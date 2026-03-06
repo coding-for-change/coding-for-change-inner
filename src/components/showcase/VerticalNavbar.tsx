@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from '../general';
-import { useLocation } from 'react-router';
+import { useLocation } from 'react-router-dom';
 
 export interface VerticalNavbarProps {}
 
