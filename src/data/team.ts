@@ -23,5 +23,8 @@ export const team: TeamMember[] = [
             { platform: 'GitHub', url: 'https://github.com/Jakob-Landbrecht' },
         ],
     },
+   
+
+    
 
 ];

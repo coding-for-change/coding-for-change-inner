@@ -27,6 +27,19 @@ const Events: React.FC = () => {
                                 <p style={styles.eventLocation}>{event.location}</p>
                                 <br />
                                 <p>{event.description}</p>
+                                {event.link && (
+                                    <>
+                                        <br />
+                                        <a
+                                            href={event.link.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={styles.eventLink}
+                                        >
+                                            {event.link.label}
+                                        </a>
+                                    </>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -46,6 +59,19 @@ const Events: React.FC = () => {
                                 <p style={styles.eventLocation}>{event.location}</p>
                                 <br />
                                 <p>{event.description}</p>
+                                {event.link && (
+                                    <>
+                                        <br />
+                                        <a
+                                            href={event.link.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={styles.eventLink}
+                                        >
+                                            {event.link.label}
+                                        </a>
+                                    </>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -83,6 +109,17 @@ const styles: StyleSheetCSS = {
     eventLocation: {
         fontStyle: 'italic',
         marginTop: 2,
+    },
+    eventLink: {
+        backgroundColor: '#008080',
+        color: 'white',
+        padding: '6px 16px',
+        fontFamily: 'MSSerif',
+        fontSize: 14,
+        textDecoration: 'none',
+        alignSelf: 'flex-start',
+        cursor: 'pointer',
+        border: '2px outset #ccc',
     },
 };
 

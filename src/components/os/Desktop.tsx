@@ -6,6 +6,7 @@ import Toolbar from './Toolbar';
 import DesktopShortcut, { DesktopShortcutProps } from './DesktopShortcut';
 import { IconName } from '../../assets/icons';
 import Credits from '../applications/Credits';
+import Imprint from '../applications/Imprint';
 
 export interface DesktopProps {}
 
@@ -30,6 +31,12 @@ const APPLICATIONS: {
         name: 'Credits',
         shortcutIcon: 'credits',
         component: Credits,
+    },
+    imprint: {
+        key: 'imprint',
+        name: 'Imprint & Privacy',
+        shortcutIcon: 'myComputer',
+        component: Imprint,
     },
 };
 

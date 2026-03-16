@@ -38,6 +38,7 @@ export interface CFCEvent {
     image?: string;
     type: string;
     isUpcoming: boolean;
+    link?: { label: string; url: string };
 }
 
 export interface Sponsor {

@@ -7,7 +7,7 @@ export interface AboutProps {}
 const About: React.FC<AboutProps> = (props) => {
     return (
         <div className="site-page-content">
-            <h1 style={{ marginLeft: -16 }}>About Us</h1>
+            <h1>About Us</h1>
             <h3>{siteConfig.tagline}</h3>
             <br />
             <div className="text-block">

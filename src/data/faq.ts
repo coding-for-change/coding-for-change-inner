@@ -22,7 +22,7 @@ export const faq: FAQItem[] = [
     {
         id: 'project-types',
         question: 'What kind of projects do you work on?',
-        answer: 'We build web applications, data dashboards, mobile apps, and automation tools for NGOs. Past projects include volunteer management platforms, impact visualization dashboards, and multilingual learning portals. Each project is scoped to be completable within one or two semesters.',
+        answer: 'We build web applications, data dashboards, mobile apps, and automation tools for NGOs.',
         category: 'projects',
     },
     {
