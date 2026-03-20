@@ -1,0 +1,57 @@
+services:
+  # Outer 3D website (Three.js + Express) — single entry point
+  website:
+    build:
+      context: ./outer
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "80:8080"
+    env_file:
+      - .env
+    environment:
+      - CMS_URL=http://cms:3000
+      - INNER_URL=http://inner:80
+    depends_on:
+      - inner
+      - cms
+
+  # Inner site (React app, embedded as iframe)
+  inner:
+    build:
+      context: ./inner
+      dockerfile: Dockerfile
+    restart: unless-stopped
+
+  # Payload CMS (admin panel + REST API)
+  cms:
+    build:
+      context: ./inner/cms
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql://payload:payload@postgres:5432/payload
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # PostgreSQL for Payload CMS
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: payload
+      POSTGRES_PASSWORD: payload
+      POSTGRES_DB: payload
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U payload"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres-data:
