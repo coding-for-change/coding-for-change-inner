@@ -1,26 +1,37 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
-/node_modules
-/.pnp
-.pnp.js
+node_modules
 
 # testing
-/coverage
+coverage
 
-# production
-/build
+# production builds
+inner/build
+outer/public
+inner/cms/.next
 
-# misc
-.DS_Store
+# CMS generated types
+inner/cms/payload-types.ts
+
+# environment
+.env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*.local
 
+# debug logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
-*.psd
+# misc
+.DS_Store
 .vercel
+*.psd
+*code-workspace
+
+# editor
+.idea
+.vscode
+*.swp
+*.swo
+*~
