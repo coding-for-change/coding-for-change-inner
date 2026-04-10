@@ -1,5 +1,5 @@
 import { buildConfig } from 'payload';
-import { mysqlAdapter } from '@dpfurner/payload-db-mysql';
+import { postgresAdapter } from '@payloadcms/db-postgres';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import { Team } from './collections/Team';
 import { Projects } from './collections/Projects';
@@ -15,11 +15,13 @@ export default buildConfig({
   editor: lexicalEditor(),
   collections: [Users, Team, Projects, Events, FAQ, Sponsors, Media],
   globals: [SiteConfig, Membership],
-  secret: process.env.PAYLOAD_SECRET || '',
-  db: mysqlAdapter({
+  secret: process.env.PAYLOAD_SECRET || 'CHANGE-ME',
+  db: postgresAdapter({
     push: true,
     pool: {
-      uri: process.env.DATABASE_URL,
+      connectionString:
+        process.env.DATABASE_URL ||
+        'postgresql://payload:payload@localhost:5432/payload',
     },
   }),
   admin: {

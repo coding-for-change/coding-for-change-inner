@@ -77,7 +77,8 @@ jobs:
 
           # Write .env from GitHub secrets and copy to VPS
           printf '%s\n' \
-            "DATABASE_URL=${{ secrets.DATABASE_URL }}" \
+            "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" \
+            "DATABASE_URL=postgresql://payload:${{ secrets.POSTGRES_PASSWORD }}@postgres:5432/payload" \
             "PAYLOAD_SECRET=${{ secrets.PAYLOAD_SECRET }}" \
             "CMS_URL=http://cms:3000" \
             "INNER_URL=http://inner:80" \

@@ -22,8 +22,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-
+inner/cms/.pnpm-store
 # misc
+
 .DS_Store
 .vercel
 *.psd

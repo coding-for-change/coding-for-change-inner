@@ -32,27 +32,26 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL=mysql://payload:payload@mysql:3306/payload
+      - DATABASE_URL=postgresql://payload:payload@postgres:5432/payload
     depends_on:
-      mysql:
+      postgres:
         condition: service_healthy
 
-  # MySQL for Payload CMS
-  mysql:
-    image: mysql:8
+  # PostgreSQL for Payload CMS
+  postgres:
+    image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: payload
-      MYSQL_USER: payload
-      MYSQL_PASSWORD: payload
-      MYSQL_ROOT_PASSWORD: root
+      POSTGRES_USER: payload
+      POSTGRES_PASSWORD: payload
+      POSTGRES_DB: payload
     volumes:
-      - mysql-data:/var/lib/mysql
+      - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 5s
+      test: ["CMD-SHELL", "pg_isready -U payload"]
+      interval: 10s
       timeout: 5s
-      retries: 10
+      retries: 5
 
 volumes:
-  mysql-data:
+  postgres-data:
