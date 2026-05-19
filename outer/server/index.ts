@@ -34,6 +34,30 @@ app.use(
     })
 );
 
+// SEO: serve a real text/plain robots.txt before the SPA catch-all
+app.get('/robots.txt', (req, res) => {
+    res.type('text/plain').send(
+        'User-agent: *\nAllow: /\n\nSitemap: https://codingforchange.com/sitemap.xml\n'
+    );
+});
+
+// SEO: serve a real sitemap.xml listing the inner app's actual routes
+app.get('/sitemap.xml', (req, res) => {
+    res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://codingforchange.com/</loc><priority>1.0</priority></url>
+  <url><loc>https://codingforchange.com/about</loc><priority>0.8</priority></url>
+  <url><loc>https://codingforchange.com/team</loc><priority>0.8</priority></url>
+  <url><loc>https://codingforchange.com/projects</loc><priority>0.8</priority></url>
+  <url><loc>https://codingforchange.com/join</loc><priority>0.8</priority></url>
+  <url><loc>https://codingforchange.com/contact</loc><priority>0.7</priority></url>
+  <url><loc>https://codingforchange.com/events</loc><priority>0.6</priority></url>
+  <url><loc>https://codingforchange.com/sponsors</loc><priority>0.5</priority></url>
+  <url><loc>https://codingforchange.com/qa</loc><priority>0.5</priority></url>
+</urlset>
+`);
+});
+
 // Serve static files for the outer 3D site
 app.use(express.static(path.resolve(__dirname, '../public')));
 
