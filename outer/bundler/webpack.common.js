@@ -18,7 +18,23 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             template: path.resolve(__dirname, '../src/index.html'),
-            minify: true,
+            // `minify: true` runs html-minifier-terser with minifyJS:true,
+            // which feeds the JSON-LD <script> through terser. terser then
+            // parses `{ "@context": ..., "name": ... }` as a JS block with
+            // labeled statements, treats the expression statements as
+            // dead code, and strips it down to `{}` — destroying the
+            // Organization schema. Explicit config keeps minification on
+            // for HTML/CSS but disables JS minification; the JS bundle is
+            // already minified by webpack's own TerserPlugin in production.
+            minify: {
+                collapseWhitespace: true,
+                removeComments: true,
+                removeRedundantAttributes: true,
+                removeStyleLinkTypeAttributes: true,
+                useShortDoctype: true,
+                minifyCSS: true,
+                minifyJS: false,
+            },
         }),
         new MiniCSSExtractPlugin(),
         new webpack.DefinePlugin({
