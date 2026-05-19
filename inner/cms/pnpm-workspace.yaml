@@ -1,0 +1,11 @@
+# pnpm 10+ moved overrides out of package.json. Even for single-package
+# projects (no `packages:` field), top-level config lives here now.
+overrides:
+  '@payloadcms/drizzle': 3.79.1
+
+# sharp compiles native image-processing binaries; esbuild fetches its
+# platform-specific binary. Both are required by Payload at runtime and
+# need their postinstall scripts allowed in pnpm's opt-in security model.
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
