@@ -47,20 +47,15 @@ app.get('/robots.txt', (req, res) => {
     );
 });
 
-// SEO: serve a real sitemap.xml listing the inner app's actual routes
+// SEO: sitemap lists only the homepage. The other React routes all
+// return the same SPA shell from the Express catch-all, so listing them
+// would be a duplicate-content claim. Expand once Next.js gives each
+// route its own indexable HTML.
 app.get('/sitemap.xml', (req, res) => {
     const lastmod = new Date().toISOString().slice(0, 10);
     res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://codingforchange.com/</loc><lastmod>${lastmod}</lastmod><priority>1.0</priority></url>
-  <url><loc>https://codingforchange.com/about</loc><lastmod>${lastmod}</lastmod><priority>0.8</priority></url>
-  <url><loc>https://codingforchange.com/team</loc><lastmod>${lastmod}</lastmod><priority>0.8</priority></url>
-  <url><loc>https://codingforchange.com/projects</loc><lastmod>${lastmod}</lastmod><priority>0.8</priority></url>
-  <url><loc>https://codingforchange.com/join</loc><lastmod>${lastmod}</lastmod><priority>0.8</priority></url>
-  <url><loc>https://codingforchange.com/contact</loc><lastmod>${lastmod}</lastmod><priority>0.7</priority></url>
-  <url><loc>https://codingforchange.com/events</loc><lastmod>${lastmod}</lastmod><priority>0.6</priority></url>
-  <url><loc>https://codingforchange.com/sponsors</loc><lastmod>${lastmod}</lastmod><priority>0.5</priority></url>
-  <url><loc>https://codingforchange.com/qa</loc><lastmod>${lastmod}</lastmod><priority>0.5</priority></url>
 </urlset>
 `);
 });
