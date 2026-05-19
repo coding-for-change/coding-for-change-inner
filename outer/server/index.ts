@@ -24,15 +24,41 @@ app.use(
     })
 );
 
-// Proxy: Inner site (iframe content) — strip /inner/ prefix
+// Proxy: Inner site (iframe content) — strip /inner/ prefix.
+// noindex header so the iframe URL doesn't compete with the homepage in search.
 app.use(
     '/inner',
     createProxyMiddleware({
         target: INNER_URL,
         changeOrigin: true,
         pathRewrite: (reqPath, req) => req.originalUrl.replace(/^\/inner/, ''),
+        on: {
+            proxyRes: (proxyRes) => {
+                proxyRes.headers['x-robots-tag'] = 'noindex, nofollow';
+            },
+        },
     })
 );
+
+// SEO: serve a real text/plain robots.txt before the SPA catch-all
+app.get('/robots.txt', (req, res) => {
+    res.type('text/plain').send(
+        'User-agent: *\nAllow: /\n\nSitemap: https://codingforchange.com/sitemap.xml\n'
+    );
+});
+
+// SEO: sitemap lists only the homepage. The other React routes all
+// return the same SPA shell from the Express catch-all, so listing them
+// would be a duplicate-content claim. Expand once Next.js gives each
+// route its own indexable HTML.
+app.get('/sitemap.xml', (req, res) => {
+    const lastmod = new Date().toISOString().slice(0, 10);
+    res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://codingforchange.com/</loc><lastmod>${lastmod}</lastmod><priority>1.0</priority></url>
+</urlset>
+`);
+});
 
 // Serve static files for the outer 3D site
 app.use(express.static(path.resolve(__dirname, '../public')));

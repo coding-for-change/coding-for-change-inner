@@ -18,7 +18,17 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             template: path.resolve(__dirname, '../src/index.html'),
-            minify: true,
+            // minifyJS:true (the default for `minify: true`) feeds the
+            // JSON-LD <script> through terser, which strips it to `{}`.
+            minify: {
+                collapseWhitespace: true,
+                removeComments: true,
+                removeRedundantAttributes: true,
+                removeStyleLinkTypeAttributes: true,
+                useShortDoctype: true,
+                minifyCSS: true,
+                minifyJS: false,
+            },
         }),
         new MiniCSSExtractPlugin(),
         new webpack.DefinePlugin({

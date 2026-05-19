@@ -17,6 +17,9 @@ inner/cms/payload-types.ts
 .env.local
 .env.*.local
 
+# local docker compose overrides
+docker-compose.override.yml
+
 # debug logs
 npm-debug.log*
 yarn-debug.log*
