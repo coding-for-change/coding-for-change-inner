@@ -58,5 +58,41 @@ jobs:
           section "docker version + compose version on VPS"
           $SSH "docker version --format '{{.Server.Version}}' && docker compose version"
 
+          section "docker system df (high-level reclaimable space)"
+          $SSH "docker system df"
+
+          section "docker system df -v (per-image / per-volume detail, top 40 lines)"
+          $SSH "docker system df -v 2>/dev/null | head -80"
+
+          section "ALL containers on the host (incl. non-homepage projects)"
+          $SSH "docker ps -a --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Size}}' | head -50"
+
+          section "ALL images on the host, sorted by size (top 30)"
+          $SSH "docker images -a --format '{{.Size}}\t{{.Repository}}:{{.Tag}}\t{{.ID}}\t{{.CreatedSince}}' | sort -h -r | head -30"
+
+          section "Dangling images (untagged, safe to prune)"
+          $SSH "docker images -f dangling=true --format '{{.ID}}\t{{.Size}}\t{{.CreatedSince}}' | head -30; echo; echo 'count:'; docker images -f dangling=true -q | wc -l"
+
+          section "Stopped containers (safe to prune)"
+          $SSH "docker ps -a --filter status=exited --filter status=created --format '{{.Names}}\t{{.Image}}\t{{.Status}}' | head -30; echo; echo 'count:'; docker ps -a --filter status=exited --filter status=created -q | wc -l"
+
+          section "Top-level /var/lib/docker subdirectory sizes"
+          $SSH "sudo du -sh /var/lib/docker/* 2>/dev/null | sort -h -r | head -20 || du -sh /var/lib/docker/* 2>/dev/null | sort -h -r | head -20"
+
+          section "Other big directories under /var (top 15)"
+          $SSH "sudo du -sh /var/* 2>/dev/null | sort -h -r | head -15 || du -sh /var/* 2>/dev/null | sort -h -r | head -15"
+
+          section "Other big directories under / (top 15)"
+          $SSH "sudo du -sh /* 2>/dev/null | sort -h -r | head -15 || du -sh /* 2>/dev/null | sort -h -r | head -15"
+
+          section "Largest individual files anywhere on disk (top 20, files >100MB)"
+          $SSH "sudo find / -type f -size +100M 2>/dev/null | xargs -I{} sudo du -h {} 2>/dev/null | sort -h -r | head -20 || find / -type f -size +100M -exec du -h {} + 2>/dev/null | sort -h -r | head -20"
+
+          section "Container log file sizes (default location, unrotated)"
+          $SSH "sudo find /var/lib/docker/containers -name '*-json.log' -exec ls -lh {} + 2>/dev/null | sort -k5 -h -r | head -20 || find /var/lib/docker/containers -name '*-json.log' 2>/dev/null | head -20"
+
+          section "Other compose projects on the host (so we know what NOT to touch)"
+          $SSH "docker ps -a --format '{{.Label \"com.docker.compose.project\"}}' | sort -u"
+
           echo
           echo "=== done ==="
