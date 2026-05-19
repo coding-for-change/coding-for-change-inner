@@ -22,6 +22,12 @@ services:
     restart: unless-stopped
     env_file:
       - .env
+    # Payload's default upload location is ./media relative to WORKDIR (/app).
+    # Without this volume, every container recreation wipes uploaded files
+    # while the Postgres-backed metadata rows survive — leaving 500s on
+    # /api/media/file/* for every existing Media record.
+    volumes:
+      - cms-media:/app/media
     depends_on:
       postgres:
         condition: service_healthy
@@ -43,3 +49,4 @@ services:
 
 volumes:
   postgres-data:
+  cms-media:
