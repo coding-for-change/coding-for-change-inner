@@ -25,12 +25,19 @@ app.use(
 );
 
 // Proxy: Inner site (iframe content) — strip /inner/ prefix
+// Tag responses noindex so the iframe content isn't indexed as a
+// separate page competing with the canonical homepage.
 app.use(
     '/inner',
     createProxyMiddleware({
         target: INNER_URL,
         changeOrigin: true,
         pathRewrite: (reqPath, req) => req.originalUrl.replace(/^\/inner/, ''),
+        on: {
+            proxyRes: (proxyRes) => {
+                proxyRes.headers['x-robots-tag'] = 'noindex, nofollow';
+            },
+        },
     })
 );
 
@@ -43,17 +50,18 @@ app.get('/robots.txt', (req, res) => {
 
 // SEO: serve a real sitemap.xml listing the inner app's actual routes
 app.get('/sitemap.xml', (req, res) => {
+    const lastmod = new Date().toISOString().slice(0, 10);
     res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://codingforchange.com/</loc><priority>1.0</priority></url>
-  <url><loc>https://codingforchange.com/about</loc><priority>0.8</priority></url>
-  <url><loc>https://codingforchange.com/team</loc><priority>0.8</priority></url>
-  <url><loc>https://codingforchange.com/projects</loc><priority>0.8</priority></url>
-  <url><loc>https://codingforchange.com/join</loc><priority>0.8</priority></url>
-  <url><loc>https://codingforchange.com/contact</loc><priority>0.7</priority></url>
-  <url><loc>https://codingforchange.com/events</loc><priority>0.6</priority></url>
-  <url><loc>https://codingforchange.com/sponsors</loc><priority>0.5</priority></url>
-  <url><loc>https://codingforchange.com/qa</loc><priority>0.5</priority></url>
+  <url><loc>https://codingforchange.com/</loc><lastmod>${lastmod}</lastmod><priority>1.0</priority></url>
+  <url><loc>https://codingforchange.com/about</loc><lastmod>${lastmod}</lastmod><priority>0.8</priority></url>
+  <url><loc>https://codingforchange.com/team</loc><lastmod>${lastmod}</lastmod><priority>0.8</priority></url>
+  <url><loc>https://codingforchange.com/projects</loc><lastmod>${lastmod}</lastmod><priority>0.8</priority></url>
+  <url><loc>https://codingforchange.com/join</loc><lastmod>${lastmod}</lastmod><priority>0.8</priority></url>
+  <url><loc>https://codingforchange.com/contact</loc><lastmod>${lastmod}</lastmod><priority>0.7</priority></url>
+  <url><loc>https://codingforchange.com/events</loc><lastmod>${lastmod}</lastmod><priority>0.6</priority></url>
+  <url><loc>https://codingforchange.com/sponsors</loc><lastmod>${lastmod}</lastmod><priority>0.5</priority></url>
+  <url><loc>https://codingforchange.com/qa</loc><lastmod>${lastmod}</lastmod><priority>0.5</priority></url>
 </urlset>
 `);
 });
