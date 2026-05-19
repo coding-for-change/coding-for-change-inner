@@ -19,7 +19,6 @@ inner/cms/payload-types.ts
 
 # local docker compose overrides
 docker-compose.override.yml
-docker-compose.override.yaml
 
 # debug logs
 npm-debug.log*

@@ -24,9 +24,8 @@ app.use(
     })
 );
 
-// Proxy: Inner site (iframe content) — strip /inner/ prefix
-// Tag responses noindex so the iframe content isn't indexed as a
-// separate page competing with the canonical homepage.
+// Proxy: Inner site (iframe content) — strip /inner/ prefix.
+// noindex header so the iframe URL doesn't compete with the homepage in search.
 app.use(
     '/inner',
     createProxyMiddleware({
