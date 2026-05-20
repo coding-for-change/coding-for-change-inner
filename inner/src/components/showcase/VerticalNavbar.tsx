@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from '../general';
+import { Link, ExperienceToggle } from '../general';
 import { useLocation } from 'react-router-dom';
 
 export interface VerticalNavbarProps {}
@@ -24,6 +24,7 @@ const VerticalNavbar: React.FC<VerticalNavbarProps> = (props) => {
                 <h1 style={styles.headerText}>Change</h1>
                 <h3 style={styles.headerShowcase}>Munich Student Club</h3>
             </div>
+            <ExperienceToggle containerStyle={styles.experienceToggle} />
             <div style={styles.links}>
                 <Link containerStyle={styles.link} to="" text="HOME" />
                 <Link containerStyle={styles.link} to="about" text="ABOUT" />
@@ -55,7 +56,11 @@ const styles: StyleSheetCSS = {
     },
     header: {
         flexDirection: 'column',
-        marginBottom: 64,
+        marginBottom: 28,
+    },
+    experienceToggle: {
+        justifyContent: 'flex-start',
+        marginBottom: 48,
     },
     headerText: {
         fontSize: 38,
