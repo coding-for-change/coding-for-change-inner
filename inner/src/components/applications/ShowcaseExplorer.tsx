@@ -33,7 +33,7 @@ const ShowcaseExplorer: React.FC<ShowcaseExplorerProps> = (props) => {
             minimizeWindow={props.onMinimize}
             bottomLeftText={siteConfig.copyrightText || ''}
         >
-            <Router basename="/inner">
+            <Router basename="/">
                 <div className="site-page">
                     <VerticalNavbar />
                     <Routes>

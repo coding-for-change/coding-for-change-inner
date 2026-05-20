@@ -67,14 +67,6 @@ const LoadingScreen: React.FC<LoadingProps> = () => {
         if (progress >= 1 && !webGLError) {
             setDoneLoading(true);
 
-            // If on a subpage, skip loading screen and go straight to monitor
-            const path = window.location.pathname.replace(/^\/+|\/+$/g, '');
-            if (path) {
-                start();
-                eventBus.dispatch('skipToMonitor', {});
-                return;
-            }
-
             setTimeout(() => {
                 setLoadingTextOpacity(0);
                 setTimeout(() => {

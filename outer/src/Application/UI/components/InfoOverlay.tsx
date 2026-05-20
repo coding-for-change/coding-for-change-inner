@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import FreeCamToggle from './FreeCamToggle';
 import MuteToggle from './MuteToggle';
+import ExitButton from './ExitButton';
 
 interface InfoOverlayProps {
     visible: boolean;
@@ -139,6 +140,11 @@ const InfoOverlay: React.FC<InfoOverlayProps> = ({ visible }) => {
                     )}
                 </div>
             )}
+            {freeCamVisible && (
+                <div style={styles.exitRowWrapper}>
+                    <ExitButton />
+                </div>
+            )}
         </div>
     );
 };
@@ -175,6 +181,10 @@ const styles: StyleSheetCSS = {
     },
     lastRowChild: {
         marginRight: 4,
+    },
+    exitRowWrapper: {
+        display: 'flex',
+        marginTop: 4,
     },
 };
 

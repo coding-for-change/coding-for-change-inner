@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from '../general';
+import { Link, ExperienceToggle } from '../general';
 import { useSiteConfig } from '../../api';
 
 export interface HomeProps {}
@@ -12,6 +12,7 @@ const Home: React.FC<HomeProps> = (props) => {
             <div style={styles.header}>
                 <h1 style={styles.name}>{siteConfig.clubName}</h1>
                 <h2>{siteConfig.tagline}</h2>
+                <ExperienceToggle containerStyle={styles.experienceToggle} />
             </div>
             <div style={styles.buttons}>
                 <Link containerStyle={styles.link} to="about" text="ABOUT" />
@@ -42,6 +43,9 @@ const styles: StyleSheetCSS = {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    experienceToggle: {
+        marginTop: 24,
     },
     buttons: {
         justifyContent: 'space-between',

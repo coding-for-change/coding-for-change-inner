@@ -182,16 +182,13 @@ export default class MonitorScreen extends EventEmitter {
             }
         };
 
-        // Set iframe attributes
-        // Uses the same origin by default (inner site served under /inner/)
-        // Can be overridden via INNER_SITE_URL env var at build time
+        // Set iframe attributes. The desktop OS is the site itself, served
+        // at / — overridable via the INNER_SITE_URL build-time env var.
         const innerSiteBase =
             typeof __INNER_SITE_URL__ !== 'undefined'
                 ? __INNER_SITE_URL__
-                : '/inner/';
-        // Forward the current URL path to the inner iframe
-        const currentPath = window.location.pathname.replace(/^\/+|\/+$/g, '');
-        iframe.src = currentPath ? innerSiteBase + currentPath : innerSiteBase;
+                : '/';
+        iframe.src = innerSiteBase;
         iframe.style.width = this.screenSize.width + 'px';
         iframe.style.height = this.screenSize.height + 'px';
         iframe.style.padding = IFRAME_PADDING + 'px';

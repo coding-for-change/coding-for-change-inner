@@ -4,7 +4,7 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm install
 COPY . .
-ENV INNER_SITE_URL=/inner/
+ENV INNER_SITE_URL=/
 RUN npm run build
 
 # Production stage
