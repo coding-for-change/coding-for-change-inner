@@ -64,11 +64,7 @@ const InterfaceUI: React.FC<InterfaceUIProps> = ({}) => {
                 is in the 3D scene: shown as soon as the scene loads (before
                 any interaction) and hidden only once the camera is inside
                 the monitor, where the embedded OS provides its own exit. */}
-            {!inMonitor && (
-                <div style={styles.exitWrapper}>
-                    <ExitButton />
-                </div>
-            )}
+            {!inMonitor && <ExitButton />}
             <motion.div
                 initial="hide"
                 variants={vars}
@@ -116,16 +112,7 @@ const styles: StyleSheetCSS = {
         position: 'absolute',
         boxSizing: 'border-box',
         // Shifted down so the always-visible exit control owns the corner.
-        top: 44,
-    },
-    exitWrapper: {
-        position: 'absolute',
-        top: 10,
-        left: 10,
-        width: 236,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
+        top: 64,
     },
 };
 
