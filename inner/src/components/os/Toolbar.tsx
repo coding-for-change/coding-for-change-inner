@@ -11,11 +11,26 @@ export interface ToolbarProps {
     shutdown: () => void;
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({
-    windows,
-    toggleMinimize,
-    shutdown,
-}) => {
+const Toolbar: React.FC<ToolbarProps> = ({ windows, toggleMinimize }) => {
+    // Switch between the desktop OS and the 3D "enhanced experience".
+    // Standalone -> into the 3D scene; embedded in the 3D monitor -> out.
+    const isEmbedded = () => {
+        try {
+            return window.self !== window.top;
+        } catch (e) {
+            return true;
+        }
+    };
+    const embedded = isEmbedded();
+
+    const goToExperience = () => {
+        if (embedded && window.top) {
+            window.top.location.href = window.location.pathname || '/';
+        } else {
+            window.location.href = '/3d';
+        }
+    };
+
     const getTime = () => {
         const date = new Date();
         let hours = date.getHours();
@@ -104,14 +119,16 @@ const Toolbar: React.FC<ToolbarProps> = ({
                             <div
                                 className="start-menu-option"
                                 style={styles.startMenuOption}
-                                onMouseDown={shutdown}
+                                onMouseDown={goToExperience}
                             >
                                 <Icon
                                     style={styles.startMenuIcon}
                                     icon="computerBig"
                                 />
                                 <p style={styles.startMenuText}>
-                                    Sh<u>u</u>t down...
+                                    {embedded
+                                        ? 'Exit 3D mode'
+                                        : 'Enter 3D mode'}
                                 </p>
                             </div>
                         </div>

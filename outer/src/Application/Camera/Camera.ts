@@ -185,15 +185,6 @@ export default class Camera extends EventEmitter {
         UIEventBus.on('loadingScreenDone', () => {
             this.transition(CameraKey.IDLE, 2500, TWEEN.Easing.Exponential.Out);
         });
-        UIEventBus.on('skipToMonitor', () => {
-            // Jump directly to monitor position without animation
-            const monitorKf = this.keyframes[CameraKey.MONITOR];
-            this.position.copy(monitorKf.position);
-            this.focalPoint.copy(monitorKf.focalPoint);
-            this.currentKeyframe = CameraKey.MONITOR;
-            this.targetKeyframe = undefined;
-            UIEventBus.dispatch('enterMonitor', {});
-        });
     }
 
     resize() {

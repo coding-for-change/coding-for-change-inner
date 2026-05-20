@@ -9,6 +9,7 @@ const port = process.env.PORT || 8080;
 
 const CMS_URL = process.env.CMS_URL || 'http://cms:3000';
 const INNER_URL = process.env.INNER_URL || 'http://inner:80';
+const PUBLIC_DIR = path.resolve(__dirname, '../public');
 
 app.use(cors());
 app.use(compression());
@@ -24,50 +25,71 @@ app.use(
     })
 );
 
-// Proxy: Inner site (iframe content) — strip /inner/ prefix.
-// noindex header so the iframe URL doesn't compete with the homepage in search.
-app.use(
-    '/inner',
-    createProxyMiddleware({
-        target: INNER_URL,
-        changeOrigin: true,
-        pathRewrite: (reqPath, req) => req.originalUrl.replace(/^\/inner/, ''),
-        on: {
-            proxyRes: (proxyRes) => {
-                proxyRes.headers['x-robots-tag'] = 'noindex, nofollow';
-            },
-        },
-    })
-);
+// The inner desktop OS used to be embedded under /inner/. It is now the
+// site itself, served at /. Permanently redirect old links and bookmarks.
+app.use('/inner', (req, res) => {
+    // req.url is the path after the /inner mount point (e.g. "/about").
+    res.redirect(301, req.url);
+});
 
-// SEO: serve a real text/plain robots.txt before the SPA catch-all
+// The 3D scene is the opt-in "enhanced experience", served at /3d. Its
+// webpack build sets publicPath to '/3d/', so every asset request arrives
+// under /3d. noindex keeps it from competing with the content site (/)
+// for search rankings.
+app.use('/3d', (req, res, next) => {
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    next();
+});
+app.use('/3d', express.static(PUBLIC_DIR));
+app.use('/3d', (req, res) => {
+    res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
+});
+
+// SEO: serve a real text/plain robots.txt before the catch-all
 app.get('/robots.txt', (req, res) => {
     res.type('text/plain').send(
         'User-agent: *\nAllow: /\n\nSitemap: https://codingforchange.com/sitemap.xml\n'
     );
 });
 
-// SEO: sitemap lists only the homepage. The other React routes all
-// return the same SPA shell from the Express catch-all, so listing them
-// would be a duplicate-content claim. Expand once Next.js gives each
-// route its own indexable HTML.
+// SEO: the inner desktop OS is now the canonical site at /, so the
+// sitemap lists every content route.
 app.get('/sitemap.xml', (req, res) => {
     const lastmod = new Date().toISOString().slice(0, 10);
+    const routes = [
+        '/',
+        '/about',
+        '/events',
+        '/projects',
+        '/sponsors',
+        '/team',
+        '/qa',
+        '/join',
+        '/contact',
+    ];
+    const urls = routes
+        .map((route) => {
+            const priority = route === '/' ? '1.0' : '0.8';
+            return `  <url><loc>https://codingforchange.com${route}</loc><lastmod>${lastmod}</lastmod><priority>${priority}</priority></url>`;
+        })
+        .join('\n');
     res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://codingforchange.com/</loc><lastmod>${lastmod}</lastmod><priority>1.0</priority></url>
+${urls}
 </urlset>
 `);
 });
 
-// Serve static files for the outer 3D site
-app.use(express.static(path.resolve(__dirname, '../public')));
-
-// Catch-all: serve the outer site for any route (e.g. /events, /team)
-// so the 3D scene loads and passes the path to the inner iframe
-app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../public/index.html'));
-});
+// Everything else: the inner desktop OS is the default experience.
+// Proxy all remaining routes to the inner nginx, which serves the SPA.
+app.use(
+    '/',
+    createProxyMiddleware({
+        target: INNER_URL,
+        changeOrigin: true,
+        pathRewrite: (reqPath, req) => req.originalUrl,
+    })
+);
 
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);

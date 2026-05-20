@@ -10,6 +10,11 @@ module.exports = {
         hashFunction: 'xxhash64',
         filename: 'bundle.[contenthash].js',
         path: path.resolve(__dirname, '../public'),
+        // The 3D scene is the opt-in experience served under /3d, so every
+        // built asset URL is prefixed. Runtime/relative URLs (the Three.js
+        // resource paths, hand-written tags) are handled by <base> in
+        // src/index.html.
+        publicPath: '/3d/',
     },
     devtool: 'source-map',
     plugins: [
@@ -33,7 +38,7 @@ module.exports = {
         new MiniCSSExtractPlugin(),
         new webpack.DefinePlugin({
             __INNER_SITE_URL__: JSON.stringify(
-                process.env.INNER_SITE_URL || '/inner/'
+                process.env.INNER_SITE_URL || '/'
             ),
         }),
     ],
@@ -48,7 +53,18 @@ module.exports = {
             // HTML
             {
                 test: /\.(html)$/,
-                use: ['html-loader'],
+                use: [
+                    {
+                        loader: 'html-loader',
+                        options: {
+                            // The favicon and monitor-video URLs in
+                            // index.html are served as-is by CopyWebpackPlugin
+                            // and resolved by the <base href="/3d/"> tag, so
+                            // html-loader must not resolve them as modules.
+                            sources: false,
+                        },
+                    },
+                ],
             },
             {
                 test: /\.ts?$/,
