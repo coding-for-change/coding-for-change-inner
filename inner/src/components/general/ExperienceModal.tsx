@@ -81,10 +81,7 @@ const ExperienceModal: React.FC = () => {
                         </h3>
                         <p style={styles.text}>
                             You can explore Coding for Change as an interactive
-                            3D scene — a retro computer on a desk. It takes a
-                            moment longer to load, so everyone starts on this
-                            fast version. Switch between the two whenever you
-                            like.
+                            3D scene. Switch whenever you like.
                         </p>
                     </div>
                 </div>
