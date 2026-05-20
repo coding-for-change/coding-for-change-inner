@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import UIEventBus from '../EventBus';
 import InfoOverlay from './InfoOverlay';
+import ExitButton from './ExitButton';
 
 interface InterfaceUIProps {}
 
@@ -9,6 +10,7 @@ const InterfaceUI: React.FC<InterfaceUIProps> = ({}) => {
     const [initLoad, setInitLoad] = useState(true);
     const [visible, setVisible] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [inMonitor, setInMonitor] = useState(false);
     const interfaceRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -42,12 +44,14 @@ const InterfaceUI: React.FC<InterfaceUIProps> = ({}) => {
         UIEventBus.on('enterMonitor', () => {
             setVisible(false);
             setInitLoad(false);
+            setInMonitor(true);
             if (interfaceRef.current) {
                 interfaceRef.current.style.pointerEvents = 'none';
             }
         });
         UIEventBus.on('leftMonitor', () => {
             setVisible(true);
+            setInMonitor(false);
             if (interfaceRef.current) {
                 interfaceRef.current.style.pointerEvents = 'auto';
             }
@@ -55,16 +59,27 @@ const InterfaceUI: React.FC<InterfaceUIProps> = ({}) => {
     }, []);
 
     return !loading ? (
-        <motion.div
-            initial="hide"
-            variants={vars}
-            animate={visible ? 'visible' : 'hide'}
-            style={styles.wrapper}
-            className="interface-wrapper"
-            id="prevent-click"
-        >
-            <InfoOverlay visible={visible} />
-        </motion.div>
+        <>
+            {/* The exit control stays available the whole time the visitor
+                is in the 3D scene: shown as soon as the scene loads (before
+                any interaction) and hidden only once the camera is inside
+                the monitor, where the embedded OS provides its own exit. */}
+            {!inMonitor && (
+                <div style={styles.exitWrapper}>
+                    <ExitButton />
+                </div>
+            )}
+            <motion.div
+                initial="hide"
+                variants={vars}
+                animate={visible ? 'visible' : 'hide'}
+                style={styles.wrapper}
+                className="interface-wrapper"
+                id="prevent-click"
+            >
+                <InfoOverlay visible={visible} />
+            </motion.div>
+        </>
     ) : (
         <></>
     );
@@ -100,6 +115,17 @@ const styles: StyleSheetCSS = {
         display: 'flex',
         position: 'absolute',
         boxSizing: 'border-box',
+        // Shifted down so the always-visible exit control owns the corner.
+        top: 44,
+    },
+    exitWrapper: {
+        position: 'absolute',
+        top: 10,
+        left: 10,
+        width: 236,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
     },
 };
 

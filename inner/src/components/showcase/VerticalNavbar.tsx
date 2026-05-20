@@ -51,7 +51,8 @@ const styles: StyleSheetCSS = {
         padding: 48,
         boxSizing: 'border-box',
         position: 'fixed',
-        overflow: 'hidden',
+        overflowX: 'hidden',
+        overflowY: 'auto',
     },
     header: {
         flexDirection: 'column',

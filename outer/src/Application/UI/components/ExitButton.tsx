@@ -5,13 +5,14 @@ interface ExitButtonProps {}
 /**
  * Leaves the 3D "enhanced experience" and returns to the fast site.
  *
- * Sits in the InfoOverlay's control cluster (next to the mute and
- * free-cam toggles), so it is reachable whenever the camera is pulled
- * back from the monitor. When the visitor is zoomed into the monitor
- * instead, the desktop OS's own ExperienceToggle provides the way out.
+ * Rendered by InterfaceUI in the top-left corner — visible as soon as the
+ * scene loads, hidden only once the camera is inside the monitor (where the
+ * embedded desktop OS handles the exit). Mirrors the InfoOverlay's boxes: a
+ * content-sized black box around a <p>, so it picks up the same responsive
+ * font-size and scales with the screen.
  */
 const ExitButton: React.FC<ExitButtonProps> = ({}) => {
-    const [isHovering, setIsHovering] = useState(false);
+    const [hover, setHover] = useState(false);
 
     const onExit = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -20,36 +21,32 @@ const ExitButton: React.FC<ExitButtonProps> = ({}) => {
 
     return (
         <div
-            style={Object.assign(
-                {},
-                styles.container,
-                isHovering && styles.containerHover
-            )}
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
-            onMouseDown={onExit}
+            style={Object.assign({}, styles.box, hover && styles.boxHover)}
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
+            onClick={onExit}
             className="icon-control-container"
             id="prevent-click"
         >
-            <p style={isHovering ? styles.textHover : styles.text}>
-                {'‹  EXIT 3D MODE'}
+            <p style={hover ? styles.textHover : styles.text}>
+                {'‹ EXIT 3D MODE'}
             </p>
         </div>
     );
 };
 
 const styles: StyleSheetCSS = {
-    container: {
+    box: {
         background: 'black',
-        padding: 4,
-        paddingLeft: 12,
-        paddingRight: 12,
         display: 'flex',
-        alignItems: 'center',
+        padding: 4,
+        paddingLeft: 16,
+        paddingRight: 16,
+        textAlign: 'center',
         boxSizing: 'border-box',
         cursor: 'pointer',
     },
-    containerHover: {
+    boxHover: {
         background: 'white',
     },
     text: {
