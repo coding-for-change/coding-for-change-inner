@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSiteConfig } from '../../api';
+import useIsMobile from '../../hooks/useIsMobile';
 
 export interface ContactProps {}
 
@@ -16,6 +17,7 @@ const Contact: React.FC<ContactProps> = (props) => {
     const [name, setName] = useState('');
     const [message, setMessage] = useState('');
     const siteConfig = useSiteConfig();
+    const isMobile = useIsMobile();
 
     const isFormValid =
         validateEmail(email) && name.length > 0 && message.length > 0;
@@ -31,9 +33,21 @@ const Contact: React.FC<ContactProps> = (props) => {
 
     return (
         <div className="site-page-content">
-            <div style={styles.header}>
+            <div
+                style={Object.assign(
+                    {},
+                    styles.header,
+                    isMobile && styles.headerMobile
+                )}
+            >
                 <h1>Contact</h1>
-                <div style={styles.socials}>
+                <div
+                    style={Object.assign(
+                        {},
+                        styles.socials,
+                        isMobile && styles.socialsMobile
+                    )}
+                >
                     {(siteConfig.socialLinks ?? []).map((link) => (
                         <a
                             key={link.platform}
@@ -188,14 +202,25 @@ const styles: StyleSheetCSS = {
         alignItems: 'flex-end',
         justifyContent: 'space-between',
     },
+    headerMobile: {
+        // Stack the social links under the title so a narrow window
+        // doesn't squeeze "Contact" onto two lines.
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+    },
     socials: {
         marginBottom: 16,
         justifyContent: 'flex-end',
         gap: 12,
     },
+    socialsMobile: {
+        justifyContent: 'flex-start',
+        marginTop: 4,
+    },
     socialLink: {
         fontSize: 14,
         textDecoration: 'none',
+        fontFamily: 'Millennium, sans-serif',
     },
 };
 

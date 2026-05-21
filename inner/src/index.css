@@ -408,3 +408,78 @@ input:active {
     50%  { opacity: 1; }
     100% { opacity: 0; }
 }
+
+/* ------------------------------------------------------------------ */
+/* Mobile / narrow-window layout                                       */
+/* On phones and narrow browser windows the fixed 300px sidebar is     */
+/* dropped: the content page stacks below a collapsible navbar and the */
+/* whole page scrolls as one column. Keep this breakpoint in sync with */
+/* MOBILE_BREAKPOINT in hooks/useIsMobile.ts.                          */
+/* ------------------------------------------------------------------ */
+@media (max-width: 1024px) {
+    .site-page {
+        flex-direction: column;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .site-page-content {
+        margin-left: 0;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 16px;
+        padding-top: 16px;
+        overflow-y: visible;
+    }
+
+    h1 {
+        font-size: 40px;
+    }
+
+    h2 {
+        font-size: 24px;
+    }
+
+    h3 {
+        font-size: 20px;
+    }
+
+    p,
+    li {
+        font-size: 16px;
+    }
+
+    /* A long word or URL must never push the layout wider than the
+       screen and force horizontal scrolling. */
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    li,
+    a {
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
+
+    .site-button {
+        min-height: 44px;
+        padding: 8px 16px;
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/* Respect the OS-level "reduce motion" accessibility setting.         */
+/* This neutralises every CSS animation/transition on the site (the    */
+/* blinking cursor, rainbow window bar, loading dots, etc.).           */
+/* ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+}

@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Colors from '../../constants/colors';
 import Button from '../os/Button';
+import { isMobileViewport } from '../../hooks/useIsMobile';
 
 const STORAGE_KEY = 'cfc-experience-prompt-seen';
 
@@ -39,6 +40,9 @@ const ExperienceModal: React.FC = () => {
             embedded = true;
         }
         if (embedded) return;
+
+        // The 3D experience isn't offered on mobile — don't advertise it.
+        if (isMobileViewport()) return;
 
         let seen = false;
         try {

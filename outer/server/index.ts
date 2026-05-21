@@ -32,6 +32,21 @@ app.use('/inner', (req, res) => {
     res.redirect(301, req.url);
 });
 
+// On phones the 3D scene is too heavy and its pointer/keyboard controls
+// don't map to touch, so the "enhanced experience" isn't offered on
+// mobile — those visitors are sent straight to the fast content site.
+// Express only sees the User-Agent here (no viewport), so this device
+// check is UA-based; every in-app layout decision uses the viewport.
+const MOBILE_UA =
+    /Android.*Mobile|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini|Mobile Safari/i;
+
+app.use('/3d', (req, res, next) => {
+    if (MOBILE_UA.test(req.headers['user-agent'] || '')) {
+        return res.redirect(302, '/');
+    }
+    next();
+});
+
 // The 3D scene is the opt-in "enhanced experience", served at /3d. Its
 // webpack build sets publicPath to '/3d/', so every asset request arrives
 // under /3d. noindex keeps it from competing with the content site (/)

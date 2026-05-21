@@ -26,6 +26,7 @@ const ShowcaseExplorer: React.FC<ShowcaseExplorerProps> = (props) => {
             left={56}
             width={initWidth}
             height={initHeight}
+            trackViewport
             windowTitle={siteConfig.windowTitle || ''}
             windowBarIcon="windowExplorerIcon"
             closeWindow={props.onClose}
