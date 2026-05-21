@@ -3,21 +3,44 @@ import { useCmsCollection, mediaUrl } from '../../api';
 import { CmsSponsor } from '../../api/types';
 import { RetroLoader } from '../general';
 
-const VISIBLE = 4;
-const SLIDE_WIDTH = 220;
+const MAX_VISIBLE = 4;
+const MIN_SLIDE_WIDTH = 200;
 const AUTO_INTERVAL = 3000;
 
 const Sponsors: React.FC = () => {
     const { data: sponsors, loading } = useCmsCollection<CmsSponsor>('sponsors');
     const list = sponsors ?? [];
 
-    // Duplicate list for seamless infinite scroll
+    // Duplicate the list for seamless infinite scroll.
     const items = [...list, ...list, ...list];
     const startOffset = list.length;
 
     const [index, setIndex] = useState(startOffset);
     const [isTransitioning, setIsTransitioning] = useState(true);
     const trackRef = useRef<HTMLDivElement>(null);
+
+    // The carousel measures the width it actually has and sizes its slides
+    // to fit — so it never overflows the window. That means full-width
+    // single slides on a phone and up to MAX_VISIBLE slides on a wide
+    // desktop, with no sponsors clipped at the edges.
+    const wrapperRef = useRef<HTMLDivElement>(null);
+    const [available, setAvailable] = useState(MAX_VISIBLE * MIN_SLIDE_WIDTH);
+
+    useEffect(() => {
+        const el = wrapperRef.current;
+        if (!el) return;
+        const measure = () => setAvailable(el.clientWidth);
+        measure();
+        const observer = new ResizeObserver(measure);
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, []);
+
+    const slidesVisible = Math.max(
+        1,
+        Math.min(MAX_VISIBLE, Math.floor(available / MIN_SLIDE_WIDTH))
+    );
+    const slideWidth = available / slidesVisible;
 
     useEffect(() => {
         if (list.length <= 1) return;
@@ -28,7 +51,7 @@ const Sponsors: React.FC = () => {
         return () => clearInterval(timer);
     }, [list.length]);
 
-    // When transition ends, silently reset position if we've gone past bounds
+    // When a transition ends, silently snap back if we've run past bounds.
     const handleTransitionEnd = () => {
         if (list.length === 0) return;
         if (index >= startOffset + list.length) {
@@ -40,9 +63,14 @@ const Sponsors: React.FC = () => {
         }
     };
 
-    const translateX = -(index * SLIDE_WIDTH);
+    const translateX = -(index * slideWidth);
 
-    if (loading) return <div className="site-page-content"><RetroLoader /></div>;
+    if (loading)
+        return (
+            <div className="site-page-content">
+                <RetroLoader />
+            </div>
+        );
 
     return (
         <div className="site-page-content">
@@ -51,12 +79,13 @@ const Sponsors: React.FC = () => {
             <br />
             <div className="text-block">
                 <p>
-                    We are grateful for the support of our sponsors who make our work possible.
-                    Interested in sponsoring? Reach out to us!
+                    We are grateful for the support of our sponsors who make
+                    our work possible. Interested in sponsoring? Reach out to
+                    us!
                 </p>
             </div>
             <br />
-            <div style={styles.carouselWrapper}>
+            <div ref={wrapperRef} style={styles.carouselWrapper}>
                 <div style={styles.carouselViewport}>
                     <div
                         ref={trackRef}
@@ -77,7 +106,10 @@ const Sponsors: React.FC = () => {
                                     href={sponsor.url}
                                     target="_blank"
                                     rel="noreferrer"
-                                    style={styles.sponsorLink}
+                                    style={{
+                                        ...styles.sponsorLink,
+                                        width: slideWidth,
+                                    }}
                                 >
                                     <div style={styles.sponsorCard}>
                                         {logoSrc ? (
@@ -87,7 +119,9 @@ const Sponsors: React.FC = () => {
                                                 style={styles.logoImage}
                                             />
                                         ) : (
-                                            <p style={styles.sponsorName}>{sponsor.name}</p>
+                                            <p style={styles.sponsorName}>
+                                                {sponsor.name}
+                                            </p>
                                         )}
                                     </div>
                                 </a>
@@ -107,7 +141,7 @@ const styles: StyleSheetCSS = {
         width: '100%',
     },
     carouselViewport: {
-        width: VISIBLE * SLIDE_WIDTH,
+        width: '100%',
         overflow: 'hidden',
     },
     track: {
@@ -118,7 +152,6 @@ const styles: StyleSheetCSS = {
         textDecoration: 'none',
         color: 'inherit',
         flexShrink: 0,
-        width: SLIDE_WIDTH,
         justifyContent: 'center',
     },
     sponsorCard: {
@@ -126,7 +159,8 @@ const styles: StyleSheetCSS = {
         alignItems: 'center',
         justifyContent: 'center',
         padding: 16,
-        height: 100,
+        boxSizing: 'border-box',
+        minHeight: 100,
         width: '100%',
     },
     logoImage: {
@@ -135,7 +169,7 @@ const styles: StyleSheetCSS = {
         objectFit: 'contain',
     },
     sponsorName: {
-        fontSize: 20,
+        fontSize: 16,
         fontFamily: 'MSSerif',
         textAlign: 'center',
     },

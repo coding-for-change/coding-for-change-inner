@@ -6,6 +6,7 @@ import Icon from '../general/Icon';
 import Button from './Button';
 import DragIndicator from './DragIndicator';
 import ResizeIndicator from './ResizeIndicator';
+import useIsMobile from '../../hooks/useIsMobile';
 
 export interface WindowProps {
     closeWindow: () => void;
@@ -20,6 +21,10 @@ export interface WindowProps {
     rainbow?: boolean;
     windowBarColor?: string;
     windowBarIcon?: IconName;
+    // When set, the window re-fits to a near-maximized box whenever the
+    // browser is resized, so it always tracks the viewport (used by the
+    // main showcase window).
+    trackViewport?: boolean;
     onWidthChange?: (width: number) => void;
     onHeightChange?: (height: number) => void;
 }
@@ -36,13 +41,21 @@ const Window: React.FC<WindowProps> = (props) => {
 
     const resizeRef = useRef<any>(null);
 
-    const [top, setTop] = useState(props.top);
-    const [left, setLeft] = useState(props.left);
+    // On mobile every window fills the screen and can't be dragged or
+    // resized — the desktop metaphor doesn't survive on a phone.
+    const isMobile = useIsMobile();
+
+    const [top, setTop] = useState(isMobile ? 0 : props.top);
+    const [left, setLeft] = useState(isMobile ? 0 : props.left);
 
     const lastClickInside = useRef(false);
 
-    const [width, setWidth] = useState(props.width);
-    const [height, setHeight] = useState(props.height);
+    const [width, setWidth] = useState(
+        isMobile ? window.innerWidth : props.width
+    );
+    const [height, setHeight] = useState(
+        isMobile ? window.innerHeight - 32 : props.height
+    );
 
     const [contentWidth, setContentWidth] = useState(props.width);
     const [contentHeight, setContentHeight] = useState(props.height);
@@ -61,6 +74,7 @@ const Window: React.FC<WindowProps> = (props) => {
     const [isResizing, setIsResizing] = useState(false);
 
     const startResize = (event: any) => {
+        if (isMobile) return;
         event.preventDefault();
         setIsResizing(true);
         window.addEventListener('mousemove', onResize, false);
@@ -85,6 +99,7 @@ const Window: React.FC<WindowProps> = (props) => {
     };
 
     const startDrag = (event: any) => {
+        if (isMobile) return;
         const { clientX, clientY } = event;
         setIsDragging(true);
         event.preventDefault();
@@ -144,6 +159,32 @@ const Window: React.FC<WindowProps> = (props) => {
     useEffect(() => {
         setContentHeight(contentRef.current.getBoundingClientRect().height);
     }, [height]);
+
+    // Keep the window fitted to the viewport as the browser resizes:
+    //  - mobile: locked to the full screen (minus the 32px toolbar);
+    //  - trackViewport windows (the showcase): re-fit to a near-maximized
+    //    box so they always follow the browser size and the breakpoint.
+    // Other desktop windows keep their user-set size and are left alone.
+    useEffect(() => {
+        if (!isMobile && !props.trackViewport) return;
+        const TOOLBAR = 32;
+        const refit = () => {
+            if (isMobile) {
+                setTop(0);
+                setLeft(0);
+                setWidth(window.innerWidth);
+                setHeight(window.innerHeight - TOOLBAR);
+            } else {
+                setTop(props.top);
+                setLeft(props.left);
+                setWidth(window.innerWidth - props.left * 2);
+                setHeight(window.innerHeight - TOOLBAR - props.top * 2);
+            }
+        };
+        refit();
+        window.addEventListener('resize', refit);
+        return () => window.removeEventListener('resize', refit);
+    }, [isMobile, props.trackViewport, props.left, props.top]);
 
     const maximize = () => {
         if (isMaximized) {

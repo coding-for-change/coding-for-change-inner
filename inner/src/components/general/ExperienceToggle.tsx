@@ -1,4 +1,5 @@
 import React from 'react';
+import useIsMobile from '../../hooks/useIsMobile';
 
 export interface ExperienceToggleProps {
     containerStyle?: React.CSSProperties;
@@ -34,6 +35,7 @@ const isEmbedded = (): boolean => {
 const ExperienceToggle: React.FC<ExperienceToggleProps> = ({
     containerStyle,
 }) => {
+    const isMobile = useIsMobile();
     const embedded = isEmbedded();
 
     const handleClick = () => {
@@ -44,6 +46,9 @@ const ExperienceToggle: React.FC<ExperienceToggleProps> = ({
             window.location.href = '/3d';
         }
     };
+
+    // The 3D scene isn't offered on mobile, so neither is the switch.
+    if (isMobile) return null;
 
     return (
         <div style={Object.assign({}, styles.wrapper, containerStyle)}>

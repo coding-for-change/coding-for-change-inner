@@ -1,23 +1,68 @@
 import React, { useEffect, useState } from 'react';
 import { Link, ExperienceToggle } from '../general';
 import { useLocation } from 'react-router-dom';
+import useIsMobile from '../../hooks/useIsMobile';
 
 export interface VerticalNavbarProps {}
 
-const VerticalNavbar: React.FC<VerticalNavbarProps> = (props) => {
-    const location = useLocation();
-    const [isHome, setIsHome] = useState(false);
+const NAV_LINKS: { to: string; text: string }[] = [
+    { to: '', text: 'HOME' },
+    { to: 'about', text: 'ABOUT' },
+    { to: 'events', text: 'EVENTS' },
+    { to: 'projects', text: 'PROJECTS' },
+    { to: 'sponsors', text: 'SPONSORS' },
+    { to: 'team', text: 'TEAM' },
+    { to: 'qa', text: 'Q&A' },
+    { to: 'join', text: 'JOIN' },
+    { to: 'contact', text: 'CONTACT' },
+];
 
+const VerticalNavbar: React.FC<VerticalNavbarProps> = () => {
+    const location = useLocation();
+    const isMobile = useIsMobile();
+    const [menuOpen, setMenuOpen] = useState(false);
+
+    const isHome = location.pathname === '/';
+
+    // Collapse the mobile menu whenever the route changes.
     useEffect(() => {
-        if (location.pathname === '/') {
-            setIsHome(true);
-        } else {
-            setIsHome(false);
-        }
-        return () => {};
+        setMenuOpen(false);
     }, [location.pathname]);
 
-    return !isHome ? (
+    // The Home page carries its own navigation, so no navbar there.
+    if (isHome) return <></>;
+
+    // Mobile: a collapsible accordion in place of the fixed sidebar, so
+    // the content page gets the full width of the screen.
+    if (isMobile) {
+        return (
+            <div style={styles.mobileNavbar}>
+                <div
+                    style={styles.mobileHeader}
+                    onClick={() => setMenuOpen((open) => !open)}
+                >
+                    <h3 style={styles.mobileTitle}>Coding for Change</h3>
+                    <span style={styles.mobileChevron}>
+                        {menuOpen ? '▲' : '▼'}
+                    </span>
+                </div>
+                {menuOpen && (
+                    <div style={styles.mobileLinks}>
+                        {NAV_LINKS.map((navLink) => (
+                            <Link
+                                key={navLink.text}
+                                containerStyle={styles.mobileLink}
+                                to={navLink.to}
+                                text={navLink.text}
+                            />
+                        ))}
+                    </div>
+                )}
+            </div>
+        );
+    }
+
+    return (
         <div style={styles.navbar}>
             <div style={styles.header}>
                 <h1 style={styles.headerText}>Coding for</h1>
@@ -26,20 +71,17 @@ const VerticalNavbar: React.FC<VerticalNavbarProps> = (props) => {
             </div>
             <ExperienceToggle containerStyle={styles.experienceToggle} />
             <div style={styles.links}>
-                <Link containerStyle={styles.link} to="" text="HOME" />
-                <Link containerStyle={styles.link} to="about" text="ABOUT" />
-                <Link containerStyle={styles.link} to="events" text="EVENTS" />
-                <Link containerStyle={styles.link} to="projects" text="PROJECTS" />
-                <Link containerStyle={styles.link} to="sponsors" text="SPONSORS" />
-                <Link containerStyle={styles.link} to="team" text="TEAM" />
-                <Link containerStyle={styles.link} to="qa" text="Q&A" />
-                <Link containerStyle={styles.link} to="join" text="JOIN" />
-                <Link containerStyle={styles.link} to="contact" text="CONTACT" />
+                {NAV_LINKS.map((navLink) => (
+                    <Link
+                        key={navLink.text}
+                        containerStyle={styles.link}
+                        to={navLink.to}
+                        text={navLink.text}
+                    />
+                ))}
             </div>
             <div style={styles.spacer} />
         </div>
-    ) : (
-        <></>
     );
 };
 
@@ -79,6 +121,44 @@ const styles: StyleSheetCSS = {
     },
     spacer: {
         flex: 1,
+    },
+    mobileNavbar: {
+        flexDirection: 'column',
+        width: '100%',
+        boxSizing: 'border-box',
+        flexShrink: 0,
+    },
+    mobileHeader: {
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '14px 16px',
+        boxSizing: 'border-box',
+        background: 'var(--surface)',
+        boxShadow: 'var(--border-raised-outer), var(--border-raised-inner)',
+        cursor: 'pointer',
+    },
+    mobileTitle: {
+        fontSize: 20,
+    },
+    mobileChevron: {
+        fontFamily: 'MSSerif',
+        fontSize: 14,
+        marginLeft: 12,
+    },
+    mobileLinks: {
+        flexDirection: 'column',
+        padding: '4px 0',
+        background: 'var(--surface)',
+        borderBottom: '1px solid #808080',
+    },
+    mobileLink: {
+        padding: '14px 20px',
+        minHeight: 44,
+        boxSizing: 'border-box',
+        alignItems: 'center',
     },
 };
 

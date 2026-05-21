@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Colors from '../../constants/colors';
 import { Icon } from '../general';
+import useIsMobile from '../../hooks/useIsMobile';
 // import { } from '../general';
 // import Home from '../site/Home';
 // import Window from './Window';
@@ -12,6 +13,11 @@ export interface ToolbarProps {
 }
 
 const Toolbar: React.FC<ToolbarProps> = ({ windows, toggleMinimize }) => {
+    // The Start menu's only entry is the 3D-experience switch, and the 3D
+    // scene isn't offered on mobile — so the Start button is dropped there
+    // rather than opening an empty menu.
+    const isMobile = useIsMobile();
+
     // Switch between the desktop OS and the 3D "enhanced experience".
     // Standalone -> into the 3D scene; embedded in the 3D monitor -> out.
     const isEmbedded = () => {
@@ -104,7 +110,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ windows, toggleMinimize }) => {
 
     return (
         <div style={styles.toolbarOuter}>
-            {startWindowOpen && (
+            {!isMobile && startWindowOpen && (
                 <div
                     onMouseDown={onStartWindowClicked}
                     style={styles.startWindow}
@@ -137,29 +143,31 @@ const Toolbar: React.FC<ToolbarProps> = ({ windows, toggleMinimize }) => {
             )}
             <div style={styles.toolbarInner}>
                 <div style={styles.toolbar}>
-                    <div
-                        style={Object.assign(
-                            {},
-                            styles.startContainerOuter,
-                            startWindowOpen && styles.activeTabOuter
-                        )}
-                        onMouseDown={toggleStartWindow}
-                    >
+                    {!isMobile && (
                         <div
                             style={Object.assign(
                                 {},
-                                styles.startContainer,
-                                startWindowOpen && styles.activeTabInner
+                                styles.startContainerOuter,
+                                startWindowOpen && styles.activeTabOuter
                             )}
+                            onMouseDown={toggleStartWindow}
                         >
-                            <Icon
-                                size={18}
-                                icon="windowsStartIcon"
-                                style={styles.startIcon}
-                            />
-                            <p className="toolbar-text ">Start</p>
+                            <div
+                                style={Object.assign(
+                                    {},
+                                    styles.startContainer,
+                                    startWindowOpen && styles.activeTabInner
+                                )}
+                            >
+                                <Icon
+                                    size={18}
+                                    icon="windowsStartIcon"
+                                    style={styles.startIcon}
+                                />
+                                <p className="toolbar-text ">Start</p>
+                            </div>
                         </div>
-                    </div>
+                    )}
                     <div style={styles.toolbarTabsContainer}>
                         {Object.keys(windows).map((key) => {
                             return (

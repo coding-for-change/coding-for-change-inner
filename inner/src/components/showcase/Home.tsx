@@ -1,16 +1,32 @@
 import React from 'react';
 import { Link } from '../general';
 import { useSiteConfig } from '../../api';
+import useIsMobile from '../../hooks/useIsMobile';
 
 export interface HomeProps {}
 
 const Home: React.FC<HomeProps> = (props) => {
     const siteConfig = useSiteConfig();
+    const isMobile = useIsMobile();
 
     return (
-        <div style={styles.page}>
-            <div style={styles.header}>
-                <h1 style={styles.name}>{siteConfig.clubName}</h1>
+        <div style={Object.assign({}, styles.page, isMobile && styles.pageMobile)}>
+            <div
+                style={Object.assign(
+                    {},
+                    styles.header,
+                    isMobile && styles.headerMobile
+                )}
+            >
+                <h1
+                    style={Object.assign(
+                        {},
+                        styles.name,
+                        isMobile && styles.nameMobile
+                    )}
+                >
+                    {siteConfig.clubName}
+                </h1>
                 <h2>{siteConfig.tagline}</h2>
             </div>
             <div style={styles.buttons}>
@@ -35,6 +51,14 @@ const styles: StyleSheetCSS = {
         flexDirection: 'column',
         height: '100%',
     },
+    pageMobile: {
+        bottom: 0,
+        height: 'auto',
+        overflowY: 'auto',
+        justifyContent: 'flex-start',
+        padding: '32px 16px',
+        boxSizing: 'border-box',
+    },
     header: {
         textAlign: 'center',
         marginBottom: 64,
@@ -43,8 +67,13 @@ const styles: StyleSheetCSS = {
         alignItems: 'center',
         justifyContent: 'center',
     },
+    headerMobile: {
+        marginTop: 8,
+        marginBottom: 40,
+    },
     buttons: {
-        justifyContent: 'space-between',
+        justifyContent: 'center',
+        flexWrap: 'wrap',
     },
     link: {
         padding: 16,
@@ -53,6 +82,9 @@ const styles: StyleSheetCSS = {
         fontSize: 72,
         marginBottom: 16,
         lineHeight: 0.9,
+    },
+    nameMobile: {
+        fontSize: 40,
     },
 };
 
