@@ -7,7 +7,6 @@ import DesktopShortcut, { DesktopShortcutProps } from './DesktopShortcut';
 import { IconName } from '../../assets/icons';
 import Credits from '../applications/Credits';
 import Imprint from '../applications/Imprint';
-import BlogExplorer from '../applications/BlogExplorer';
 
 export interface DesktopProps {}
 
@@ -18,7 +17,10 @@ const APPLICATIONS: {
         key: string;
         name: string;
         shortcutIcon: IconName;
-        component: React.FC<ExtendedWindowAppProps<any>>;
+        // Windowed apps render a component. "Route" apps (e.g. the blog) instead
+        // open the showcase window at a deep-linked path and have no component.
+        component?: React.FC<ExtendedWindowAppProps<any>>;
+        route?: string;
     };
 } = {
     showcase: {
@@ -43,7 +45,7 @@ const APPLICATIONS: {
         key: 'blog',
         name: 'Engineering Blog',
         shortcutIcon: 'windowExplorerIcon',
-        component: BlogExplorer,
+        route: '/blog',
     },
 };
 
@@ -70,9 +72,16 @@ const Desktop: React.FC<DesktopProps> = (props) => {
                 shortcutName: app.name,
                 icon: app.shortcutIcon,
                 onOpen: () => {
+                    // Route apps open the main showcase window deep-linked to a path.
+                    if (app.route) {
+                        openShowcaseAt(app.route);
+                        return;
+                    }
+                    const Component = app.component;
+                    if (!Component) return;
                     addWindow(
                         app.key,
-                        <app.component
+                        <Component
                             onInteract={() => onWindowInteract(app.key)}
                             onMinimize={() => minimizeWindow(app.key)}
                             onClose={() => removeWindow(app.key)}
@@ -178,6 +187,51 @@ const Desktop: React.FC<DesktopProps> = (props) => {
             }));
         },
         [getHighestZIndex]
+    );
+
+    // Open (or focus) the main showcase window and deep-link it to a path.
+    // Used by "route" desktop apps such as the blog, so the URL is shareable
+    // and the page shows up inside the same navbar-driven layout.
+    const openShowcaseAt = useCallback(
+        (path: string) => {
+            window.history.pushState({}, '', path);
+            setWindows((prev) => {
+                const highest = Object.keys(prev).reduce(
+                    (max, k) => Math.max(max, prev[k]?.zIndex ?? 0),
+                    0
+                );
+                if (prev['showcase']) {
+                    return {
+                        ...prev,
+                        showcase: {
+                            ...prev['showcase'],
+                            minimized: false,
+                            zIndex: highest + 1,
+                        },
+                    };
+                }
+                return {
+                    ...prev,
+                    showcase: {
+                        zIndex: highest + 1,
+                        minimized: false,
+                        component: (
+                            <ShowcaseExplorer
+                                onInteract={() => onWindowInteract('showcase')}
+                                onMinimize={() => minimizeWindow('showcase')}
+                                onClose={() => removeWindow('showcase')}
+                                key="showcase"
+                            />
+                        ),
+                        name: APPLICATIONS['showcase'].name,
+                        icon: APPLICATIONS['showcase'].shortcutIcon,
+                    },
+                };
+            });
+            // Notify the already-mounted router (if any) to navigate.
+            window.dispatchEvent(new PopStateEvent('popstate'));
+        },
+        [onWindowInteract, minimizeWindow, removeWindow]
     );
 
     return !shutdown ? (

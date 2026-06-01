@@ -10,7 +10,8 @@ const FORMAT_CODE = 16;
 
 function renderText(node: LexicalNode, key: string): React.ReactNode {
     const text = node.text ?? '';
-    const fmt = node.format ?? 0;
+    // format is a bitmask; the shared LexicalNode type allows string|number, so coerce.
+    const fmt = typeof node.format === 'number' ? node.format : 0;
     let el: React.ReactNode = text;
     if (fmt & FORMAT_CODE) {
         el = (
