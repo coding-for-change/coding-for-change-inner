@@ -7,6 +7,7 @@ import DesktopShortcut, { DesktopShortcutProps } from './DesktopShortcut';
 import { IconName } from '../../assets/icons';
 import Credits from '../applications/Credits';
 import Imprint from '../applications/Imprint';
+import BlogExplorer from '../applications/BlogExplorer';
 
 export interface DesktopProps {}
 
@@ -37,6 +38,12 @@ const APPLICATIONS: {
         name: 'Imprint & Privacy',
         shortcutIcon: 'myComputer',
         component: Imprint,
+    },
+    blog: {
+        key: 'blog',
+        name: 'Engineering Blog',
+        shortcutIcon: 'windowExplorerIcon',
+        component: BlogExplorer,
     },
 };
 

@@ -13,5 +13,7 @@ export type {
     CmsMembership,
     CmsLegal,
     LexicalRichText,
+    CmsBlogPost,
+    LexicalDocument,
     LexicalNode,
 } from './types';

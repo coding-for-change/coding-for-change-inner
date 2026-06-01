@@ -728,6 +728,10 @@ const seed = async () => {
     { slug: 'sponsors', en: sponsors, de: sponsorsDe },
   ];
 
+  // Captured English-item IDs per slug, so the blog posts below can reference
+  // their author (team) and project relationships.
+  const idsBySlug = {};
+
   for (const { slug, en, de } of collections) {
     const ids = [];
 
@@ -743,8 +747,114 @@ const seed = async () => {
       await patchJson(`/api/${slug}/${id}?locale=de`, de[i], cookie).then(assertOk(`${slug}[${i}] (de)`));
     }
 
+    idsBySlug[slug] = ids;
     console.log(`Created ${en.length} ${slug} entries (en + de)`);
   }
+
+  const teamIds = idsBySlug.team ?? [];
+  const projectIds = idsBySlug.projects ?? [];
+
+  // Build blog posts using the captured IDs (Lena=0, Jonas=1; Volunteer Portal=0, Donation Tracker=1).
+  const lexicalParagraph = (text) => ({
+    type: 'paragraph',
+    format: '',
+    indent: 0,
+    version: 1,
+    direction: 'ltr',
+    children: [{ type: 'text', text, format: 0, version: 1 }],
+  });
+
+  const lexicalHeading = (tag, text) => ({
+    type: 'heading',
+    tag,
+    format: '',
+    indent: 0,
+    version: 1,
+    direction: 'ltr',
+    children: [{ type: 'text', text, format: 0, version: 1 }],
+  });
+
+  const makeDoc = (...nodes) => ({
+    root: { type: 'root', format: '', indent: 0, version: 1, direction: 'ltr', children: nodes },
+  });
+
+  const blogPosts = [
+    {
+      title: 'How We Built the Volunteer Portal',
+      slug: 'how-we-built-the-volunteer-portal',
+      publishedAt: '2026-04-10T10:00:00.000Z',
+      excerpt:
+        'A behind-the-scenes look at how our team replaced a tangle of spreadsheets with a real web portal for Münchner Tafel — in a single semester.',
+      author: teamIds[0],
+      project: projectIds[0],
+      tags: [{ tag: 'technical' }, { tag: 'react' }, { tag: 'postgresql' }],
+      content: makeDoc(
+        lexicalHeading('h2', 'The Problem'),
+        lexicalParagraph(
+          'Münchner Tafel coordinated hundreds of volunteer shifts every week using spreadsheets and phone calls. Staff spent hours reconciling schedules and volunteers often showed up to the wrong location.'
+        ),
+        lexicalHeading('h2', 'Our Approach'),
+        lexicalParagraph(
+          'We built a web portal with React on the frontend and a Node.js / PostgreSQL backend. Volunteers can log in, view upcoming shifts, and sign up in seconds. Staff get a live dashboard of coverage.'
+        ),
+        lexicalHeading('h2', 'What We Learned'),
+        lexicalParagraph(
+          'Building for real users is very different from coursework. Requirements changed every two weeks. We learned to scope tightly, ship early, and iterate based on feedback from the client.'
+        )
+      ),
+    },
+    {
+      title: 'Code for Good: Our Hackathon Recap',
+      slug: 'code-for-good-hackathon-recap',
+      publishedAt: '2026-03-18T10:00:00.000Z',
+      excerpt:
+        'Twenty student teams, four NGO challenges, and 24 hours. Here is what happened at our Code for Good hackathon.',
+      author: teamIds[1],
+      tags: [{ tag: 'hackathon' }, { tag: 'community' }],
+      content: makeDoc(
+        lexicalHeading('h2', 'Setting the Stage'),
+        lexicalParagraph(
+          'This was our biggest event yet — over sixty students gathered in the Garching informatics building for a 24-hour sprint on real challenges submitted by Munich non-profits.'
+        ),
+        lexicalHeading('h2', 'The Challenges'),
+        lexicalParagraph(
+          'Four NGOs brought problems ranging from volunteer scheduling to impact visualisation. Teams self-selected based on interest, forming groups of three to five people.'
+        ),
+        lexicalHeading('h2', 'Outcomes'),
+        lexicalParagraph(
+          'Two of the prototypes built during the hackathon became full Coding for Change projects the following semester. That is the goal: validate the idea quickly, then commit to shipping it properly.'
+        )
+      ),
+    },
+    {
+      title: 'Getting Started with NGO Partnerships',
+      slug: 'getting-started-with-ngo-partnerships',
+      publishedAt: '2026-02-05T10:00:00.000Z',
+      excerpt:
+        'How we source, scope, and kick off partnerships with non-profit organisations — and what makes a project succeed from the very first meeting.',
+      author: teamIds[1],
+      tags: [{ tag: 'community' }, { tag: 'process' }],
+      content: makeDoc(
+        lexicalHeading('h2', 'Finding the Right Partners'),
+        lexicalParagraph(
+          'Not every NGO is ready for a student software project. We look for organisations that have a concrete, scoped problem, at least one staff contact who can engage weekly, and patience for an iterative process.'
+        ),
+        lexicalHeading('h2', 'Scoping the Work'),
+        lexicalParagraph(
+          'The first meeting is about listening. We ask the partner to walk us through their current process, identify the biggest pain point, and describe what success looks like in concrete terms.'
+        ),
+        lexicalHeading('h2', 'Setting Expectations'),
+        lexicalParagraph(
+          'We are explicit that we are students, not contractors. That means some uncertainty, some learning curves, and a process that values feedback over a fixed spec. Partners who embrace that tend to get the best results.'
+        )
+      ),
+    },
+  ];
+
+  for (const post of blogPosts) {
+    await postJson('/api/blog-posts', post, cookie).then(assertOk('blog-posts entry'));
+  }
+  console.log(`Created ${blogPosts.length} blog-posts entries`);
 
   console.log('\nSeed complete. Admin login:');
   console.log(`  email:    ${ADMIN_EMAIL}`);

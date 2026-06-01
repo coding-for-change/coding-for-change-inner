@@ -8,16 +8,19 @@ interface UseCmsResult<T> {
     error: string | null;
 }
 
-export function useCmsCollection<T>(slug: string): UseCmsResult<T[]> {
+export function useCmsCollection<T>(slug: string, params?: Record<string, string>): UseCmsResult<T[]> {
     const { locale } = useLanguage();
     const [data, setData] = useState<T[] | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const paramsKey = JSON.stringify(params);
+
     useEffect(() => {
         let cancelled = false;
         setLoading(true);
-        fetchCollection<T>(slug, { locale })
+        fetchCollection<T>(slug, { locale, ...params })
             .then((docs) => {
                 if (!cancelled) {
                     setData(docs);
@@ -33,7 +36,9 @@ export function useCmsCollection<T>(slug: string): UseCmsResult<T[]> {
         return () => {
             cancelled = true;
         };
-    }, [slug, locale]);
+        // paramsKey is a stable serialisation of params — avoids object identity re-renders
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [slug, locale, paramsKey]);
 
     return { data, loading, error };
 }

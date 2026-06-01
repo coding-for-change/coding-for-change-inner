@@ -8,13 +8,14 @@ import { FAQ } from './collections/FAQ';
 import { Sponsors } from './collections/Sponsors';
 import { Media } from './collections/Media';
 import { Users } from './collections/Users';
+import { BlogPost } from './collections/BlogPost';
 import { SiteConfig } from './globals/SiteConfig';
 import { Membership } from './globals/Membership';
 import { Legal } from './globals/Legal';
 
 export default buildConfig({
   editor: lexicalEditor(),
-  collections: [Users, Team, Projects, Events, FAQ, Sponsors, Media],
+  collections: [Users, Team, Projects, Events, FAQ, Sponsors, Media, BlogPost],
   globals: [SiteConfig, Membership, Legal],
   localization: {
     locales: [
