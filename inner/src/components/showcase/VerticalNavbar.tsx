@@ -2,25 +2,27 @@ import React, { useEffect, useState } from 'react';
 import { Link, ExperienceToggle } from '../general';
 import { useLocation } from 'react-router-dom';
 import useIsMobile from '../../hooks/useIsMobile';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export interface VerticalNavbarProps {}
-
-const NAV_LINKS: { to: string; text: string }[] = [
-    { to: '', text: 'HOME' },
-    { to: 'about', text: 'ABOUT' },
-    { to: 'events', text: 'EVENTS' },
-    { to: 'projects', text: 'PROJECTS' },
-    { to: 'sponsors', text: 'SPONSORS' },
-    { to: 'team', text: 'TEAM' },
-    { to: 'qa', text: 'Q&A' },
-    { to: 'join', text: 'JOIN' },
-    { to: 'contact', text: 'CONTACT' },
-];
 
 const VerticalNavbar: React.FC<VerticalNavbarProps> = () => {
     const location = useLocation();
     const isMobile = useIsMobile();
+    const { t } = useLanguage();
     const [menuOpen, setMenuOpen] = useState(false);
+
+    const navLinks = [
+        { to: '', text: t.nav.home },
+        { to: 'about', text: t.nav.about },
+        { to: 'events', text: t.nav.events },
+        { to: 'projects', text: t.nav.projects },
+        { to: 'sponsors', text: t.nav.sponsors },
+        { to: 'team', text: t.nav.team },
+        { to: 'qa', text: t.nav.qa },
+        { to: 'join', text: t.nav.join },
+        { to: 'contact', text: t.nav.contact },
+    ];
 
     const isHome = location.pathname === '/';
 
@@ -41,16 +43,16 @@ const VerticalNavbar: React.FC<VerticalNavbarProps> = () => {
                     style={styles.mobileHeader}
                     onClick={() => setMenuOpen((open) => !open)}
                 >
-                    <h3 style={styles.mobileTitle}>Coding for Change</h3>
+                    <h3 style={styles.mobileTitle}>{t.navbar.title}</h3>
                     <span style={styles.mobileChevron}>
                         {menuOpen ? '▲' : '▼'}
                     </span>
                 </div>
                 {menuOpen && (
                     <div style={styles.mobileLinks}>
-                        {NAV_LINKS.map((navLink) => (
+                        {navLinks.map((navLink) => (
                             <Link
-                                key={navLink.text}
+                                key={navLink.to}
                                 containerStyle={styles.mobileLink}
                                 to={navLink.to}
                                 text={navLink.text}
@@ -67,13 +69,13 @@ const VerticalNavbar: React.FC<VerticalNavbarProps> = () => {
             <div style={styles.header}>
                 <h1 style={styles.headerText}>Coding for</h1>
                 <h1 style={styles.headerText}>Change</h1>
-                <h3 style={styles.headerShowcase}>Munich Student Club</h3>
+                <h3 style={styles.headerShowcase}>{t.navbar.subtitle}</h3>
             </div>
             <ExperienceToggle containerStyle={styles.experienceToggle} />
             <div style={styles.links}>
-                {NAV_LINKS.map((navLink) => (
+                {navLinks.map((navLink) => (
                     <Link
-                        key={navLink.text}
+                        key={navLink.to}
                         containerStyle={styles.link}
                         to={navLink.to}
                         text={navLink.text}

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Colors from '../../constants/colors';
 import { Icon } from '../general';
 import useIsMobile from '../../hooks/useIsMobile';
+import { useLanguage } from '../../contexts/LanguageContext';
 // import { } from '../general';
 // import Home from '../site/Home';
 // import Window from './Window';
@@ -17,6 +18,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ windows, toggleMinimize }) => {
     // scene isn't offered on mobile — so the Start button is dropped there
     // rather than opening an empty menu.
     const isMobile = useIsMobile();
+    const { locale, setLocale, t } = useLanguage();
 
     // Switch between the desktop OS and the 3D "enhanced experience".
     // Standalone -> into the 3D scene; embedded in the 3D monitor -> out.
@@ -133,8 +135,8 @@ const Toolbar: React.FC<ToolbarProps> = ({ windows, toggleMinimize }) => {
                                 />
                                 <p style={styles.startMenuText}>
                                     {embedded
-                                        ? 'Exit 3D mode'
-                                        : 'Enter 3D mode'}
+                                        ? t.common.exitThreeD
+                                        : t.common.enterThreeD}
                                 </p>
                             </div>
                         </div>
@@ -206,6 +208,20 @@ const Toolbar: React.FC<ToolbarProps> = ({ windows, toggleMinimize }) => {
                     </div>
                 </div>
                 <div style={styles.time}>
+                    <span
+                        style={Object.assign({}, styles.flagBtn, locale !== 'en' && styles.flagBtnDim)}
+                        onMouseDown={() => setLocale('en')}
+                        title="English"
+                    >
+                        🇬🇧
+                    </span>
+                    <span
+                        style={Object.assign({}, styles.flagBtn, locale !== 'de' && styles.flagBtnDim)}
+                        onMouseDown={() => setLocale('de')}
+                        title="Deutsch"
+                    >
+                        🇩🇪
+                    </span>
                     <Icon style={styles.volumeIcon} icon="volumeOn" />
                     <p style={styles.timeText}>{time}</p>
                 </div>
@@ -374,17 +390,28 @@ const styles: StyleSheetCSS = {
         flexGrow: 1,
         width: '100%',
     },
+    flagBtn: {
+        cursor: 'pointer',
+        fontSize: 16,
+        lineHeight: 1,
+        paddingRight: 4,
+        userSelect: 'none',
+        opacity: 1,
+        transition: 'opacity 0.15s',
+    },
+    flagBtnDim: {
+        opacity: 0.35,
+    },
     time: {
-        flexShrink: 1,
-        width: 86,
+        flexShrink: 0,
+        width: 148,
         height: 24,
         boxSizing: 'border-box',
         marginRight: 4,
-        paddingLeft: 4,
+        paddingLeft: 6,
         paddingRight: 4,
         border: `1px solid ${Colors.white}`,
         borderTopColor: Colors.darkGray,
-
         justifyContent: 'space-between',
         alignItems: 'center',
         borderLeftColor: Colors.darkGray,

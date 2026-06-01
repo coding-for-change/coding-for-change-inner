@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useCmsCollection, mediaUrl } from '../../api';
 import { CmsSponsor } from '../../api/types';
 import { RetroLoader } from '../general';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const MAX_VISIBLE = 4;
 const MIN_SLIDE_WIDTH = 200;
@@ -9,6 +10,7 @@ const AUTO_INTERVAL = 3000;
 
 const Sponsors: React.FC = () => {
     const { data: sponsors, loading } = useCmsCollection<CmsSponsor>('sponsors');
+    const { t } = useLanguage();
     const list = sponsors ?? [];
 
     // Duplicate the list for seamless infinite scroll.
@@ -74,15 +76,11 @@ const Sponsors: React.FC = () => {
 
     return (
         <div className="site-page-content">
-            <h1>Sponsors</h1>
-            <h3>Our Supporters</h3>
+            <h1>{t.sponsors.title}</h1>
+            <h3>{t.sponsors.subtitle}</h3>
             <br />
             <div className="text-block">
-                <p>
-                    We are grateful for the support of our sponsors who make
-                    our work possible. Interested in sponsoring? Reach out to
-                    us!
-                </p>
+                <p>{t.sponsors.intro}</p>
             </div>
             <br />
             <div ref={wrapperRef} style={styles.carouselWrapper}>

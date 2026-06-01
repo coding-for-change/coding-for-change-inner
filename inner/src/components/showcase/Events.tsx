@@ -2,9 +2,11 @@ import React from 'react';
 import { useCmsCollection } from '../../api';
 import { CmsEvent } from '../../api/types';
 import { RetroLoader } from '../general';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const Events: React.FC = () => {
     const { data: events, loading } = useCmsCollection<CmsEvent>('events');
+    const { t } = useLanguage();
 
     if (loading) return <div className="site-page-content"><RetroLoader /></div>;
 
@@ -14,23 +16,23 @@ const Events: React.FC = () => {
 
     return (
         <div className="site-page-content">
-            <h1>Events</h1>
-            <h3>Workshops, Hackathons & More</h3>
+            <h1>{t.events.title}</h1>
+            <h3>{t.events.subtitle}</h3>
             <br />
             <div className="text-block">
-                <p>Join us at our upcoming events or check out what we have been up to!</p>
+                <p>{t.events.intro}</p>
             </div>
             <br />
             {upcoming.length > 0 && (
                 <>
-                    <h3>Upcoming Events</h3>
+                    <h3>{t.events.upcoming}</h3>
                     <br />
                     <div style={styles.eventsGrid}>
                         {upcoming.map(event => (
                             <div key={event.id} className="big-button-container" style={styles.eventCard}>
                                 <div style={styles.eventBadge}>{event.type}</div>
                                 <h3>{event.title}</h3>
-                                <p style={styles.eventDate}>{event.date} at {event.time}</p>
+                                <p style={styles.eventDate}>{event.date} {t.common.at} {event.time}</p>
                                 <p style={styles.eventLocation}>{event.location}</p>
                                 <br />
                                 <p>{event.description}</p>
@@ -43,7 +45,7 @@ const Events: React.FC = () => {
                                             rel="noopener noreferrer"
                                             style={styles.eventLink}
                                         >
-                                            {event.link.label || 'Learn More'}
+                                            {event.link.label || t.common.learnMore}
                                         </a>
                                     </>
                                 )}
@@ -55,14 +57,14 @@ const Events: React.FC = () => {
             )}
             {past.length > 0 && (
                 <>
-                    <h3>Past Events</h3>
+                    <h3>{t.events.past}</h3>
                     <br />
                     <div style={styles.eventsGrid}>
                         {past.map(event => (
                             <div key={event.id} className="big-button-container" style={styles.eventCard}>
                                 <div style={styles.eventBadge}>{event.type}</div>
                                 <h3>{event.title}</h3>
-                                <p style={styles.eventDate}>{event.date} at {event.time}</p>
+                                <p style={styles.eventDate}>{event.date} {t.common.at} {event.time}</p>
                                 <p style={styles.eventLocation}>{event.location}</p>
                                 <br />
                                 <p>{event.description}</p>
@@ -75,7 +77,7 @@ const Events: React.FC = () => {
                                             rel="noopener noreferrer"
                                             style={styles.eventLink}
                                         >
-                                            {event.link.label || 'Learn More'}
+                                            {event.link.label || t.common.learnMore}
                                         </a>
                                     </>
                                 )}

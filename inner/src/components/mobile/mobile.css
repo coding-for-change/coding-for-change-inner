@@ -1,0 +1,40 @@
+/* Entrance animations for the mobile menu overlay. */
+
+@keyframes mobileOverlayIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes mobileMenuItemIn {
+    from {
+        opacity: 0;
+        transform: translateY(-18px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.mobile-menu-overlay {
+    animation: mobileOverlayIn 0.16s ease-out;
+}
+
+/* Each nav item / CTA fades down into place. animation-delay is set
+   inline per index so they cascade top-to-bottom. */
+.mobile-menu-item {
+    opacity: 0;
+    animation: mobileMenuItemIn 0.3s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mobile-menu-overlay,
+    .mobile-menu-item {
+        animation: none;
+        opacity: 1;
+    }
+}

@@ -8,8 +8,8 @@ export const SiteConfig: GlobalConfig = {
   },
   fields: [
     { name: 'clubName', type: 'text', required: true },
-    { name: 'tagline', type: 'text', required: true },
-    { name: 'description', type: 'textarea', required: true },
+    { name: 'tagline', type: 'text', required: true, localized: true },
+    { name: 'description', type: 'textarea', required: true, localized: true },
     { name: 'email', type: 'email', required: true },
     {
       name: 'socialLinks',
@@ -19,7 +19,7 @@ export const SiteConfig: GlobalConfig = {
         { name: 'url', type: 'text', required: true },
       ],
     },
-    { name: 'copyrightText', type: 'text' },
-    { name: 'windowTitle', type: 'text' },
+    { name: 'copyrightText', type: 'text', localized: true },
+    { name: 'windowTitle', type: 'text', localized: true },
   ],
 };

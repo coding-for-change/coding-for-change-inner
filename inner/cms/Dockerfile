@@ -5,5 +5,8 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 COPY . .
+# next build sets NODE_ENV=production, which disables push:true in payload.config.ts
+RUN pnpm build
 EXPOSE 3000
-CMD ["pnpm", "dev"]
+# Apply any pending migrations before starting the production server.
+CMD ["sh", "-c", "pnpm payload migrate && pnpm start"]

@@ -1,6 +1,6 @@
 /**
- * Development seed — fills the CMS with representative sample content so the
- * site can be reviewed in a populated state.
+ * Development seed — fills the CMS with representative sample content in both
+ * English and German so the site can be reviewed in a fully localised state.
  *
  * It talks to the running CMS over its REST API, so it needs the CMS to be
  * up. Run it inside the Docker stack:
@@ -8,24 +8,18 @@
  *   docker compose exec cms pnpm seed
  *
  * Plain JavaScript on purpose: it runs with bare `node`, with no TypeScript
- * transpilation or bundler, so it is immune to the module-resolution issues
- * that `payload run` hits in this project.
+ * transpilation or bundler.
  *
  * It is safe to rerun: if content already exists the script does nothing.
  * To reseed from scratch, recreate the database volume
  * (`docker compose down -v`) and run it again.
- *
- * Admin credentials and content are sample data for local development only.
- * Override the admin login with SEED_ADMIN_EMAIL / SEED_ADMIN_PASSWORD, and
- * the target with SEED_BASE_URL (defaults to the CMS on localhost:3000).
- *
- * Note: image/logo upload fields are left empty — uploads need real files.
- * Add imagery in the admin panel if you want it.
  */
 
 const BASE = (process.env.SEED_BASE_URL || 'http://localhost:3000').replace(/\/$/, '');
 const ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL || 'admin@codingforchange.com';
 const ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD || 'ChangeMe!1234';
+
+// ─── English content ────────────────────────────────────────────────────────
 
 const siteConfig = {
   clubName: 'Coding for Change',
@@ -57,7 +51,7 @@ const membership = {
     { text: 'Ship real software for a real non-profit client' },
     { text: 'Learn full-stack development with guidance from experienced leads' },
     { text: 'Build a portfolio of high-impact, production projects' },
-    { text: 'Connect with Munich’s tech and social-impact community' },
+    { text: "Connect with Munich's tech and social-impact community" },
     { text: 'Workshops, hackathons, and socials throughout the semester' },
   ],
   requirements: [
@@ -72,7 +66,7 @@ const team = [
   {
     name: 'Lena Hofmann',
     role: 'President',
-    bio: 'Computer science master’s student who founded Coding for Change after a semester volunteering with a local NGO. Keeps the teams aligned and the coffee flowing.',
+    bio: "Computer science master's student who founded Coding for Change after a semester volunteering with a local NGO. Keeps the teams aligned and the coffee flowing.",
     links: [{ label: 'LinkedIn', url: 'https://www.linkedin.com/' }],
   },
   {
@@ -90,7 +84,7 @@ const team = [
   {
     name: 'Maximilian Bauer',
     role: 'Treasurer',
-    bio: 'Information systems student keeping the club’s finances and grant applications in order so the teams can focus on building.',
+    bio: "Information systems student keeping the club's finances and grant applications in order so the teams can focus on building.",
     links: [{ label: 'LinkedIn', url: 'https://www.linkedin.com/' }],
   },
   {
@@ -139,7 +133,7 @@ const projects = [
     title: 'Impact Dashboard',
     ngoPartner: 'Green City e.V.',
     description:
-      'A public dashboard visualising the environmental impact of the organisation’s urban greening projects across Munich.',
+      "A public dashboard visualising the environmental impact of the organisation's urban greening projects across Munich.",
     technologies: [{ name: 'Vue' }, { name: 'D3.js' }],
     status: 'recruiting',
     links: [],
@@ -162,7 +156,7 @@ const events = [
     time: '18:00',
     location: 'TUM Main Campus, Room 1100',
     description:
-      'Meet the teams, hear about this semester’s NGO projects, and find out how to get involved. Pizza provided.',
+      "Meet the teams, hear about this semester's NGO projects, and find out how to get involved. Pizza provided.",
     type: 'Info-session',
     isUpcoming: true,
   },
@@ -251,7 +245,7 @@ const faqs = [
   {
     question: 'What technologies do you use?',
     answer:
-      'It depends on the project, but most teams work with React, TypeScript, and Node.js. We choose the stack that best fits the partner’s needs.',
+      "It depends on the project, but most teams work with React, TypeScript, and Node.js. We choose the stack that best fits the partner's needs.",
     category: 'technical',
   },
   {
@@ -273,7 +267,7 @@ const sponsors = [
     name: 'UnternehmerTUM',
     tier: 'gold',
     url: 'https://www.unternehmertum.de/',
-    description: 'Munich’s centre for innovation and entrepreneurship, supporting our hackathons and events.',
+    description: "Munich's centre for innovation and entrepreneurship, supporting our hackathons and events.",
   },
   {
     name: 'GitHub Education',
@@ -295,10 +289,338 @@ const sponsors = [
   },
 ];
 
-/** POST JSON helper. */
-const postJson = async (path, body, cookie) => {
+// ─── German translations (localized fields only) ────────────────────────────
+
+const siteConfigDe = {
+  tagline: 'Studierende entwickeln Software für das Gemeinwohl',
+  description:
+    'Coding for Change ist eine Studierendeninitiative an der Technischen Universität München. ' +
+    'Wir entwickeln Software für gemeinnützige Organisationen, veranstalten Hackathons und bringen ' +
+    'Studierende zusammen, um Code für soziale Zwecke einzusetzen. Jedes Projekt verbindet ' +
+    'Entwicklungsstudent:innen mit einer echten NGO und wird innerhalb eines Semesters fertiggestellt.',
+  copyrightText: '© 2026 Coding for Change',
+  windowTitle: 'Coding for Change',
+};
+
+const membershipDe = {
+  title: 'Werde Mitglied',
+  description:
+    'Werde Teil einer Gemeinschaft von Studierenden, die ihre technischen Fähigkeiten einsetzen, ' +
+    'um echte Veränderungen zu bewirken. Keine Vorkenntnisse in NGO-Software nötig – wir begleiten ' +
+    'Mitglieder aller Erfahrungsstufen und du lernst an einem echten Projekt mit echten Kund:innen.',
+  benefits: [
+    { text: 'Echte Software für echte gemeinnützige Kunden entwickeln' },
+    { text: 'Full-Stack-Entwicklung mit erfahrenen Leads lernen' },
+    { text: 'Portfolio aus wirkungsvollen Produktionsprojekten aufbauen' },
+    { text: 'Mit Münchens Tech- und Social-Impact-Community vernetzen' },
+    { text: 'Workshops, Hackathons und Socializing während des Semesters' },
+  ],
+  requirements: [
+    { text: 'Eingeschrieben an der TUM oder einer anderen Münchner Hochschule' },
+    { text: 'Rund 4–6 Stunden pro Woche während des Semesters' },
+    { text: 'Lernbereitschaft – alle Kenntnisstände sind willkommen' },
+  ],
+};
+
+const teamDe = [
+  { role: 'Vorsitzende', bio: 'Informatik-Masterstudentin, die Coding for Change nach einem Freiwilligen-Semester bei einer lokalen NGO gegründet hat. Hält die Teams zusammen.' },
+  { role: 'Stellvertretender Vorsitzender', bio: 'Backend-Entwickler mit Fokus auf Partnerschaften. Sorgt dafür, dass jede NGO ein passendes Projektteam bekommt.' },
+  { role: 'Projektleiterin', bio: 'Full-Stack-Entwicklerin, die drei NGO-Projekte von Kick-off bis Übergabe geleitet hat. Begeistert vom Mentoring von Erstbeitragenden.' },
+  { role: 'Schatzmeister', bio: 'Wirtschaftsinformatikstudent, der Finanzen und Förderanträge des Clubs verwaltet, damit sich die Teams aufs Bauen konzentrieren können.' },
+  { role: 'Design Lead', bio: 'Designerin und Frontend-Entwicklerin, die sicherstellt, dass die Software, die wir übergeben, so bedienbar wie funktional ist.' },
+  { role: 'Outreach Lead', bio: 'Organisiert Hackathons, Workshops und die Partnergewinnung. Wenn Coding for Change bei einem Event in München dabei ist, hat David es organisiert.' },
+];
+
+const projectsDe = [
+  {
+    title: 'Ehrenamtsportal',
+    ngoPartner: 'Münchner Tafel',
+    description: 'Ein Webportal zur Koordination von Freiwilligenschichten und Lebensmittellogistik, das ein Gewirr aus Tabellen und Telefonaten ersetzt.',
+    links: [{ label: 'Fallstudie', url: 'https://codingforchange.com/projects' }],
+  },
+  {
+    title: 'Spenden-Tracker',
+    ngoPartner: 'Lebenshilfe München',
+    description: 'Ein Dashboard, das dem Fundraising-Team eine Live-Übersicht über Spenden, Dauerspender und Kampagnenleistung bietet.',
+    links: [],
+  },
+  {
+    title: 'Mentoring-Plattform',
+    ngoPartner: 'Start with a Friend',
+    description: 'Ein algorithmusgestütztes Tool, das Neuankömmlinge anhand von Sprache, Interessen und Verfügbarkeit mit lokalen Mentor:innen verbindet.',
+    links: [],
+  },
+  {
+    title: 'Impact-Dashboard',
+    ngoPartner: 'Green City e.V.',
+    description: 'Ein öffentliches Dashboard, das die Umweltwirkung der Stadtbegrünungsprojekte der Organisation in München visualisiert.',
+    links: [],
+  },
+  {
+    title: 'Veranstaltungsmanagement-Tool',
+    ngoPartner: 'Caritas München',
+    description: 'Ein internes Tool zur Planung von Gemeinschaftsveranstaltungen, Anwesenheitsverfolgung und dem Versand von Erinnerungen.',
+    links: [{ label: 'Repository', url: 'https://github.com/coding-for-change' }],
+  },
+];
+
+const eventsDe = [
+  {
+    title: 'Semesterauftakt',
+    location: 'TUM Hauptcampus, Raum 1100',
+    description: 'Lern die Teams kennen, erfahre mehr über die NGO-Projekte dieses Semesters und wie du mitmachen kannst. Pizza inklusive.',
+  },
+  {
+    title: 'Code for Good Hackathon',
+    location: 'TUM Garching, Informatikgebäude',
+    description: 'Ein 24-Stunden-Hackathon, bei dem Studierendenteams Prototypen für echte Herausforderungen von Münchner Nonprofits entwickeln.',
+    link: { label: 'Anmelden', url: 'https://codingforchange.com/events' },
+  },
+  {
+    title: 'Einführung in React – Workshop',
+    location: 'Online',
+    description: 'Ein praxisorientierter Anfänger-Workshop zu Komponenten, State und Hooks – alles, was du für dein erstes Projektteam brauchst.',
+  },
+  {
+    title: 'Semesterabschluss-Feier',
+    location: 'Münchner Innenstadt',
+    description: 'Feiere mit den Teams und unseren Partnerorganisationen die Projekte, die wir in diesem Semester umgesetzt haben.',
+  },
+  {
+    title: 'Winter-Hackathon 2025',
+    location: 'TUM Garching',
+    description: 'Unser Winter-Hackathon brachte vier NGO-Prototypen hervor, von denen zwei in diesem Semester zu vollständigen Projektteams wurden.',
+  },
+  {
+    title: 'Git & GitHub Workshop',
+    location: 'TUM Hauptcampus',
+    description: 'Eine Einführung in Versionskontrolle und Kollaborations-Workflows für neue Mitglieder.',
+  },
+];
+
+const faqsDe = [
+  {
+    question: 'Brauche ich Vorkenntnisse, um beizutreten?',
+    answer: 'Nein. Wir begleiten Mitglieder aller Erfahrungsstufen und verbinden Neueinsteiger:innen mit erfahrenen Leads. Neugier und Engagement zählen mehr als ein polierter Lebenslauf.',
+  },
+  {
+    question: 'Wie viel Zeit erfordert die Mitgliedschaft?',
+    answer: 'Rechne mit rund 4–6 Stunden pro Woche während des Semesters. Projektteams legen ihre Zeitpläne selbst fest.',
+  },
+  {
+    question: 'Gibt es einen Mitgliedsbeitrag?',
+    answer: 'Nein. Coding for Change ist kostenlos – wir werden durch Sponsoren und Hochschulförderung finanziert.',
+  },
+  {
+    question: 'Wie werden Projekte ausgewählt?',
+    answer: 'Wir planen Projekte mit NGO-Partnern, die innerhalb eines Semesters umsetzbar sind, und matchen sie mit einem Studierendenteam basierend auf Fähigkeiten und Interesse.',
+  },
+  {
+    question: 'Kann meine Organisation ein Projekt anfragen?',
+    answer: 'Ja. Gemeinnützige Organisationen können sich über unser Kontaktformular melden. Wir arbeiten unentgeltlich mit mission-orientierten Organisationen zusammen.',
+  },
+  {
+    question: 'Welche Technologien verwendet ihr?',
+    answer: 'Das hängt vom Projekt ab, aber die meisten Teams arbeiten mit React, TypeScript und Node.js. Wir wählen den Stack, der am besten zu den Bedürfnissen der Partner passt.',
+  },
+  {
+    question: 'Muss ich Informatik studieren?',
+    answer: 'Nein. Wir begrüßen Studierende aller Fachrichtungen – Designer:innen, produktaffine Köpfe und Entwickler:innen sind alle willkommen.',
+  },
+];
+
+const sponsorsDe = [
+  { description: 'Unsere Heimuniversität, die Räume, Akkreditierung und eine Community von Studierenden bereitstellt.' },
+  { description: 'Münchens Zentrum für Innovation und Unternehmertum, das unsere Hackathons und Events unterstützt.' },
+  { description: 'Stellt Tools und Ressourcen bereit, die unsere Projektteams am Liefern halten.' },
+  { description: 'Ein lokales Netzwerk, das Studierendeninitiativen mit Mentoren verbindet.' },
+  { description: 'Unterstützt Graswurzel-Tech-for-Good-Arbeit in ganz Deutschland.' },
+];
+
+// ─── Legal (Impressum + Datenschutz) ─────────────────────────────────────────
+// The legal text is German by law and identical in both locales, so it is only
+// seeded for the default locale (en); the de locale falls back to it.
+// Stored as Payload lexical rich text, built with the small helpers below.
+
+const txt = (text, opts = {}) => ({
+  type: 'text',
+  detail: 0,
+  format: opts.bold ? 1 : 0,
+  mode: 'normal',
+  style: '',
+  text,
+  version: 1,
+});
+
+const bold = (text) => txt(text, { bold: true });
+
+const linebreak = () => ({ type: 'linebreak', version: 1 });
+
+const link = (text, url) => ({
+  type: 'link',
+  version: 2,
+  format: '',
+  indent: 0,
+  direction: 'ltr',
+  fields: { linkType: 'custom', url, newTab: false },
+  children: [txt(text)],
+});
+
+// Inline children: strings become text nodes, splitting on \n into linebreaks.
+const inline = (children) =>
+  children.flatMap((child) => {
+    if (typeof child !== 'string') return [child];
+    const out = [];
+    child.split('\n').forEach((part, i) => {
+      if (i > 0) out.push(linebreak());
+      if (part) out.push(txt(part));
+    });
+    return out;
+  });
+
+const para = (...children) => ({
+  type: 'paragraph',
+  version: 1,
+  format: '',
+  indent: 0,
+  direction: 'ltr',
+  textFormat: 0,
+  children: inline(children),
+});
+
+const heading = (tag, text) => ({
+  type: 'heading',
+  tag,
+  version: 1,
+  format: '',
+  indent: 0,
+  direction: 'ltr',
+  children: [txt(text)],
+});
+
+const hr = () => ({ type: 'horizontalrule', version: 1 });
+
+const doc = (...nodes) => ({
+  root: {
+    type: 'root',
+    version: 1,
+    format: '',
+    indent: 0,
+    direction: 'ltr',
+    children: nodes,
+  },
+});
+
+const legalEmail = siteConfig.email;
+const mailto = link(legalEmail, `mailto:${legalEmail}`);
+
+const legal = {
+  impressum: doc(
+    heading('h2', 'Impressum'),
+    para(bold('Angaben gem. § 5 DDG')),
+    para(bold('Coding for Change')),
+    para('Montgelasstraße 33\n80538 München'),
+    para(bold('Vertreten durch:')),
+    para('David Franke und Jakob Landbrecht'),
+    para(bold('Kontakt:')),
+    para('E-Mail: ', mailto),
+    para(bold('Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV:')),
+    para('David Franke und Jakob Landbrecht\nMontgelasstraße 33\n80538 München'),
+    para(bold('Haftungsausschluss:')),
+    para(bold('Haftung für Inhalte')),
+    para(
+      'Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die ' +
+        'Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch ' +
+        'keine Gewähr übernehmen. Als Diensteanbieter sind wir gemäß § 7 Abs. 1 DDG ' +
+        'für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen ' +
+        'verantwortlich. Nach §§ 8 bis 10 DDG sind wir als Diensteanbieter jedoch ' +
+        'nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu ' +
+        'überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige ' +
+        'Tätigkeit hinweisen.'
+    ),
+    para(bold('Haftung für Links')),
+    para(
+      'Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte ' +
+        'wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch ' +
+        'keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der ' +
+        'jeweilige Anbieter oder Betreiber der Seiten verantwortlich. Die verlinkten ' +
+        'Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße ' +
+        'überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht ' +
+        'erkennbar.'
+    ),
+    para(bold('Urheberrecht')),
+    para(
+      'Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten ' +
+        'unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, ' +
+        'Verbreitung und jede Art der Verwertung außerhalb der Grenzen des ' +
+        'Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors ' +
+        'bzw. Erstellers.'
+    )
+  ),
+  privacyPolicy: doc(
+    heading('h2', 'Datenschutzerklärung'),
+    heading('h3', '1. Verantwortlicher'),
+    para('Verantwortlicher im Sinne der DSGVO ist:'),
+    para('Coding for Change'),
+    para('Montgelasstraße 33, 80538 München'),
+    para('E-Mail: ', mailto),
+    heading('h3', '2. Allgemeines zur Datenverarbeitung'),
+    para(
+      'Der Schutz Ihrer persönlichen Daten ist uns ein wichtiges Anliegen. Diese ' +
+        'Datenschutzerklärung informiert Sie darüber, welche Daten beim Besuch ' +
+        'unserer Website erhoben werden und wie diese verwendet werden.'
+    ),
+    heading('h3', '3. Hosting'),
+    para(
+      'Diese Website wird auf einem Virtual Private Server (VPS) der Hetzner Online ' +
+        'GmbH, Industriestr. 25, 91710 Gunzenhausen, Deutschland betrieben. Hetzner ' +
+        'stellt lediglich die Server-Infrastruktur bereit und verarbeitet dabei im ' +
+        'Rahmen des Betriebs personenbezogene Daten (z.B. IP-Adressen) als ' +
+        'Auftragsverarbeiter.'
+    ),
+    para(
+      'Der Webserver auf unserem VPS ist so konfiguriert, dass keine zusätzlichen ' +
+        'personenbezogenen Daten (wie Browsertyp, Betriebssystem oder Referrer-URLs) ' +
+        'in Log-Dateien gespeichert werden. Die Rechtsgrundlage für die ' +
+        'Datenverarbeitung im Rahmen des Hostings ist Art. 6 Abs. 1 lit. f DSGVO ' +
+        '(berechtigtes Interesse an einer zuverlässigen Bereitstellung der Website).'
+    ),
+    heading('h3', '4. Cookies und Tracking'),
+    para(
+      'Diese Website verwendet keine Cookies, Analysetools oder sonstige ' +
+        'Tracking-Technologien.'
+    ),
+    heading('h3', '5. Externe Links'),
+    para(
+      'Unsere Website kann Links zu externen Websites enthalten. Auf die Inhalte und ' +
+        'Datenschutzpraktiken dieser externen Seiten haben wir keinen Einfluss.'
+    ),
+    heading('h3', '6. Ihre Rechte'),
+    para('Sie haben gemäß DSGVO folgende Rechte bezüglich Ihrer personenbezogenen Daten:'),
+    para(
+      '• Recht auf Auskunft (Art. 15 DSGVO)\n' +
+        '• Recht auf Berichtigung (Art. 16 DSGVO)\n' +
+        '• Recht auf Löschung (Art. 17 DSGVO)\n' +
+        '• Recht auf Einschränkung der Verarbeitung (Art. 18 DSGVO)\n' +
+        '• Recht auf Datenübertragbarkeit (Art. 20 DSGVO)\n' +
+        '• Widerspruchsrecht (Art. 21 DSGVO)'
+    ),
+    para(
+      'Zudem haben Sie das Recht, sich bei einer Datenschutz-Aufsichtsbehörde über ' +
+        'die Verarbeitung Ihrer personenbezogenen Daten zu beschweren. Die zuständige ' +
+        'Aufsichtsbehörde ist das Bayerische Landesamt für Datenschutzaufsicht ' +
+        '(BayLDA).'
+    ),
+    heading('h3', '7. Kontakt'),
+    para('Bei Fragen zur Datenschutzerklärung kontaktieren Sie uns unter ', mailto, '.')
+  ),
+};
+
+// ─── HTTP helpers ────────────────────────────────────────────────────────────
+
+const jsonRequest = async (method, path, body, cookie) => {
   const res = await fetch(`${BASE}${path}`, {
-    method: 'POST',
+    method,
     headers: {
       'content-type': 'application/json',
       ...(cookie ? { cookie } : {}),
@@ -307,6 +629,9 @@ const postJson = async (path, body, cookie) => {
   });
   return res;
 };
+
+const postJson = (path, body, cookie) => jsonRequest('POST', path, body, cookie);
+const patchJson = (path, body, cookie) => jsonRequest('PATCH', path, body, cookie);
 
 /** Extract the Payload auth cookie (name=value) from a login response. */
 const authCookieFrom = (res) => {
@@ -321,11 +646,8 @@ const authenticate = async () => {
 
   let res = await postJson('/api/users/login', creds);
   if (!res.ok) {
-    // No matching user — create the first admin account.
     let created = await postJson('/api/users/first-register', creds);
     if (!created.ok) {
-      // Older/newer Payload may not expose first-register; plain create is
-      // permitted while the users collection is empty.
       created = await postJson('/api/users', creds);
     }
     if (!created.ok) {
@@ -359,11 +681,20 @@ const waitForCms = async () => {
   throw new Error(`CMS not reachable at ${BASE} — is it running? (${lastError?.message})`);
 };
 
+/** Returns a .then() handler that throws on a non-OK response. */
+const assertOk = (label) => async (res) => {
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Failed to create ${label}: ${res.status} ${text}`);
+  }
+  return res;
+};
+
+// ─── Seed ────────────────────────────────────────────────────────────────────
+
 const seed = async () => {
   console.log(`Seeding CMS at ${BASE}`);
 
-  // Wait for the CMS to be reachable, then check whether it is already
-  // populated (read access is public, so this needs no auth).
   const existing = await waitForCms();
   const json = await existing.json();
   if ((json.totalDocs ?? 0) > 0) {
@@ -373,36 +704,51 @@ const seed = async () => {
   }
 
   const cookie = await authenticate();
-  console.log(`Authenticated as ${ADMIN_EMAIL}`);
+  console.log(`\nAuthenticated as ${ADMIN_EMAIL}`);
 
-  await postJson('/api/globals/site-config', siteConfig, cookie).then(assertOk('site-config global'));
-  await postJson('/api/globals/membership', membership, cookie).then(assertOk('membership global'));
-  console.log('Updated globals: site-config, membership');
+  // ── Globals ──────────────────────────────────────────────────────────────
+  await postJson('/api/globals/site-config', siteConfig, cookie).then(assertOk('site-config (en)'));
+  await postJson('/api/globals/site-config?locale=de', siteConfigDe, cookie).then(assertOk('site-config (de)'));
 
+  await postJson('/api/globals/membership', membership, cookie).then(assertOk('membership (en)'));
+  await postJson('/api/globals/membership?locale=de', membershipDe, cookie).then(assertOk('membership (de)'));
+
+  // Legal text is German by law; seeded once for the default locale (de falls back).
+  await postJson('/api/globals/legal', legal, cookie).then(assertOk('legal'));
+
+  console.log('Updated globals: site-config, membership, legal (en + de)');
+
+  // ── Collections ──────────────────────────────────────────────────────────
+  // Create English items first (returns IDs), then PATCH German translations.
   const collections = [
-    ['team', team],
-    ['projects', projects],
-    ['events', events],
-    ['faq', faqs],
-    ['sponsors', sponsors],
+    { slug: 'team',     en: team,     de: teamDe },
+    { slug: 'projects', en: projects, de: projectsDe },
+    { slug: 'events',   en: events,   de: eventsDe },
+    { slug: 'faq',      en: faqs,     de: faqsDe },
+    { slug: 'sponsors', en: sponsors, de: sponsorsDe },
   ];
-  for (const [slug, items] of collections) {
-    for (const item of items) {
-      await postJson(`/api/${slug}`, item, cookie).then(assertOk(`${slug} entry`));
+
+  for (const { slug, en, de } of collections) {
+    const ids = [];
+
+    for (const item of en) {
+      const res = await postJson(`/api/${slug}`, item, cookie).then(assertOk(`${slug} (en)`));
+      const data = await res.json();
+      ids.push(data?.doc?.id);
     }
-    console.log(`Created ${items.length} ${slug} entries`);
+
+    for (let i = 0; i < de.length; i++) {
+      const id = ids[i];
+      if (!id) continue;
+      await patchJson(`/api/${slug}/${id}?locale=de`, de[i], cookie).then(assertOk(`${slug}[${i}] (de)`));
+    }
+
+    console.log(`Created ${en.length} ${slug} entries (en + de)`);
   }
 
   console.log('\nSeed complete. Admin login:');
   console.log(`  email:    ${ADMIN_EMAIL}`);
   console.log(`  password: ${ADMIN_PASSWORD}`);
-};
-
-/** Returns a .then() handler that throws on a non-OK response. */
-const assertOk = (label) => async (res) => {
-  if (!res.ok) {
-    throw new Error(`Failed to create ${label}: ${res.status} ${await res.text()}`);
-  }
 };
 
 seed().catch((error) => {

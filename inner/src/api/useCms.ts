@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { fetchCollection, fetchGlobal } from './client';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface UseCmsResult<T> {
     data: T | null;
@@ -8,13 +9,15 @@ interface UseCmsResult<T> {
 }
 
 export function useCmsCollection<T>(slug: string): UseCmsResult<T[]> {
+    const { locale } = useLanguage();
     const [data, setData] = useState<T[] | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         let cancelled = false;
-        fetchCollection<T>(slug)
+        setLoading(true);
+        fetchCollection<T>(slug, { locale })
             .then((docs) => {
                 if (!cancelled) {
                     setData(docs);
@@ -30,19 +33,21 @@ export function useCmsCollection<T>(slug: string): UseCmsResult<T[]> {
         return () => {
             cancelled = true;
         };
-    }, [slug]);
+    }, [slug, locale]);
 
     return { data, loading, error };
 }
 
 export function useCmsGlobal<T>(slug: string): UseCmsResult<T> {
+    const { locale } = useLanguage();
     const [data, setData] = useState<T | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         let cancelled = false;
-        fetchGlobal<T>(slug)
+        setLoading(true);
+        fetchGlobal<T>(slug, { locale })
             .then((result) => {
                 if (!cancelled) {
                     setData(result);
@@ -58,7 +63,7 @@ export function useCmsGlobal<T>(slug: string): UseCmsResult<T> {
         return () => {
             cancelled = true;
         };
-    }, [slug]);
+    }, [slug, locale]);
 
     return { data, loading, error };
 }

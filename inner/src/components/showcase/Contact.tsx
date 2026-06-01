@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useSiteConfig } from '../../api';
 import useIsMobile from '../../hooks/useIsMobile';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export interface ContactProps {}
 
@@ -18,6 +19,7 @@ const Contact: React.FC<ContactProps> = (props) => {
     const [message, setMessage] = useState('');
     const siteConfig = useSiteConfig();
     const isMobile = useIsMobile();
+    const { t } = useLanguage();
 
     const isFormValid =
         validateEmail(email) && name.length > 0 && message.length > 0;
@@ -40,7 +42,7 @@ const Contact: React.FC<ContactProps> = (props) => {
                     isMobile && styles.headerMobile
                 )}
             >
-                <h1>Contact</h1>
+                <h1>{t.contact.title}</h1>
                 <div
                     style={Object.assign(
                         {},
@@ -62,11 +64,7 @@ const Contact: React.FC<ContactProps> = (props) => {
                 </div>
             </div>
             <div className="text-block">
-                <p>
-                    Whether you are an NGO looking for tech support, a student
-                    wanting to join, or just curious about what we do — we would
-                    love to hear from you!
-                </p>
+                <p>{t.contact.intro}</p>
                 <br />
                 <p>
                     <b>Email: </b>
@@ -79,14 +77,14 @@ const Contact: React.FC<ContactProps> = (props) => {
                     <label>
                         <p>
                             {!name && <span style={styles.star}>*</span>}
-                            <b>Your name:</b>
+                            <b>{t.contact.nameLabel}</b>
                         </p>
                     </label>
                     <input
                         style={styles.formItem}
                         type="text"
                         name="name"
-                        placeholder="Name"
+                        placeholder={t.contact.namePlaceholder}
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                     />
@@ -95,39 +93,39 @@ const Contact: React.FC<ContactProps> = (props) => {
                             {!validateEmail(email) && (
                                 <span style={styles.star}>*</span>
                             )}
-                            <b>Email:</b>
+                            <b>{t.contact.emailLabel}</b>
                         </p>
                     </label>
                     <input
                         style={styles.formItem}
                         type="email"
                         name="email"
-                        placeholder="Email"
+                        placeholder={t.contact.emailPlaceholder}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
                     <label>
                         <p>
-                            <b>Organization/NGO (optional):</b>
+                            <b>{t.contact.orgLabel}</b>
                         </p>
                     </label>
                     <input
                         style={styles.formItem}
                         type="text"
                         name="organization"
-                        placeholder="Organization or NGO name"
+                        placeholder={t.contact.orgPlaceholder}
                         value={organization}
                         onChange={(e) => setOrganization(e.target.value)}
                     />
                     <label>
                         <p>
                             {!message && <span style={styles.star}>*</span>}
-                            <b>Message:</b>
+                            <b>{t.contact.messageLabel}</b>
                         </p>
                     </label>
                     <textarea
                         name="message"
-                        placeholder="Message"
+                        placeholder={t.contact.messagePlaceholder}
                         style={styles.formItem}
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
@@ -140,23 +138,20 @@ const Contact: React.FC<ContactProps> = (props) => {
                             disabled={!isFormValid}
                             onMouseDown={handleSubmit}
                         >
-                            Send Message
+                            {t.contact.sendMessage}
                         </button>
                         <div style={styles.formInfo}>
                             <p>
                                 <b>
-                                    <sub>
-                                        This will open your email client to send
-                                        the message
-                                    </sub>
+                                    <sub>{t.contact.emailClientNote}</sub>
                                 </b>
                             </p>
                             <p>
                                 <sub>
                                     {!isFormValid ? (
                                         <span>
-                                            <b style={styles.star}>*</b> =
-                                            required
+                                            <b style={styles.star}>*</b> ={' '}
+                                            {t.contact.requiredNote.replace('* = ', '')}
                                         </span>
                                     ) : (
                                         '\xa0'
@@ -203,8 +198,6 @@ const styles: StyleSheetCSS = {
         justifyContent: 'space-between',
     },
     headerMobile: {
-        // Stack the social links under the title so a narrow window
-        // doesn't squeeze "Contact" onto two lines.
         flexDirection: 'column',
         alignItems: 'flex-start',
     },
