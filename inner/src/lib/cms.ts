@@ -1,5 +1,10 @@
 const BASE = process.env.CMS_URL ?? 'http://localhost:3000'
 
+// Cap how long a page render will wait on the CMS. Without this, a CMS that
+// is down or slow makes every page (which fetches through the root layout)
+// hang on the connection rather than rendering with empty data.
+const FETCH_TIMEOUT_MS = 5000
+
 interface PaginatedResponse<T> {
   docs: T[]
 }
@@ -14,7 +19,10 @@ export async function fetchCollection<T>(
     url.searchParams.set('locale', locale)
     url.searchParams.set('limit', '200')
     if (params) Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v))
-    const res = await fetch(url.toString(), { cache: 'no-store' })
+    const res = await fetch(url.toString(), {
+      cache: 'no-store',
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+    })
     if (!res.ok) return []
     const contentType = res.headers.get('content-type') ?? ''
     if (!contentType.includes('application/json')) return []
@@ -29,7 +37,10 @@ export async function fetchGlobal<T>(slug: string, locale = 'en'): Promise<T | n
   try {
     const url = new URL(`${BASE}/api/globals/${slug}`)
     url.searchParams.set('locale', locale)
-    const res = await fetch(url.toString(), { cache: 'no-store' })
+    const res = await fetch(url.toString(), {
+      cache: 'no-store',
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+    })
     if (!res.ok) return null
     const contentType = res.headers.get('content-type') ?? ''
     if (!contentType.includes('application/json')) return null
