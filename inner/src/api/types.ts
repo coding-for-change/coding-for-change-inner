@@ -74,6 +74,32 @@ export interface CmsSiteConfig {
     windowTitle?: string;
 }
 
+/** A node in a Payload lexical rich-text tree. */
+export interface LexicalNode {
+    type: string;
+    version: number;
+    children?: LexicalNode[];
+    // text node
+    text?: string;
+    format?: number | string;
+    // heading node
+    tag?: string;
+    // link node
+    fields?: { url?: string; newTab?: boolean; linkType?: string };
+    [key: string]: unknown;
+}
+
+/** Payload lexical rich-text field value. */
+export interface LexicalRichText {
+    root: LexicalNode;
+}
+
+/** GET /api/globals/legal */
+export interface CmsLegal {
+    impressum: LexicalRichText;
+    privacyPolicy: LexicalRichText;
+}
+
 /** GET /api/globals/membership */
 export interface CmsMembership {
     title: string;

@@ -7,17 +7,17 @@ export const Membership: GlobalConfig = {
     read: () => true,
   },
   fields: [
-    { name: 'title', type: 'text', required: true },
-    { name: 'description', type: 'textarea', required: true },
+    { name: 'title', type: 'text', required: true, localized: true },
+    { name: 'description', type: 'textarea', required: true, localized: true },
     {
       name: 'benefits',
       type: 'array',
-      fields: [{ name: 'text', type: 'text', required: true }],
+      fields: [{ name: 'text', type: 'text', required: true, localized: true }],
     },
     {
       name: 'requirements',
       type: 'array',
-      fields: [{ name: 'text', type: 'text', required: true }],
+      fields: [{ name: 'text', type: 'text', required: true, localized: true }],
     },
     { name: 'contactEmail', type: 'email', required: true },
   ],

@@ -2,6 +2,7 @@ import React from 'react';
 import { useCmsCollection, mediaUrl } from '../../api';
 import { CmsTeamMember } from '../../api/types';
 import { RetroLoader } from '../general';
+import { useLanguage } from '../../contexts/LanguageContext';
 import linkedinIcon from '../../assets/icons/linkedin.png';
 import githubIcon from '../../assets/icons/git.png';
 
@@ -12,19 +13,17 @@ const linkIconMap: Record<string, string> = {
 
 const Team: React.FC = () => {
     const { data: team, loading } = useCmsCollection<CmsTeamMember>('team');
+    const { t } = useLanguage();
 
     if (loading) return <div className="site-page-content"><RetroLoader /></div>;
 
     return (
         <div className="site-page-content">
-            <h1>Our Team</h1>
-            <h3>The People Behind CFC</h3>
+            <h1>{t.team.title}</h1>
+            <h3>{t.team.subtitle}</h3>
             <br />
             <div className="text-block">
-                <p>
-                    Meet the team that drives Coding for Change. We are a diverse group of students
-                    passionate about using technology for social good.
-                </p>
+                <p>{t.team.intro}</p>
             </div>
             <br />
             <div style={styles.teamGrid}>

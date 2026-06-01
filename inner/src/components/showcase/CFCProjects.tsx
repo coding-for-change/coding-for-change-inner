@@ -2,6 +2,7 @@ import React from 'react';
 import { useCmsCollection } from '../../api';
 import { CmsProject } from '../../api/types';
 import { RetroLoader } from '../general';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const statusColors: Record<string, string> = {
     active: '#008000',
@@ -11,19 +12,17 @@ const statusColors: Record<string, string> = {
 
 const CFCProjects: React.FC = () => {
     const { data: projects, loading } = useCmsCollection<CmsProject>('projects');
+    const { t } = useLanguage();
 
     if (loading) return <div className="site-page-content"><RetroLoader /></div>;
 
     return (
         <div className="site-page-content">
-            <h1>Projects</h1>
-            <h3>Building Tech for Social Good</h3>
+            <h1>{t.projects.title}</h1>
+            <h3>{t.projects.subtitle}</h3>
             <br />
             <div className="text-block">
-                <p>
-                    We partner with NGOs to build software solutions that make a real difference.
-                    Each project is led by student teams and developed in close collaboration with our partners.
-                </p>
+                <p>{t.projects.intro}</p>
             </div>
             <br />
             <div style={styles.projectsGrid}>
@@ -38,7 +37,7 @@ const CFCProjects: React.FC = () => {
                                 {project.status}
                             </div>
                         </div>
-                        <p style={styles.ngoPartner}>Partner: {project.ngoPartner}</p>
+                        <p style={styles.ngoPartner}>{t.common.partner} {project.ngoPartner}</p>
                         <br />
                         <p>{project.description}</p>
                         <br />

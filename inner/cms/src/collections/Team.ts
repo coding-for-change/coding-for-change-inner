@@ -11,9 +11,9 @@ export const Team: CollectionConfig = {
   },
   fields: [
     { name: 'name', type: 'text', required: true },
-    { name: 'role', type: 'text', required: true },
+    { name: 'role', type: 'text', required: true, localized: true },
     { name: 'image', type: 'upload', relationTo: 'media' },
-    { name: 'bio', type: 'textarea', required: true },
+    { name: 'bio', type: 'textarea', required: true, localized: true },
     {
       name: 'links',
       type: 'array',

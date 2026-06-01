@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { useCmsGlobal } from '../../api';
 import { CmsMembership } from '../../api/types';
 import { RetroLoader } from '../general';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const BecomeAMember: React.FC = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [motivation, setMotivation] = useState('');
     const { data: membership, loading } = useCmsGlobal<CmsMembership>('membership');
+    const { t } = useLanguage();
 
     const handleSubmit = () => {
         if (!membership) return;
@@ -21,7 +23,7 @@ const BecomeAMember: React.FC = () => {
     const isValid = name.length > 0 && email.length > 0 && motivation.length > 0;
 
     if (loading) return <div className="site-page-content"><RetroLoader /></div>;
-    if (!membership) return <div className="site-page-content"><p>Content unavailable.</p></div>;
+    if (!membership) return <div className="site-page-content"><p>{t.join.unavailable}</p></div>;
 
     return (
         <div className="site-page-content">
@@ -31,7 +33,7 @@ const BecomeAMember: React.FC = () => {
                 <p>{membership.description}</p>
             </div>
             <br />
-            <h3>Benefits</h3>
+            <h3>{t.join.benefits}</h3>
             <br />
             <ul style={styles.list}>
                 {(membership.benefits ?? []).map((b, i) => (
@@ -39,7 +41,7 @@ const BecomeAMember: React.FC = () => {
                 ))}
             </ul>
             <br />
-            <h3>Requirements</h3>
+            <h3>{t.join.requirements}</h3>
             <br />
             <ul style={styles.list}>
                 {(membership.requirements ?? []).map((r, i) => (
@@ -47,29 +49,29 @@ const BecomeAMember: React.FC = () => {
                 ))}
             </ul>
             <br />
-            <h3>Apply Now</h3>
+            <h3>{t.join.applyNow}</h3>
             <br />
             <div style={styles.form}>
-                <label><p><b>Your Name:</b></p></label>
+                <label><p><b>{t.join.nameLabel}</b></p></label>
                 <input
                     style={styles.formItem}
                     type="text"
-                    placeholder="Name"
+                    placeholder={t.join.namePlaceholder}
                     value={name}
                     onChange={e => setName(e.target.value)}
                 />
-                <label><p><b>Email:</b></p></label>
+                <label><p><b>{t.join.emailLabel}</b></p></label>
                 <input
                     style={styles.formItem}
                     type="email"
-                    placeholder="Email"
+                    placeholder={t.join.emailPlaceholder}
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                 />
-                <label><p><b>Why do you want to join?</b></p></label>
+                <label><p><b>{t.join.motivationLabel}</b></p></label>
                 <textarea
                     style={styles.formItem}
-                    placeholder="Tell us about your motivation..."
+                    placeholder={t.join.motivationPlaceholder}
                     value={motivation}
                     onChange={e => setMotivation(e.target.value)}
                 />
@@ -79,7 +81,7 @@ const BecomeAMember: React.FC = () => {
                     disabled={!isValid}
                     onMouseDown={handleSubmit}
                 >
-                    Send Application
+                    {t.join.sendApplication}
                 </button>
             </div>
         </div>

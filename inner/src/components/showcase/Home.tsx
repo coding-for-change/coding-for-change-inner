@@ -2,12 +2,14 @@ import React from 'react';
 import { Link } from '../general';
 import { useSiteConfig } from '../../api';
 import useIsMobile from '../../hooks/useIsMobile';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export interface HomeProps {}
 
 const Home: React.FC<HomeProps> = (props) => {
     const siteConfig = useSiteConfig();
     const isMobile = useIsMobile();
+    const { t } = useLanguage();
 
     return (
         <div style={Object.assign({}, styles.page, isMobile && styles.pageMobile)}>
@@ -30,11 +32,11 @@ const Home: React.FC<HomeProps> = (props) => {
                 <h2>{siteConfig.tagline}</h2>
             </div>
             <div style={styles.buttons}>
-                <Link containerStyle={styles.link} to="about" text="ABOUT" />
-                <Link containerStyle={styles.link} to="events" text="EVENTS" />
-                <Link containerStyle={styles.link} to="projects" text="PROJECTS" />
-                <Link containerStyle={styles.link} to="team" text="TEAM" />
-                <Link containerStyle={styles.link} to="join" text="JOIN" />
+                <Link containerStyle={styles.link} to="about" text={t.home.about} />
+                <Link containerStyle={styles.link} to="events" text={t.home.events} />
+                <Link containerStyle={styles.link} to="projects" text={t.home.projects} />
+                <Link containerStyle={styles.link} to="team" text={t.home.team} />
+                <Link containerStyle={styles.link} to="join" text={t.home.join} />
             </div>
         </div>
     );

@@ -24,8 +24,10 @@ export async function fetchCollection<T>(
     return data.docs;
 }
 
-export async function fetchGlobal<T>(slug: string): Promise<T> {
-    const res = await fetch(`${API_BASE}/globals/${slug}`);
+export async function fetchGlobal<T>(slug: string, params?: Record<string, string>): Promise<T> {
+    const query = new URLSearchParams(params);
+    const qs = query.toString();
+    const res = await fetch(`${API_BASE}/globals/${slug}${qs ? `?${qs}` : ''}`);
     if (!res.ok) throw new Error(`Failed to fetch global ${slug}: ${res.status}`);
     return res.json();
 }

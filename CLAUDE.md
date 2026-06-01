@@ -10,11 +10,17 @@ Coding For Change (codingforchange.com) website — a multi-service architecture
 
 The repo has three services under `outer/`, `inner/`, and `inner/cms/`:
 
-- **Outer site** (`outer/`): A 3D Three.js scene (a retro computer on a desk) built with TypeScript and Webpack. The Express server (`outer/server/index.ts`) is the single entry point on port 8080 and reverse-proxies to the inner site and CMS.
-- **Inner site** (`inner/`): A React (CRA) app styled as a Windows 95-likWhat e desktop OS. Embedded inside the outer site's 3D monitor screen via iframe at `/inner/`. Uses react-router-dom, framer-motion, and usehooks-ts.
+- **Inner site** (`inner/`): A React (CRA) app styled as a Windows 95-like desktop OS. This is the **canonical site, served at `/`**. Uses react-router-dom, framer-motion, and usehooks-ts.
+- **Outer site** (`outer/`): A 3D Three.js scene (a retro computer on a desk) built with TypeScript and Webpack. It is the opt-in "enhanced experience" served at **`/3d`** (the inner desktop OS is rendered inside the 3D monitor screen via iframe). The Express server (`outer/server/index.ts`) is the single entry point on port 8080 and reverse-proxies to the inner site and CMS. The 3D scene is marked `noindex`, and mobile User-Agents requesting `/3d` are redirected to `/`.
 - **CMS** (`inner/cms/`): Payload CMS v3 on Next.js 15, backed by PostgreSQL. Provides REST API at `/api/` and admin panel at `/admin/`. Collections: Events, FAQ, Media, Projects, Sponsors, Team. Globals: Membership, SiteConfig.
 
-**Request flow**: Browser → outer Express (port 80→8080) → proxies `/inner/*` to inner nginx, `/api/*` and `/admin/*` to CMS.
+**Request flow** (all through outer Express, port 80→8080, see `outer/server/index.ts`):
+- `/admin`, `/api`, `/_next`, `/media` → proxied to the CMS
+- `/3d` → the 3D scene's static webpack build (served from `outer/public`)
+- `/inner/*` → `301` redirect to `/*` (legacy path; inner is no longer embedded there)
+- everything else (`/`, `/about`, `/team`, …) → proxied to the inner app, which serves the SPA
+
+> Note: the 3D scene's webpack build sets `publicPath` to `/3d/`, and the inner app's `index.html` is what's served at `/` — its bundle is CRA's non-content-hashed `/static/js/bundle.js`.
 
 ## Development Commands
 
@@ -48,9 +54,13 @@ pnpm generate:types  # generate Payload TypeScript types
 ### Full stack (Docker)
 ```bash
 cp .env.example .env  # configure PAYLOAD_SECRET and DATABASE_URL
-docker compose up --build
+docker compose up --build                        # default stack
+docker compose -f docker-compose.dev.yml up      # hot-reloading dev stack
+docker compose -f docker-compose.prod.yml up     # production stack
 ```
-Runs all services: outer (port 80), inner, CMS, and PostgreSQL.
+Runs all services: outer (port 80), inner (also direct on 3001 in dev), CMS (port 3000), and PostgreSQL.
+
+The **dev stack** (`docker-compose.dev.yml`) bind-mounts host source into each container and runs the dev servers (webpack `--watch` for outer, CRA `npm start` for inner, `pnpm dev` for CMS) with polling-based file watching, so edits hot-reload. Note: the inner CRA bundle (`/static/js/bundle.js`) is **not** content-hashed and is served without a `Cache-Control` header — if the browser shows a stale UI, hard-refresh (Cmd+Shift+R) or enable "Disable cache" in DevTools. The 3D scene at `/3d` has no HMR and always requires a manual browser refresh after a rebuild.
 
 ## Key Architectural Details
 
@@ -59,7 +69,7 @@ Runs all services: outer (port 80), inner, CMS, and PostgreSQL.
 - The inner site's UI component (`outer/src/Application/UI/`) is a React app rendered alongside the Three.js canvas for overlay controls.
 - The inner site mimics a desktop OS with Window, Desktop, Toolbar, and DesktopShortcut components under `inner/src/components/os/`.
 - Content pages (Home, About, Team, Events, Projects, Sponsors, etc.) live in `inner/src/components/showcase/`.
-- The `INNER_SITE_URL` env var controls the iframe URL path (defaults to `/inner/` in Docker).
+- The `INNER_SITE_URL` env var is baked into the 3D bundle at build time (webpack DefinePlugin) and controls the iframe URL the 3D monitor loads. It is set to `/` in Docker so the iframe loads the inner site through the outer Express proxy (same as production).
 
 ## Environment Variables
 

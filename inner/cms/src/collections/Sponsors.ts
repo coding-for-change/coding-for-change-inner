@@ -24,6 +24,6 @@ export const Sponsors: CollectionConfig = {
         { label: 'Partner', value: 'partner' },
       ],
     },
-    { name: 'description', type: 'textarea' },
+    { name: 'description', type: 'textarea', localized: true },
   ],
 };

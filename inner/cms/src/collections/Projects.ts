@@ -10,14 +10,14 @@ export const Projects: CollectionConfig = {
     read: () => true,
   },
   fields: [
-    { name: 'title', type: 'text', required: true },
-    { name: 'ngoPartner', type: 'text', required: true, label: 'NGO Partner' },
-    { name: 'description', type: 'textarea', required: true },
+    { name: 'title', type: 'text', required: true, localized: true },
+    { name: 'ngoPartner', type: 'text', required: true, label: 'NGO Partner', localized: true },
+    { name: 'description', type: 'textarea', required: true, localized: true },
     { name: 'image', type: 'upload', relationTo: 'media' },
     {
       name: 'technologies',
       type: 'array',
-      fields: [{ name: 'name', type: 'text', required: true }],
+      fields: [{ name: 'name', type: 'text', required: true, localized: true }],
     },
     {
       name: 'status',
@@ -33,7 +33,7 @@ export const Projects: CollectionConfig = {
       name: 'links',
       type: 'array',
       fields: [
-        { name: 'label', type: 'text', required: true },
+        { name: 'label', type: 'text', required: true, localized: true },
         { name: 'url', type: 'text', required: true },
       ],
     },

@@ -10,11 +10,11 @@ export const Events: CollectionConfig = {
     read: () => true,
   },
   fields: [
-    { name: 'title', type: 'text', required: true },
+    { name: 'title', type: 'text', required: true, localized: true },
     { name: 'date', type: 'text', required: true },
     { name: 'time', type: 'text', required: true },
-    { name: 'location', type: 'text', required: true },
-    { name: 'description', type: 'textarea', required: true },
+    { name: 'location', type: 'text', required: true, localized: true },
+    { name: 'description', type: 'textarea', required: true, localized: true },
     {
       name: 'type',
       type: 'select',
@@ -32,7 +32,7 @@ export const Events: CollectionConfig = {
       type: 'group',
       label: 'Action Button',
       fields: [
-        { name: 'label', type: 'text' },
+        { name: 'label', type: 'text', localized: true },
         { name: 'url', type: 'text' },
       ],
     },

@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { useCmsCollection } from '../../api';
 import { CmsFaqItem } from '../../api/types';
 import { RetroLoader } from '../general';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const QA: React.FC = () => {
     const [openId, setOpenId] = useState<number | null>(null);
     const { data: faq, loading } = useCmsCollection<CmsFaqItem>('faq');
+    const { t } = useLanguage();
 
     const toggle = (id: number) => {
         setOpenId(openId === id ? null : id);
@@ -15,11 +17,11 @@ const QA: React.FC = () => {
 
     return (
         <div className="site-page-content">
-            <h1>Q&A</h1>
-            <h3>Frequently Asked Questions</h3>
+            <h1>{t.qa.title}</h1>
+            <h3>{t.qa.subtitle}</h3>
             <br />
             <div className="text-block">
-                <p>Find answers to common questions about Coding for Change below.</p>
+                <p>{t.qa.intro}</p>
             </div>
             <br />
             <div style={styles.faqList}>
