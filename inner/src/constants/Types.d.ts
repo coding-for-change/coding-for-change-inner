@@ -14,6 +14,6 @@ declare type DesktopWindows = {
         component: React.ReactElement;
         minimized: boolean;
         name: string;
-        icon: IconName;
+        icon: string;
     };
 };

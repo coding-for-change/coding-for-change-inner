@@ -1,5 +1,6 @@
+'use client'
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { IconName } from '../../assets/icons';
+import getIconByName, { IconName } from '../../assets/icons';
 import colors from '../../constants/colors';
 import { Icon } from '../general';
 
@@ -19,11 +20,11 @@ const DesktopShortcut: React.FC<DesktopShortcutProps> = ({
     const [isSelected, setIsSelected] = useState(false);
     const [shortcutId, setShortcutId] = useState('');
     const [lastSelected, setLastSelected] = useState(false);
-    const containerRef = useRef<any>();
+    const containerRef = useRef<any>(null);
 
     const [scaledStyle, setScaledStyle] = useState({});
 
-    const requiredIcon = require(`../../assets/icons/${icon}.png`);
+    const requiredIcon = getIconByName(icon);
     const [doubleClickTimerActive, setDoubleClickTimerActive] = useState(false);
 
     const getShortcutId = useCallback(() => {

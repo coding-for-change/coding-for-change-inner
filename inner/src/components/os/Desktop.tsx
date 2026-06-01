@@ -1,3 +1,4 @@
+'use client'
 import React, { useCallback, useEffect, useState } from 'react';
 import Colors from '../../constants/colors';
 import ShowcaseExplorer from '../applications/ShowcaseExplorer';
@@ -7,8 +8,11 @@ import DesktopShortcut, { DesktopShortcutProps } from './DesktopShortcut';
 import { IconName } from '../../assets/icons';
 import Credits from '../applications/Credits';
 import Imprint from '../applications/Imprint';
+import Search from '../applications/Search';
 
-export interface DesktopProps {}
+export interface DesktopProps {
+    children?: React.ReactNode;
+}
 
 type ExtendedWindowAppProps<T> = T & WindowAppProps;
 
@@ -20,12 +24,6 @@ const APPLICATIONS: {
         component: React.FC<ExtendedWindowAppProps<any>>;
     };
 } = {
-    showcase: {
-        key: 'showcase',
-        name: 'Coding for Change',
-        shortcutIcon: 'showcaseIcon',
-        component: ShowcaseExplorer,
-    },
     credits: {
         key: 'credits',
         name: 'Credits',
@@ -38,157 +36,186 @@ const APPLICATIONS: {
         shortcutIcon: 'myComputer',
         component: Imprint,
     },
+    search: {
+        key: 'search',
+        name: 'Search',
+        shortcutIcon: 'showcaseIcon',
+        component: Search,
+    },
 };
 
-const Desktop: React.FC<DesktopProps> = (props) => {
+interface ShowcaseState {
+    minimized: boolean;
+    zIndex: number;
+}
+
+const Desktop: React.FC<DesktopProps> = ({ children }) => {
     const [windows, setWindows] = useState<DesktopWindows>({});
-
+    const [showcaseState, setShowcaseState] = useState<ShowcaseState>({ minimized: false, zIndex: 2 });
     const [shortcuts, setShortcuts] = useState<DesktopShortcutProps[]>([]);
-
     const [shutdown, setShutdown] = useState(false);
     const [numShutdowns, setNumShutdowns] = useState(1);
 
     useEffect(() => {
-        if (shutdown === true) {
-            rebootDesktop();
-        }
+        if (shutdown === true) rebootDesktop();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [shutdown]);
 
     useEffect(() => {
-        const newShortcuts: DesktopShortcutProps[] = [];
+        const newShortcuts: DesktopShortcutProps[] = [
+            {
+                shortcutName: 'Coding for Change',
+                icon: 'showcaseIcon',
+                onOpen: () => restoreShowcase(),
+            },
+        ];
         Object.keys(APPLICATIONS).forEach((key) => {
             const app = APPLICATIONS[key];
             newShortcuts.push({
                 shortcutName: app.name,
                 icon: app.shortcutIcon,
-                onOpen: () => {
-                    addWindow(
-                        app.key,
-                        <app.component
-                            onInteract={() => onWindowInteract(app.key)}
-                            onMinimize={() => minimizeWindow(app.key)}
-                            onClose={() => removeWindow(app.key)}
-                            key={app.key}
-                        />
-                    );
-                },
+                onOpen: () => addWindow(app.key, <app.component
+                    onInteract={() => onWindowInteract(app.key)}
+                    onMinimize={() => minimizeWindow(app.key)}
+                    onClose={() => removeWindow(app.key)}
+                    key={app.key}
+                />),
             });
         });
-
-        newShortcuts.forEach((shortcut) => {
-            if (shortcut.shortcutName === 'Coding for Change') {
-                shortcut.onOpen();
-            }
-        });
-
         setShortcuts(newShortcuts);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const rebootDesktop = useCallback(() => {
         setWindows({});
+        setShowcaseState({ minimized: false, zIndex: 2 });
     }, []);
 
     const removeWindow = useCallback((key: string) => {
-        // Absolute hack and a half
         setTimeout(() => {
-            setWindows((prevWindows) => {
-                const newWindows = { ...prevWindows };
-                delete newWindows[key];
-                return newWindows;
+            setWindows((prev) => {
+                const next = { ...prev };
+                delete next[key];
+                return next;
             });
         }, 100);
     }, []);
 
     const minimizeWindow = useCallback((key: string) => {
-        setWindows((prevWindows) => {
-            const newWindows = { ...prevWindows };
-            newWindows[key].minimized = true;
-            return newWindows;
-        });
+        setWindows((prev) => ({ ...prev, [key]: { ...prev[key], minimized: true } }));
     }, []);
 
     const getHighestZIndex = useCallback((): number => {
-        let highestZIndex = 0;
+        let max = showcaseState.zIndex;
         Object.keys(windows).forEach((key) => {
-            const window = windows[key];
-            if (window) {
-                if (window.zIndex > highestZIndex)
-                    highestZIndex = window.zIndex;
-            }
+            if (windows[key]?.zIndex > max) max = windows[key].zIndex;
         });
-        return highestZIndex;
-    }, [windows]);
+        return max;
+    }, [windows, showcaseState.zIndex]);
 
-    const toggleMinimize = useCallback(
-        (key: string) => {
-            const newWindows = { ...windows };
-            const highestIndex = getHighestZIndex();
-            if (
-                newWindows[key].minimized ||
-                newWindows[key].zIndex === highestIndex
-            ) {
-                newWindows[key].minimized = !newWindows[key].minimized;
-            }
-            newWindows[key].zIndex = getHighestZIndex() + 1;
-            setWindows(newWindows);
-        },
-        [windows, getHighestZIndex]
-    );
+    const toggleMinimize = useCallback((key: string) => {
+        if (key === 'showcase') {
+            setShowcaseState((s) => {
+                const highest = getHighestZIndex();
+                return {
+                    minimized: s.minimized || s.zIndex === highest ? !s.minimized : s.minimized,
+                    zIndex: getHighestZIndex() + 1,
+                };
+            });
+            return;
+        }
+        const newWindows = { ...windows };
+        const highest = getHighestZIndex();
+        if (newWindows[key].minimized || newWindows[key].zIndex === highest) {
+            newWindows[key].minimized = !newWindows[key].minimized;
+        }
+        newWindows[key].zIndex = getHighestZIndex() + 1;
+        setWindows(newWindows);
+    }, [windows, getHighestZIndex]);
 
-    const onWindowInteract = useCallback(
-        (key: string) => {
-            setWindows((prevWindows) => ({
-                ...prevWindows,
-                [key]: {
-                    ...prevWindows[key],
-                    zIndex: 1 + getHighestZIndex(),
-                },
-            }));
-        },
-        [setWindows, getHighestZIndex]
-    );
+    const onWindowInteract = useCallback((key: string) => {
+        setWindows((prev) => ({
+            ...prev,
+            [key]: { ...prev[key], zIndex: 1 + getHighestZIndex() },
+        }));
+    }, [setWindows, getHighestZIndex]);
+
+    const onShowcaseInteract = useCallback(() => {
+        setShowcaseState((s) => ({ ...s, zIndex: 1 + getHighestZIndex() }));
+    }, [getHighestZIndex]);
+
+    const restoreShowcase = useCallback(() => {
+        setShowcaseState((_s) => ({ minimized: false, zIndex: getHighestZIndex() + 1 }));
+    }, [getHighestZIndex]);
 
     const startShutdown = useCallback(() => {
         setTimeout(() => {
             setShutdown(true);
-            setNumShutdowns(numShutdowns + 1);
+            setNumShutdowns((n) => n + 1);
         }, 600);
-    }, [numShutdowns]);
+    }, []);
 
-    const addWindow = useCallback(
-        (key: string, element: JSX.Element) => {
-            setWindows((prevState) => ({
-                ...prevState,
-                [key]: {
-                    zIndex: getHighestZIndex() + 1,
-                    minimized: false,
-                    component: element,
-                    name: APPLICATIONS[key].name,
-                    icon: APPLICATIONS[key].shortcutIcon,
-                },
-            }));
+    const addWindow = useCallback((key: string, element: React.ReactElement) => {
+        setWindows((prev) => ({
+            ...prev,
+            [key]: {
+                zIndex: getHighestZIndex() + 1,
+                minimized: false,
+                component: element,
+                name: APPLICATIONS[key].name,
+                icon: APPLICATIONS[key].shortcutIcon,
+            },
+        }));
+    }, [getHighestZIndex]);
+
+    const openSearch = useCallback(() => {
+        addWindow('search', <Search
+            onInteract={() => onWindowInteract('search')}
+            onMinimize={() => minimizeWindow('search')}
+            onClose={() => removeWindow('search')}
+            key="search"
+        />);
+    }, [addWindow, onWindowInteract, minimizeWindow, removeWindow]);
+
+    // Build toolbar windows map including showcase
+    const allWindows: DesktopWindows = {
+        showcase: {
+            zIndex: showcaseState.zIndex,
+            minimized: showcaseState.minimized,
+            component: <></>,
+            name: 'Coding for Change',
+            icon: 'showcaseIcon',
         },
-        [getHighestZIndex]
-    );
+        ...windows,
+    };
 
-    return !shutdown ? (
+    if (shutdown) {
+        return <ShutdownSequence setShutdown={setShutdown} numShutdowns={numShutdowns} />;
+    }
+
+    return (
         <div style={styles.desktop}>
-            {/* For each window in windows, loop over and render  */}
+            {/* ShowcaseExplorer - always mounted */}
+            <div style={Object.assign({}, { zIndex: showcaseState.zIndex }, showcaseState.minimized && styles.minimized)}>
+                <ShowcaseExplorer
+                    onClose={() => setShowcaseState((s) => ({ ...s, minimized: true }))}
+                    onInteract={onShowcaseInteract}
+                    onMinimize={() => setShowcaseState((s) => ({ ...s, minimized: true }))}
+                >
+                    {children}
+                </ShowcaseExplorer>
+            </div>
+
+            {/* Dynamic windows */}
             {Object.keys(windows).map((key) => {
                 const element = windows[key].component;
-                if (!element) return <div key={`win-${key}`}></div>;
+                if (!element) return <div key={`win-${key}`} />;
                 return (
                     <div
                         key={`win-${key}`}
-                        style={Object.assign(
-                            {},
-                            { zIndex: windows[key].zIndex },
-                            windows[key].minimized && styles.minimized
-                        )}
+                        style={Object.assign({}, { zIndex: windows[key].zIndex }, windows[key].minimized && styles.minimized)}
                     >
-                        {React.cloneElement(element, {
+                        {React.cloneElement(element as React.ReactElement<any>, {
                             key,
                             onInteract: () => onWindowInteract(key),
                             onClose: () => removeWindow(key),
@@ -196,61 +223,37 @@ const Desktop: React.FC<DesktopProps> = (props) => {
                     </div>
                 );
             })}
+
             <div style={styles.shortcuts}>
-                {shortcuts.map((shortcut, i) => {
-                    return (
-                        <div
-                            style={Object.assign({}, styles.shortcutContainer, {
-                                top: i * 104,
-                            })}
-                            key={shortcut.shortcutName}
-                        >
-                            <DesktopShortcut
-                                icon={shortcut.icon}
-                                shortcutName={shortcut.shortcutName}
-                                onOpen={shortcut.onOpen}
-                            />
-                        </div>
-                    );
-                })}
+                {shortcuts.map((shortcut, i) => (
+                    <div
+                        style={Object.assign({}, styles.shortcutContainer, { top: i * 104 })}
+                        key={shortcut.shortcutName}
+                    >
+                        <DesktopShortcut
+                            icon={shortcut.icon}
+                            shortcutName={shortcut.shortcutName}
+                            onOpen={shortcut.onOpen}
+                        />
+                    </div>
+                ))}
             </div>
+
             <Toolbar
-                windows={windows}
+                windows={allWindows}
                 toggleMinimize={toggleMinimize}
                 shutdown={startShutdown}
+                openSearch={openSearch}
             />
         </div>
-    ) : (
-        <ShutdownSequence
-            setShutdown={setShutdown}
-            numShutdowns={numShutdowns}
-        />
     );
 };
 
 const styles: StyleSheetCSS = {
-    desktop: {
-        minHeight: '100%',
-        flex: 1,
-        backgroundColor: Colors.turquoise,
-    },
-    shutdown: {
-        minHeight: '100%',
-        flex: 1,
-        backgroundColor: '#1d2e2f',
-    },
-    shortcutContainer: {
-        position: 'absolute',
-    },
-    shortcuts: {
-        position: 'absolute',
-        top: 16,
-        left: 6,
-    },
-    minimized: {
-        pointerEvents: 'none',
-        opacity: 0,
-    },
+    desktop: { minHeight: '100%', flex: 1, backgroundColor: Colors.turquoise },
+    shortcutContainer: { position: 'absolute' },
+    shortcuts: { position: 'absolute', top: 16, left: 6 },
+    minimized: { pointerEvents: 'none', opacity: 0 },
 };
 
 export default Desktop;

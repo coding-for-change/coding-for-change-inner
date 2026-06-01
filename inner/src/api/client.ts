@@ -1,4 +1,4 @@
-const API_BASE = process.env.REACT_APP_API_URL || '/api';
+const API_BASE = '/api'
 
 export interface PaginatedResponse<T> {
     docs: T[];

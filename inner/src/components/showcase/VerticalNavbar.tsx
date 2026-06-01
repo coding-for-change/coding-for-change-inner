@@ -1,6 +1,7 @@
+'use client'
 import React, { useEffect, useState } from 'react';
 import { Link, ExperienceToggle } from '../general';
-import { useLocation } from 'react-router-dom';
+import { usePathname } from 'next/navigation';
 import useIsMobile from '../../hooks/useIsMobile';
 
 export interface VerticalNavbarProps {}
@@ -18,16 +19,16 @@ const NAV_LINKS: { to: string; text: string }[] = [
 ];
 
 const VerticalNavbar: React.FC<VerticalNavbarProps> = () => {
-    const location = useLocation();
+    const pathname = usePathname();
     const isMobile = useIsMobile();
     const [menuOpen, setMenuOpen] = useState(false);
 
-    const isHome = location.pathname === '/';
+    const isHome = pathname === '/';
 
     // Collapse the mobile menu whenever the route changes.
     useEffect(() => {
         setMenuOpen(false);
-    }, [location.pathname]);
+    }, [pathname]);
 
     // The Home page carries its own navigation, so no navbar there.
     if (isHome) return <></>;

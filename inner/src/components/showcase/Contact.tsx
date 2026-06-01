@@ -1,3 +1,4 @@
+'use client'
 import React, { useState } from 'react';
 import { useSiteConfig } from '../../api';
 import useIsMobile from '../../hooks/useIsMobile';
@@ -11,25 +12,60 @@ const validateEmail = (email: string) => {
     return re.test(String(email).toLowerCase());
 };
 
-const Contact: React.FC<ContactProps> = (props) => {
+const Contact: React.FC<ContactProps> = () => {
     const [organization, setOrganization] = useState('');
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [message, setMessage] = useState('');
+    const [submitted, setSubmitted] = useState(false);
     const siteConfig = useSiteConfig();
     const isMobile = useIsMobile();
 
     const isFormValid =
         validateEmail(email) && name.length > 0 && message.length > 0;
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!isFormValid) return;
+        try {
+            const formsRes = await fetch('/api/forms?where[slug][equals]=contact');
+            const formsData = await formsRes.json();
+            const form = formsData.docs?.[0];
+            if (form) {
+                await fetch('/api/form-submissions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        form: form.id,
+                        submissionData: [
+                            { field: 'name', value: name },
+                            { field: 'email', value: email },
+                            { field: 'organization', value: organization },
+                            { field: 'message', value: message },
+                        ],
+                    }),
+                });
+                setSubmitted(true);
+                return;
+            }
+        } catch (_) {}
+        // Fallback to mailto
         const subject = encodeURIComponent(`Contact from ${name}${organization ? ` (${organization})` : ''}`);
         const body = encodeURIComponent(
             `Name: ${name}\nEmail: ${email}\nOrganization/NGO: ${organization || 'N/A'}\n\nMessage:\n${message}`
         );
         window.location.href = `mailto:${siteConfig.email}?subject=${subject}&body=${body}`;
     };
+
+    if (submitted) {
+        return (
+            <div className="site-page-content">
+                <h1>Message Sent!</h1>
+                <div className="text-block">
+                    <p>Thank you for reaching out! We&apos;ll get back to you soon.</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="site-page-content">

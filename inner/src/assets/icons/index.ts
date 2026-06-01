@@ -32,9 +32,10 @@ const icons = {
 
 export type IconName = keyof typeof icons;
 
-const getIconByName = (
-    iconName: IconName
-    // @ts-ignore
-): React.FC<React.SVGAttributes<SVGElement>> => icons[iconName];
+const getIconByName = (iconName: IconName): string => {
+    const icon = icons[iconName];
+    if (typeof icon === 'string') return icon;
+    return (icon as unknown as { src: string }).src;
+};
 
 export default getIconByName;

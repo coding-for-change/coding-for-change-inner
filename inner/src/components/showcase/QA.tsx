@@ -1,17 +1,15 @@
+'use client'
 import React, { useState } from 'react';
-import { useCmsCollection } from '../../api';
 import { CmsFaqItem } from '../../api/types';
-import { RetroLoader } from '../general';
 
-const QA: React.FC = () => {
+interface QAProps { faq: CmsFaqItem[] }
+
+const QA: React.FC<QAProps> = ({ faq }) => {
     const [openId, setOpenId] = useState<number | null>(null);
-    const { data: faq, loading } = useCmsCollection<CmsFaqItem>('faq');
 
     const toggle = (id: number) => {
         setOpenId(openId === id ? null : id);
     };
-
-    if (loading) return <div className="site-page-content"><RetroLoader /></div>;
 
     return (
         <div className="site-page-content">

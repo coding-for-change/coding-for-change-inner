@@ -1,0 +1,12 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/(os)/about/page": "/about",
+  "/(os)/events/page": "/events",
+  "/(os)/qa/page": "/qa",
+  "/(os)/page": "/",
+  "/(os)/join/page": "/join",
+  "/(os)/team/page": "/team",
+  "/(os)/sponsors/page": "/sponsors",
+  "/(os)/contact/page": "/contact",
+  "/(os)/projects/page": "/projects"
+}

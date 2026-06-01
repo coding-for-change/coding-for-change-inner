@@ -1,18 +1,17 @@
+'use client'
 import React, { useEffect, useRef, useState } from 'react';
 import Colors from '../../constants/colors';
 import { Icon } from '../general';
 import useIsMobile from '../../hooks/useIsMobile';
-// import { } from '../general';
-// import Home from '../site/Home';
-// import Window from './Window';
 
 export interface ToolbarProps {
     windows: DesktopWindows;
     toggleMinimize: (key: string) => void;
     shutdown: () => void;
+    openSearch: () => void;
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({ windows, toggleMinimize }) => {
+const Toolbar: React.FC<ToolbarProps> = ({ windows, toggleMinimize, openSearch }) => {
     // The Start menu's only entry is the 3D-experience switch, and the 3D
     // scene isn't offered on mobile — so the Start button is dropped there
     // rather than opening an empty menu.
@@ -168,6 +167,16 @@ const Toolbar: React.FC<ToolbarProps> = ({ windows, toggleMinimize }) => {
                             </div>
                         </div>
                     )}
+                    {/* Search button */}
+                    <div
+                        style={Object.assign({}, styles.searchContainerOuter)}
+                        onMouseDown={openSearch}
+                        title="Search"
+                    >
+                        <div style={styles.searchContainer}>
+                            <p style={styles.searchText}>🔍</p>
+                        </div>
+                    </div>
                     <div style={styles.toolbarTabsContainer}>
                         {Object.keys(windows).map((key) => {
                             return (
@@ -193,7 +202,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ windows, toggleMinimize }) => {
                                     >
                                         <Icon
                                             size={18}
-                                            icon={windows[key].icon}
+                                            icon={windows[key].icon as any}
                                             style={styles.tabIcon}
                                         />
                                         <p style={styles.tabText}>
@@ -226,7 +235,6 @@ const styles: StyleSheetCSS = {
         zIndex: 100000,
     },
     verticalStartContainer: {
-        // width: 30,
         height: '100%',
         background: Colors.darkGray,
     },
@@ -251,7 +259,6 @@ const styles: StyleSheetCSS = {
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'flex-end',
-        // alignItems: 'flex-end',
     },
     startWindow: {
         position: 'absolute',
@@ -259,7 +266,6 @@ const styles: StyleSheetCSS = {
         display: 'flex',
         flex: 1,
         width: 256,
-        // height: 400,
         left: 4,
         boxSizing: 'border-box',
         border: `1px solid ${Colors.white}`,
@@ -289,7 +295,6 @@ const styles: StyleSheetCSS = {
     },
     startMenuOption: {
         alignItems: 'center',
-        // flex: 1,
         height: 24,
         padding: 12,
     },
@@ -339,7 +344,6 @@ const styles: StyleSheetCSS = {
     startContainer: {
         alignItems: 'center',
         flexShrink: 1,
-        // background: 'red',
         border: `1px solid ${Colors.lightGray}`,
         borderBottomColor: Colors.darkGray,
         borderRightColor: Colors.darkGray,
@@ -355,8 +359,31 @@ const styles: StyleSheetCSS = {
         borderBottomColor: Colors.black,
         borderRightColor: Colors.black,
     },
+    searchContainerOuter: {
+        marginLeft: 3,
+        marginRight: 3,
+        boxSizing: 'border-box',
+        cursor: 'pointer',
+        border: `1px solid ${Colors.white}`,
+        borderBottomColor: Colors.black,
+        borderRightColor: Colors.black,
+    },
+    searchContainer: {
+        alignItems: 'center',
+        flexShrink: 1,
+        border: `1px solid ${Colors.lightGray}`,
+        borderBottomColor: Colors.darkGray,
+        borderRightColor: Colors.darkGray,
+        padding: 1,
+        paddingLeft: 5,
+        paddingRight: 5,
+    },
+    searchText: {
+        fontSize: 14,
+        fontFamily: 'MSSerif',
+        lineHeight: 1,
+    },
     toolbarTabsContainer: {
-        // background: 'blue',
         flex: 1,
         marginLeft: 4,
         marginRight: 4,
@@ -366,7 +393,6 @@ const styles: StyleSheetCSS = {
     },
     toolbarInner: {
         borderTop: `1px solid ${Colors.white}`,
-
         alignItems: 'center',
         flex: 1,
     },
@@ -384,7 +410,6 @@ const styles: StyleSheetCSS = {
         paddingRight: 4,
         border: `1px solid ${Colors.white}`,
         borderTopColor: Colors.darkGray,
-
         justifyContent: 'space-between',
         alignItems: 'center',
         borderLeftColor: Colors.darkGray,

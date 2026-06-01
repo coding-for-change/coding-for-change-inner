@@ -1,13 +1,10 @@
+'use client'
 import React from 'react';
-import { useCmsCollection } from '../../api';
 import { CmsEvent } from '../../api/types';
-import { RetroLoader } from '../general';
 
-const Events: React.FC = () => {
-    const { data: events, loading } = useCmsCollection<CmsEvent>('events');
+interface EventsProps { events: CmsEvent[] }
 
-    if (loading) return <div className="site-page-content"><RetroLoader /></div>;
-
+const Events: React.FC<EventsProps> = ({ events }) => {
     const all = events ?? [];
     const upcoming = all.filter(e => e.isUpcoming);
     const past = all.filter(e => !e.isUpcoming);

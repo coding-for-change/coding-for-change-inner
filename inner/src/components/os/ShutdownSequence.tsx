@@ -1,6 +1,8 @@
+'use client'
 import React, { useState, useEffect } from 'react';
-import neverGiveUp from '../../assets/pictures/neverGiveUp.jpg';
-import eePic from '../../assets/pictures/neverGiveUp.jpg';
+import _neverGiveUp from '../../assets/pictures/neverGiveUp.jpg';
+const neverGiveUp = (_neverGiveUp as any).src ?? String(_neverGiveUp);
+const eePic = neverGiveUp;
 export interface ShutdownSequenceProps {
     numShutdowns: number;
     setShutdown: React.Dispatch<React.SetStateAction<boolean>>;

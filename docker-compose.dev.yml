@@ -1,0 +1,111 @@
+# Hot-reloading dev stack — standalone (does NOT overlay docker-compose.yml).
+# Mirrors the prod architecture (outer Express proxies to inner + cms) so the
+# iframe and routing behave identically to production.
+#
+# Usage:
+#   docker compose -f docker-compose.dev.yml up
+#
+# Once started, open:
+#   - http://localhost/              full site (outer + 3D scene + iframe → inner)
+#   - http://localhost/3d/           outer 3D scene  (edits in ./outer rebuild; refresh browser)
+#   - http://localhost/admin         Payload CMS admin (proxied via outer; HMR works)
+#   - http://localhost:3001/         inner Next.js app, direct  (HMR — edits in ./inner show instantly)
+#   - http://localhost:3000/admin    Payload CMS admin, direct
+#
+# Source code from your host is mounted into each container, and node_modules
+# live in named volumes so they survive restarts but don't leak host artifacts.
+
+services:
+  # Outer site — runs the prod Express server (handles proxying to inner/cms)
+  # with webpack in watch mode so edits in ./outer rebuild the 3D bundle.
+  # The 3D scene requires a browser refresh after a rebuild (no HMR for outer).
+  website:
+    image: node:18-alpine
+    working_dir: /app
+    # 1) install deps, 2) do an initial build so /3d has content,
+    # 3) start webpack in watch mode (background), 4) run the Express server (foreground).
+    command: >
+      sh -c "npm install &&
+             npx webpack --config bundler/webpack.dev.js &&
+             (npx webpack --config bundler/webpack.dev.js --watch &) &&
+             node server/index.ts"
+    environment:
+      # INNER_SITE_URL is baked into the 3D bundle by webpack (DefinePlugin),
+      # so it must be set before the build runs. '/' makes the iframe load
+      # the inner site via the outer Express proxy — same as prod.
+      - INNER_SITE_URL=/
+      - CMS_URL=http://cms:3000
+      - INNER_URL=http://inner:3000
+      - PORT=8080
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+    volumes:
+      - ./outer:/app
+      - outer_node_modules:/app/node_modules
+    ports:
+      - "80:8080"
+    depends_on:
+      - inner
+      - cms
+
+  # Inner site (Next.js) — `npm run dev` with HMR
+  inner:
+    image: node:20-alpine
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+    environment:
+      - PORT=3000
+      - CMS_URL=http://cms:3000
+      - NEXT_TELEMETRY_DISABLED=1
+      # Polling is required for file-change detection through Docker bind mounts on macOS/Windows.
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+    volumes:
+      - ./inner:/app
+      - inner_node_modules:/app/node_modules
+    ports:
+      - "3001:3000"
+
+  # Payload CMS — Next.js dev server with HMR
+  cms:
+    image: node:22-alpine
+    working_dir: /app
+    command: sh -c "corepack enable && corepack prepare pnpm@10.33.4 --activate && pnpm install && pnpm dev"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql://payload:payload@postgres:5432/payload
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+    volumes:
+      - ./inner/cms:/app
+      - cms_node_modules:/app/node_modules
+      - cms-media:/app/media
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # PostgreSQL for Payload CMS
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: payload
+      POSTGRES_PASSWORD: payload
+      POSTGRES_DB: payload
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U payload"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres-data:
+  cms-media:
+  outer_node_modules:
+  inner_node_modules:
+  cms_node_modules:

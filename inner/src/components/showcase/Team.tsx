@@ -1,20 +1,18 @@
+'use client'
 import React from 'react';
-import { useCmsCollection, mediaUrl } from '../../api';
+import { mediaUrl } from '../../api';
 import { CmsTeamMember } from '../../api/types';
-import { RetroLoader } from '../general';
 import linkedinIcon from '../../assets/icons/linkedin.png';
 import githubIcon from '../../assets/icons/git.png';
 
 const linkIconMap: Record<string, string> = {
-    LinkedIn: linkedinIcon,
-    GitHub: githubIcon,
-};
+    LinkedIn: (linkedinIcon as any).src ?? String(linkedinIcon),
+    GitHub: (githubIcon as any).src ?? String(githubIcon),
+}
 
-const Team: React.FC = () => {
-    const { data: team, loading } = useCmsCollection<CmsTeamMember>('team');
+interface TeamProps { members: CmsTeamMember[] }
 
-    if (loading) return <div className="site-page-content"><RetroLoader /></div>;
-
+const Team: React.FC<TeamProps> = ({ members }) => {
     return (
         <div className="site-page-content">
             <h1>Our Team</h1>
@@ -28,7 +26,7 @@ const Team: React.FC = () => {
             </div>
             <br />
             <div style={styles.teamGrid}>
-                {(team ?? []).map(member => {
+                {(members ?? []).map(member => {
                     const imgSrc = mediaUrl(member.image);
                     return (
                         <div key={member.id} className="big-button-container" style={styles.memberCard}>

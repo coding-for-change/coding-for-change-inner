@@ -1,3 +1,4 @@
+'use client'
 import React, { useEffect, useRef, useState } from 'react';
 import { IconName } from '../../assets/icons';
 import colors from '../../constants/colors';
@@ -9,6 +10,7 @@ import ResizeIndicator from './ResizeIndicator';
 import useIsMobile from '../../hooks/useIsMobile';
 
 export interface WindowProps {
+    children?: React.ReactNode;
     closeWindow: () => void;
     minimizeWindow: () => void;
     onInteract: () => void;
@@ -37,7 +39,7 @@ const Window: React.FC<WindowProps> = (props) => {
     const dragProps = useRef<{
         dragStartX: any;
         dragStartY: any;
-    }>();
+    }>(undefined);
 
     const resizeRef = useRef<any>(null);
 

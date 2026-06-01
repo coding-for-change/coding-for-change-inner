@@ -1,7 +1,6 @@
+'use client'
 import React from 'react';
-import { useCmsCollection } from '../../api';
 import { CmsProject } from '../../api/types';
-import { RetroLoader } from '../general';
 
 const statusColors: Record<string, string> = {
     active: '#008000',
@@ -9,11 +8,9 @@ const statusColors: Record<string, string> = {
     recruiting: '#800000',
 };
 
-const CFCProjects: React.FC = () => {
-    const { data: projects, loading } = useCmsCollection<CmsProject>('projects');
+interface CFCProjectsProps { projects: CmsProject[] }
 
-    if (loading) return <div className="site-page-content"><RetroLoader /></div>;
-
+const CFCProjects: React.FC<CFCProjectsProps> = ({ projects }) => {
     return (
         <div className="site-page-content">
             <h1>Projects</h1>

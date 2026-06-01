@@ -1,9 +1,16 @@
+'use client'
 import React, { useState, useRef, useEffect } from 'react';
-import PlayIcon from '../../assets/icons/play.png';
-import PauseIcon from '../../assets/icons/pause.png';
-import RewindIcon from '../../assets/icons/rewind.png';
-import ForwardIcon from '../../assets/icons/forward.png';
-import CDIcon from '../../assets/icons/cd.png';
+import _PlayIcon from '../../assets/icons/play.png';
+import _PauseIcon from '../../assets/icons/pause.png';
+import _RewindIcon from '../../assets/icons/rewind.png';
+import _ForwardIcon from '../../assets/icons/forward.png';
+import _CDIcon from '../../assets/icons/cd.png';
+
+const PlayIcon = (_PlayIcon as any).src ?? String(_PlayIcon);
+const PauseIcon = (_PauseIcon as any).src ?? String(_PauseIcon);
+const RewindIcon = (_RewindIcon as any).src ?? String(_RewindIcon);
+const ForwardIcon = (_ForwardIcon as any).src ?? String(_ForwardIcon);
+const CDIcon = (_CDIcon as any).src ?? String(_CDIcon);
 import colors from '../../constants/colors';
 
 import { motion, Variants } from 'framer-motion';

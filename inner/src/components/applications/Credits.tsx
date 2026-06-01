@@ -1,3 +1,4 @@
+'use client'
 import React, { useEffect, useState } from 'react';
 import Window from '../os/Window';
 import { useInterval } from 'usehooks-ts';

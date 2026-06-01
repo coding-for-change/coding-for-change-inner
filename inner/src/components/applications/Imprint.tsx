@@ -1,3 +1,4 @@
+'use client'
 import React from 'react';
 import Window from '../os/Window';
 import { useSiteConfig } from '../../api';

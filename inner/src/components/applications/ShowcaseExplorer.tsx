@@ -1,20 +1,13 @@
+'use client'
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from '../showcase/Home';
-import About from '../showcase/About';
 import Window from '../os/Window';
-import CFCProjects from '../showcase/CFCProjects';
-import Contact from '../showcase/Contact';
-import Events from '../showcase/Events';
-import Sponsors from '../showcase/Sponsors';
-import Team from '../showcase/Team';
-import QA from '../showcase/QA';
-import BecomeAMember from '../showcase/BecomeAMember';
 import VerticalNavbar from '../showcase/VerticalNavbar';
 import useInitialWindowSize from '../../hooks/useInitialWindowSize';
 import { useSiteConfig } from '../../api';
 
-export interface ShowcaseExplorerProps extends WindowAppProps {}
+export interface ShowcaseExplorerProps extends WindowAppProps {
+    children?: React.ReactNode;
+}
 
 const ShowcaseExplorer: React.FC<ShowcaseExplorerProps> = (props) => {
     const { initWidth, initHeight } = useInitialWindowSize({ margin: 100 });
@@ -34,22 +27,12 @@ const ShowcaseExplorer: React.FC<ShowcaseExplorerProps> = (props) => {
             minimizeWindow={props.onMinimize}
             bottomLeftText={siteConfig.copyrightText || ''}
         >
-            <Router basename="/">
-                <div className="site-page">
-                    <VerticalNavbar />
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/about" element={<About />} />
-                        <Route path="/events" element={<Events />} />
-                        <Route path="/projects" element={<CFCProjects />} />
-                        <Route path="/sponsors" element={<Sponsors />} />
-                        <Route path="/team" element={<Team />} />
-                        <Route path="/qa" element={<QA />} />
-                        <Route path="/join" element={<BecomeAMember />} />
-                        <Route path="/contact" element={<Contact />} />
-                    </Routes>
+            <div className="site-page">
+                <VerticalNavbar />
+                <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
+                    {props.children}
                 </div>
-            </Router>
+            </div>
         </Window>
     );
 };

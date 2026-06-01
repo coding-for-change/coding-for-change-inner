@@ -1,14 +1,15 @@
+'use client'
 import React, { useState, useEffect, useRef } from 'react';
-import { useCmsCollection, mediaUrl } from '../../api';
+import { mediaUrl } from '../../api';
 import { CmsSponsor } from '../../api/types';
-import { RetroLoader } from '../general';
 
 const MAX_VISIBLE = 4;
 const MIN_SLIDE_WIDTH = 200;
 const AUTO_INTERVAL = 3000;
 
-const Sponsors: React.FC = () => {
-    const { data: sponsors, loading } = useCmsCollection<CmsSponsor>('sponsors');
+interface SponsorsProps { sponsors: CmsSponsor[] }
+
+const Sponsors: React.FC<SponsorsProps> = ({ sponsors }) => {
     const list = sponsors ?? [];
 
     // Duplicate the list for seamless infinite scroll.
@@ -64,13 +65,6 @@ const Sponsors: React.FC = () => {
     };
 
     const translateX = -(index * slideWidth);
-
-    if (loading)
-        return (
-            <div className="site-page-content">
-                <RetroLoader />
-            </div>
-        );
 
     return (
         <div className="site-page-content">

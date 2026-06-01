@@ -1,3 +1,4 @@
+'use client'
 import React, { useCallback, useEffect, useState } from 'react';
 import Colors from '../../constants/colors';
 import Button from '../os/Button';

@@ -1,3 +1,4 @@
+'use client'
 import React from 'react';
 import { Link } from '../general';
 import { useSiteConfig } from '../../api';

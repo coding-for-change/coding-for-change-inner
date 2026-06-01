@@ -1,3 +1,4 @@
+'use client'
 import React, { useState } from 'react';
 import { IconName } from '../../assets/icons';
 import Colors from '../../constants/colors';

@@ -1,27 +1,63 @@
+'use client'
 import React, { useState } from 'react';
-import { useCmsGlobal } from '../../api';
 import { CmsMembership } from '../../api/types';
-import { RetroLoader } from '../general';
 
-const BecomeAMember: React.FC = () => {
+interface BecomeAMemberProps {
+    membership: CmsMembership | null;
+}
+
+const BecomeAMember: React.FC<BecomeAMemberProps> = ({ membership }) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [motivation, setMotivation] = useState('');
-    const { data: membership, loading } = useCmsGlobal<CmsMembership>('membership');
+    const [submitted, setSubmitted] = useState(false);
+    const [error, setError] = useState('');
 
-    const handleSubmit = () => {
-        if (!membership) return;
-        const subject = encodeURIComponent('Membership Application - ' + name);
+    if (!membership) return <div className="site-page-content"><p>Content unavailable.</p></div>;
+
+    const isValid = name.length > 0 && email.length > 0 && motivation.length > 0;
+
+    const handleSubmit = async () => {
+        if (!name || !email || !motivation) return;
+        setError('');
+        try {
+            // Try Form Builder first
+            const formsRes = await fetch('/api/forms?where[slug][equals]=membership-interest');
+            const formsData = await formsRes.json();
+            const form = formsData.docs?.[0];
+            if (form) {
+                await fetch('/api/form-submissions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        form: form.id,
+                        submissionData: [
+                            { field: 'name', value: name },
+                            { field: 'email', value: email },
+                            { field: 'motivation', value: motivation },
+                        ],
+                    }),
+                });
+                setSubmitted(true);
+                return;
+            }
+        } catch (_) {}
+        // Fallback to mailto
+        const subject = encodeURIComponent(`Membership Application - ${name}`);
         const body = encodeURIComponent(
             `Name: ${name}\nEmail: ${email}\n\nMotivation:\n${motivation}`
         );
         window.location.href = `mailto:${membership.contactEmail}?subject=${subject}&body=${body}`;
     };
 
-    const isValid = name.length > 0 && email.length > 0 && motivation.length > 0;
-
-    if (loading) return <div className="site-page-content"><RetroLoader /></div>;
-    if (!membership) return <div className="site-page-content"><p>Content unavailable.</p></div>;
+    if (submitted) {
+        return (
+            <div className="site-page-content">
+                <h1>Application Sent!</h1>
+                <div className="text-block"><p>Thank you for applying! We&apos;ll be in touch soon.</p></div>
+            </div>
+        );
+    }
 
     return (
         <div className="site-page-content">
@@ -73,6 +109,7 @@ const BecomeAMember: React.FC = () => {
                     value={motivation}
                     onChange={e => setMotivation(e.target.value)}
                 />
+                {error && <p style={{ color: 'red' }}>{error}</p>}
                 <button
                     className="site-button"
                     style={styles.button}

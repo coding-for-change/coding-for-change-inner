@@ -1,7 +1,7 @@
-import React from 'react';
-import { useEffect } from 'react';
-import { useState } from 'react';
-import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
+'use client'
+import React, { useState } from 'react'
+import NextLink from 'next/link'
+import { usePathname } from 'next/navigation'
 
 export interface LinkProps {
     text: string;
@@ -10,82 +10,39 @@ export interface LinkProps {
     outsideTo?: string;
 }
 
-const Link: React.FC<LinkProps> = (props) => {
-    const navigate = useNavigate();
-
-    // get current location of react router
-    const location = useLocation();
-    const [isHere, setIsHere] = useState(false);
-
-    // if current path is the same as the link path
-    useEffect(() => {
-        if (location.pathname === `/${props.to}`) {
-            setIsHere(true);
-        } else {
-            setIsHere(false);
-        }
-        return () => {};
-    }, [location, props.to]);
-
-    const [active, setActive] = useState(false);
-
-    const handleClick = (e: any) => {
-        let isMounted = true;
-        e.preventDefault();
-        setActive(true);
-        if (location.pathname !== `/${props.to}`) {
-            setTimeout(() => {
-                if (isMounted) navigate(`/${props.to}`);
-            }, 100);
-        }
-        let t = setTimeout(() => {
-            if (isMounted) setActive(false);
-        }, 100);
-
-        return () => {
-            isMounted = false;
-            clearTimeout(t);
-        };
-    };
+const Link: React.FC<LinkProps> = ({ text, to, containerStyle }) => {
+    const pathname = usePathname()
+    const href = `/${to}`
+    const isHere = pathname === href || (to === '' && pathname === '/')
+    const [active, setActive] = useState(false)
 
     return (
-        <RouterLink
-            to={`/${props.to}`}
-            onMouseDown={handleClick}
-            style={Object.assign({}, { display: 'flex' }, props.containerStyle)}
+        <NextLink
+            href={href}
+            onMouseDown={() => {
+                setActive(true)
+                setTimeout(() => setActive(false), 100)
+            }}
+            style={Object.assign({}, { display: 'flex' }, containerStyle)}
         >
             {isHere && <div style={styles.hereIndicator} />}
             <h4
                 className="router-link"
-                style={Object.assign(
-                    {},
-                    styles.link,
-                    active && { color: 'red' }
-                )}
+                style={Object.assign({}, styles.link, active && { color: 'red' })}
             >
-                {props.text}
+                {text}
             </h4>
-        </RouterLink>
-    );
-};
+        </NextLink>
+    )
+}
 
 const styles: StyleSheetCSS = {
-    link: {
-        cursor: 'pointer',
-        fontWeight: 'bolder',
-        textDecoration: 'underline',
-    },
+    link: { cursor: 'pointer', fontWeight: 'bolder', textDecoration: 'underline' },
     hereIndicator: {
-        width: 4,
-        height: 4,
-        borderWidth: 3,
-        borderStyle: 'solid',
-        borderColor: 'rgb(85, 26, 139)',
-        alignSelf: 'center',
-        borderRadius: '50%',
-        marginRight: 6,
-        textDecoration: 'none',
+        width: 4, height: 4, borderWidth: 3, borderStyle: 'solid',
+        borderColor: 'rgb(85, 26, 139)', alignSelf: 'center', borderRadius: '50%',
+        marginRight: 6, textDecoration: 'none',
     },
-};
+}
 
-export default Link;
+export default Link

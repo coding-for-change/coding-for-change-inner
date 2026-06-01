@@ -1,10 +1,11 @@
+'use client'
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { useSiteConfig } from '../../api';
 
 export interface AboutProps {}
 
-const About: React.FC<AboutProps> = (props) => {
+const About: React.FC<AboutProps> = () => {
     const siteConfig = useSiteConfig();
 
     return (
@@ -17,8 +18,8 @@ const About: React.FC<AboutProps> = (props) => {
                 <br />
                 <p>
                     Have questions or want to get involved? Check out our{' '}
-                    <Link to="/qa">Q&A page</Link> or reach out via the{' '}
-                    <Link to="/contact">contact form</Link>. You can also email
+                    <Link href="/qa">Q&A page</Link> or reach out via the{' '}
+                    <Link href="/contact">contact form</Link>. You can also email
                     us at{' '}
                     <a href={`mailto:${siteConfig.email}`}>
                         {siteConfig.email}
@@ -69,7 +70,7 @@ const About: React.FC<AboutProps> = (props) => {
                 <br />
                 <p>
                     Interested in joining us? Check out the{' '}
-                    <Link to="/join">membership page</Link> to learn more about
+                    <Link href="/join">membership page</Link> to learn more about
                     how you can get involved!
                 </p>
             </div>
