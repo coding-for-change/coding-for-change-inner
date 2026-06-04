@@ -1,5 +1,7 @@
+'use client';
 import React, { useEffect, useRef, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { ExperienceToggle } from '../general';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useSiteConfig } from '../../api';
@@ -13,13 +15,13 @@ const SECTION_IDS = ['home', 'about', 'process', 'events', 'projects', 'sponsors
 const TopNav: React.FC = () => {
     const { t, locale, setLocale } = useLanguage();
     const siteConfig = useSiteConfig();
-    const location = useLocation();
-    const navigate = useNavigate();
+    const pathname = usePathname() ?? '/';
+    const router = useRouter();
     const [active, setActive] = useState('home');
     const [scrolled, setScrolled] = useState(false);
     const navRef = useRef<HTMLElement>(null);
 
-    const onLanding = location.pathname === '/';
+    const onLanding = pathname === '/';
 
     // The nav sits transparent over the hero gradient at the top of the
     // page and fades to a solid background once the content scrolls beneath
@@ -56,10 +58,13 @@ const TopNav: React.FC = () => {
     }, [onLanding]);
 
     const goToSection = (id: string) => {
-        navigate(id === 'home' ? '/' : `/#${id}`);
         if (id === 'home' && onLanding) {
             document.getElementById('home')?.scrollIntoView({ block: 'start' });
+            // Clear any lingering hash so the URL reflects the top of the page.
+            router.push('/');
+            return;
         }
+        router.push(id === 'home' ? '/' : `/#${id}`);
     };
 
     const sectionLinks = [{ id: 'home', label: t.nav.home }];
@@ -80,7 +85,7 @@ const TopNav: React.FC = () => {
                 onClick={() => goToSection('home')}
                 aria-label={siteConfig.clubName || 'Home'}
             >
-                <img className="lp-nav__logo" src={Logo} alt="" />
+                <img className="lp-nav__logo" src={Logo.src} alt="" />
                 <span className="lp-nav__name">
                     {siteConfig.clubName || 'Coding for Change'}
                 </span>
@@ -105,10 +110,10 @@ const TopNav: React.FC = () => {
                 {pageLinks.map((link) => (
                     <Link
                         key={link.to}
-                        to={link.to}
+                        href={link.to}
                         className={
                             'lp-nav__link' +
-                            (location.pathname.startsWith(link.to)
+                            (pathname.startsWith(link.to)
                                 ? ' lp-nav__link--active'
                                 : '')
                         }
@@ -134,7 +139,7 @@ const TopNav: React.FC = () => {
                         </button>
                     ))}
                 </div>
-                <Link className="lp-nav__cta" to="/join">
+                <Link className="lp-nav__cta" href="/join">
                     {t.nav.join}
                 </Link>
             </div>

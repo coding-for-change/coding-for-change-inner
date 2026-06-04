@@ -1,4 +1,5 @@
-import React from 'react';
+'use client';
+import React, { useEffect, useState } from 'react';
 import useIsMobile from '../../hooks/useIsMobile';
 
 export interface ExperienceToggleProps {
@@ -36,7 +37,11 @@ const ExperienceToggle: React.FC<ExperienceToggleProps> = ({
     containerStyle,
 }) => {
     const isMobile = useIsMobile();
-    const embedded = isEmbedded();
+    // `isEmbedded()` can't run during SSR (it reads `window`), and on the
+    // server it would default to "embedded" and mismatch the client. Resolve
+    // it after mount so the server and first client render agree.
+    const [embedded, setEmbedded] = useState(false);
+    useEffect(() => setEmbedded(isEmbedded()), []);
 
     const handleClick = () => {
         if (embedded && window.top) {

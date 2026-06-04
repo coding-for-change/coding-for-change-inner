@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+'use client';
+import React, { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCmsCollection, mediaUrl, useSiteConfig } from '../../api';
 import {
@@ -24,42 +26,58 @@ const statusColors: Record<string, string> = {
     recruiting: '#b5651d',
 };
 
-const Landing: React.FC = () => {
+export interface LandingProps {
+    events?: CmsEvent[] | null;
+    projects?: CmsProject[] | null;
+    sponsors?: CmsSponsor[] | null;
+    faq?: CmsFaqItem[] | null;
+}
+
+const Landing: React.FC<LandingProps> = (props) => {
     const siteConfig = useSiteConfig();
     const { t } = useLanguage();
-    const location = useLocation();
-    const navigate = useNavigate();
+    const pathname = usePathname();
+    const router = useRouter();
 
     const { data: events, loading: eventsLoading } =
-        useCmsCollection<CmsEvent>('events');
+        useCmsCollection<CmsEvent>('events', undefined, props.events);
     const { data: projects, loading: projectsLoading } =
-        useCmsCollection<CmsProject>('projects');
+        useCmsCollection<CmsProject>('projects', undefined, props.projects);
     const { data: sponsors, loading: sponsorsLoading } =
-        useCmsCollection<CmsSponsor>('sponsors');
+        useCmsCollection<CmsSponsor>('sponsors', undefined, props.sponsors);
     const { data: faq, loading: faqLoading } =
-        useCmsCollection<CmsFaqItem>('faq');
+        useCmsCollection<CmsFaqItem>('faq', undefined, props.faq);
 
     const [openFaq, setOpenFaq] = useState<number | null>(null);
 
     // Deep-link / nav handling: scroll to the section named in the URL hash
-    // (e.g. /#projects). Re-runs after a short delay so async CMS sections
-    // that grow taller after loading still land in the right spot.
+    // (e.g. /#projects). Next's router doesn't expose the hash, so we read it
+    // off `window.location` and also listen for `hashchange`. Re-runs after a
+    // short delay so async CMS sections that grow taller after loading still
+    // land in the right spot.
+    const scrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     useEffect(() => {
-        const id = location.hash.replace('#', '');
-        if (!id) {
-            document
-                .getElementById('home')
-                ?.scrollIntoView({ block: 'start' });
-            return;
-        }
-        const scroll = () =>
-            document
-                .getElementById(id)
-                ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        scroll();
-        const timer = setTimeout(scroll, 350);
-        return () => clearTimeout(timer);
-    }, [location.hash, location.pathname]);
+        const scrollToHash = () => {
+            if (scrollTimer.current) clearTimeout(scrollTimer.current);
+            const id = window.location.hash.replace('#', '');
+            if (!id) {
+                document.getElementById('home')?.scrollIntoView({ block: 'start' });
+                return;
+            }
+            const scroll = () =>
+                document
+                    .getElementById(id)
+                    ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            scroll();
+            scrollTimer.current = setTimeout(scroll, 350);
+        };
+        scrollToHash();
+        window.addEventListener('hashchange', scrollToHash);
+        return () => {
+            window.removeEventListener('hashchange', scrollToHash);
+            if (scrollTimer.current) clearTimeout(scrollTimer.current);
+        };
+    }, [pathname]);
 
     const upcoming = (events ?? []).filter((e) => e.isUpcoming);
     const past = (events ?? []).filter((e) => !e.isUpcoming);
@@ -110,7 +128,7 @@ const Landing: React.FC = () => {
                             {siteConfig.tagline || t.about.oneLiner}
                         </p>
                         <div className="lp-hero__ctas">
-                            <Link className="lp-btn lp-btn--primary" to="/join">
+                            <Link className="lp-btn lp-btn--primary" href="/join">
                                 {t.home.ctaPrimary}
                             </Link>
                             <a
@@ -118,7 +136,7 @@ const Landing: React.FC = () => {
                                 href="#projects"
                                 onClick={(e) => {
                                     e.preventDefault();
-                                    navigate('/#projects');
+                                    router.push('/#projects');
                                 }}
                             >
                                 {t.home.ctaSecondary}
@@ -241,7 +259,7 @@ const Landing: React.FC = () => {
                                     </p>
                                     <Link
                                         className="lp-card__link"
-                                        to="/contact"
+                                        href="/contact"
                                     >
                                         {t.events.emptyCta} →
                                     </Link>
@@ -449,13 +467,13 @@ const Landing: React.FC = () => {
                         <div className="lp-cta__btns">
                             <Link
                                 className="lp-btn lp-btn--light"
-                                to="/join"
+                                href="/join"
                             >
                                 {t.cta.join}
                             </Link>
                             <Link
                                 className="lp-btn lp-btn--light"
-                                to="/contact"
+                                href="/contact"
                             >
                                 {t.cta.contact}
                             </Link>

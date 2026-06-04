@@ -48,29 +48,27 @@ services:
       - inner
       - cms
 
-  # Inner React app (CRA) — `npm start` dev server with HMR
+  # Inner site (Next.js) — `next dev` with HMR
   inner:
-    image: node:18-alpine
+    image: node:20-alpine
     working_dir: /app
-    command: sh -c "npm install --legacy-peer-deps && npm start"
+    command: sh -c "npm install && npm run dev"
     environment:
-      - HOST=0.0.0.0
+      - HOSTNAME=0.0.0.0
       - PORT=3000
+      - NEXT_TELEMETRY_DISABLED=1
+      # Server-side CMS fetches go directly to the CMS container.
+      - CMS_INTERNAL_URL=http://cms:3000/api
       # Polling is required for file-change detection through Docker bind mounts on macOS/Windows.
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
-      # Tell CRA's HMR client to connect back through the host-port mapping.
-      - WDS_SOCKET_PORT=3001
-      # Inner is loaded both directly (localhost:3001) and proxied through outer
-      # (localhost:80 → outer Express → inner). Disable CRA's host check so the
-      # proxied requests aren't rejected.
-      - DANGEROUSLY_DISABLE_HOST_CHECK=true
-      - BROWSER=none
     volumes:
       - ./inner:/app
       - inner_node_modules:/app/node_modules
     ports:
       - "3001:3000"
+    depends_on:
+      - cms
 
   # Payload CMS — Next.js dev server with HMR
   cms:

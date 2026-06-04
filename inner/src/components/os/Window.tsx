@@ -9,6 +9,7 @@ import ResizeIndicator from './ResizeIndicator';
 import useIsMobile from '../../hooks/useIsMobile';
 
 export interface WindowProps {
+    children?: React.ReactNode;
     closeWindow: () => void;
     minimizeWindow: () => void;
     onInteract: () => void;

@@ -1,5 +1,6 @@
+'use client';
 import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import RouterLink from 'next/link';
 import { useSiteConfig } from '../../api';
 import Logo from '../../assets/Logo.png';
 
@@ -31,7 +32,7 @@ const MobileFooter: React.FC = () => {
     return (
         <footer style={styles.footer}>
             <div style={styles.top}>
-                <img src={Logo} alt="Coding for Change" style={styles.logo} />
+                <img src={Logo.src} alt="Coding for Change" style={styles.logo} />
                 {siteConfig.tagline && (
                     <p style={styles.tagline}>{siteConfig.tagline}</p>
                 )}
@@ -46,7 +47,7 @@ const MobileFooter: React.FC = () => {
                 <div style={styles.column}>
                     <p style={styles.columnHeading}>SEITEN</p>
                     {PAGE_LINKS.map((link) => (
-                        <RouterLink key={link.label} to={link.to} style={styles.columnLink}>
+                        <RouterLink key={link.label} href={link.to} style={styles.columnLink}>
                             {link.label}
                         </RouterLink>
                     ))}
@@ -54,7 +55,7 @@ const MobileFooter: React.FC = () => {
                 <div style={styles.column}>
                     <p style={styles.columnHeading}>INFORMATIONEN</p>
                     {INFO_LINKS.map((link) => (
-                        <RouterLink key={link.label} to={link.to} style={styles.columnLink}>
+                        <RouterLink key={link.label} href={link.to} style={styles.columnLink}>
                             {link.label}
                         </RouterLink>
                     ))}

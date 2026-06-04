@@ -1,5 +1,6 @@
+'use client';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useCmsCollection, mediaUrl } from '../../api';
 import { CmsBlogPost } from '../../api/types';
@@ -74,12 +75,13 @@ const PostCard: React.FC<PostCardProps> = ({ post, onOpen, locale, index }) => {
     );
 };
 
-const Blog: React.FC = () => {
+const Blog: React.FC<{ posts?: CmsBlogPost[] | null }> = (props) => {
     const { data: posts, loading } = useCmsCollection<CmsBlogPost>(
         'blog-posts',
-        BLOG_PARAMS
+        BLOG_PARAMS,
+        props.posts
     );
-    const navigate = useNavigate();
+    const router = useRouter();
     const { t, locale } = useLanguage();
 
     const [search, setSearch] = useState('');
@@ -180,7 +182,7 @@ const Blog: React.FC = () => {
                                     key={post.id}
                                     post={post}
                                     index={i}
-                                    onOpen={(slug) => navigate(`/blog/${slug}`)}
+                                    onOpen={(slug) => router.push(`/blog/${slug}`)}
                                     locale={locale}
                                 />
                             ))}

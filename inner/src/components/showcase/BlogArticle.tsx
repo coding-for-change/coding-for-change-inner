@@ -1,13 +1,12 @@
+'use client';
 import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { useCmsCollection, mediaUrl } from '../../api';
+import { mediaUrl } from '../../api';
 import { CmsBlogPost } from '../../api/types';
 import { LexicalRenderer } from '../general';
 import { useLanguage } from '../../contexts/LanguageContext';
 import './landing.css';
-
-const BLOG_PARAMS = { depth: '2' };
 
 const formatDate = (iso: string, locale: string) =>
     new Date(iso).toLocaleDateString(locale === 'de' ? 'de-DE' : 'en-GB', {
@@ -22,45 +21,15 @@ const initials = (name: string) =>
         .map((n: string) => n[0])
         .join('');
 
-const BlogArticle: React.FC = () => {
-    const { slug } = useParams<{ slug: string }>();
-    const navigate = useNavigate();
+const BlogArticle: React.FC<{ post: CmsBlogPost }> = ({ post }) => {
+    const router = useRouter();
     const { t, locale } = useLanguage();
-    const { data: posts, loading } = useCmsCollection<CmsBlogPost>(
-        'blog-posts',
-        BLOG_PARAMS
-    );
-
-    const post = (posts ?? []).find((p) => p.slug === slug) ?? null;
 
     const backButton = (
-        <button className="lp-back" onClick={() => navigate('/blog')}>
+        <button className="lp-back" onClick={() => router.push('/blog')}>
             ← {t.blog.back}
         </button>
     );
-
-    if (loading) {
-        return (
-            <div className="lp lp-page">
-                <div className="lp-inner">
-                    <p className="lp-loading">Loading…</p>
-                </div>
-            </div>
-        );
-    }
-
-    if (!post) {
-        return (
-            <div className="lp lp-page">
-                <div className="lp-inner">
-                    {backButton}
-                    <h2 className="lp-page__title" style={{ marginTop: 24 }}>
-                        {t.blog.notFound}
-                    </h2>
-                </div>
-            </div>
-        );
-    }
 
     const imgSrc = mediaUrl(post.featuredImage ?? null);
     const author =

@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useCmsGlobal } from '../../api';
@@ -5,12 +6,14 @@ import { CmsMembership } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
 import './landing.css';
 
-const BecomeAMember: React.FC = () => {
+const BecomeAMember: React.FC<{ membership?: CmsMembership | null }> = (props) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [motivation, setMotivation] = useState('');
-    const { data: membership, loading } =
-        useCmsGlobal<CmsMembership>('membership');
+    const { data: membership, loading } = useCmsGlobal<CmsMembership>(
+        'membership',
+        props.membership
+    );
     const { t } = useLanguage();
 
     const handleSubmit = () => {

@@ -1,3 +1,4 @@
+'use client';
 import React, { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useSiteConfig, useCmsCollection, submitForm } from '../../api';
@@ -6,7 +7,9 @@ import { useLanguage } from '../../contexts/LanguageContext';
 import RichText from '../RichText';
 import './landing.css';
 
-export interface ContactProps {}
+export interface ContactProps {
+    forms?: CmsForm[] | null;
+}
 
 const validateEmail = (email: string) => {
     const re =
@@ -23,13 +26,17 @@ const isInputField = (
 ): field is Exclude<CmsFormField, { blockType: 'message' }> =>
     field.blockType !== 'message';
 
-const Contact: React.FC<ContactProps> = () => {
+const Contact: React.FC<ContactProps> = (props) => {
     const siteConfig = useSiteConfig();
     const { t } = useLanguage();
 
     // Forms are defined in the CMS (form-builder plugin). The contact page
     // renders the form titled "Contact", falling back to the first form.
-    const { data: forms, loading, error } = useCmsCollection<CmsForm>('forms');
+    const { data: forms, loading, error } = useCmsCollection<CmsForm>(
+        'forms',
+        undefined,
+        props.forms
+    );
     const form = useMemo(
         () => forms?.find((f) => f.title === 'Contact') ?? forms?.[0] ?? null,
         [forms]

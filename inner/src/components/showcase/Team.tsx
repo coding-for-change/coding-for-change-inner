@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useCmsCollection, mediaUrl } from '../../api';
@@ -8,8 +9,8 @@ import githubIcon from '../../assets/icons/git.png';
 import './landing.css';
 
 const linkIconMap: Record<string, string> = {
-    LinkedIn: linkedinIcon,
-    GitHub: githubIcon,
+    LinkedIn: linkedinIcon.src,
+    GitHub: githubIcon.src,
 };
 
 const reveal = {
@@ -24,9 +25,22 @@ const initials = (name: string) =>
         .map((n) => n[0])
         .join('');
 
-const Team: React.FC = () => {
-    const { data: team, loading } = useCmsCollection<CmsTeamMember>('team');
-    const { data: companies } = useCmsCollection<CmsCompany>('companies');
+export interface TeamProps {
+    team?: CmsTeamMember[] | null;
+    companies?: CmsCompany[] | null;
+}
+
+const Team: React.FC<TeamProps> = (props) => {
+    const { data: team, loading } = useCmsCollection<CmsTeamMember>(
+        'team',
+        undefined,
+        props.team
+    );
+    const { data: companies } = useCmsCollection<CmsCompany>(
+        'companies',
+        undefined,
+        props.companies
+    );
     const { t } = useLanguage();
 
     return (
