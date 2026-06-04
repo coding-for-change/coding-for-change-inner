@@ -68,6 +68,7 @@ const MobileNav: React.FC = () => {
         { to: '/events', label: t.nav.events },
         { to: '/projects', label: t.nav.projects },
         { to: '/team', label: t.nav.team },
+        { to: '/blog', label: t.nav.blog },
         { to: '/sponsors', label: t.nav.sponsors },
         { to: '/qa', label: t.nav.qa },
         { to: '/contact', label: t.nav.contact },

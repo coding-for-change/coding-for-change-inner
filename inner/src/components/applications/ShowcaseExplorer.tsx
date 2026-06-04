@@ -10,6 +10,8 @@ import Sponsors from '../showcase/Sponsors';
 import Team from '../showcase/Team';
 import QA from '../showcase/QA';
 import BecomeAMember from '../showcase/BecomeAMember';
+import Blog from '../showcase/Blog';
+import BlogArticle from '../showcase/BlogArticle';
 import VerticalNavbar from '../showcase/VerticalNavbar';
 import useInitialWindowSize from '../../hooks/useInitialWindowSize';
 import { useSiteConfig } from '../../api';
@@ -44,6 +46,8 @@ const ShowcaseExplorer: React.FC<ShowcaseExplorerProps> = (props) => {
                         <Route path="/projects" element={<CFCProjects />} />
                         <Route path="/sponsors" element={<Sponsors />} />
                         <Route path="/team" element={<Team />} />
+                        <Route path="/blog" element={<Blog />} />
+                        <Route path="/blog/:slug" element={<BlogArticle />} />
                         <Route path="/qa" element={<QA />} />
                         <Route path="/join" element={<BecomeAMember />} />
                         <Route path="/contact" element={<Contact />} />

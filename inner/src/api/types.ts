@@ -77,7 +77,7 @@ export interface CmsSiteConfig {
 /** A node in a Payload lexical rich-text tree. */
 export interface LexicalNode {
     type: string;
-    version: number;
+    version?: number;
     children?: LexicalNode[];
     // text node
     text?: string;
@@ -86,6 +86,10 @@ export interface LexicalNode {
     tag?: string;
     // link node
     fields?: { url?: string; newTab?: boolean; linkType?: string };
+    // list node
+    listType?: string;
+    // upload node
+    value?: { url?: string; alt?: string; mimeType?: string } | null;
     [key: string]: unknown;
 }
 
@@ -94,10 +98,27 @@ export interface LexicalRichText {
     root: LexicalNode;
 }
 
+/** Alias used by the blog feature — same shape as LexicalRichText. */
+export type LexicalDocument = LexicalRichText;
+
 /** GET /api/globals/legal */
 export interface CmsLegal {
     impressum: LexicalRichText;
     privacyPolicy: LexicalRichText;
+}
+
+/** GET /api/blog-posts?depth=2 */
+export interface CmsBlogPost {
+    id: number;
+    title: string;
+    slug: string;
+    publishedAt: string;
+    excerpt: string;
+    featuredImage?: CmsMedia | null;
+    tags?: { tag: string; id?: string }[];
+    author?: CmsTeamMember | null;
+    project?: CmsProject | null;
+    content: LexicalDocument;
 }
 
 /** GET /api/globals/membership */

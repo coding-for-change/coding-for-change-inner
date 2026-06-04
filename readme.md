@@ -1,6 +1,6 @@
 # Coding for Change — Website
 
-Multi-service website: a 3D Three.js outer scene (outer), a Windows 95-style React desktop (inner), and a Payload CMS (inner/cms) backed by PostgreSQL.
+Multi-service website: a 3D Three.js outer scene (outer), a Windows 95-style React desktop (inner), and a Payload CMS (inner/cms) backed by PostgreSQL. 
 
 ## Local development
 

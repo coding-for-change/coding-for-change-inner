@@ -19,6 +19,7 @@ const VerticalNavbar: React.FC<VerticalNavbarProps> = () => {
         { to: 'projects', text: t.nav.projects },
         { to: 'sponsors', text: t.nav.sponsors },
         { to: 'team', text: t.nav.team },
+        { to: 'blog', text: t.nav.blog },
         { to: 'qa', text: t.nav.qa },
         { to: 'join', text: t.nav.join },
         { to: 'contact', text: t.nav.contact },

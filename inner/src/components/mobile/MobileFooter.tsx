@@ -13,6 +13,7 @@ const PAGE_LINKS = [
     { to: '/events', label: 'Events' },
     { to: '/projects', label: 'Projekte' },
     { to: '/team', label: 'Team' },
+    { to: '/blog', label: 'Blog' },
     { to: '/sponsors', label: 'Sponsoren' },
     { to: '/join', label: 'Mitmachen' },
 ];

@@ -3,7 +3,7 @@ export type Locale = 'en' | 'de';
 export interface Translations {
     nav: {
         home: string; about: string; events: string; projects: string;
-        sponsors: string; team: string; qa: string; join: string; contact: string;
+        sponsors: string; team: string; blog: string; qa: string; join: string; contact: string;
     };
     common: {
         learnMore: string; partner: string; at: string;
@@ -47,13 +47,17 @@ export interface Translations {
         sendMessage: string; emailClientNote: string; requiredNote: string;
     };
     sponsors: { title: string; subtitle: string; intro: string; };
+    blog: {
+        title: string; subtitle: string; searchPlaceholder: string;
+        all: string; noPosts: string; back: string; notFound: string;
+    };
     navbar: { title: string; subtitle: string; };
 }
 
 const en: Translations = {
     nav: {
         home: 'HOME', about: 'ABOUT', events: 'EVENTS', projects: 'PROJECTS',
-        sponsors: 'SPONSORS', team: 'TEAM', qa: 'Q&A', join: 'JOIN', contact: 'CONTACT',
+        sponsors: 'SPONSORS', team: 'TEAM', blog: 'BLOG', qa: 'Q&A', join: 'JOIN', contact: 'CONTACT',
     },
     common: {
         learnMore: 'Learn More', partner: 'Partner:', at: 'at',
@@ -122,13 +126,18 @@ const en: Translations = {
         title: 'Sponsors', subtitle: 'Our Supporters',
         intro: 'We are grateful for the support of our sponsors who make our work possible. Interested in sponsoring? Reach out to us!',
     },
+    blog: {
+        title: 'Engineering Blog', subtitle: 'Projects, lessons, and reflections from our teams',
+        searchPlaceholder: 'Search posts...', all: 'All',
+        noPosts: 'No posts found.', back: 'Back to Blog', notFound: 'Post not found.',
+    },
     navbar: { title: 'Coding for Change', subtitle: 'Munich Student Club' },
 };
 
 const de: Translations = {
     nav: {
         home: 'START', about: 'ÜBER UNS', events: 'EVENTS', projects: 'PROJEKTE',
-        sponsors: 'SPONSOREN', team: 'TEAM', qa: 'F&A', join: 'MITMACHEN', contact: 'KONTAKT',
+        sponsors: 'SPONSOREN', team: 'TEAM', blog: 'BLOG', qa: 'F&A', join: 'MITMACHEN', contact: 'KONTAKT',
     },
     common: {
         learnMore: 'Mehr erfahren', partner: 'Partner:', at: 'um',
@@ -196,6 +205,11 @@ const de: Translations = {
     sponsors: {
         title: 'Sponsoren', subtitle: 'Unsere Unterstützer',
         intro: 'Wir sind dankbar für die Unterstützung unserer Sponsoren, die unsere Arbeit erst möglich machen. Interesse am Sponsoring? Meld dich bei uns!',
+    },
+    blog: {
+        title: 'Engineering-Blog', subtitle: 'Projekte, Erkenntnisse und Rückblicke unserer Teams',
+        searchPlaceholder: 'Beiträge durchsuchen...', all: 'Alle',
+        noPosts: 'Keine Beiträge gefunden.', back: 'Zurück zum Blog', notFound: 'Beitrag nicht gefunden.',
     },
     navbar: { title: 'Coding for Change', subtitle: 'Münchner Studierendenclub' },
 };
