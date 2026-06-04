@@ -1,10 +1,11 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useCmsCollection, mediaUrl } from '../../api';
 import { CmsBlogPost } from '../../api/types';
-import { RetroLoader, LexicalRenderer } from '../general';
+import { LexicalRenderer } from '../general';
 import { useLanguage } from '../../contexts/LanguageContext';
-import Colors from '../../constants/colors';
+import './landing.css';
 
 const BLOG_PARAMS = { depth: '2' };
 
@@ -15,207 +16,138 @@ const formatDate = (iso: string, locale: string) =>
         day: 'numeric',
     });
 
+const initials = (name: string) =>
+    name
+        .split(' ')
+        .map((n: string) => n[0])
+        .join('');
+
 const BlogArticle: React.FC = () => {
     const { slug } = useParams<{ slug: string }>();
     const navigate = useNavigate();
     const { t, locale } = useLanguage();
-    const { data: posts, loading } = useCmsCollection<CmsBlogPost>('blog-posts', BLOG_PARAMS);
+    const { data: posts, loading } = useCmsCollection<CmsBlogPost>(
+        'blog-posts',
+        BLOG_PARAMS
+    );
 
     const post = (posts ?? []).find((p) => p.slug === slug) ?? null;
 
-    const BackButton = (
-        <button
-            className="site-button"
-            style={styles.backBtn}
-            onClick={() => navigate('/blog')}
-        >
+    const backButton = (
+        <button className="lp-back" onClick={() => navigate('/blog')}>
             ← {t.blog.back}
         </button>
     );
 
     if (loading) {
         return (
-            <div className="site-page-content">
-                <RetroLoader />
+            <div className="lp lp-page">
+                <div className="lp-inner">
+                    <p className="lp-loading">Loading…</p>
+                </div>
             </div>
         );
     }
 
     if (!post) {
         return (
-            <div className="site-page-content">
-                {BackButton}
-                <h2 style={{ marginTop: 24 }}>{t.blog.notFound}</h2>
+            <div className="lp lp-page">
+                <div className="lp-inner">
+                    {backButton}
+                    <h2 className="lp-page__title" style={{ marginTop: 24 }}>
+                        {t.blog.notFound}
+                    </h2>
+                </div>
             </div>
         );
     }
 
     const imgSrc = mediaUrl(post.featuredImage ?? null);
-    const author = post.author && typeof post.author !== 'number' ? post.author : null;
-    const project = post.project && typeof post.project !== 'number' ? post.project : null;
+    const author =
+        post.author && typeof post.author !== 'number' ? post.author : null;
+    const project =
+        post.project && typeof post.project !== 'number' ? post.project : null;
     const authorImgSrc = author ? mediaUrl(author.image ?? null) : null;
 
     return (
-        <div className="site-page-content">
-            {BackButton}
+        <div className="lp lp-page">
+            <div className="lp-inner">
+                {backButton}
+                <motion.div
+                    className="lp-article"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    {imgSrc && (
+                        <div className="lp-article__hero">
+                            <img
+                                src={imgSrc}
+                                alt={post.featuredImage?.alt ?? post.title}
+                            />
+                        </div>
+                    )}
 
-            {imgSrc && (
-                <div style={styles.heroBanner}>
-                    <img
-                        src={imgSrc}
-                        alt={post.featuredImage?.alt ?? post.title}
-                        style={styles.heroImg}
-                    />
-                </div>
-            )}
+                    <h1 className="lp-article__title">{post.title}</h1>
 
-            <h1 style={styles.title}>{post.title}</h1>
-
-            <div style={styles.metaRow}>
-                {author && (
-                    <div style={styles.authorBlock}>
-                        {authorImgSrc ? (
-                            <img src={authorImgSrc} alt={author.name} style={styles.avatarImg} />
-                        ) : (
-                            <div style={styles.avatarPlaceholder}>
-                                <span style={styles.avatarInitials}>
-                                    {author.name
-                                        .split(' ')
-                                        .map((n: string) => n[0])
-                                        .join('')}
-                                </span>
+                    <div className="lp-article__meta">
+                        {author && (
+                            <div className="lp-author">
+                                {authorImgSrc ? (
+                                    <img
+                                        className="lp-author__avatar"
+                                        src={authorImgSrc}
+                                        alt={author.name}
+                                    />
+                                ) : (
+                                    <div className="lp-author__avatar-ph">
+                                        {initials(author.name)}
+                                    </div>
+                                )}
+                                <div className="lp-author__text">
+                                    <span className="lp-author__name">
+                                        {author.name}
+                                    </span>
+                                    <span className="lp-author__role">
+                                        {author.role}
+                                    </span>
+                                </div>
                             </div>
                         )}
-                        <div style={styles.authorText}>
-                            <span style={styles.authorName}>{author.name}</span>
-                            <span style={styles.authorRole}>{author.role}</span>
-                        </div>
-                    </div>
-                )}
-                <span style={styles.date}>{formatDate(post.publishedAt, locale)}</span>
-                {project && <span style={styles.projectRef}>Re: {project.title}</span>}
-            </div>
-
-            {post.tags && post.tags.length > 0 && (
-                <div style={styles.tagRow}>
-                    {post.tags.map((tg) => (
-                        <span key={tg.tag} style={styles.tagChip}>
-                            {tg.tag}
+                        <span className="lp-article__date">
+                            {formatDate(post.publishedAt, locale)}
                         </span>
-                    ))}
-                </div>
-            )}
+                        {project && (
+                            <span
+                                className="lp-article__date"
+                                style={{ color: '#246b6c' }}
+                            >
+                                Re: {project.title}
+                            </span>
+                        )}
+                    </div>
 
-            <hr style={styles.divider} />
+                    {post.tags && post.tags.length > 0 && (
+                        <div className="lp-pills">
+                            {post.tags.map((tg) => (
+                                <span key={tg.tag} className="lp-pill">
+                                    {tg.tag}
+                                </span>
+                            ))}
+                        </div>
+                    )}
 
-            <p style={styles.excerptLead}>{post.excerpt}</p>
+                    <hr className="lp-article__divider" />
 
-            <div className="text-block">
-                <LexicalRenderer doc={post.content} />
+                    <p className="lp-article__lead">{post.excerpt}</p>
+
+                    <div className="text-block">
+                        <LexicalRenderer doc={post.content} />
+                    </div>
+                </motion.div>
             </div>
         </div>
     );
-};
-
-const styles: StyleSheetCSS = {
-    backBtn: {
-        alignSelf: 'flex-start',
-        flexShrink: 0,
-        marginBottom: 24,
-        padding: '8px 16px',
-    },
-    heroBanner: {
-        width: '100%',
-        marginBottom: 24,
-        overflow: 'hidden',
-    },
-    heroImg: {
-        width: '100%',
-        maxHeight: 360,
-        objectFit: 'cover',
-        display: 'block',
-    },
-    title: {
-        marginBottom: 16,
-        marginTop: 0,
-    },
-    metaRow: {
-        gap: 24,
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        marginBottom: 14,
-    },
-    authorBlock: {
-        gap: 10,
-        alignItems: 'center',
-    },
-    avatarImg: {
-        width: 44,
-        height: 44,
-        borderRadius: '50%',
-        objectFit: 'cover',
-        flexShrink: 0,
-    },
-    avatarPlaceholder: {
-        width: 44,
-        height: 44,
-        borderRadius: '50%',
-        backgroundColor: '#008080',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexShrink: 0,
-    },
-    avatarInitials: {
-        color: '#ffffff',
-        fontSize: 15,
-        fontWeight: 'bold',
-    },
-    authorText: {
-        flexDirection: 'column',
-    },
-    authorName: {
-        fontSize: 15,
-        fontWeight: 'bold',
-    },
-    authorRole: {
-        fontSize: 13,
-        color: Colors.darkGray,
-        fontStyle: 'italic',
-    },
-    date: {
-        fontSize: 14,
-        fontFamily: 'MSSerif, serif',
-        color: Colors.darkGray,
-    },
-    projectRef: {
-        fontSize: 14,
-        fontFamily: 'MSSerif, serif',
-        color: Colors.blue,
-    },
-    tagRow: {
-        flexWrap: 'wrap',
-        gap: 6,
-        marginBottom: 16,
-    },
-    tagChip: {
-        backgroundColor: '#c0c0c0',
-        border: '1px solid #808080',
-        padding: '2px 8px',
-        fontSize: 12,
-        fontFamily: 'MSSerif, serif',
-    },
-    divider: {
-        border: 'none',
-        borderTop: '1px solid #888',
-        margin: '8px 0 16px 0',
-        width: '100%',
-    },
-    excerptLead: {
-        fontStyle: 'italic',
-        fontSize: 17,
-        color: Colors.darkGray,
-        marginBottom: 8,
-    },
 };
 
 export default BlogArticle;

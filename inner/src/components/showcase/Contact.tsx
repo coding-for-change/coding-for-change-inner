@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
-import { useSiteConfig } from '../../api';
-import useIsMobile from '../../hooks/useIsMobile';
+import React, { useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
+import { useSiteConfig, useCmsCollection, submitForm } from '../../api';
+import type { CmsForm, CmsFormField } from '../../api';
 import { useLanguage } from '../../contexts/LanguageContext';
+import RichText from '../RichText';
+import './landing.css';
 
 export interface ContactProps {}
 
@@ -12,209 +15,277 @@ const validateEmail = (email: string) => {
     return re.test(String(email).toLowerCase());
 };
 
-const Contact: React.FC<ContactProps> = (props) => {
-    const [organization, setOrganization] = useState('');
-    const [email, setEmail] = useState('');
-    const [name, setName] = useState('');
-    const [message, setMessage] = useState('');
+type FormValues = Record<string, string | boolean>;
+
+// Fields that actually capture a value (everything except the static `message`).
+const isInputField = (
+    field: CmsFormField
+): field is Exclude<CmsFormField, { blockType: 'message' }> =>
+    field.blockType !== 'message';
+
+const Contact: React.FC<ContactProps> = () => {
     const siteConfig = useSiteConfig();
-    const isMobile = useIsMobile();
     const { t } = useLanguage();
 
-    const isFormValid =
-        validateEmail(email) && name.length > 0 && message.length > 0;
+    // Forms are defined in the CMS (form-builder plugin). The contact page
+    // renders the form titled "Contact", falling back to the first form.
+    const { data: forms, loading, error } = useCmsCollection<CmsForm>('forms');
+    const form = useMemo(
+        () => forms?.find((f) => f.title === 'Contact') ?? forms?.[0] ?? null,
+        [forms]
+    );
 
-    const handleSubmit = () => {
-        if (!isFormValid) return;
-        const subject = encodeURIComponent(`Contact from ${name}${organization ? ` (${organization})` : ''}`);
-        const body = encodeURIComponent(
-            `Name: ${name}\nEmail: ${email}\nOrganization/NGO: ${organization || 'N/A'}\n\nMessage:\n${message}`
+    const [values, setValues] = useState<FormValues>({});
+    const [submitting, setSubmitting] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
+    const [sendError, setSendError] = useState(false);
+
+    const setValue = (name: string, value: string | boolean) =>
+        setValues((prev) => ({ ...prev, [name]: value }));
+
+    const inputFields = (form?.fields ?? []).filter(isInputField);
+
+    const fieldValue = (field: CmsFormField & { name: string }) => {
+        const v = values[field.name];
+        if (v !== undefined) return v;
+        if (field.blockType === 'checkbox') return field.defaultValue ?? false;
+        if (field.blockType === 'number')
+            return field.defaultValue != null ? String(field.defaultValue) : '';
+        if ('defaultValue' in field && field.defaultValue != null)
+            return String(field.defaultValue);
+        return '';
+    };
+
+    const isFieldValid = (field: typeof inputFields[number]) => {
+        const value = fieldValue(field);
+        if (field.blockType === 'email') {
+            const str = String(value);
+            if (!str) return !field.required;
+            return validateEmail(str);
+        }
+        if (field.blockType === 'checkbox') {
+            return field.required ? value === true : true;
+        }
+        if (!field.required) return true;
+        return String(value).trim().length > 0;
+    };
+
+    const isFormValid =
+        !!form && inputFields.every((field) => isFieldValid(field));
+
+    const handleSubmit = async () => {
+        if (!form || !isFormValid || submitting) return;
+        setSendError(false);
+        setSubmitting(true);
+        try {
+            const submissionData = inputFields.map((field) => ({
+                field: field.name,
+                value:
+                    field.blockType === 'checkbox'
+                        ? fieldValue(field) === true
+                            ? 'true'
+                            : 'false'
+                        : String(fieldValue(field)),
+            }));
+            await submitForm(form.id, submissionData);
+            setSubmitted(true);
+        } catch (err) {
+            setSendError(true);
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const renderField = (field: typeof inputFields[number], index: number) => {
+        const value = fieldValue(field);
+        const showRequiredStar =
+            field.required &&
+            !isFieldValid(field) &&
+            field.blockType !== 'checkbox';
+
+        if (field.blockType === 'checkbox') {
+            return (
+                <label key={field.name ?? index} className="lp-checkbox">
+                    <input
+                        type="checkbox"
+                        name={field.name}
+                        checked={value === true}
+                        onChange={(e) => setValue(field.name, e.target.checked)}
+                    />
+                    <span className="lp-label">
+                        {field.required && value !== true && (
+                            <span className="lp-required">*</span>
+                        )}
+                        {field.label || field.name}
+                    </span>
+                </label>
+            );
+        }
+
+        const label = (
+            <span className="lp-label">
+                {showRequiredStar && <span className="lp-required">*</span>}
+                {field.label || field.name}
+            </span>
         );
-        window.location.href = `mailto:${siteConfig.email}?subject=${subject}&body=${body}`;
+
+        if (field.blockType === 'textarea') {
+            return (
+                <div className="lp-field" key={field.name ?? index}>
+                    {label}
+                    <textarea
+                        className="lp-textarea"
+                        name={field.name}
+                        value={String(value)}
+                        onChange={(e) => setValue(field.name, e.target.value)}
+                    />
+                </div>
+            );
+        }
+
+        if (field.blockType === 'select') {
+            return (
+                <div className="lp-field" key={field.name ?? index}>
+                    {label}
+                    <select
+                        className="lp-select"
+                        name={field.name}
+                        value={String(value)}
+                        onChange={(e) => setValue(field.name, e.target.value)}
+                    >
+                        <option value="">{field.placeholder || '—'}</option>
+                        {(field.options ?? []).map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                                {opt.label}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            );
+        }
+
+        return (
+            <div className="lp-field" key={field.name ?? index}>
+                {label}
+                <input
+                    className="lp-input"
+                    type={
+                        field.blockType === 'email'
+                            ? 'email'
+                            : field.blockType === 'number'
+                            ? 'number'
+                            : 'text'
+                    }
+                    name={field.name}
+                    value={String(value)}
+                    onChange={(e) => setValue(field.name, e.target.value)}
+                />
+            </div>
+        );
     };
 
     return (
-        <div className="site-page-content">
-            <div
-                style={Object.assign(
-                    {},
-                    styles.header,
-                    isMobile && styles.headerMobile
-                )}
-            >
-                <h1>{t.contact.title}</h1>
-                <div
-                    style={Object.assign(
-                        {},
-                        styles.socials,
-                        isMobile && styles.socialsMobile
-                    )}
+        <div className="lp lp-page">
+            <div className="lp-inner">
+                <motion.div
+                    className="lp-page__head"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
                 >
-                    {(siteConfig.socialLinks ?? []).map((link) => (
-                        <a
-                            key={link.platform}
-                            rel="noreferrer"
-                            target="_blank"
-                            href={link.url}
-                            style={styles.socialLink}
-                        >
-                            {link.platform}
-                        </a>
-                    ))}
-                </div>
-            </div>
-            <div className="text-block">
-                <p>{t.contact.intro}</p>
-                <br />
-                <p>
-                    <b>Email: </b>
-                    <a href={`mailto:${siteConfig.email}`}>
-                        {siteConfig.email}
-                    </a>
-                </p>
+                    <p className="lp-kicker">{t.nav.contact}</p>
+                    <h1 className="lp-page__title">{t.contact.title}</h1>
+                    <p className="lp-lead">{t.contact.intro}</p>
+                </motion.div>
 
-                <div style={styles.form}>
-                    <label>
-                        <p>
-                            {!name && <span style={styles.star}>*</span>}
-                            <b>{t.contact.nameLabel}</b>
-                        </p>
-                    </label>
-                    <input
-                        style={styles.formItem}
-                        type="text"
-                        name="name"
-                        placeholder={t.contact.namePlaceholder}
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-                    <label>
-                        <p>
-                            {!validateEmail(email) && (
-                                <span style={styles.star}>*</span>
-                            )}
-                            <b>{t.contact.emailLabel}</b>
-                        </p>
-                    </label>
-                    <input
-                        style={styles.formItem}
-                        type="email"
-                        name="email"
-                        placeholder={t.contact.emailPlaceholder}
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <label>
-                        <p>
-                            <b>{t.contact.orgLabel}</b>
-                        </p>
-                    </label>
-                    <input
-                        style={styles.formItem}
-                        type="text"
-                        name="organization"
-                        placeholder={t.contact.orgPlaceholder}
-                        value={organization}
-                        onChange={(e) => setOrganization(e.target.value)}
-                    />
-                    <label>
-                        <p>
-                            {!message && <span style={styles.star}>*</span>}
-                            <b>{t.contact.messageLabel}</b>
-                        </p>
-                    </label>
-                    <textarea
-                        name="message"
-                        placeholder={t.contact.messagePlaceholder}
-                        style={styles.formItem}
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                    />
-                    <div style={styles.buttons}>
-                        <button
-                            className="site-button"
-                            style={styles.button}
-                            type="submit"
-                            disabled={!isFormValid}
-                            onMouseDown={handleSubmit}
-                        >
-                            {t.contact.sendMessage}
-                        </button>
-                        <div style={styles.formInfo}>
-                            <p>
-                                <b>
-                                    <sub>{t.contact.emailClientNote}</sub>
-                                </b>
-                            </p>
-                            <p>
-                                <sub>
-                                    {!isFormValid ? (
-                                        <span>
-                                            <b style={styles.star}>*</b> ={' '}
-                                            {t.contact.requiredNote.replace('* = ', '')}
-                                        </span>
-                                    ) : (
-                                        '\xa0'
-                                    )}
-                                </sub>
-                            </p>
-                        </div>
+                {(siteConfig.socialLinks ?? []).length > 0 && (
+                    <div className="lp-socials">
+                        {(siteConfig.socialLinks ?? []).map((link) => (
+                            <a
+                                key={link.platform}
+                                className="lp-social"
+                                rel="noreferrer"
+                                target="_blank"
+                                href={link.url}
+                            >
+                                {link.platform}
+                            </a>
+                        ))}
                     </div>
+                )}
+
+                <div className="lp-contact">
+                    <p className="lp-contact__intro">
+                        <b>Email: </b>
+                        <a className="lp-social" href={`mailto:${siteConfig.email}`}>
+                            {siteConfig.email}
+                        </a>
+                    </p>
+
+                    {loading && <p className="lp-loading">{t.contact.loadingForm}</p>}
+
+                    {!loading && (error || !form) && (
+                        <p className="lp-empty">{t.contact.formUnavailable}</p>
+                    )}
+
+                    {!loading && form && submitted && (
+                        <div className="lp-field">
+                            {form.confirmationMessage ? (
+                                <RichText content={form.confirmationMessage} />
+                            ) : (
+                                <p>{t.contact.successFallback}</p>
+                            )}
+                        </div>
+                    )}
+
+                    {!loading && form && !submitted && (
+                        <>
+                            {(form.fields ?? []).map((field, index) =>
+                                field.blockType === 'message' ? (
+                                    <div
+                                        key={`message-${index}`}
+                                        className="lp-field"
+                                    >
+                                        <RichText content={field.message} />
+                                    </div>
+                                ) : (
+                                    renderField(field, index)
+                                )
+                            )}
+                            <button
+                                className="lp-submit"
+                                type="submit"
+                                disabled={!isFormValid || submitting}
+                                onMouseDown={handleSubmit}
+                            >
+                                {submitting
+                                    ? t.contact.submitting
+                                    : form.submitButtonLabel ||
+                                      t.contact.sendMessage}
+                            </button>
+                            <p className="lp-form-note">
+                                {sendError ? (
+                                    <span className="lp-required">
+                                        {t.contact.sendError}
+                                    </span>
+                                ) : !isFormValid ? (
+                                    <span>
+                                        <span className="lp-required">*</span> ={' '}
+                                        {t.contact.requiredNote.replace(
+                                            '* = ',
+                                            ''
+                                        )}
+                                    </span>
+                                ) : (
+                                    '\xa0'
+                                )}
+                            </p>
+                        </>
+                    )}
                 </div>
             </div>
         </div>
     );
-};
-
-const styles: StyleSheetCSS = {
-    form: {
-        flexDirection: 'column',
-        marginTop: 32,
-    },
-    formItem: {
-        marginTop: 4,
-        marginBottom: 16,
-    },
-    buttons: {
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    formInfo: {
-        textAlign: 'right',
-        flexDirection: 'column',
-        alignItems: 'flex-end',
-        paddingLeft: 24,
-    },
-    star: {
-        paddingRight: 4,
-        color: 'red',
-    },
-    button: {
-        minWidth: 184,
-        height: 32,
-    },
-    header: {
-        alignItems: 'flex-end',
-        justifyContent: 'space-between',
-    },
-    headerMobile: {
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-    },
-    socials: {
-        marginBottom: 16,
-        justifyContent: 'flex-end',
-        gap: 12,
-    },
-    socialsMobile: {
-        justifyContent: 'flex-start',
-        marginTop: 4,
-    },
-    socialLink: {
-        fontSize: 14,
-        textDecoration: 'none',
-        fontFamily: 'Millennium, sans-serif',
-    },
 };
 
 export default Contact;

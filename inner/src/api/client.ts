@@ -32,6 +32,27 @@ export async function fetchGlobal<T>(slug: string, params?: Record<string, strin
     return res.json();
 }
 
+export interface FormSubmissionValue {
+    field: string;
+    value: string;
+}
+
+
+export async function submitForm(
+    formId: number,
+    submissionData: FormSubmissionValue[]
+): Promise<void> {
+    const res = await fetch(`${API_BASE}/form-submissions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ form: formId, submissionData }),
+    });
+    if (!res.ok) {
+        const detail = await res.text().catch(() => '');
+        throw new Error(`Failed to submit form: ${res.status} ${detail}`);
+    }
+}
+
 export function mediaUrl(
     media: { url?: string | null } | null | undefined
 ): string | null {

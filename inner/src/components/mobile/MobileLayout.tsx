@@ -1,12 +1,7 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from '../showcase/Home';
-import About from '../showcase/About';
-import Events from '../showcase/Events';
-import CFCProjects from '../showcase/CFCProjects';
-import Sponsors from '../showcase/Sponsors';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import Landing from '../showcase/Landing';
 import Team from '../showcase/Team';
-import QA from '../showcase/QA';
 import BecomeAMember from '../showcase/BecomeAMember';
 import Contact from '../showcase/Contact';
 import Blog from '../showcase/Blog';
@@ -26,15 +21,17 @@ const MobileLayout: React.FC = () => {
                 <MobileNav />
                 <div style={styles.content}>
                     <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/about" element={<About />} />
-                        <Route path="/events" element={<Events />} />
-                        <Route path="/projects" element={<CFCProjects />} />
-                        <Route path="/sponsors" element={<Sponsors />} />
+                        <Route path="/" element={<Landing />} />
+                        {/* Legacy section URLs scroll to their section. */}
+                        <Route path="/about" element={<Navigate to="/#about" replace />} />
+                        <Route path="/events" element={<Navigate to="/#events" replace />} />
+                        <Route path="/projects" element={<Navigate to="/#projects" replace />} />
+                        <Route path="/sponsors" element={<Navigate to="/#sponsors" replace />} />
+                        <Route path="/qa" element={<Navigate to="/#qa" replace />} />
+                        {/* Standalone pages */}
                         <Route path="/team" element={<Team />} />
                         <Route path="/blog" element={<Blog />} />
                         <Route path="/blog/:slug" element={<BlogArticle />} />
-                        <Route path="/qa" element={<QA />} />
                         <Route path="/join" element={<BecomeAMember />} />
                         <Route path="/contact" element={<Contact />} />
                         <Route path="/imprint" element={<ImprintPage />} />

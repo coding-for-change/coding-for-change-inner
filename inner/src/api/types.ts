@@ -55,6 +55,14 @@ export interface CmsSponsor {
     description?: string;
 }
 
+/** GET /api/companies — companies our team members have worked at */
+export interface CmsCompany {
+    id: number;
+    name: string;
+    logo?: CmsMedia | null;
+    url?: string;
+}
+
 /** GET /api/faq */
 export interface CmsFaqItem {
     id: number;
@@ -72,6 +80,7 @@ export interface CmsSiteConfig {
     socialLinks?: { platform: string; url: string; id?: string }[];
     copyrightText?: string;
     windowTitle?: string;
+    stats?: { value: string; label: string; id?: string }[];
 }
 
 /** A node in a Payload lexical rich-text tree. */
@@ -128,4 +137,70 @@ export interface CmsMembership {
     benefits?: { text: string; id?: string }[];
     requirements?: { text: string; id?: string }[];
     contactEmail: string;
+}
+
+export type CmsFormField =
+    | {
+          blockType: 'text';
+          name: string;
+          label?: string | null;
+          required?: boolean | null;
+          defaultValue?: string | null;
+          width?: number | null;
+      }
+    | {
+          blockType: 'textarea';
+          name: string;
+          label?: string | null;
+          required?: boolean | null;
+          defaultValue?: string | null;
+          width?: number | null;
+      }
+    | {
+          blockType: 'email';
+          name: string;
+          label?: string | null;
+          required?: boolean | null;
+          width?: number | null;
+      }
+    | {
+          blockType: 'number';
+          name: string;
+          label?: string | null;
+          required?: boolean | null;
+          defaultValue?: number | null;
+          width?: number | null;
+      }
+    | {
+          blockType: 'checkbox';
+          name: string;
+          label?: string | null;
+          required?: boolean | null;
+          defaultValue?: boolean | null;
+          width?: number | null;
+      }
+    | {
+          blockType: 'select';
+          name: string;
+          label?: string | null;
+          required?: boolean | null;
+          defaultValue?: string | null;
+          placeholder?: string | null;
+          options?: { label: string; value: string; id?: string }[] | null;
+          width?: number | null;
+      }
+    | {
+          blockType: 'message';
+          message?: LexicalRichText | null;
+      };
+
+/** GET /api/forms — a form-builder form schema (rendered dynamically). */
+export interface CmsForm {
+    id: number;
+    title: string;
+    fields?: CmsFormField[] | null;
+    submitButtonLabel?: string | null;
+    confirmationType?: 'message' | 'redirect' | null;
+    confirmationMessage?: LexicalRichText | null;
+    redirect?: { url: string } | null;
 }

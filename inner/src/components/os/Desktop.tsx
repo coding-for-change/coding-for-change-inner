@@ -43,7 +43,7 @@ const APPLICATIONS: {
     },
     blog: {
         key: 'blog',
-        name: 'Engineering Blog',
+        name: 'News',
         shortcutIcon: 'windowExplorerIcon',
         route: '/blog',
     },

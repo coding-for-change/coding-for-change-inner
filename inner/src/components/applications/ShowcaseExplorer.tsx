@@ -1,18 +1,18 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from '../showcase/Home';
-import About from '../showcase/About';
+import {
+    BrowserRouter as Router,
+    Routes,
+    Route,
+    Navigate,
+} from 'react-router-dom';
 import Window from '../os/Window';
-import CFCProjects from '../showcase/CFCProjects';
+import Landing from '../showcase/Landing';
+import TopNav from '../showcase/TopNav';
 import Contact from '../showcase/Contact';
-import Events from '../showcase/Events';
-import Sponsors from '../showcase/Sponsors';
 import Team from '../showcase/Team';
-import QA from '../showcase/QA';
 import BecomeAMember from '../showcase/BecomeAMember';
 import Blog from '../showcase/Blog';
 import BlogArticle from '../showcase/BlogArticle';
-import VerticalNavbar from '../showcase/VerticalNavbar';
 import useInitialWindowSize from '../../hooks/useInitialWindowSize';
 import { useSiteConfig } from '../../api';
 
@@ -38,20 +38,43 @@ const ShowcaseExplorer: React.FC<ShowcaseExplorerProps> = (props) => {
         >
             <Router basename="/">
                 <div className="site-page">
-                    <VerticalNavbar />
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/about" element={<About />} />
-                        <Route path="/events" element={<Events />} />
-                        <Route path="/projects" element={<CFCProjects />} />
-                        <Route path="/sponsors" element={<Sponsors />} />
-                        <Route path="/team" element={<Team />} />
-                        <Route path="/blog" element={<Blog />} />
-                        <Route path="/blog/:slug" element={<BlogArticle />} />
-                        <Route path="/qa" element={<QA />} />
-                        <Route path="/join" element={<BecomeAMember />} />
-                        <Route path="/contact" element={<Contact />} />
-                    </Routes>
+                    <TopNav />
+                    <div className="site-scroll">
+                        <Routes>
+                            <Route path="/" element={<Landing />} />
+                            {/* Legacy section URLs now scroll to their section
+                                on the single-page landing. */}
+                            <Route
+                                path="/about"
+                                element={<Navigate to="/#about" replace />}
+                            />
+                            <Route
+                                path="/events"
+                                element={<Navigate to="/#events" replace />}
+                            />
+                            <Route
+                                path="/projects"
+                                element={<Navigate to="/#projects" replace />}
+                            />
+                            <Route
+                                path="/sponsors"
+                                element={<Navigate to="/#sponsors" replace />}
+                            />
+                            <Route
+                                path="/qa"
+                                element={<Navigate to="/#qa" replace />}
+                            />
+                            {/* Standalone pages */}
+                            <Route path="/team" element={<Team />} />
+                            <Route path="/blog" element={<Blog />} />
+                            <Route
+                                path="/blog/:slug"
+                                element={<BlogArticle />}
+                            />
+                            <Route path="/join" element={<BecomeAMember />} />
+                            <Route path="/contact" element={<Contact />} />
+                        </Routes>
+                    </div>
                 </div>
             </Router>
         </Window>

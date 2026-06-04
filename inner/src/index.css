@@ -247,6 +247,7 @@ input:active {
 
 .site-page {
     display: flex;
+    flex-direction: column;
     left: 0px;
     right: 0px;
     position: absolute;
@@ -254,18 +255,29 @@ input:active {
     top: 0px;
     overflow: hidden;
     transform: translate3d(0, 0, 0);
-    overflow: hidden;
+}
+
+.site-scroll {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    width: 100%;
+    padding-top: 64px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
 }
 
 .site-page-content {
     display: flex;
     flex-direction: column;
-    margin-left: 300px;
     width: 100%;
-    padding: 64px;
-    padding-top: 32px;
-    padding-left: 16px;
-    overflow-y: scroll;
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 32px 32px 56px;
+    box-sizing: border-box;
 }
 
 .router-link:visited {

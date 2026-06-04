@@ -38,6 +38,11 @@ const siteConfig = {
   ],
   copyrightText: '© 2026 Coding for Change',
   windowTitle: 'Coding for Change',
+  stats: [
+    { value: '4', label: 'NGOs partnered' },
+    { value: '10+', label: 'Active members' },
+    { value: '1', label: 'Projects shipped' },
+  ],
 };
 
 const membership = {
@@ -300,6 +305,11 @@ const siteConfigDe = {
     'Entwicklungsstudent:innen mit einer echten NGO und wird innerhalb eines Semesters fertiggestellt.',
   copyrightText: '© 2026 Coding for Change',
   windowTitle: 'Coding for Change',
+  stats: [
+    { value: '4', label: 'NGOs unterstützt' },
+    { value: '10+', label: 'Aktive Mitglieder' },
+    { value: '1', label: 'Projekte umgesetzt' },
+  ],
 };
 
 const membershipDe = {
@@ -855,6 +865,84 @@ const seed = async () => {
     await postJson('/api/blog-posts', post, cookie).then(assertOk('blog-posts entry'));
   }
   console.log(`Created ${blogPosts.length} blog-posts entries`);
+
+  // ── Contact form (form-builder plugin) ────────────────────────────────────
+  // The inner site renders the form titled "Contact" dynamically and POSTs to
+  // /api/form-submissions. Title is kept identical across locales so the
+  // frontend lookup is locale-independent; labels/messages are localised below.
+  const contactToEmail = process.env.CONTACT_TO_EMAIL || 'team@codingforchange.com';
+  const contactFromEmail = process.env.EMAIL_FROM || 'noreply@codingforchange.com';
+
+  const contactForm = {
+    title: 'Contact',
+    submitButtonLabel: 'Send Message',
+    confirmationType: 'message',
+    confirmationMessage: makeDoc(
+      lexicalParagraph(
+        "Thanks for reaching out! We've received your message and will get back to you soon."
+      )
+    ),
+    fields: [
+      { blockType: 'text', name: 'name', label: 'Your name', required: true, width: 100 },
+      { blockType: 'email', name: 'email', label: 'Email', required: true, width: 100 },
+      {
+        blockType: 'text',
+        name: 'organization',
+        label: 'Organization / NGO (optional)',
+        required: false,
+        width: 100,
+      },
+      { blockType: 'textarea', name: 'message', label: 'Message', required: true, width: 100 },
+    ],
+    emails: [
+      {
+        emailTo: contactToEmail,
+        emailFrom: contactFromEmail,
+        replyTo: '{{email}}',
+        subject: 'New contact enquiry from {{name}}',
+        message: makeDoc(
+          lexicalParagraph('You have a new contact form submission:'),
+          lexicalParagraph('{{*:table}}')
+        ),
+      },
+    ],
+  };
+
+  const formRes = await postJson('/api/forms', contactForm, cookie).then(assertOk('forms (en)'));
+  const formDoc = (await formRes.json())?.doc;
+
+  // Localise field labels + confirmation message for German. Block rows are
+  // matched by their generated `id`, so reuse the ids from the create response.
+  const deLabels = {
+    name: 'Dein Name',
+    email: 'E-Mail',
+    organization: 'Organisation / NGO (optional)',
+    message: 'Nachricht',
+  };
+  if (formDoc?.id) {
+    await patchJson(
+      `/api/forms/${formDoc.id}?locale=de`,
+      {
+        title: 'Contact',
+        submitButtonLabel: 'Nachricht senden',
+        confirmationMessage: makeDoc(
+          lexicalParagraph(
+            'Danke für deine Nachricht! Wir haben sie erhalten und melden uns bald bei dir.'
+          )
+        ),
+        fields: (formDoc.fields ?? []).map((f) => ({
+          id: f.id,
+          blockType: f.blockType,
+          name: f.name,
+          label: deLabels[f.name] ?? f.label,
+          required: f.required,
+          width: f.width,
+        })),
+      },
+      cookie
+    ).then(assertOk('forms (de)'));
+  }
+  console.log('Created Contact form (en + de)');
 
   console.log('\nSeed complete. Admin login:');
   console.log(`  email:    ${ADMIN_EMAIL}`);

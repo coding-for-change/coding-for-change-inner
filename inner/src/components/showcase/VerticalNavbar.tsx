@@ -3,6 +3,7 @@ import { Link, ExperienceToggle } from '../general';
 import { useLocation } from 'react-router-dom';
 import useIsMobile from '../../hooks/useIsMobile';
 import { useLanguage } from '../../contexts/LanguageContext';
+import Logo from '../../assets/Logo.png';
 
 export interface VerticalNavbarProps {}
 
@@ -68,9 +69,8 @@ const VerticalNavbar: React.FC<VerticalNavbarProps> = () => {
     return (
         <div style={styles.navbar}>
             <div style={styles.header}>
-                <h1 style={styles.headerText}>Coding for</h1>
-                <h1 style={styles.headerText}>Change</h1>
-                <h3 style={styles.headerShowcase}>{t.navbar.subtitle}</h3>
+                <img src={Logo} alt="Coding for Change" style={styles.logo} />
+                <h1 style={styles.headerText}>Coding for Change</h1>
             </div>
             <ExperienceToggle containerStyle={styles.experienceToggle} />
             <div style={styles.links}>
@@ -101,18 +101,22 @@ const styles: StyleSheetCSS = {
     },
     header: {
         flexDirection: 'column',
+        alignItems: 'flex-start',
         marginBottom: 28,
     },
     experienceToggle: {
         justifyContent: 'flex-start',
         marginBottom: 48,
     },
-    headerText: {
-        fontSize: 38,
-        lineHeight: 1,
+    logo: {
+        width: 88,
+        height: 'auto',
+        objectFit: 'contain',
+        marginBottom: 16,
     },
-    headerShowcase: {
-        marginTop: 12,
+    headerText: {
+        fontSize: 34,
+        lineHeight: 1.1,
     },
     link: {
         marginBottom: 32,

@@ -23,6 +23,7 @@ export const useSiteConfig = (): CmsSiteConfig & { loading: boolean } => {
         socialLinks: config?.socialLinks ?? [],
         copyrightText: config?.copyrightText ?? '',
         windowTitle: config?.windowTitle ?? '',
+        stats: config?.stats ?? [],
         loading,
     };
 };
