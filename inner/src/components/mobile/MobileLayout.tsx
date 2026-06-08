@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import MobileNav from './MobileNav';
-import MobileFooter from './MobileFooter';
+import SiteFooter from '../general/SiteFooter';
 
 // Height of the sticky nav bar — used to size the content area so that
 // position:absolute pages fill the visible viewport below the nav.
@@ -14,7 +14,7 @@ const MobileLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) =>
         <div style={styles.layout}>
             <MobileNav />
             <div style={styles.content}>{children}</div>
-            <MobileFooter />
+            <SiteFooter />
         </div>
     );
 };

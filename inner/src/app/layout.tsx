@@ -83,6 +83,16 @@ export default async function RootLayout({
                     3D scene's monitor iframe. */}
                 <base target="_parent" />
                 <link rel="stylesheet" href="https://use.typekit.net/llo2eru.css" />
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link
+                    rel="preconnect"
+                    href="https://fonts.gstatic.com"
+                    crossOrigin="anonymous"
+                />
+                <link
+                    rel="stylesheet"
+                    href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500;700&display=swap"
+                />
                 <script
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_JSONLD) }}

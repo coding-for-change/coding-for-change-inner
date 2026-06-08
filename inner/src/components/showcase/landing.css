@@ -65,7 +65,10 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    min-height: 78vh;
+    /* Fill the viewport on first load so the next section stays below the
+       fold. The .site-scroll container adds 64px top clearance for the nav,
+       so subtract it here to land exactly at the bottom edge. */
+    min-height: calc(100vh - 64px);
     box-sizing: border-box;
     padding: 64px 0;
     background: radial-gradient(
@@ -522,8 +525,11 @@
     object-fit: contain;
 }
 .lp-nav__name {
-    font-family: MillenniumBold, serif;
-    font-size: 18px;
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 700;
+    /* Sized so the cap height matches the 30px logo mark beside it. */
+    font-size: 27px;
+    line-height: 30px;
     color: #1b1f1f;
     white-space: nowrap;
 }
@@ -1127,4 +1133,162 @@
     .lp-nav__links {
         display: none;
     }
+}
+
+/* ---- Enter 3D button ---- */
+.enter3d-btn {
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    transition: color 0.18s ease, border-color 0.18s ease,
+        background 0.18s ease, transform 0.18s ease;
+}
+.enter3d-btn:hover {
+    color: var(--teal, #2f8f90);
+    border-color: var(--teal, #2f8f90);
+    background: rgba(47, 143, 144, 0.06);
+    transform: translateY(-1px);
+}
+.enter3d-btn:focus-visible {
+    outline: 2px solid var(--teal, #2f8f90);
+    outline-offset: 2px;
+}
+
+/* ---- Credits page ---- */
+.lp-credits {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 28px;
+    margin-top: 32px;
+}
+.lp-credits__section {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    background: #fff;
+    border: 1px solid var(--line);
+    box-sizing: border-box;
+}
+.lp-credits__heading {
+    font-family: MillenniumBold, serif;
+    font-size: 18px;
+    margin: 0 0 14px;
+}
+.lp-credits__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.lp-credits__row {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 0;
+    border-top: 1px solid var(--line);
+}
+.lp-credits__row:first-child {
+    border-top: none;
+}
+.lp-credits__name {
+    font-family: MillenniumBold, serif;
+    font-size: 15px;
+}
+.lp-credits__role {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+/* ---- Advisers section heading ---- */
+.lp-team__group-head {
+    font-family: MillenniumBold, serif;
+    font-size: 24px;
+    margin: 64px 0 8px;
+    grid-column: 1 / -1;
+}
+
+/* ---- Per-member company logos (revealed on card hover) ---- */
+.lp-member__companies {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+    padding-top: 0;
+    overflow: hidden;
+    border-top: 1px solid transparent;
+    transition: max-height 0.28s ease, opacity 0.2s ease,
+        margin-top 0.28s ease, padding-top 0.28s ease, border-color 0.28s ease;
+}
+.lp-member:hover .lp-member__companies,
+.lp-member:focus-within .lp-member__companies {
+    max-height: 120px;
+    opacity: 1;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top-color: var(--line);
+}
+.lp-member__company {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 34px;
+}
+.lp-member__company img {
+    max-height: 28px;
+    max-width: 96px;
+    object-fit: contain;
+    filter: grayscale(1);
+    opacity: 0.8;
+    transition: filter 0.2s ease, opacity 0.2s ease;
+}
+.lp-member:hover .lp-member__company img {
+    filter: grayscale(0);
+    opacity: 1;
+}
+.lp-member__company-name {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+/* ---- Booking embed ---- */
+.lp-booking {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.lp-booking__frame {
+    width: 100%;
+    min-height: 640px;
+    border: 1px solid var(--line);
+    background: #fff;
+}
+.lp-booking__link {
+    align-self: flex-start;
+    margin-top: 14px;
+    font-family: MillenniumBold, serif;
+    font-size: 14px;
+    color: var(--teal-dark, #246b6c);
+    text-decoration: none;
+    border-bottom: 2px solid var(--teal, #2f8f90);
+    padding-bottom: 2px;
+}
+.lp-booking__link:hover {
+    color: var(--teal, #2f8f90);
+}
+.lp-booking__fallback {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 28px;
+    background: #fff;
+    border: 1px dashed var(--line);
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.6;
+}
+.lp-section--book {
+    border-top: 1px solid var(--line);
 }

@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { ExperienceToggle } from '../general';
+import Enter3DButton from '../general/Enter3DButton';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useSiteConfig } from '../../api';
 import Logo from '../../assets/Logo.png';
@@ -124,7 +124,7 @@ const TopNav: React.FC = () => {
             </div>
 
             <div className="lp-nav__right">
-                <ExperienceToggle />
+                <Enter3DButton />
                 <div className="lp-lang">
                     {(['en', 'de'] as const).map((code) => (
                         <button

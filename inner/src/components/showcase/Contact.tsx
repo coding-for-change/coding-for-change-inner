@@ -5,6 +5,7 @@ import { useSiteConfig, useCmsCollection, submitForm } from '../../api';
 import type { CmsForm, CmsFormField } from '../../api';
 import { useLanguage } from '../../contexts/LanguageContext';
 import RichText from '../RichText';
+import BookingEmbed from '../general/BookingEmbed';
 import './landing.css';
 
 export interface ContactProps {
@@ -290,6 +291,16 @@ const Contact: React.FC<ContactProps> = (props) => {
                         </>
                     )}
                 </div>
+
+                <section id="book" className="lp-section--book" style={{ marginTop: 56, paddingTop: 40 }}>
+                    <h2 className="lp-page__title" style={{ fontSize: 28 }}>
+                        {t.book.title}
+                    </h2>
+                    <p className="lp-lead" style={{ marginBottom: 24 }}>
+                        {t.book.intro}
+                    </p>
+                    <BookingEmbed />
+                </section>
             </div>
         </div>
     );

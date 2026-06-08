@@ -25,23 +25,94 @@ const initials = (name: string) =>
         .map((n) => n[0])
         .join('');
 
+// The companies relationship is populated to full docs at depth >= 2; guard
+// against bare IDs (insufficient depth) by keeping only object entries.
+const populatedCompanies = (member: CmsTeamMember): CmsCompany[] =>
+    (member.companies ?? []).filter(
+        (c): c is CmsCompany => typeof c === 'object' && c !== null
+    );
+
+const MemberCard: React.FC<{ member: CmsTeamMember; index: number }> = ({
+    member,
+    index,
+}) => {
+    const imgSrc = mediaUrl(member.image);
+    const companies = populatedCompanies(member);
+    return (
+        <motion.div
+            className="lp-member"
+            {...reveal}
+            transition={{ duration: 0.45, delay: Math.min(index * 0.05, 0.3) }}
+        >
+            {imgSrc ? (
+                <img className="lp-member__avatar" src={imgSrc} alt={member.name} />
+            ) : (
+                <div className="lp-member__avatar-ph">{initials(member.name)}</div>
+            )}
+            <span className="lp-member__name">{member.name}</span>
+            <span className="lp-member__role">{member.role}</span>
+            <p className="lp-member__bio">{member.bio}</p>
+            {member.links && member.links.length > 0 && (
+                <div className="lp-member__links">
+                    {member.links.map((link) => (
+                        <a
+                            key={link.label}
+                            href={link.url}
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            {linkIconMap[link.label] ? (
+                                <img
+                                    src={linkIconMap[link.label]}
+                                    alt={link.label}
+                                />
+                            ) : (
+                                <span>{link.label}</span>
+                            )}
+                        </a>
+                    ))}
+                </div>
+            )}
+            {companies.length > 0 && (
+                <div
+                    className="lp-member__companies"
+                    aria-label="Previously worked at"
+                >
+                    {companies.map((company) => {
+                        const logo = mediaUrl(company.logo);
+                        return (
+                            <span className="lp-member__company" key={company.id}>
+                                {logo ? (
+                                    <img src={logo} alt={company.name} />
+                                ) : (
+                                    <span className="lp-member__company-name">
+                                        {company.name}
+                                    </span>
+                                )}
+                            </span>
+                        );
+                    })}
+                </div>
+            )}
+        </motion.div>
+    );
+};
+
 export interface TeamProps {
     team?: CmsTeamMember[] | null;
-    companies?: CmsCompany[] | null;
 }
 
 const Team: React.FC<TeamProps> = (props) => {
     const { data: team, loading } = useCmsCollection<CmsTeamMember>(
         'team',
-        undefined,
+        { depth: '2' },
         props.team
     );
-    const { data: companies } = useCmsCollection<CmsCompany>(
-        'companies',
-        undefined,
-        props.companies
-    );
     const { t } = useLanguage();
+
+    const all = team ?? [];
+    const members = all.filter((m) => m.category !== 'adviser');
+    const advisers = all.filter((m) => m.category === 'adviser');
 
     return (
         <div className="lp lp-page">
@@ -60,111 +131,32 @@ const Team: React.FC<TeamProps> = (props) => {
                 {loading ? (
                     <p className="lp-loading">Loading…</p>
                 ) : (
-                    <div className="lp-team">
-                        {(team ?? []).map((member, i) => {
-                            const imgSrc = mediaUrl(member.image);
-                            return (
-                                <motion.div
+                    <>
+                        <div className="lp-team">
+                            {members.map((member, i) => (
+                                <MemberCard
                                     key={member.id}
-                                    className="lp-member"
-                                    {...reveal}
-                                    transition={{
-                                        duration: 0.45,
-                                        delay: Math.min(i * 0.05, 0.3),
-                                    }}
-                                >
-                                    {imgSrc ? (
-                                        <img
-                                            className="lp-member__avatar"
-                                            src={imgSrc}
-                                            alt={member.name}
-                                        />
-                                    ) : (
-                                        <div className="lp-member__avatar-ph">
-                                            {initials(member.name)}
-                                        </div>
-                                    )}
-                                    <span className="lp-member__name">
-                                        {member.name}
-                                    </span>
-                                    <span className="lp-member__role">
-                                        {member.role}
-                                    </span>
-                                    <p className="lp-member__bio">{member.bio}</p>
-                                    {member.links &&
-                                        member.links.length > 0 && (
-                                            <div className="lp-member__links">
-                                                {member.links.map((link) => (
-                                                    <a
-                                                        key={link.label}
-                                                        href={link.url}
-                                                        target="_blank"
-                                                        rel="noreferrer"
-                                                    >
-                                                        {linkIconMap[
-                                                            link.label
-                                                        ] ? (
-                                                            <img
-                                                                src={
-                                                                    linkIconMap[
-                                                                        link
-                                                                            .label
-                                                                    ]
-                                                                }
-                                                                alt={link.label}
-                                                            />
-                                                        ) : (
-                                                            <span>
-                                                                {link.label}
-                                                            </span>
-                                                        )}
-                                                    </a>
-                                                ))}
-                                            </div>
-                                        )}
-                                </motion.div>
-                            );
-                        })}
-                    </div>
-                )}
-
-                {(companies ?? []).length > 0 && (
-                    <motion.div
-                        className="lp-companies"
-                        {...reveal}
-                        transition={{ duration: 0.5 }}
-                    >
-                        <h2 className="lp-companies__head">
-                            {t.team.companiesHeading}
-                        </h2>
-                        <div className="lp-sponsors">
-                            {(companies ?? []).map((company) => {
-                                const logo = mediaUrl(company.logo);
-                                const inner = logo ? (
-                                    <img src={logo} alt={company.name} />
-                                ) : (
-                                    <span className="lp-sponsor__name">
-                                        {company.name}
-                                    </span>
-                                );
-                                return company.url ? (
-                                    <a
-                                        key={company.id}
-                                        className="lp-sponsor"
-                                        href={company.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        {inner}
-                                    </a>
-                                ) : (
-                                    <div key={company.id} className="lp-sponsor">
-                                        {inner}
-                                    </div>
-                                );
-                            })}
+                                    member={member}
+                                    index={i}
+                                />
+                            ))}
                         </div>
-                    </motion.div>
+
+                        {advisers.length > 0 && (
+                            <div className="lp-team">
+                                <h2 className="lp-team__group-head">
+                                    {t.team.advisersTitle}
+                                </h2>
+                                {advisers.map((member, i) => (
+                                    <MemberCard
+                                        key={member.id}
+                                        member={member}
+                                        index={i}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
         </div>

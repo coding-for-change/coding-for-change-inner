@@ -11,6 +11,7 @@ import {
     CmsFaqItem,
 } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
+import BookingEmbed from '../general/BookingEmbed';
 import './landing.css';
 
 // Shared scroll-reveal animation. Sections fade/slide in once on first view.
@@ -451,6 +452,24 @@ const Landing: React.FC<LandingProps> = (props) => {
                             })}
                         </div>
                     )}
+                </div>
+            </section>
+
+            {/* ---- Book a meeting ---- */}
+            <section id="book" className="lp-section lp-section--book">
+                <div className="lp-inner">
+                    <motion.div
+                        style={{ display: 'block', width: '100%' }}
+                        {...reveal}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <p className="lp-kicker">{t.nav.contact}</p>
+                        <h2 className="lp-h2">{t.book.title}</h2>
+                        <p className="lp-lead">{t.book.intro}</p>
+                        <div style={{ marginTop: 28, width: '100%' }}>
+                            <BookingEmbed />
+                        </div>
+                    </motion.div>
                 </div>
             </section>
 

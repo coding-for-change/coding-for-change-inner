@@ -35,7 +35,7 @@ export interface Translations {
         upcoming: string; past: string;
         emptyTitle: string; emptyText: string; emptyCta: string;
     };
-    team: { title: string; subtitle: string; intro: string; companiesHeading: string; };
+    team: { title: string; subtitle: string; intro: string; advisersTitle: string; };
     qa: { title: string; subtitle: string; intro: string; };
     join: {
         benefits: string; requirements: string; applyNow: string;
@@ -54,6 +54,7 @@ export interface Translations {
         submitting: string; sendError: string; loadingForm: string;
         formUnavailable: string; successFallback: string;
     };
+    book: { title: string; intro: string; fallback: string; openInNewTab: string; };
     sponsors: { title: string; subtitle: string; intro: string; };
     blog: {
         title: string; subtitle: string; searchPlaceholder: string;
@@ -122,7 +123,7 @@ const en: Translations = {
     team: {
         title: 'Our Team', subtitle: 'The People Behind CFC',
         intro: 'Meet the team that drives Coding for Change. We are a diverse group of students passionate about using technology for social good.',
-        companiesHeading: 'Where our members have worked',
+        advisersTitle: 'Advisers',
     },
     qa: {
         title: 'Q&A', subtitle: 'Frequently Asked Questions',
@@ -153,6 +154,12 @@ const en: Translations = {
         formUnavailable:
             'The contact form is currently unavailable. Please email us directly.',
         successFallback: 'Thanks! Your message has been sent.',
+    },
+    book: {
+        title: 'Book a meeting',
+        intro: 'Prefer to talk? Grab a slot that suits you and we will meet you there.',
+        fallback: 'Online booking is not set up yet — email us and we will find a time.',
+        openInNewTab: 'Open booking page',
     },
     sponsors: {
         title: 'Sponsors', subtitle: 'Our Supporters',
@@ -226,7 +233,7 @@ const de: Translations = {
     team: {
         title: 'Unser Team', subtitle: 'Die Menschen hinter CFC',
         intro: 'Lern das Team kennen, das Coding for Change antreibt. Wir sind eine vielfältige Gruppe von Studierenden, die Technologie für soziale Zwecke einsetzen wollen.',
-        companiesHeading: 'Wo unsere Mitglieder gearbeitet haben',
+        advisersTitle: 'Beirat',
     },
     qa: {
         title: 'F&A', subtitle: 'Häufig Gestellte Fragen',
@@ -257,6 +264,12 @@ const de: Translations = {
         formUnavailable:
             'Das Kontaktformular ist derzeit nicht verfügbar. Bitte schreib uns direkt eine E-Mail.',
         successFallback: 'Danke! Deine Nachricht wurde gesendet.',
+    },
+    book: {
+        title: 'Termin buchen',
+        intro: 'Lieber sprechen? Wähl einen passenden Slot und wir treffen uns dort.',
+        fallback: 'Online-Buchung ist noch nicht eingerichtet — schreib uns und wir finden einen Termin.',
+        openInNewTab: 'Buchungsseite öffnen',
     },
     sponsors: {
         title: 'Sponsoren', subtitle: 'Unsere Unterstützer',

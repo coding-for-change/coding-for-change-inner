@@ -15,9 +15,13 @@ export interface CmsTeamMember {
     id: number;
     name: string;
     role: string;
+    category?: 'member' | 'adviser';
     image?: CmsMedia | null;
     bio: string;
     links?: { label: string; url: string; id?: string }[];
+    // Companies this person worked at (populated at depth >= 2). Logos shown
+    // on hover. May be IDs if fetched at insufficient depth.
+    companies?: (CmsCompany | number)[] | null;
 }
 
 /** GET /api/events */
@@ -80,6 +84,7 @@ export interface CmsSiteConfig {
     socialLinks?: { platform: string; url: string; id?: string }[];
     copyrightText?: string;
     windowTitle?: string;
+    bookingUrl?: string;
     stats?: { value: string; label: string; id?: string }[];
 }
 

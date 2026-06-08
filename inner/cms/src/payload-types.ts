@@ -197,6 +197,7 @@ export interface Team {
   id: number;
   name: string;
   role: string;
+  category: 'member' | 'adviser';
   image?: (number | null) | Media;
   bio: string;
   links?:
@@ -206,6 +207,7 @@ export interface Team {
         id?: string | null;
       }[]
     | null;
+  companies?: (number | Company)[] | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -227,6 +229,20 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+}
+/**
+ * Companies our team members have worked at — shown as a logo wall on the Team page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "companies".
+ */
+export interface Company {
+  id: number;
+  name: string;
+  logo?: (number | null) | Media;
+  url?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -298,20 +314,6 @@ export interface Sponsor {
   url?: string | null;
   tier: 'gold' | 'silver' | 'bronze' | 'partner';
   description?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * Companies our team members have worked at — shown as a logo wall on the Team page.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "companies".
- */
-export interface Company {
-  id: number;
-  name: string;
-  logo?: (number | null) | Media;
-  url?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -915,6 +917,7 @@ export interface UsersSelect<T extends boolean = true> {
 export interface TeamSelect<T extends boolean = true> {
   name?: T;
   role?: T;
+  category?: T;
   image?: T;
   bio?: T;
   links?:
@@ -924,6 +927,7 @@ export interface TeamSelect<T extends boolean = true> {
         url?: T;
         id?: T;
       };
+  companies?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1349,6 +1353,7 @@ export interface SiteConfig {
     | null;
   copyrightText?: string | null;
   windowTitle?: string | null;
+  bookingUrl?: string | null;
   stats?:
     | {
         value: string;
@@ -1440,6 +1445,7 @@ export interface SiteConfigSelect<T extends boolean = true> {
       };
   copyrightText?: T;
   windowTitle?: T;
+  bookingUrl?: T;
   stats?:
     | T
     | {

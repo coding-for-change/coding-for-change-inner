@@ -24,49 +24,59 @@ const INFO_LINKS = [
     { to: '/qa', label: 'F&A' },
     { to: '/imprint', label: 'Datenschutz' },
     { to: '/imprint', label: 'Impressum' },
+    { to: '/credits', label: 'Credits' },
 ];
 
-const MobileFooter: React.FC = () => {
+/**
+ * Site-wide footer. Shared by the desktop site shell and the mobile layout —
+ * with the Windows-95 desktop chrome (and its shortcuts) gone, this is now the
+ * canonical way to reach the Imprint, Privacy and Credits pages. A centered
+ * max-width inner block keeps it readable full-width on desktop and stacked on
+ * mobile.
+ */
+const SiteFooter: React.FC = () => {
     const siteConfig = useSiteConfig();
 
     return (
         <footer style={styles.footer}>
-            <div style={styles.top}>
-                <img src={Logo.src} alt="Coding for Change" style={styles.logo} />
-                {siteConfig.tagline && (
-                    <p style={styles.tagline}>{siteConfig.tagline}</p>
-                )}
-                {siteConfig.email && (
-                    <a href={`mailto:${siteConfig.email}`} style={styles.email}>
-                        {siteConfig.email}
-                    </a>
-                )}
-            </div>
-
-            <div style={styles.columns}>
-                <div style={styles.column}>
-                    <p style={styles.columnHeading}>SEITEN</p>
-                    {PAGE_LINKS.map((link) => (
-                        <RouterLink key={link.label} href={link.to} style={styles.columnLink}>
-                            {link.label}
-                        </RouterLink>
-                    ))}
+            <div style={styles.inner}>
+                <div style={styles.top}>
+                    <img src={Logo.src} alt="Coding for Change" style={styles.logo} />
+                    {siteConfig.tagline && (
+                        <p style={styles.tagline}>{siteConfig.tagline}</p>
+                    )}
+                    {siteConfig.email && (
+                        <a href={`mailto:${siteConfig.email}`} style={styles.email}>
+                            {siteConfig.email}
+                        </a>
+                    )}
                 </div>
-                <div style={styles.column}>
-                    <p style={styles.columnHeading}>INFORMATIONEN</p>
-                    {INFO_LINKS.map((link) => (
-                        <RouterLink key={link.label} href={link.to} style={styles.columnLink}>
-                            {link.label}
-                        </RouterLink>
-                    ))}
+
+                <div style={styles.columns}>
+                    <div style={styles.column}>
+                        <p style={styles.columnHeading}>SEITEN</p>
+                        {PAGE_LINKS.map((link) => (
+                            <RouterLink key={link.label} href={link.to} style={styles.columnLink}>
+                                {link.label}
+                            </RouterLink>
+                        ))}
+                    </div>
+                    <div style={styles.column}>
+                        <p style={styles.columnHeading}>INFORMATIONEN</p>
+                        {INFO_LINKS.map((link) => (
+                            <RouterLink key={link.label} href={link.to} style={styles.columnLink}>
+                                {link.label}
+                            </RouterLink>
+                        ))}
+                    </div>
                 </div>
             </div>
 
             {siteConfig.copyrightText && (
-                <>
+                <div style={styles.copyrightWrap}>
                     <div style={styles.divider} />
                     <p style={styles.copyright}>{siteConfig.copyrightText}</p>
-                </>
+                </div>
             )}
         </footer>
     );
@@ -78,13 +88,27 @@ const styles: StyleSheetCSS = {
         flexDirection: 'column',
         backgroundColor: '#ffffff',
         borderTop: '1px solid #f0f0f0',
-        padding: '40px 24px 28px',
+        padding: '48px 24px 32px',
+        width: '100%',
+        boxSizing: 'border-box',
+    },
+    inner: {
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 48,
+        width: '100%',
+        maxWidth: 1060,
+        margin: '0 auto',
+        boxSizing: 'border-box',
+        justifyContent: 'space-between',
     },
     top: {
         display: 'flex',
         flexDirection: 'column',
-        marginBottom: 32,
         gap: 12,
+        flex: '1 1 260px',
+        minWidth: 240,
     },
     logo: {
         height: 40,
@@ -108,14 +132,14 @@ const styles: StyleSheetCSS = {
     },
     columns: {
         display: 'flex',
-        gap: 48,
+        flexDirection: 'row',
+        gap: 64,
         alignItems: 'flex-start',
-        maxWidth: 460,
+        flexWrap: 'wrap',
     },
     column: {
         display: 'flex',
         flexDirection: 'column',
-        flex: 1,
     },
     columnHeading: {
         fontFamily: FONT,
@@ -133,6 +157,14 @@ const styles: StyleSheetCSS = {
         textDecoration: 'none',
         padding: '6px 0',
     },
+    copyrightWrap: {
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        maxWidth: 1060,
+        margin: '0 auto',
+        boxSizing: 'border-box',
+    },
     divider: {
         height: 1,
         backgroundColor: '#f0f0f0',
@@ -147,4 +179,4 @@ const styles: StyleSheetCSS = {
     },
 };
 
-export default MobileFooter;
+export default SiteFooter;
