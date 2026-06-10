@@ -8,7 +8,7 @@ services:
       - .env
     environment:
       - CMS_URL=http://cms:3000
-      - INNER_URL=http://inner:80
+      - INNER_URL=http://inner:3000
     depends_on:
       - inner
       - cms
@@ -16,6 +16,9 @@ services:
   inner:
     image: localhost:5000/homepage-inner:latest
     restart: unless-stopped
+    environment:
+      # Server-side CMS fetches go directly to the CMS container.
+      - CMS_INTERNAL_URL=http://cms:3000/api
 
   cms:
     image: localhost:5000/homepage-cms:latest

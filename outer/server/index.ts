@@ -16,11 +16,29 @@ app.use(compression());
 
 // Proxy: Payload CMS (admin, API, assets, media)
 app.use(
-    ['/admin', '/api', '/_next', '/media'],
+    ['/admin', '/api', '/media'],
     createProxyMiddleware({
         target: CMS_URL,
         changeOrigin: true,
         // Preserve the original path (don't strip the mount prefix)
+        pathRewrite: (reqPath, req) => req.originalUrl,
+    })
+);
+
+// `/_next` is served by BOTH Next apps — the CMS admin panel and the inner
+// site. The path alone is ambiguous, so route by the requesting document:
+// admin asset/RSC requests carry an `/admin` referer; everything else is the
+// inner site (the default). Without this split, the inner app's JS/CSS chunks
+// would be fetched from the CMS and 404.
+app.use(
+    '/_next',
+    createProxyMiddleware({
+        changeOrigin: true,
+        target: INNER_URL,
+        router: (req) =>
+            /\/admin(\/|$|\?)/.test(req.headers.referer || '')
+                ? CMS_URL
+                : INNER_URL,
         pathRewrite: (reqPath, req) => req.originalUrl,
     })
 );

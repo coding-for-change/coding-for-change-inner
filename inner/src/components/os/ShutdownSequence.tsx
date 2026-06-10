@@ -260,7 +260,7 @@ const ShutdownSequence: React.FC<ShutdownSequenceProps> = ({
 
     return ee ? (
         <div style={styles.imageContainer}>
-            <img src={eePic} style={styles.img} alt="" />
+            <img src={eePic.src} style={styles.img} alt="" />
         </div>
     ) : loading ? (
         <div style={styles.shutdown}>
@@ -268,7 +268,7 @@ const ShutdownSequence: React.FC<ShutdownSequenceProps> = ({
         </div>
     ) : numShutdowns === 10 ? (
         <div style={styles.imageContainer}>
-            <img src={neverGiveUp} style={styles.img} alt="" />
+            <img src={neverGiveUp.src} style={styles.img} alt="" />
         </div>
     ) : (
         <div style={styles.shutdown}>

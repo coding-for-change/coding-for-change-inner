@@ -1,120 +1,166 @@
+'use client';
 import React from 'react';
+import { motion } from 'framer-motion';
 import { useCmsCollection, mediaUrl } from '../../api';
-import { CmsTeamMember } from '../../api/types';
-import { RetroLoader } from '../general';
+import { CmsTeamMember, CmsCompany } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
 import linkedinIcon from '../../assets/icons/linkedin.png';
 import githubIcon from '../../assets/icons/git.png';
+import './landing.css';
 
 const linkIconMap: Record<string, string> = {
-    LinkedIn: linkedinIcon,
-    GitHub: githubIcon,
+    LinkedIn: linkedinIcon.src,
+    GitHub: githubIcon.src,
 };
 
-const Team: React.FC = () => {
-    const { data: team, loading } = useCmsCollection<CmsTeamMember>('team');
-    const { t } = useLanguage();
+const reveal = {
+    initial: { opacity: 0, y: 24 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, amount: 0.15 },
+} as const;
 
-    if (loading) return <div className="site-page-content"><RetroLoader /></div>;
+const initials = (name: string) =>
+    name
+        .split(' ')
+        .map((n) => n[0])
+        .join('');
 
+// The companies relationship is populated to full docs at depth >= 2; guard
+// against bare IDs (insufficient depth) by keeping only object entries.
+const populatedCompanies = (member: CmsTeamMember): CmsCompany[] =>
+    (member.companies ?? []).filter(
+        (c): c is CmsCompany => typeof c === 'object' && c !== null
+    );
+
+const MemberCard: React.FC<{ member: CmsTeamMember; index: number }> = ({
+    member,
+    index,
+}) => {
+    const imgSrc = mediaUrl(member.image);
+    const companies = populatedCompanies(member);
     return (
-        <div className="site-page-content">
-            <h1>{t.team.title}</h1>
-            <h3>{t.team.subtitle}</h3>
-            <br />
-            <div className="text-block">
-                <p>{t.team.intro}</p>
-            </div>
-            <br />
-            <div style={styles.teamGrid}>
-                {(team ?? []).map(member => {
-                    const imgSrc = mediaUrl(member.image);
-                    return (
-                        <div key={member.id} className="big-button-container" style={styles.memberCard}>
-                            {imgSrc ? (
-                                <img src={imgSrc} alt={member.name} style={styles.avatarImage} />
+        <motion.div
+            className="lp-member"
+            {...reveal}
+            transition={{ duration: 0.45, delay: Math.min(index * 0.05, 0.3) }}
+        >
+            {imgSrc ? (
+                <img className="lp-member__avatar" src={imgSrc} alt={member.name} />
+            ) : (
+                <div className="lp-member__avatar-ph">{initials(member.name)}</div>
+            )}
+            <span className="lp-member__name">{member.name}</span>
+            <span className="lp-member__role">{member.role}</span>
+            <p className="lp-member__bio">{member.bio}</p>
+            {member.links && member.links.length > 0 && (
+                <div className="lp-member__links">
+                    {member.links.map((link) => (
+                        <a
+                            key={link.label}
+                            href={link.url}
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            {linkIconMap[link.label] ? (
+                                <img
+                                    src={linkIconMap[link.label]}
+                                    alt={link.label}
+                                />
                             ) : (
-                                <div style={styles.avatarPlaceholder}>
-                                    <p style={styles.avatarText}>{member.name.split(' ').map(n => n[0]).join('')}</p>
-                                </div>
+                                <span>{link.label}</span>
                             )}
-                            <h3>{member.name}</h3>
-                            <p style={styles.role}>{member.role}</p>
-                            <br />
-                            <p style={styles.bio}>{member.bio}</p>
-                            {member.links && member.links.length > 0 && (
-                                <div style={styles.linkRow}>
-                                    {member.links.map(link => (
-                                        <a key={link.label} href={link.url} target="_blank" rel="noreferrer">
-                                            {linkIconMap[link.label] ? (
-                                                <img src={linkIconMap[link.label]} alt={link.label} style={styles.linkIcon} />
-                                            ) : (
-                                                <span>{link.label}</span>
-                                            )}
-                                        </a>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    );
-                })}
-            </div>
-        </div>
+                        </a>
+                    ))}
+                </div>
+            )}
+            {companies.length > 0 && (
+                <div
+                    className="lp-member__companies"
+                    aria-label="Previously worked at"
+                >
+                    {companies.map((company) => {
+                        const logo = mediaUrl(company.logo);
+                        return (
+                            <span className="lp-member__company" key={company.id}>
+                                {logo ? (
+                                    <img src={logo} alt={company.name} />
+                                ) : (
+                                    <span className="lp-member__company-name">
+                                        {company.name}
+                                    </span>
+                                )}
+                            </span>
+                        );
+                    })}
+                </div>
+            )}
+        </motion.div>
     );
 };
 
-const styles: StyleSheetCSS = {
-    teamGrid: {
-        flexWrap: 'wrap',
-        gap: 16,
-    },
-    memberCard: {
-        flexDirection: 'column',
-        alignItems: 'center',
-        padding: 16,
-        width: 220,
-        boxSizing: 'border-box',
-    },
-    avatarImage: {
-        width: 80,
-        height: 80,
-        borderRadius: '50%',
-        objectFit: 'cover',
-        marginBottom: 12,
-    },
-    avatarPlaceholder: {
-        width: 80,
-        height: 80,
-        borderRadius: '50%',
-        backgroundColor: '#008080',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 12,
-    },
-    avatarText: {
-        color: 'white',
-        fontSize: 24,
-        fontWeight: 'bold',
-    },
-    role: {
-        fontStyle: 'italic',
-        fontSize: 14,
-        marginTop: 4,
-    },
-    bio: {
-        fontSize: 13,
-        textAlign: 'center',
-    },
-    linkRow: {
-        marginTop: 8,
-        gap: 12,
-        justifyContent: 'center',
-    },
-    linkIcon: {
-        width: 20,
-        height: 20,
-        cursor: 'pointer',
-    },
+export interface TeamProps {
+    team?: CmsTeamMember[] | null;
+}
+
+const Team: React.FC<TeamProps> = (props) => {
+    const { data: team, loading } = useCmsCollection<CmsTeamMember>(
+        'team',
+        { depth: '2' },
+        props.team
+    );
+    const { t } = useLanguage();
+
+    const all = team ?? [];
+    const members = all.filter((m) => m.category !== 'adviser');
+    const advisers = all.filter((m) => m.category === 'adviser');
+
+    return (
+        <div className="lp lp-page">
+            <div className="lp-inner">
+                <motion.div
+                    className="lp-page__head"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <p className="lp-kicker">{t.team.subtitle}</p>
+                    <h1 className="lp-page__title">{t.team.title}</h1>
+                    <p className="lp-lead">{t.team.intro}</p>
+                </motion.div>
+
+                {loading ? (
+                    <p className="lp-loading">Loading…</p>
+                ) : (
+                    <>
+                        <div className="lp-team">
+                            {members.map((member, i) => (
+                                <MemberCard
+                                    key={member.id}
+                                    member={member}
+                                    index={i}
+                                />
+                            ))}
+                        </div>
+
+                        {advisers.length > 0 && (
+                            <div className="lp-team">
+                                <h2 className="lp-team__group-head">
+                                    {t.team.advisersTitle}
+                                </h2>
+                                {advisers.map((member, i) => (
+                                    <MemberCard
+                                        key={member.id}
+                                        member={member}
+                                        index={i}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                    </>
+                )}
+            </div>
+        </div>
+    );
 };
 
 export default Team;

@@ -1,48 +1,21 @@
+'use client';
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from '../showcase/Home';
-import About from '../showcase/About';
-import Events from '../showcase/Events';
-import CFCProjects from '../showcase/CFCProjects';
-import Sponsors from '../showcase/Sponsors';
-import Team from '../showcase/Team';
-import QA from '../showcase/QA';
-import BecomeAMember from '../showcase/BecomeAMember';
-import Contact from '../showcase/Contact';
-import Blog from '../showcase/Blog';
-import BlogArticle from '../showcase/BlogArticle';
 import MobileNav from './MobileNav';
-import MobileFooter from './MobileFooter';
-import ImprintPage from './ImprintPage';
+import SiteFooter from '../general/SiteFooter';
 
 // Height of the sticky nav bar — used to size the content area so that
-// position:absolute pages (Home) fill the visible viewport below the nav.
+// position:absolute pages fill the visible viewport below the nav.
 const NAV_HEIGHT = 60;
 
-const MobileLayout: React.FC = () => {
+// Mobile chrome wrapper. The active route's content is passed as `children`
+// by the (os) layout; routing itself is handled by the Next.js App Router.
+const MobileLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
     return (
-        <BrowserRouter>
-            <div style={styles.layout}>
-                <MobileNav />
-                <div style={styles.content}>
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/about" element={<About />} />
-                        <Route path="/events" element={<Events />} />
-                        <Route path="/projects" element={<CFCProjects />} />
-                        <Route path="/sponsors" element={<Sponsors />} />
-                        <Route path="/team" element={<Team />} />
-                        <Route path="/blog" element={<Blog />} />
-                        <Route path="/blog/:slug" element={<BlogArticle />} />
-                        <Route path="/qa" element={<QA />} />
-                        <Route path="/join" element={<BecomeAMember />} />
-                        <Route path="/contact" element={<Contact />} />
-                        <Route path="/imprint" element={<ImprintPage />} />
-                    </Routes>
-                </div>
-                <MobileFooter />
-            </div>
-        </BrowserRouter>
+        <div style={styles.layout}>
+            <MobileNav />
+            <div style={styles.content}>{children}</div>
+            <SiteFooter />
+        </div>
     );
 };
 
@@ -54,9 +27,9 @@ const styles: StyleSheetCSS = {
         flexDirection: 'column',
         backgroundColor: '#ffffff',
     },
-    // Positioned wrapper so that Home's position:absolute fills the
-    // visible screen below the nav, while normal-flow pages (About, etc.)
-    // push this container taller and naturally scroll.
+    // Positioned wrapper so that position:absolute pages fill the visible
+    // screen below the nav, while normal-flow pages push this container
+    // taller and naturally scroll.
     content: {
         position: 'relative',
         flex: 1,

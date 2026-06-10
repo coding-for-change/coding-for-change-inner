@@ -11,17 +11,22 @@ services:
       - .env
     environment:
       - CMS_URL=http://cms:3000
-      - INNER_URL=http://inner:80
+      - INNER_URL=http://inner:3000
     depends_on:
       - inner
       - cms
 
-  # Inner site (React app, embedded as iframe)
+  # Inner site (Next.js app — SSR server, embedded as iframe)
   inner:
     build:
       context: ./inner
       dockerfile: Dockerfile
     restart: unless-stopped
+    environment:
+      # Server-side CMS fetches go directly to the CMS container.
+      - CMS_INTERNAL_URL=http://cms:3000/api
+    depends_on:
+      - cms
 
   # Payload CMS (admin panel + REST API)
   cms:

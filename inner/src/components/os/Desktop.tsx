@@ -1,4 +1,6 @@
+'use client';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Colors from '../../constants/colors';
 import ShowcaseExplorer from '../applications/ShowcaseExplorer';
 import ShutdownSequence from './ShutdownSequence';
@@ -8,9 +10,17 @@ import { IconName } from '../../assets/icons';
 import Credits from '../applications/Credits';
 import Imprint from '../applications/Imprint';
 
-export interface DesktopProps {}
+export interface DesktopProps {
+    // The active route's content, rendered inside the always-present showcase
+    // window. Supplied by the (os) route-group layout.
+    children?: React.ReactNode;
+}
 
 type ExtendedWindowAppProps<T> = T & WindowAppProps;
+
+// The showcase is the primary window: it hosts the routed page content and is
+// open by default. Other apps are opened from desktop shortcuts.
+const SHOWCASE_KEY = 'showcase';
 
 const APPLICATIONS: {
     [key in string]: {
@@ -18,7 +28,7 @@ const APPLICATIONS: {
         name: string;
         shortcutIcon: IconName;
         // Windowed apps render a component. "Route" apps (e.g. the blog) instead
-        // open the showcase window at a deep-linked path and have no component.
+        // navigate the showcase window to a path and have no component.
         component?: React.FC<ExtendedWindowAppProps<any>>;
         route?: string;
     };
@@ -27,7 +37,6 @@ const APPLICATIONS: {
         key: 'showcase',
         name: 'Coding for Change',
         shortcutIcon: 'showcaseIcon',
-        component: ShowcaseExplorer,
     },
     credits: {
         key: 'credits',
@@ -43,14 +52,31 @@ const APPLICATIONS: {
     },
     blog: {
         key: 'blog',
-        name: 'Engineering Blog',
+        name: 'News',
         shortcutIcon: 'windowExplorerIcon',
         route: '/blog',
     },
 };
 
-const Desktop: React.FC<DesktopProps> = (props) => {
-    const [windows, setWindows] = useState<DesktopWindows>({});
+// Metadata-only window entry for the showcase. Its `component` is never read —
+// the render loop renders <ShowcaseExplorer> inline so it always reflects the
+// current route's `children` — but the field satisfies the DesktopWindows type
+// and feeds the taskbar (name/icon/zIndex/minimized).
+const showcaseEntry = (zIndex: number, minimized = false) => ({
+    zIndex,
+    minimized,
+    component: <React.Fragment />,
+    name: APPLICATIONS.showcase.name,
+    icon: APPLICATIONS.showcase.shortcutIcon,
+});
+
+const Desktop: React.FC<DesktopProps> = ({ children }) => {
+    const router = useRouter();
+
+    // The showcase window is open on load (like the old auto-open behavior).
+    const [windows, setWindows] = useState<DesktopWindows>(() => ({
+        [SHOWCASE_KEY]: showcaseEntry(1),
+    }));
 
     const [shortcuts, setShortcuts] = useState<DesktopShortcutProps[]>([]);
 
@@ -64,46 +90,8 @@ const Desktop: React.FC<DesktopProps> = (props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [shutdown]);
 
-    useEffect(() => {
-        const newShortcuts: DesktopShortcutProps[] = [];
-        Object.keys(APPLICATIONS).forEach((key) => {
-            const app = APPLICATIONS[key];
-            newShortcuts.push({
-                shortcutName: app.name,
-                icon: app.shortcutIcon,
-                onOpen: () => {
-                    // Route apps open the main showcase window deep-linked to a path.
-                    if (app.route) {
-                        openShowcaseAt(app.route);
-                        return;
-                    }
-                    const Component = app.component;
-                    if (!Component) return;
-                    addWindow(
-                        app.key,
-                        <Component
-                            onInteract={() => onWindowInteract(app.key)}
-                            onMinimize={() => minimizeWindow(app.key)}
-                            onClose={() => removeWindow(app.key)}
-                            key={app.key}
-                        />
-                    );
-                },
-            });
-        });
-
-        newShortcuts.forEach((shortcut) => {
-            if (shortcut.shortcutName === 'Coding for Change') {
-                shortcut.onOpen();
-            }
-        });
-
-        setShortcuts(newShortcuts);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
     const rebootDesktop = useCallback(() => {
-        setWindows({});
+        setWindows({ [SHOWCASE_KEY]: showcaseEntry(1) });
     }, []);
 
     const removeWindow = useCallback((key: string) => {
@@ -120,7 +108,7 @@ const Desktop: React.FC<DesktopProps> = (props) => {
     const minimizeWindow = useCallback((key: string) => {
         setWindows((prevWindows) => {
             const newWindows = { ...prevWindows };
-            newWindows[key].minimized = true;
+            if (newWindows[key]) newWindows[key].minimized = true;
             return newWindows;
         });
     }, []);
@@ -140,6 +128,7 @@ const Desktop: React.FC<DesktopProps> = (props) => {
     const toggleMinimize = useCallback(
         (key: string) => {
             const newWindows = { ...windows };
+            if (!newWindows[key]) return;
             const highestIndex = getHighestZIndex();
             if (
                 newWindows[key].minimized ||
@@ -189,71 +178,106 @@ const Desktop: React.FC<DesktopProps> = (props) => {
         [getHighestZIndex]
     );
 
-    // Open (or focus) the main showcase window and deep-link it to a path.
-    // Used by "route" desktop apps such as the blog, so the URL is shareable
-    // and the page shows up inside the same navbar-driven layout.
+    // Open (or focus) the showcase window. Re-creates it if it was closed.
+    const focusShowcase = useCallback(() => {
+        setWindows((prev) => {
+            const highest = Object.keys(prev).reduce(
+                (max, k) => Math.max(max, prev[k]?.zIndex ?? 0),
+                0
+            );
+            return {
+                ...prev,
+                [SHOWCASE_KEY]: prev[SHOWCASE_KEY]
+                    ? { ...prev[SHOWCASE_KEY], minimized: false, zIndex: highest + 1 }
+                    : showcaseEntry(highest + 1),
+            };
+        });
+    }, []);
+
+    // Navigate the showcase window to a path (used by "route" desktop apps such
+    // as the blog) and bring it to the front. Next's router handles the URL;
+    // the matched page renders into the layout's `children`.
     const openShowcaseAt = useCallback(
         (path: string) => {
-            window.history.pushState({}, '', path);
-            setWindows((prev) => {
-                const highest = Object.keys(prev).reduce(
-                    (max, k) => Math.max(max, prev[k]?.zIndex ?? 0),
-                    0
-                );
-                if (prev['showcase']) {
-                    return {
-                        ...prev,
-                        showcase: {
-                            ...prev['showcase'],
-                            minimized: false,
-                            zIndex: highest + 1,
-                        },
-                    };
-                }
-                return {
-                    ...prev,
-                    showcase: {
-                        zIndex: highest + 1,
-                        minimized: false,
-                        component: (
-                            <ShowcaseExplorer
-                                onInteract={() => onWindowInteract('showcase')}
-                                onMinimize={() => minimizeWindow('showcase')}
-                                onClose={() => removeWindow('showcase')}
-                                key="showcase"
-                            />
-                        ),
-                        name: APPLICATIONS['showcase'].name,
-                        icon: APPLICATIONS['showcase'].shortcutIcon,
-                    },
-                };
-            });
-            // Notify the already-mounted router (if any) to navigate.
-            window.dispatchEvent(new PopStateEvent('popstate'));
+            router.push(path);
+            focusShowcase();
         },
-        [onWindowInteract, minimizeWindow, removeWindow]
+        [router, focusShowcase]
     );
+
+    useEffect(() => {
+        const newShortcuts: DesktopShortcutProps[] = [];
+        Object.keys(APPLICATIONS).forEach((key) => {
+            const app = APPLICATIONS[key];
+            newShortcuts.push({
+                shortcutName: app.name,
+                icon: app.shortcutIcon,
+                onOpen: () => {
+                    // The showcase is always present — its shortcut just focuses it.
+                    if (app.key === SHOWCASE_KEY) {
+                        focusShowcase();
+                        return;
+                    }
+                    // Route apps navigate the showcase window to a path.
+                    if (app.route) {
+                        openShowcaseAt(app.route);
+                        return;
+                    }
+                    const Component = app.component;
+                    if (!Component) return;
+                    addWindow(
+                        app.key,
+                        <Component
+                            onInteract={() => onWindowInteract(app.key)}
+                            onMinimize={() => minimizeWindow(app.key)}
+                            onClose={() => removeWindow(app.key)}
+                            key={app.key}
+                        />
+                    );
+                },
+            });
+        });
+
+        setShortcuts(newShortcuts);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return !shutdown ? (
         <div style={styles.desktop}>
             {/* For each window in windows, loop over and render  */}
             {Object.keys(windows).map((key) => {
-                const element = windows[key].component;
-                if (!element) return <div key={`win-${key}`}></div>;
+                const win = windows[key];
+                if (!win) return <div key={`win-${key}`}></div>;
+                // The showcase window is rendered inline so it always reflects
+                // the current route's content (`children`); other apps render
+                // their stored component element.
+                const content =
+                    key === SHOWCASE_KEY ? (
+                        <ShowcaseExplorer
+                            key={key}
+                            onInteract={() => onWindowInteract(key)}
+                            onClose={() => removeWindow(key)}
+                            onMinimize={() => minimizeWindow(key)}
+                        >
+                            {children}
+                        </ShowcaseExplorer>
+                    ) : (
+                        React.cloneElement(win.component, {
+                            key,
+                            onInteract: () => onWindowInteract(key),
+                            onClose: () => removeWindow(key),
+                        })
+                    );
                 return (
                     <div
                         key={`win-${key}`}
                         style={Object.assign(
                             {},
-                            { zIndex: windows[key].zIndex },
-                            windows[key].minimized && styles.minimized
+                            { zIndex: win.zIndex },
+                            win.minimized && styles.minimized
                         )}
                     >
-                        {React.cloneElement(element, {
-                            key,
-                            onInteract: () => onWindowInteract(key),
-                            onClose: () => removeWindow(key),
-                        })}
+                        {content}
                     </div>
                 );
             })}

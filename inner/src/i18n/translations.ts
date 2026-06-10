@@ -11,25 +11,31 @@ export interface Translations {
     };
     home: {
         about: string; events: string; projects: string; team: string; join: string;
+        kicker: string; ctaPrimary: string; ctaSecondary: string;
     };
     about: {
         title: string;
-        mission: string; missionText: string;
-        whatWeDo: string; whatWeDoText: string;
+        kicker: string;
+        oneLiner: string;
+        pitch: string;
+        stats: { value: string; label: string }[];
         howItWorks: string;
-        step1Title: string; step1Text: string;
-        step2Title: string; step2Text: string;
-        step3Title: string; step3Text: string;
-        getInvolvedPre: string; qaLink: string;
-        getInvolvedMid: string; contactLink: string; getInvolvedPost: string;
-        joinPre: string; memberLink: string; joinPost: string;
+        steps: { title: string; text: string }[];
+        explore: string;
+    };
+    process: {
+        kicker: string; heading: string; intro: string;
+    };
+    cta: {
+        heading: string; text: string; join: string; contact: string;
     };
     projects: { title: string; subtitle: string; intro: string; };
     events: {
         title: string; subtitle: string; intro: string;
         upcoming: string; past: string;
+        emptyTitle: string; emptyText: string; emptyCta: string;
     };
-    team: { title: string; subtitle: string; intro: string; };
+    team: { title: string; subtitle: string; intro: string; advisersTitle: string; };
     qa: { title: string; subtitle: string; intro: string; };
     join: {
         benefits: string; requirements: string; applyNow: string;
@@ -45,7 +51,10 @@ export interface Translations {
         orgLabel: string; orgPlaceholder: string;
         messageLabel: string; messagePlaceholder: string;
         sendMessage: string; emailClientNote: string; requiredNote: string;
+        submitting: string; sendError: string; loadingForm: string;
+        formUnavailable: string; successFallback: string;
     };
+    book: { title: string; intro: string; fallback: string; openInNewTab: string; };
     sponsors: { title: string; subtitle: string; intro: string; };
     blog: {
         title: string; subtitle: string; searchPlaceholder: string;
@@ -66,25 +75,38 @@ const en: Translations = {
     },
     home: {
         about: 'ABOUT', events: 'EVENTS', projects: 'PROJECTS', team: 'TEAM', join: 'JOIN',
+        kicker: 'Gain coding experience while making a difference',
+        ctaPrimary: 'Join the club',
+        ctaSecondary: 'See our work',
     },
     about: {
         title: 'About Us',
-        mission: 'Our Mission',
-        missionText: 'We believe that technology should serve everyone. Many NGOs and non-profit organizations have great ideas and important missions but lack the technical resources to bring them to life. At the same time, CS students are eager to apply their skills to real-world problems. Coding for Change bridges this gap.',
-        whatWeDo: 'What We Do',
-        whatWeDoText: 'We partner with NGOs in and around Munich to build software solutions — from websites and apps to data dashboards and automation tools. Each project is developed by a team of student volunteers, guided by experienced team leads, and delivered in close collaboration with the partner organization.',
-        howItWorks: 'How It Works',
-        step1Title: '1. Partner Matching:', step1Text: 'We identify NGOs with technology needs and match them with a student team.',
-        step2Title: '2. Project Development:', step2Text: 'Teams work in agile sprints over the course of a semester to deliver a working product.',
-        step3Title: '3. Handoff & Support:', step3Text: 'Completed projects are handed off to the NGO with documentation and optional ongoing support.',
-        getInvolvedPre: 'Have questions or want to get involved? Check out our',
-        qaLink: 'Q&A page',
-        getInvolvedMid: 'or reach out via the',
-        contactLink: 'contact form',
-        getInvolvedPost: 'You can also email us at',
-        joinPre: 'Interested in joining us? Check out the',
-        memberLink: 'membership page',
-        joinPost: 'to learn more about how you can get involved!',
+        kicker: 'Who we are',
+        oneLiner: 'We develop software for NGOs so they can focus on their mission.',
+        pitch: 'NGOs have the mission. Students have the skills. We connect the two.',
+        stats: [
+            { value: '4', label: 'NGOs partnered' },
+            { value: '10+', label: 'Active members' },
+            { value: '1', label: 'Projects shipped' },
+        ],
+        howItWorks: 'How it works',
+        steps: [
+            { title: 'Match', text: 'We pair an NGO that needs software with a student team.' },
+            { title: 'Build', text: 'The team ships it over one semester of agile sprints.' },
+            { title: 'Hand off', text: 'We deliver the finished product with docs and support.' },
+        ],
+        explore: 'Explore',
+    },
+    process: {
+        kicker: 'How it works',
+        heading: 'How we work with NGOs',
+        intro: 'From first conversation to finished software in a single semester — here is the path every project follows.',
+    },
+    cta: {
+        heading: 'Ready to build something good?',
+        text: 'Whether you are a student who wants to ship real code or a nonprofit with a problem worth solving — let us talk.',
+        join: 'Join the club',
+        contact: 'Partner with us',
     },
     projects: {
         title: 'Projects', subtitle: 'Building Tech for Social Good',
@@ -94,10 +116,14 @@ const en: Translations = {
         title: 'Events', subtitle: 'Workshops, Hackathons & More',
         intro: 'Join us at our upcoming events or check out what we have been up to!',
         upcoming: 'Upcoming Events', past: 'Past Events',
+        emptyTitle: 'Currently no event',
+        emptyText: 'Have an idea for an event? Let’s talk.',
+        emptyCta: 'Get in touch',
     },
     team: {
         title: 'Our Team', subtitle: 'The People Behind CFC',
         intro: 'Meet the team that drives Coding for Change. We are a diverse group of students passionate about using technology for social good.',
+        advisersTitle: 'Advisers',
     },
     qa: {
         title: 'Q&A', subtitle: 'Frequently Asked Questions',
@@ -113,7 +139,7 @@ const en: Translations = {
     },
     contact: {
         title: 'Contact',
-        intro: 'Whether you are an NGO looking for tech support, a student wanting to join, or just curious about what we do — we would love to hear from you!',
+        intro: 'Whether you are an NGO looking for someone to solve a hard problem using technology or just curious about what we do — we would love to hear from you!',
         nameLabel: 'Your name:', namePlaceholder: 'Name',
         emailLabel: 'Email:', emailPlaceholder: 'Email',
         orgLabel: 'Organization/NGO (optional):', orgPlaceholder: 'Organization or NGO name',
@@ -121,13 +147,26 @@ const en: Translations = {
         sendMessage: 'Send Message',
         emailClientNote: 'This will open your email client to send the message',
         requiredNote: '* = required',
+        submitting: 'Sending…',
+        sendError:
+            'Something went wrong sending your message. Please try again, or email us directly.',
+        loadingForm: 'Loading form…',
+        formUnavailable:
+            'The contact form is currently unavailable. Please email us directly.',
+        successFallback: 'Thanks! Your message has been sent.',
+    },
+    book: {
+        title: 'Book a meeting',
+        intro: 'Prefer to talk? Grab a slot that suits you and we will meet you there.',
+        fallback: 'Online booking is not set up yet — email us and we will find a time.',
+        openInNewTab: 'Open booking page',
     },
     sponsors: {
         title: 'Sponsors', subtitle: 'Our Supporters',
         intro: 'We are grateful for the support of our sponsors who make our work possible. Interested in sponsoring? Reach out to us!',
     },
     blog: {
-        title: 'Engineering Blog', subtitle: 'Projects, lessons, and reflections from our teams',
+        title: 'News', subtitle: 'Projects, lessons, and reflections from our teams',
         searchPlaceholder: 'Search posts...', all: 'All',
         noPosts: 'No posts found.', back: 'Back to Blog', notFound: 'Post not found.',
     },
@@ -146,25 +185,38 @@ const de: Translations = {
     },
     home: {
         about: 'ÜBER UNS', events: 'EVENTS', projects: 'PROJEKTE', team: 'TEAM', join: 'MITMACHEN',
+        kicker: 'Sammle Programmiererfahrung und bewirke etwas Gutes',
+        ctaPrimary: 'Mitglied werden',
+        ctaSecondary: 'Unsere Arbeit ansehen',
     },
     about: {
         title: 'Über Uns',
-        mission: 'Unsere Mission',
-        missionText: 'Wir glauben, dass Technologie allen zugutekommen sollte. Viele NGOs und gemeinnützige Organisationen haben großartige Ideen und wichtige Missionen, aber es fehlen ihnen die technischen Ressourcen, um diese umzusetzen. Gleichzeitig möchten Informatikstudent:innen ihre Fähigkeiten auf reale Probleme anwenden. Coding for Change schlägt diese Brücke.',
-        whatWeDo: 'Was Wir Tun',
-        whatWeDoText: 'Wir kooperieren mit NGOs in und um München, um Softwarelösungen zu entwickeln – von Websites und Apps bis hin zu Daten-Dashboards und Automatisierungstools. Jedes Projekt wird von einem Team aus studentischen Freiwilligen umgesetzt, von erfahrenen Teamleads begleitet und in enger Zusammenarbeit mit der Partnerorganisation geliefert.',
-        howItWorks: 'So Funktioniert Es',
-        step1Title: '1. Partner-Matching:', step1Text: 'Wir identifizieren NGOs mit Technologiebedarf und stellen sie einem Studierendenteam vor.',
-        step2Title: '2. Projektentwicklung:', step2Text: 'Teams arbeiten in agilen Sprints über ein Semester hinweg, um ein funktionierendes Produkt zu liefern.',
-        step3Title: '3. Übergabe & Support:', step3Text: 'Fertige Projekte werden mit Dokumentation an die NGO übergeben, optional mit weiterem Support.',
-        getInvolvedPre: 'Fragen oder möchtest du mitmachen? Schau auf unserer',
-        qaLink: 'F&A-Seite',
-        getInvolvedMid: 'nach oder wende dich über unser',
-        contactLink: 'Kontaktformular',
-        getInvolvedPost: 'an uns. Du kannst uns auch direkt per E-Mail erreichen:',
-        joinPre: 'Möchtest du mitmachen? Schau auf der',
-        memberLink: 'Mitgliedschaftsseite',
-        joinPost: 'vorbei, um mehr darüber zu erfahren, wie du dich einbringen kannst!',
+        kicker: 'Wer wir sind',
+        oneLiner: 'Wir entwickeln Software für NGOs, damit sie sich auf ihre Mission konzentrieren können.',
+        pitch: 'NGOs haben die Mission. Studierende haben die Fähigkeiten. Wir bringen beide zusammen.',
+        stats: [
+            { value: '4', label: 'NGOs unterstützt' },
+            { value: '10+', label: 'Aktive Mitglieder' },
+            { value: '1', label: 'Projekte umgesetzt' },
+        ],
+        howItWorks: 'So funktioniert es',
+        steps: [
+            { title: 'Matching', text: 'Wir bringen eine NGO mit Softwarebedarf mit einem Studierendenteam zusammen.' },
+            { title: 'Entwicklung', text: 'Das Team setzt es in einem Semester in agilen Sprints um.' },
+            { title: 'Übergabe', text: 'Wir liefern das fertige Produkt mit Dokumentation und Support.' },
+        ],
+        explore: 'Entdecken',
+    },
+    process: {
+        kicker: 'So funktioniert es',
+        heading: 'Wie wir mit NGOs arbeiten',
+        intro: 'Vom ersten Gespräch bis zur fertigen Software in einem einzigen Semester – diesen Weg geht jedes Projekt.',
+    },
+    cta: {
+        heading: 'Bereit, etwas Gutes zu bauen?',
+        text: 'Ob Studierende:r, die:der echten Code liefern will, oder NGO mit einem Problem, das es zu lösen lohnt – sprich mit uns.',
+        join: 'Mitglied werden',
+        contact: 'Partner werden',
     },
     projects: {
         title: 'Projekte', subtitle: 'Technologie für das Gemeinwohl',
@@ -174,10 +226,14 @@ const de: Translations = {
         title: 'Events', subtitle: 'Workshops, Hackathons & Mehr',
         intro: 'Nimm an unseren kommenden Events teil oder schau dir an, was wir bisher erlebt haben!',
         upcoming: 'Kommende Events', past: 'Vergangene Events',
+        emptyTitle: 'Aktuell kein Event',
+        emptyText: 'Du hast eine Idee für ein Event? Lass uns reden.',
+        emptyCta: 'Kontakt aufnehmen',
     },
     team: {
         title: 'Unser Team', subtitle: 'Die Menschen hinter CFC',
         intro: 'Lern das Team kennen, das Coding for Change antreibt. Wir sind eine vielfältige Gruppe von Studierenden, die Technologie für soziale Zwecke einsetzen wollen.',
+        advisersTitle: 'Beirat',
     },
     qa: {
         title: 'F&A', subtitle: 'Häufig Gestellte Fragen',
@@ -193,7 +249,7 @@ const de: Translations = {
     },
     contact: {
         title: 'Kontakt',
-        intro: 'Ob NGO auf der Suche nach technischer Unterstützung, Studierende:r mit Interesse am Mitmachen oder einfach neugierig auf unsere Arbeit – wir freuen uns von dir zu hören!',
+        intro: 'Ob NGO auf der Suche nach jemandem, der ein kniffliges Problem mithilfe von Technologie löst, oder einfach neugierig auf unsere Arbeit – wir freuen uns von dir zu hören!',
         nameLabel: 'Dein Name:', namePlaceholder: 'Name',
         emailLabel: 'E-Mail:', emailPlaceholder: 'E-Mail',
         orgLabel: 'Organisation/NGO (optional):', orgPlaceholder: 'Name der Organisation oder NGO',
@@ -201,13 +257,26 @@ const de: Translations = {
         sendMessage: 'Nachricht senden',
         emailClientNote: 'Damit wird dein E-Mail-Programm geöffnet, um die Nachricht zu senden',
         requiredNote: '* = Pflichtfeld',
+        submitting: 'Wird gesendet…',
+        sendError:
+            'Beim Senden deiner Nachricht ist etwas schiefgelaufen. Bitte versuche es erneut oder schreib uns direkt eine E-Mail.',
+        loadingForm: 'Formular wird geladen…',
+        formUnavailable:
+            'Das Kontaktformular ist derzeit nicht verfügbar. Bitte schreib uns direkt eine E-Mail.',
+        successFallback: 'Danke! Deine Nachricht wurde gesendet.',
+    },
+    book: {
+        title: 'Termin buchen',
+        intro: 'Lieber sprechen? Wähl einen passenden Slot und wir treffen uns dort.',
+        fallback: 'Online-Buchung ist noch nicht eingerichtet — schreib uns und wir finden einen Termin.',
+        openInNewTab: 'Buchungsseite öffnen',
     },
     sponsors: {
         title: 'Sponsoren', subtitle: 'Unsere Unterstützer',
         intro: 'Wir sind dankbar für die Unterstützung unserer Sponsoren, die unsere Arbeit erst möglich machen. Interesse am Sponsoring? Meld dich bei uns!',
     },
     blog: {
-        title: 'Engineering-Blog', subtitle: 'Projekte, Erkenntnisse und Rückblicke unserer Teams',
+        title: 'News', subtitle: 'Projekte, Erkenntnisse und Rückblicke unserer Teams',
         searchPlaceholder: 'Beiträge durchsuchen...', all: 'Alle',
         noPosts: 'Keine Beiträge gefunden.', back: 'Zurück zum Blog', notFound: 'Beitrag nicht gefunden.',
     },

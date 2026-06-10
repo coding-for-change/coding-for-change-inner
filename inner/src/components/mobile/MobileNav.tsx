@@ -1,5 +1,7 @@
+'use client';
 import React, { useState, useEffect, useRef } from 'react';
-import { useLocation, Link as RouterLink } from 'react-router-dom';
+import { usePathname } from 'next/navigation';
+import RouterLink from 'next/link';
 import { useLanguage } from '../../contexts/LanguageContext';
 import Logo from '../../assets/Logo.png';
 import './mobile.css';
@@ -20,14 +22,14 @@ const MobileNav: React.FC = () => {
     const [open, setOpen] = useState(false);
     const [langOpen, setLangOpen] = useState(false);
     const [reveal, setReveal] = useState(0);
-    const location = useLocation();
+    const pathname = usePathname();
     const { t, locale, setLocale } = useLanguage();
     const langRef = useRef<HTMLDivElement>(null);
 
     // Close the menu whenever the route changes.
     useEffect(() => {
         setOpen(false);
-    }, [location.pathname]);
+    }, [pathname]);
 
     // Reveal the wordmark progressively as the page scrolls.
     useEffect(() => {
@@ -64,13 +66,15 @@ const MobileNav: React.FC = () => {
     }, [langOpen]);
 
     const navLinks = [
-        { to: '/about', label: t.nav.about },
-        { to: '/events', label: t.nav.events },
-        { to: '/projects', label: t.nav.projects },
+        // Sections on the single-scroll landing page.
+        { to: '/#about', label: t.nav.about },
+        { to: '/#events', label: t.nav.events },
+        { to: '/#projects', label: t.nav.projects },
+        { to: '/#sponsors', label: t.nav.sponsors },
+        { to: '/#qa', label: t.nav.qa },
+        // Standalone pages.
         { to: '/team', label: t.nav.team },
         { to: '/blog', label: t.nav.blog },
-        { to: '/sponsors', label: t.nav.sponsors },
-        { to: '/qa', label: t.nav.qa },
         { to: '/contact', label: t.nav.contact },
     ];
 
@@ -80,8 +84,8 @@ const MobileNav: React.FC = () => {
         <>
             <header style={styles.header}>
                 <div style={styles.brand}>
-                    <RouterLink to="/" style={styles.logoLink}>
-                        <img src={Logo} alt="Coding for Change" style={styles.logo} />
+                    <RouterLink href="/" style={styles.logoLink}>
+                        <img src={Logo.src} alt="Coding for Change" style={styles.logo} />
                     </RouterLink>
                     <span
                         style={Object.assign({}, styles.wordmark, {
@@ -108,12 +112,12 @@ const MobileNav: React.FC = () => {
                     <div style={styles.overlayHeader}>
                         <div style={styles.brand}>
                             <RouterLink
-                                to="/"
+                                href="/"
                                 style={styles.logoLink}
                                 onClick={() => setOpen(false)}
                             >
                                 <img
-                                    src={Logo}
+                                    src={Logo.src}
                                     alt="Coding for Change"
                                     style={styles.logo}
                                 />
@@ -132,7 +136,7 @@ const MobileNav: React.FC = () => {
                         {navLinks.map((link, i) => (
                             <RouterLink
                                 key={link.to}
-                                to={link.to}
+                                href={link.to}
                                 className="mobile-menu-item"
                                 style={Object.assign({}, styles.navLink, {
                                     animationDelay: `${i * 0.05}s`,
@@ -145,7 +149,7 @@ const MobileNav: React.FC = () => {
                     </nav>
 
                     <RouterLink
-                        to="/join"
+                        href="/join"
                         className="mobile-menu-item"
                         style={Object.assign({}, styles.ctaButton, {
                             animationDelay: `${navLinks.length * 0.05}s`,

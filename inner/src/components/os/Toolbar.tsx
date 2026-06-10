@@ -68,7 +68,9 @@ const Toolbar: React.FC<ToolbarProps> = ({ windows, toggleMinimize }) => {
         setLastActive(k);
     }, [windows]);
 
-    const [time, setTime] = useState(getTime());
+    // Start empty so the server-rendered HTML and the client's first render
+    // agree (the clock is set on mount by updateTime below).
+    const [time, setTime] = useState('');
 
     const updateTime = () => {
         setTime(getTime());

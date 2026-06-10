@@ -1,14 +1,19 @@
+'use client';
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useCmsGlobal } from '../../api';
 import { CmsMembership } from '../../api/types';
-import { RetroLoader } from '../general';
 import { useLanguage } from '../../contexts/LanguageContext';
+import './landing.css';
 
-const BecomeAMember: React.FC = () => {
+const BecomeAMember: React.FC<{ membership?: CmsMembership | null }> = (props) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [motivation, setMotivation] = useState('');
-    const { data: membership, loading } = useCmsGlobal<CmsMembership>('membership');
+    const { data: membership, loading } = useCmsGlobal<CmsMembership>(
+        'membership',
+        props.membership
+    );
     const { t } = useLanguage();
 
     const handleSubmit = () => {
@@ -20,94 +25,120 @@ const BecomeAMember: React.FC = () => {
         window.location.href = `mailto:${membership.contactEmail}?subject=${subject}&body=${body}`;
     };
 
-    const isValid = name.length > 0 && email.length > 0 && motivation.length > 0;
+    const isValid =
+        name.length > 0 && email.length > 0 && motivation.length > 0;
 
-    if (loading) return <div className="site-page-content"><RetroLoader /></div>;
-    if (!membership) return <div className="site-page-content"><p>{t.join.unavailable}</p></div>;
+    if (loading) {
+        return (
+            <div className="lp lp-page">
+                <div className="lp-inner">
+                    <p className="lp-loading">Loading…</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (!membership) {
+        return (
+            <div className="lp lp-page">
+                <div className="lp-inner">
+                    <p className="lp-empty">{t.join.unavailable}</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className="site-page-content">
-            <h1>{membership.title}</h1>
-            <br />
-            <div className="text-block">
-                <p>{membership.description}</p>
-            </div>
-            <br />
-            <h3>{t.join.benefits}</h3>
-            <br />
-            <ul style={styles.list}>
-                {(membership.benefits ?? []).map((b, i) => (
-                    <li key={i} style={styles.listItem}>{b.text}</li>
-                ))}
-            </ul>
-            <br />
-            <h3>{t.join.requirements}</h3>
-            <br />
-            <ul style={styles.list}>
-                {(membership.requirements ?? []).map((r, i) => (
-                    <li key={i} style={styles.listItem}>{r.text}</li>
-                ))}
-            </ul>
-            <br />
-            <h3>{t.join.applyNow}</h3>
-            <br />
-            <div style={styles.form}>
-                <label><p><b>{t.join.nameLabel}</b></p></label>
-                <input
-                    style={styles.formItem}
-                    type="text"
-                    placeholder={t.join.namePlaceholder}
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                />
-                <label><p><b>{t.join.emailLabel}</b></p></label>
-                <input
-                    style={styles.formItem}
-                    type="email"
-                    placeholder={t.join.emailPlaceholder}
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                />
-                <label><p><b>{t.join.motivationLabel}</b></p></label>
-                <textarea
-                    style={styles.formItem}
-                    placeholder={t.join.motivationPlaceholder}
-                    value={motivation}
-                    onChange={e => setMotivation(e.target.value)}
-                />
-                <button
-                    className="site-button"
-                    style={styles.button}
-                    disabled={!isValid}
-                    onMouseDown={handleSubmit}
+        <div className="lp lp-page">
+            <div className="lp-inner">
+                <motion.div
+                    className="lp-page__head"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
                 >
-                    {t.join.sendApplication}
-                </button>
+                    <p className="lp-kicker">{t.nav.join}</p>
+                    <h1 className="lp-page__title">{membership.title}</h1>
+                    <p className="lp-lead">{membership.description}</p>
+                </motion.div>
+
+                <motion.div
+                    className="lp-cols2"
+                    initial={{ opacity: 0, y: 24 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.15 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <div className="lp-col">
+                        <h3 className="lp-col__head">{t.join.benefits}</h3>
+                        <ul className="lp-list">
+                            {(membership.benefits ?? []).map((b, i) => (
+                                <li key={i}>{b.text}</li>
+                            ))}
+                        </ul>
+                    </div>
+                    <div className="lp-col">
+                        <h3 className="lp-col__head">{t.join.requirements}</h3>
+                        <ul className="lp-list">
+                            {(membership.requirements ?? []).map((r, i) => (
+                                <li key={i}>{r.text}</li>
+                            ))}
+                        </ul>
+                    </div>
+                </motion.div>
+
+                <motion.div
+                    className="lp-form"
+                    initial={{ opacity: 0, y: 24 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.15 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <h3 className="lp-col__head" style={{ marginBottom: 16 }}>
+                        {t.join.applyNow}
+                    </h3>
+                    <div className="lp-field">
+                        <span className="lp-label">{t.join.nameLabel}</span>
+                        <input
+                            className="lp-input"
+                            type="text"
+                            placeholder={t.join.namePlaceholder}
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                    </div>
+                    <div className="lp-field">
+                        <span className="lp-label">{t.join.emailLabel}</span>
+                        <input
+                            className="lp-input"
+                            type="email"
+                            placeholder={t.join.emailPlaceholder}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                    </div>
+                    <div className="lp-field">
+                        <span className="lp-label">
+                            {t.join.motivationLabel}
+                        </span>
+                        <textarea
+                            className="lp-textarea"
+                            placeholder={t.join.motivationPlaceholder}
+                            value={motivation}
+                            onChange={(e) => setMotivation(e.target.value)}
+                        />
+                    </div>
+                    <button
+                        className="lp-submit"
+                        disabled={!isValid}
+                        onMouseDown={handleSubmit}
+                    >
+                        {t.join.sendApplication}
+                    </button>
+                </motion.div>
             </div>
         </div>
     );
-};
-
-const styles: StyleSheetCSS = {
-    list: {
-        flexDirection: 'column',
-        paddingLeft: 24,
-    },
-    listItem: {
-        marginBottom: 8,
-    },
-    form: {
-        flexDirection: 'column',
-    },
-    formItem: {
-        marginTop: 4,
-        marginBottom: 16,
-    },
-    button: {
-        minWidth: 184,
-        height: 32,
-        alignSelf: 'flex-start',
-    },
 };
 
 export default BecomeAMember;
