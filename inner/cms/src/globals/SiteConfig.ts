@@ -22,12 +22,11 @@ export const SiteConfig: GlobalConfig = {
     { name: 'copyrightText', type: 'text', localized: true },
     { name: 'windowTitle', type: 'text', localized: true },
     {
-      // Public Google Appointment Schedule booking-page URL. Embedded as an
-      // iframe on the Contact and home pages. Paste the link from Google
-      // Calendar → Appointment schedule → "Open booking page" / Share.
+      // Public Cal.com booking-page URL. Embedded as an iframe on the Contact
+      // and home pages. Paste the Cal.com event link (cal.com/<user>/<event>).
       name: 'bookingUrl',
       type: 'text',
-      label: 'Booking page URL (Google Appointment Schedule)',
+      label: 'Booking page URL (Cal.com)',
     },
     {
       // Impact figures shown on the About page. Editable here so the numbers

@@ -12,9 +12,10 @@ export interface BookingEmbedProps {
 // Site Configuration → "Booking page URL" field overrides it when present.
 const ENV_BOOKING_URL = process.env.NEXT_PUBLIC_BOOKING_URL?.trim() || '';
 
-// Google's embeddable appointment-schedule URL needs `?gv=true`. The plain
-// schedule URL (and the calendar.google.com/calendar/... variant) is iframeable
-// only with that param, so add it defensively when it's missing.
+// Cal.com booking links (cal.com/<user>/<event>) are iframeable as-is, so the
+// URL is used unchanged. The legacy Google Appointment Schedule URL needs
+// `?gv=true` to be iframeable, so add it defensively if such a URL is still
+// configured (e.g. an old value lingering in the CMS).
 const toEmbeddable = (raw: string): string => {
     if (!/calendar\.google\.com\/.*appointments\/schedules\//.test(raw)) return raw;
     if (/[?&]gv=true\b/.test(raw)) return raw;
@@ -22,17 +23,14 @@ const toEmbeddable = (raw: string): string => {
 };
 
 /**
- * Embeds the club's Google Appointment Schedule booking page as an iframe.
+ * Embeds the club's Cal.com booking page as an iframe.
  *
  * The URL comes from the CMS (Site Configuration → "Booking page URL"), or from
  * the NEXT_PUBLIC_BOOKING_URL env var as a fallback. A direct "open in new tab"
- * link is always shown so visitors can still book even if Google declines to be
- * iframed (some share links set X-Frame-Options). Falls back to an email prompt
- * when no URL is configured at all.
+ * link is always shown so visitors can still book even if the provider declines
+ * to be iframed. Falls back to an email prompt when no URL is configured at all.
  *
- * To get the URL: Google Calendar → Create → Appointment schedule → set
- * availability → Share → copy the booking-page link (or the "Embed" URL, which
- * ends in `?gv=true` and is the most reliable to iframe).
+ * To get the URL: copy the Cal.com event link (cal.com/<user>/<event>).
  */
 const BookingEmbed: React.FC<BookingEmbedProps> = ({ height = 700 }) => {
     const siteConfig = useSiteConfig();
