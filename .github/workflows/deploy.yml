@@ -82,6 +82,10 @@ jobs:
             "PAYLOAD_SECRET=${{ secrets.PAYLOAD_SECRET }}" \
             "CMS_URL=http://cms:3000" \
             "INNER_URL=http://inner:80" \
+            "RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}" \
+            "EMAIL_FROM=info@codingforchange.com" \
+            "EMAIL_FROM_NAME=Coding for Change" \
+            "CONTACT_TO_EMAIL=info@codingforchange.com" \
             > /tmp/.env
           $SCP /tmp/.env ${SSH_TARGET}:/var/www/homepage/.env
           rm -f /tmp/.env
