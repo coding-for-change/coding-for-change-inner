@@ -195,6 +195,7 @@ export interface User {
  */
 export interface Team {
   id: number;
+  _order?: string | null;
   name: string;
   role: string;
   category: 'member' | 'adviser';
@@ -915,6 +916,7 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "team_select".
  */
 export interface TeamSelect<T extends boolean = true> {
+  _order?: T;
   name?: T;
   role?: T;
   category?: T;

@@ -103,9 +103,11 @@ export interface TeamProps {
 }
 
 const Team: React.FC<TeamProps> = (props) => {
+    // Keep `sort` in step with the server fetch in app/(os)/team/page.tsx so the
+    // client re-fetch preserves the admin's drag-and-drop order (`_order`).
     const { data: team, loading } = useCmsCollection<CmsTeamMember>(
         'team',
-        { depth: '2' },
+        { depth: '2', sort: '_order' },
         props.team
     );
     const { t } = useLanguage();

@@ -4,6 +4,7 @@ import * as migration_20260604_123322_add_forms_and_mcp from './20260604_123322_
 import * as migration_20260604_154011_add_site_config_stats from './20260604_154011_add_site_config_stats';
 import * as migration_20260604_154226_add_companies from './20260604_154226_add_companies';
 import * as migration_20260608_205054_advisers_companies_booking from './20260608_205054_advisers_companies_booking';
+import * as migration_20260610_193625_team_orderable from './20260610_193625_team_orderable';
 
 export const migrations = [
   {
@@ -35,5 +36,10 @@ export const migrations = [
     up: migration_20260608_205054_advisers_companies_booking.up,
     down: migration_20260608_205054_advisers_companies_booking.down,
     name: '20260608_205054_advisers_companies_booking'
+  },
+  {
+    up: migration_20260610_193625_team_orderable.up,
+    down: migration_20260610_193625_team_orderable.down,
+    name: '20260610_193625_team_orderable',
   },
 ];

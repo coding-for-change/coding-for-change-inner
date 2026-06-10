@@ -14,8 +14,11 @@ export default async function TeamPage() {
     const locale = await getServerLocale();
     // depth=2 so each member's `companies` relationship is populated to full
     // docs (and the companies' logos resolved) for the hover logo reveal.
+    // sort by `_order` (the drag-and-drop position set in the CMS admin) so the
+    // page reflects the editor's chosen order rather than newest-first.
     const team = await fetchCollection<CmsTeamMember>('team', locale, {
         depth: '2',
+        sort: '_order',
     });
     return <Team team={team} />;
 }

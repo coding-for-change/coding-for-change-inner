@@ -2,6 +2,10 @@ import { CollectionConfig } from 'payload';
 
 export const Team: CollectionConfig = {
   slug: 'team',
+  // Enables drag-and-drop reordering in the admin list view. Payload stores the
+  // position in a hidden `_order` field; the Team page sorts by it (sort=_order)
+  // instead of the default newest-first. Reorder rows in admin → site updates.
+  orderable: true,
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'role', 'category'],
