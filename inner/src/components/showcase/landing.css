@@ -525,7 +525,7 @@
     object-fit: contain;
 }
 .lp-nav__name {
-    font-family: 'Roboto Mono', monospace;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', monospace;
     font-weight: 700;
     /* Sized so the cap height matches the 30px logo mark beside it. */
     font-size: 27px;

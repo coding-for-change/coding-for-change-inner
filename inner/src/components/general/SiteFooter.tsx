@@ -2,7 +2,7 @@
 import React from 'react';
 import RouterLink from 'next/link';
 import { useSiteConfig } from '../../api';
-import Logo from '../../assets/Logo.png';
+import Logo from '../../assets/Logo.webp';
 
 const NAVY = '#0f2040';
 const GRAY = '#6b7280';
@@ -41,7 +41,13 @@ const SiteFooter: React.FC = () => {
         <footer style={styles.footer}>
             <div style={styles.inner}>
                 <div style={styles.top}>
-                    <img src={Logo.src} alt="Coding for Change" style={styles.logo} />
+                    <img
+                        src={Logo.src}
+                        alt="Coding for Change"
+                        width={Logo.width}
+                        height={Logo.height}
+                        style={styles.logo}
+                    />
                     {siteConfig.tagline && (
                         <p style={styles.tagline}>{siteConfig.tagline}</p>
                     )}

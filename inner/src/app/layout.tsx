@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import localFont from 'next/font/local';
 // All four global stylesheets — importing every one here is what the old CRA
 // build did via index.tsx/App.tsx. (The abandoned migration dropped App.css and
 // mobile.css, which is what broke its formatting.)
@@ -12,6 +13,13 @@ import InputRelay from './InputRelay';
 import { fetchGlobal } from '@/lib/cms';
 import { getServerLocale } from '@/lib/locale';
 import type { CmsSiteConfig } from '@/api/types';
+
+const robotoMono = localFont({
+    src: '../assets/fonts/RobotoMono-latin.woff2',
+    weight: '100 700',
+    display: 'swap',
+    variable: '--font-roboto-mono',
+});
 
 export const metadata: Metadata = {
     metadataBase: new URL('https://codingforchange.com'),
@@ -77,22 +85,31 @@ export default async function RootLayout({
     const siteConfig = await fetchGlobal<CmsSiteConfig>('site-config', locale);
 
     return (
-        <html lang={locale}>
+        <html lang={locale} className={robotoMono.variable}>
             <head>
                 {/* `_parent` keeps links working when the OS is embedded in the
                     3D scene's monitor iframe. */}
                 <base target="_parent" />
-                <link rel="stylesheet" href="https://use.typekit.net/llo2eru.css" />
-                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                {}
+                <link rel="preconnect" href="https://use.typekit.net" />
                 <link
                     rel="preconnect"
-                    href="https://fonts.gstatic.com"
+                    href="https://p.typekit.net"
                     crossOrigin="anonymous"
                 />
-                <link
-                    rel="stylesheet"
-                    href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500;700&display=swap"
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html:
+                            "(function(){var l=document.createElement('link');" +
+                            "l.rel='stylesheet';l.href='https://use.typekit.net/llo2eru.css';" +
+                            "l.media='print';l.onload=function(){this.onload=null;this.media='all'};" +
+                            'document.head.appendChild(l);})();',
+                    }}
                 />
+                <noscript>
+                    {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+                    <link rel="stylesheet" href="https://use.typekit.net/llo2eru.css" />
+                </noscript>
                 <script
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_JSONLD) }}

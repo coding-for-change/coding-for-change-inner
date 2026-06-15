@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import Enter3DButton from '../general/Enter3DButton';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useSiteConfig } from '../../api';
-import Logo from '../../assets/Logo.png';
+import Logo from '../../assets/Logo.webp';
 import './landing.css';
 
 // Sections that live on the single-scroll landing page (`/`). Clicking one
@@ -85,7 +85,13 @@ const TopNav: React.FC = () => {
                 onClick={() => goToSection('home')}
                 aria-label={siteConfig.clubName || 'Home'}
             >
-                <img className="lp-nav__logo" src={Logo.src} alt="" />
+                <img
+                    className="lp-nav__logo"
+                    src={Logo.src}
+                    alt=""
+                    width={Logo.width}
+                    height={Logo.height}
+                />
                 <span className="lp-nav__name">
                     {siteConfig.clubName || 'Coding for Change'}
                 </span>

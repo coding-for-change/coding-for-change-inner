@@ -12,7 +12,44 @@ const INNER_URL = process.env.INNER_URL || 'http://inner:80';
 const PUBLIC_DIR = path.resolve(__dirname, '../public');
 
 app.use(cors());
-app.use(compression());
+app.use(
+    compression({
+        filter: (req, res) => {
+            const contentType = res.getHeader('Content-Type');
+            if (
+                typeof contentType === 'string' &&
+                contentType.includes('text/event-stream')
+            ) {
+                return false;
+            }
+            return compression.filter(req, res);
+        },
+    })
+);
+
+// Security response headers (Lighthouse "Trust & Safety"). Set before the
+// proxies so they apply to every response on this origin — the inner site,
+// the CMS admin/API, and the 3D scene alike.
+app.use((req, res, next) => {
+    // HSTS: pin the origin to HTTPS for a year. Per spec, browsers ignore this
+    // header when it arrives over plain HTTP, so sending it unconditionally is
+    // safe even though TLS is terminated upstream. `includeSubDomains` requires
+    // every *.codingforchange.com host to also be HTTPS — drop it if any
+    // subdomain is still served over plain HTTP.
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    // Clickjacking: only same-origin documents may frame the site. The 3D scene
+    // (/3d) embeds the inner site from this same origin, so SAMEORIGIN keeps
+    // that working while blocking foreign framers.
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    // Block MIME-sniffing a response into an unintended content type.
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    // Send only the origin (no path/query) on cross-origin navigations.
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    // Isolate this browsing-context group from cross-origin openers while still
+    // allowing "open in new tab" links (cal.com, socials) to work.
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+    next();
+});
 
 // Proxy: Payload CMS (admin, API, assets, media)
 app.use(

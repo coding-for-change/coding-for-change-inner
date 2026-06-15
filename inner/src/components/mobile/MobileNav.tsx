@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import RouterLink from 'next/link';
 import { useLanguage } from '../../contexts/LanguageContext';
-import Logo from '../../assets/Logo.png';
+import Logo from '../../assets/Logo.webp';
 import './mobile.css';
 
 const NAVY = '#0f2040';
@@ -85,7 +85,13 @@ const MobileNav: React.FC = () => {
             <header style={styles.header}>
                 <div style={styles.brand}>
                     <RouterLink href="/" style={styles.logoLink}>
-                        <img src={Logo.src} alt="Coding for Change" style={styles.logo} />
+                        <img
+                            src={Logo.src}
+                            alt="Coding for Change"
+                            width={Logo.width}
+                            height={Logo.height}
+                            style={styles.logo}
+                        />
                     </RouterLink>
                     <span
                         style={Object.assign({}, styles.wordmark, {
@@ -119,6 +125,8 @@ const MobileNav: React.FC = () => {
                                 <img
                                     src={Logo.src}
                                     alt="Coding for Change"
+                                    width={Logo.width}
+                                    height={Logo.height}
                                     style={styles.logo}
                                 />
                             </RouterLink>

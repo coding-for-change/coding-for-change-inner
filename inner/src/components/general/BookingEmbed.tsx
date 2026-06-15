@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSiteConfig } from '../../api';
 import { useLanguage } from '../../contexts/LanguageContext';
 
@@ -38,6 +38,32 @@ const BookingEmbed: React.FC<BookingEmbedProps> = ({ height = 700 }) => {
     const rawUrl = (siteConfig.bookingUrl?.trim() || ENV_BOOKING_URL) || '';
     const url = rawUrl ? toEmbeddable(rawUrl) : '';
 
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [visible, setVisible] = useState(false);
+
+    useEffect(() => {
+        if (visible || !url) return;
+        const el = containerRef.current;
+        if (!el) return;
+        // No IntersectionObserver (very old browsers) → load immediately.
+        if (typeof IntersectionObserver === 'undefined') {
+            setVisible(true);
+            return;
+        }
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries.some((e) => e.isIntersecting)) {
+                    setVisible(true);
+                    observer.disconnect();
+                }
+            },
+            // Start loading a little before it enters the viewport.
+            { rootMargin: '400px' }
+        );
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, [visible, url]);
+
     if (!url) {
         return (
             <div className="lp-booking">
@@ -54,14 +80,23 @@ const BookingEmbed: React.FC<BookingEmbedProps> = ({ height = 700 }) => {
     }
 
     return (
-        <div className="lp-booking">
-            <iframe
-                className="lp-booking__frame"
-                src={url}
-                style={{ minHeight: height }}
-                title={t.book.title}
-                frameBorder={0}
-            />
+        <div className="lp-booking" ref={containerRef}>
+            {visible ? (
+                <iframe
+                    className="lp-booking__frame"
+                    src={url}
+                    style={{ minHeight: height }}
+                    title={t.book.title}
+                    frameBorder={0}
+                    loading="lazy"
+                />
+            ) : (
+                <div
+                    className="lp-booking__frame"
+                    style={{ minHeight: height }}
+                    aria-hidden
+                />
+            )}
             <a
                 className="lp-booking__link"
                 href={url}

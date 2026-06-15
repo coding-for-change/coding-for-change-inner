@@ -26,7 +26,7 @@ export const isMobileViewport = (): boolean => {
  * /3d redirect has no viewport information to work with.
  */
 export default function useIsMobile(): boolean {
-    const [isMobile, setIsMobile] = useState<boolean>(isMobileViewport);
+    const [isMobile, setIsMobile] = useState<boolean>(false);
 
     useEffect(() => {
         const mql = window.matchMedia(MOBILE_QUERY);

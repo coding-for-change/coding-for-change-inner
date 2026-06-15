@@ -18,24 +18,33 @@ code {
 
 
 /* 8px */
+
 @font-face {
     font-family: MSSerif;
-    src: url(./assets/fonts/MSSansSerif.ttf);
+    src: url(./assets/fonts/MSSansSerif.woff2) format('woff2'),
+        url(./assets/fonts/MSSansSerif.ttf) format('truetype');
+    font-display: swap;
 }
 
 @font-face {
     font-family: Millennium;
-    src: url(./assets/fonts/Millennium.ttf);
+    src: url(./assets/fonts/Millennium.woff2) format('woff2'),
+        url(./assets/fonts/Millennium.ttf) format('truetype');
+    font-display: swap;
 }
 
 @font-face {
     font-family: MillenniumBold;
-    src: url(./assets/fonts/Millennium-Bold.ttf);
+    src: url(./assets/fonts/Millennium-Bold.woff2) format('woff2'),
+        url(./assets/fonts/Millennium-Bold.ttf) format('truetype');
+    font-display: swap;
 }
 
 @font-face {
     font-family: Terminal;
-    src: url(./assets/fonts/Terminal.ttf);
+    src: url(./assets/fonts/Terminal.woff2) format('woff2'),
+        url(./assets/fonts/Terminal.ttf) format('truetype');
+    font-display: swap;
 }
 
 

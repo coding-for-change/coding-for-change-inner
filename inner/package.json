@@ -16,6 +16,13 @@
     "server-only": "^0.0.1",
     "usehooks-ts": "^3.1.1"
   },
+  "browserslist": [
+    "chrome >= 109",
+    "edge >= 109",
+    "firefox >= 115",
+    "safari >= 16",
+    "ios_saf >= 16"
+  ],
   "devDependencies": {
     "@types/node": "^20.19.0",
     "@types/react": "^18.3.12",
