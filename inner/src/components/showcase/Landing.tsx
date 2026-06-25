@@ -143,7 +143,7 @@ const Landing: React.FC<LandingProps> = (props) => {
                                 {t.home.ctaSecondary}
                             </a>
                         </div>
-                        <span className="lp-scrollhint">↓ scroll to explore</span>
+                        <span className="lp-scrollhint">{t.home.scrollHint}</span>
                     </motion.div>
                 </div>
             </section>

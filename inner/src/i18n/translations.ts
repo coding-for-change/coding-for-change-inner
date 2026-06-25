@@ -11,7 +11,7 @@ export interface Translations {
     };
     home: {
         about: string; events: string; projects: string; team: string; join: string;
-        kicker: string; ctaPrimary: string; ctaSecondary: string;
+        kicker: string; ctaPrimary: string; ctaSecondary: string; scrollHint: string;
     };
     about: {
         title: string;
@@ -78,6 +78,7 @@ const en: Translations = {
         kicker: 'Gain coding experience while making a difference',
         ctaPrimary: 'Join the club',
         ctaSecondary: 'See our work',
+        scrollHint: '↓ scroll to explore',
     },
     about: {
         title: 'About Us',
@@ -188,6 +189,7 @@ const de: Translations = {
         kicker: 'Sammle Programmiererfahrung und bewirke etwas Gutes',
         ctaPrimary: 'Mitglied werden',
         ctaSecondary: 'Unsere Arbeit ansehen',
+        scrollHint: '↓ zum Entdecken scrollen',
     },
     about: {
         title: 'Über Uns',
