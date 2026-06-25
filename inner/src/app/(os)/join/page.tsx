@@ -1,7 +1,7 @@
 import BecomeAMember from '@/components/showcase/BecomeAMember';
-import { fetchGlobal } from '@/lib/cms';
+import { fetchCollection, fetchGlobal } from '@/lib/cms';
 import { getServerLocale } from '@/lib/locale';
-import type { CmsMembership } from '@/api/types';
+import type { CmsMembership, CmsForm } from '@/api/types';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,6 +12,9 @@ export const metadata = {
 
 export default async function JoinPage() {
     const locale = await getServerLocale();
-    const membership = await fetchGlobal<CmsMembership>('membership', locale);
-    return <BecomeAMember membership={membership} />;
+    const [membership, forms] = await Promise.all([
+        fetchGlobal<CmsMembership>('membership', locale),
+        fetchCollection<CmsForm>('forms', locale),
+    ]);
+    return <BecomeAMember membership={membership} forms={forms} />;
 }

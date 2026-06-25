@@ -43,6 +43,8 @@ export interface Translations {
         emailLabel: string; emailPlaceholder: string;
         motivationLabel: string; motivationPlaceholder: string;
         sendApplication: string; unavailable: string;
+        submitting: string; sendError: string; loadingForm: string;
+        formUnavailable: string; successFallback: string; requiredNote: string;
     };
     contact: {
         title: string; intro: string;
@@ -137,6 +139,14 @@ const en: Translations = {
         motivationLabel: 'Why do you want to join?',
         motivationPlaceholder: 'Tell us about your motivation...',
         sendApplication: 'Send Application', unavailable: 'Content unavailable.',
+        submitting: 'Sending…',
+        sendError:
+            'Something went wrong sending your application. Please try again or email us directly.',
+        loadingForm: 'Loading form…',
+        formUnavailable:
+            'The application form is currently unavailable. Please email us directly.',
+        successFallback: 'Thanks! Your application has been sent.',
+        requiredNote: '* = required',
     },
     contact: {
         title: 'Contact',
@@ -248,6 +258,14 @@ const de: Translations = {
         motivationLabel: 'Warum möchtest du mitmachen?',
         motivationPlaceholder: 'Erzähl uns von deiner Motivation...',
         sendApplication: 'Bewerbung absenden', unavailable: 'Inhalt nicht verfügbar.',
+        submitting: 'Wird gesendet…',
+        sendError:
+            'Beim Senden deiner Bewerbung ist etwas schiefgelaufen. Bitte versuche es erneut oder schreib uns direkt.',
+        loadingForm: 'Formular wird geladen…',
+        formUnavailable:
+            'Das Bewerbungsformular ist derzeit nicht verfügbar. Bitte schreib uns direkt.',
+        successFallback: 'Danke! Deine Bewerbung wurde gesendet.',
+        requiredNote: '* = Pflichtfeld',
     },
     contact: {
         title: 'Kontakt',
