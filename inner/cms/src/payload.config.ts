@@ -13,13 +13,14 @@ import { Companies } from './collections/Companies';
 import { Media } from './collections/Media';
 import { Users } from './collections/Users';
 import { BlogPost } from './collections/BlogPost';
+import { WaitlistSignups } from './collections/WaitlistSignups';
 import { SiteConfig } from './globals/SiteConfig';
 import { Membership } from './globals/Membership';
 import { Legal } from './globals/Legal';
 
 export default buildConfig({
   editor: lexicalEditor(),
-  collections: [Users, Team, Projects, Events, FAQ, Sponsors, Companies, Media, BlogPost],
+  collections: [Users, Team, Projects, Events, FAQ, Sponsors, Companies, Media, BlogPost, WaitlistSignups],
   globals: [SiteConfig, Membership, Legal],
   localization: {
     locales: [

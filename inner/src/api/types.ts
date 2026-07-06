@@ -141,6 +141,8 @@ export interface CmsMembership {
     description: string;
     benefits?: { text: string; id?: string }[];
     requirements?: { text: string; id?: string }[];
+    /** Cross-disciplinary "Ways to contribute" cards (Engineering, Consulting, …). */
+    tracks?: { title: string; description: string; id?: string }[];
     contactEmail: string;
 }
 

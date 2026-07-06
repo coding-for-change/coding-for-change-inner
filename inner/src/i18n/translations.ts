@@ -38,13 +38,17 @@ export interface Translations {
     team: { title: string; subtitle: string; intro: string; advisersTitle: string; };
     qa: { title: string; subtitle: string; intro: string; };
     join: {
-        benefits: string; requirements: string; applyNow: string;
+        benefits: string; requirements: string; waysToContribute: string; applyNow: string;
         nameLabel: string; namePlaceholder: string;
         emailLabel: string; emailPlaceholder: string;
         motivationLabel: string; motivationPlaceholder: string;
         sendApplication: string; unavailable: string;
         submitting: string; sendError: string; loadingForm: string;
         formUnavailable: string; successFallback: string; requiredNote: string;
+        waitlistTitle: string; waitlistLead: string;
+        waitlistEmailLabel: string; waitlistEmailPlaceholder: string;
+        waitlistButton: string; waitlistSubmitting: string;
+        waitlistSuccess: string; waitlistError: string;
     };
     contact: {
         title: string; intro: string;
@@ -133,7 +137,8 @@ const en: Translations = {
         intro: 'Find answers to common questions about Coding for Change below.',
     },
     join: {
-        benefits: 'Benefits', requirements: 'Requirements', applyNow: 'Apply Now',
+        benefits: 'What you get', requirements: 'Who we’re looking for',
+        waysToContribute: 'Ways to contribute', applyNow: 'Apply Now',
         nameLabel: 'Your Name:', namePlaceholder: 'Name',
         emailLabel: 'Email:', emailPlaceholder: 'Email',
         motivationLabel: 'Why do you want to join?',
@@ -147,6 +152,17 @@ const en: Translations = {
             'The application form is currently unavailable. Please email us directly.',
         successFallback: 'Thanks! Your application has been sent.',
         requiredNote: '* = required',
+        waitlistTitle: 'Applications are currently closed',
+        waitlistLead:
+            'Sign up to be the first to know when applications reopen — we’ll email you the moment they do.',
+        waitlistEmailLabel: 'Email:',
+        waitlistEmailPlaceholder: 'you@example.com',
+        waitlistButton: 'Notify me',
+        waitlistSubmitting: 'Signing up…',
+        waitlistSuccess:
+            'You’re on the list! We’ll be in touch as soon as applications reopen.',
+        waitlistError:
+            'Something went wrong. Please try again or email us directly.',
     },
     contact: {
         title: 'Contact',
@@ -252,7 +268,8 @@ const de: Translations = {
         intro: 'Finde hier Antworten auf häufige Fragen zu Coding for Change.',
     },
     join: {
-        benefits: 'Vorteile', requirements: 'Voraussetzungen', applyNow: 'Jetzt Bewerben',
+        benefits: 'Was du bekommst', requirements: 'Wen wir suchen',
+        waysToContribute: 'Wie du mitwirken kannst', applyNow: 'Jetzt Bewerben',
         nameLabel: 'Dein Name:', namePlaceholder: 'Name',
         emailLabel: 'E-Mail:', emailPlaceholder: 'E-Mail',
         motivationLabel: 'Warum möchtest du mitmachen?',
@@ -266,6 +283,17 @@ const de: Translations = {
             'Das Bewerbungsformular ist derzeit nicht verfügbar. Bitte schreib uns direkt.',
         successFallback: 'Danke! Deine Bewerbung wurde gesendet.',
         requiredNote: '* = Pflichtfeld',
+        waitlistTitle: 'Bewerbungen sind derzeit geschlossen',
+        waitlistLead:
+            'Trag dich ein und erfahre als Erste:r, wenn die Bewerbungen wieder öffnen – wir schreiben dir sofort, sobald es so weit ist.',
+        waitlistEmailLabel: 'E-Mail:',
+        waitlistEmailPlaceholder: 'du@beispiel.de',
+        waitlistButton: 'Benachrichtigt mich',
+        waitlistSubmitting: 'Wird eingetragen…',
+        waitlistSuccess:
+            'Du stehst auf der Liste! Wir melden uns, sobald die Bewerbungen wieder öffnen.',
+        waitlistError:
+            'Etwas ist schiefgelaufen. Bitte versuche es erneut oder schreib uns direkt.',
     },
     contact: {
         title: 'Kontakt',

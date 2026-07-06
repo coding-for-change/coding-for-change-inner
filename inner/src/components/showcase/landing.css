@@ -1086,6 +1086,24 @@
     margin-top: 8px;
 }
 
+/* ---- Join — "Ways to contribute" tracks ---- */
+.lp-tracks {
+    display: block;
+    margin: 8px 0 52px; /* breathing room before What you get / Who we're looking for */
+}
+.lp-tracks .lp-subhead {
+    display: block;
+    float: none;
+    clear: both;
+    width: 100%;
+    margin: 0 0 20px; /* header sits above the cards, not beside them */
+}
+.lp-tracks .lp-grid {
+    clear: both;
+    margin-top: 0;
+    grid-template-columns: repeat(2, 1fr); /* 2×2 for the four role tracks */
+}
+
 /* ---- Responsive (narrow window / phone) ---- */
 @media (max-width: 900px) {
     .lp-section {
@@ -1127,6 +1145,9 @@
     .lp-cols2 {
         grid-template-columns: 1fr;
         gap: 8px;
+    }
+    .lp-tracks .lp-grid {
+        grid-template-columns: 1fr;
     }
     /* On phones the top bar collapses to just brand + CTA; the inline
        section links are handled by the existing MobileNav menu. */

@@ -77,6 +77,7 @@ export interface Config {
     companies: Company;
     media: Media;
     'blog-posts': BlogPost;
+    'waitlist-signups': WaitlistSignup;
     forms: Form;
     'form-submissions': FormSubmission;
     'payload-mcp-api-keys': PayloadMcpApiKey;
@@ -96,6 +97,7 @@ export interface Config {
     companies: CompaniesSelect<false> | CompaniesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     'blog-posts': BlogPostsSelect<false> | BlogPostsSelect<true>;
+    'waitlist-signups': WaitlistSignupsSelect<false> | WaitlistSignupsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     'payload-mcp-api-keys': PayloadMcpApiKeysSelect<false> | PayloadMcpApiKeysSelect<true>;
@@ -352,6 +354,22 @@ export interface BlogPost {
     };
     [k: string]: unknown;
   };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * People who asked to be notified when membership applications reopen.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "waitlist-signups".
+ */
+export interface WaitlistSignup {
+  id: number;
+  email: string;
+  /**
+   * Site language the person signed up in.
+   */
+  locale?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -826,6 +844,10 @@ export interface PayloadLockedDocument {
         value: number | BlogPost;
       } | null)
     | ({
+        relationTo: 'waitlist-signups';
+        value: number | WaitlistSignup;
+      } | null)
+    | ({
         relationTo: 'forms';
         value: number | Form;
       } | null)
@@ -1052,6 +1074,16 @@ export interface BlogPostsSelect<T extends boolean = true> {
   author?: T;
   project?: T;
   content?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "waitlist-signups_select".
+ */
+export interface WaitlistSignupsSelect<T extends boolean = true> {
+  email?: T;
+  locale?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1386,6 +1418,16 @@ export interface Membership {
         id?: string | null;
       }[]
     | null;
+  /**
+   * The disciplines people can join in (e.g. Engineering, Consulting, Marketing, People & Ops). Shown as cards on the Join page to encourage cross-disciplinary applications.
+   */
+  tracks?:
+    | {
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
   contactEmail: string;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1476,6 +1518,13 @@ export interface MembershipSelect<T extends boolean = true> {
     | T
     | {
         text?: T;
+        id?: T;
+      };
+  tracks?:
+    | T
+    | {
+        title?: T;
+        description?: T;
         id?: T;
       };
   contactEmail?: T;
