@@ -1,7 +1,7 @@
 'use client';
 import React, { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useCmsGlobal, useCmsCollection, submitForm } from '../../api';
+import { useCmsGlobal, useCmsCollection, submitForm, submitWaitlist } from '../../api';
 import type { CmsForm, CmsFormField } from '../../api';
 import { CmsMembership } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -14,6 +14,13 @@ const validateEmail = (email: string) => {
         /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
 };
+
+// Whether membership applications are open. While closed, the page shows a
+// "notify me when applications reopen" email signup (persisted to the CMS
+// `waitlist-signups` collection) instead of the application form. To reopen,
+// flip this to `true` and redeploy — the application form path below is kept
+// intact for exactly that.
+const APPLICATIONS_OPEN: boolean = false;
 
 type FormValues = Record<string, string | boolean>;
 
@@ -31,7 +38,31 @@ const BecomeAMember: React.FC<{
         'membership',
         props.membership
     );
-    const { t } = useLanguage();
+    const { t, locale } = useLanguage();
+
+    // Waitlist ("notify me when applications reopen") state — used when
+    // APPLICATIONS_OPEN is false. Emails persist to the CMS waitlist-signups
+    // collection via submitWaitlist().
+    const [waitlistEmail, setWaitlistEmail] = useState('');
+    const [waitlistSubmitting, setWaitlistSubmitting] = useState(false);
+    const [waitlistSubmitted, setWaitlistSubmitted] = useState(false);
+    const [waitlistError, setWaitlistError] = useState(false);
+
+    const waitlistValid = validateEmail(waitlistEmail);
+
+    const handleWaitlistSubmit = async () => {
+        if (!waitlistValid || waitlistSubmitting) return;
+        setWaitlistError(false);
+        setWaitlistSubmitting(true);
+        try {
+            await submitWaitlist(waitlistEmail.trim(), locale);
+            setWaitlistSubmitted(true);
+        } catch {
+            setWaitlistError(true);
+        } finally {
+            setWaitlistSubmitting(false);
+        }
+    };
 
     // Forms are defined in the CMS (form-builder plugin). The join page
     // renders the form titled "application", falling back to the first form.
@@ -229,37 +260,14 @@ const BecomeAMember: React.FC<{
                 </motion.div>
 
                 <motion.div
-                    className="lp-cols2"
-                    initial={{ opacity: 0, y: 24 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.15 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    <div className="lp-col">
-                        <h3 className="lp-col__head">{t.join.benefits}</h3>
-                        <ul className="lp-list">
-                            {(membership.benefits ?? []).map((b, i) => (
-                                <li key={i}>{b.text}</li>
-                            ))}
-                        </ul>
-                    </div>
-                    <div className="lp-col">
-                        <h3 className="lp-col__head">{t.join.requirements}</h3>
-                        <ul className="lp-list">
-                            {(membership.requirements ?? []).map((r, i) => (
-                                <li key={i}>{r.text}</li>
-                            ))}
-                        </ul>
-                    </div>
-                </motion.div>
-
-                <motion.div
                     className="lp-form"
                     initial={{ opacity: 0, y: 24 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.15 }}
                     transition={{ duration: 0.5 }}
                 >
+                    {APPLICATIONS_OPEN ? (
+                      <>
                     <h3 className="lp-col__head" style={{ marginBottom: 16 }}>
                         {t.join.applyNow}
                     </h3>
@@ -323,6 +331,121 @@ const BecomeAMember: React.FC<{
                             </p>
                         </>
                     )}
+                      </>
+                    ) : (
+                      <>
+                        <h3
+                            className="lp-col__head"
+                            style={{ marginBottom: 8 }}
+                        >
+                            {t.join.waitlistTitle}
+                        </h3>
+                        <p className="lp-lead" style={{ marginBottom: 20 }}>
+                            {t.join.waitlistLead}
+                        </p>
+
+                        {waitlistSubmitted ? (
+                            <div className="lp-field">
+                                <p>{t.join.waitlistSuccess}</p>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="lp-field">
+                                    <span className="lp-label">
+                                        {t.join.waitlistEmailLabel}
+                                    </span>
+                                    <input
+                                        className="lp-input"
+                                        type="email"
+                                        placeholder={
+                                            t.join.waitlistEmailPlaceholder
+                                        }
+                                        value={waitlistEmail}
+                                        onChange={(e) =>
+                                            setWaitlistEmail(e.target.value)
+                                        }
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter')
+                                                handleWaitlistSubmit();
+                                        }}
+                                    />
+                                </div>
+                                <button
+                                    className="lp-submit"
+                                    type="button"
+                                    disabled={
+                                        !waitlistValid || waitlistSubmitting
+                                    }
+                                    onMouseDown={handleWaitlistSubmit}
+                                >
+                                    {waitlistSubmitting
+                                        ? t.join.waitlistSubmitting
+                                        : t.join.waitlistButton}
+                                </button>
+                                <p className="lp-form-note">
+                                    {waitlistError ? (
+                                        <span className="lp-required">
+                                            {t.join.waitlistError}
+                                        </span>
+                                    ) : (
+                                        '\xa0'
+                                    )}
+                                </p>
+                            </>
+                        )}
+                      </>
+                    )}
+                </motion.div>
+
+                {(membership.tracks ?? []).length > 0 && (
+                    <motion.div
+                        className="lp-tracks"
+                        initial={{ opacity: 0, y: 24 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.1 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <h2 className="lp-subhead">
+                            {t.join.waysToContribute}
+                        </h2>
+                        <div className="lp-grid">
+                            {(membership.tracks ?? []).map((track, i) => (
+                                <div className="lp-card" key={track.id ?? i}>
+                                    <h3 className="lp-card__title">
+                                        {track.title}
+                                    </h3>
+                                    <p className="lp-card__text">
+                                        {track.description}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </motion.div>
+                )}
+
+                <motion.div
+                    className="lp-cols2"
+                    initial={{ opacity: 0, y: 24 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.15 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <div className="lp-col">
+                        <h3 className="lp-col__head">{t.join.benefits}</h3>
+                        <ul className="lp-list">
+                            {(membership.benefits ?? []).map((b, i) => (
+                                <li key={i}>{b.text}</li>
+                            ))}
+                        </ul>
+                    </div>
+                    <div className="lp-col">
+                        <h3 className="lp-col__head">{t.join.requirements}</h3>
+                        <ul className="lp-list">
+                            {(membership.requirements ?? []).map((r, i) => (
+                                <li key={i}>{r.text}</li>
+                            ))}
+                        </ul>
+                    </div>
                 </motion.div>
             </div>
         </div>

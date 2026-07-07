@@ -53,6 +53,25 @@ export async function submitForm(
     }
 }
 
+/**
+ * Add an email to the membership waitlist ("notify me when applications open").
+ * Persists to the `waitlist-signups` collection (public create; admin-only read).
+ */
+export async function submitWaitlist(
+    email: string,
+    locale?: string
+): Promise<void> {
+    const res = await fetch(`${API_BASE}/waitlist-signups`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, locale }),
+    });
+    if (!res.ok) {
+        const detail = await res.text().catch(() => '');
+        throw new Error(`Failed to join waitlist: ${res.status} ${detail}`);
+    }
+}
+
 export function mediaUrl(
     media: { url?: string | null } | null | undefined
 ): string | null {

@@ -48,21 +48,53 @@ const siteConfig = {
 const membership = {
   title: 'Become a Member',
   description:
-    'Join a community of students using their technical skills to make a ' +
-    'real difference. No prior experience with NGO software is needed — we ' +
-    'onboard members of all levels and you learn on a real project with a ' +
-    'real client.',
+    "We're a cross-disciplinary community of students building real software " +
+    'for non-profits — and that takes more than engineers. It takes people who ' +
+    'talk to partners and find the real problem, people who tell our story, and ' +
+    "people who grow the team. Whatever you're studying, there's a way to make " +
+    'a real impact with us.',
   benefits: [
-    { text: 'Ship real software for a real non-profit client' },
-    { text: 'Learn full-stack development with guidance from experienced leads' },
-    { text: 'Build a portfolio of high-impact, production projects' },
+    { text: 'Ship real work for a real non-profit client' },
+    { text: 'Learn from experienced leads and grow job-ready skills' },
+    { text: 'Build a portfolio of high-impact projects' },
     { text: "Connect with Munich's tech and social-impact community" },
     { text: 'Workshops, hackathons, and socials throughout the semester' },
   ],
   requirements: [
-    { text: 'Enrolled as a student at TUM or another Munich university' },
-    { text: 'Around 4–6 hours per week during the semester' },
-    { text: 'Enthusiasm to learn — all skill levels are welcome' },
+    { text: "You're studying or working in Germany" },
+    { text: 'You can commit around 5 hours a week during the semester' },
+    {
+      text:
+        'You care about social impact — coding experience is welcome but not ' +
+        'required for every role',
+    },
+  ],
+  tracks: [
+    {
+      title: 'Engineering',
+      description:
+        "Design and build the software that solves our partners' problems — " +
+        'frontend, backend, and everything in between. All experience levels welcome.',
+    },
+    {
+      title: 'Consulting & Product',
+      description:
+        'Work directly with our non-profit partners to uncover the real problem, ' +
+        'scope the solution, and translate it for the engineering team. A great ' +
+        'fit for business, management, and product-minded students.',
+    },
+    {
+      title: 'Marketing & Communications',
+      description:
+        'Grow our reach and tell the story of our impact — social media, content, ' +
+        'events, and partnerships.',
+    },
+    {
+      title: 'People & Operations',
+      description:
+        'Recruit, onboard, and support our members, and keep the club running as ' +
+        'we grow. The organisational backbone of Coding for Change.',
+    },
   ],
   contactEmail: 'join@codingforchange.com',
 };
@@ -315,20 +347,53 @@ const siteConfigDe = {
 const membershipDe = {
   title: 'Werde Mitglied',
   description:
-    'Werde Teil einer Gemeinschaft von Studierenden, die ihre technischen Fähigkeiten einsetzen, ' +
-    'um echte Veränderungen zu bewirken. Keine Vorkenntnisse in NGO-Software nötig – wir begleiten ' +
-    'Mitglieder aller Erfahrungsstufen und du lernst an einem echten Projekt mit echten Kund:innen.',
+    'Wir sind eine interdisziplinäre Gemeinschaft von Studierenden, die echte Software für ' +
+    'gemeinnützige Organisationen entwickeln – und dafür braucht es mehr als Entwickler:innen. ' +
+    'Es braucht Menschen, die mit Partnern sprechen und das eigentliche Problem finden, die unsere ' +
+    'Geschichte erzählen und das Team wachsen lassen. Egal was du studierst – bei uns findest du ' +
+    'einen Weg, echten Impact zu schaffen.',
   benefits: [
-    { text: 'Echte Software für echte gemeinnützige Kunden entwickeln' },
-    { text: 'Full-Stack-Entwicklung mit erfahrenen Leads lernen' },
-    { text: 'Portfolio aus wirkungsvollen Produktionsprojekten aufbauen' },
+    { text: 'Echte Arbeit für echte gemeinnützige Kunden leisten' },
+    { text: 'Von erfahrenen Leads lernen und praxisnahe Fähigkeiten aufbauen' },
+    { text: 'Portfolio aus wirkungsvollen Projekten aufbauen' },
     { text: 'Mit Münchens Tech- und Social-Impact-Community vernetzen' },
     { text: 'Workshops, Hackathons und Socializing während des Semesters' },
   ],
   requirements: [
-    { text: 'Eingeschrieben an der TUM oder einer anderen Münchner Hochschule' },
-    { text: 'Rund 4–6 Stunden pro Woche während des Semesters' },
-    { text: 'Lernbereitschaft – alle Kenntnisstände sind willkommen' },
+    { text: 'Du studierst oder arbeitest in Deutschland' },
+    { text: 'Du kannst dich ca. 5 Stunden pro Woche während des Semesters einbringen' },
+    {
+      text:
+        'Dir liegt gesellschaftlicher Impact am Herzen – Programmiererfahrung ist ' +
+        'willkommen, aber nicht für jede Rolle nötig',
+    },
+  ],
+  tracks: [
+    {
+      title: 'Entwicklung',
+      description:
+        'Entwirf und entwickle die Software, die die Probleme unserer Partner löst – ' +
+        'Frontend, Backend und alles dazwischen. Alle Erfahrungsstufen willkommen.',
+    },
+    {
+      title: 'Consulting & Produkt',
+      description:
+        'Arbeite direkt mit unseren gemeinnützigen Partnern zusammen, um das eigentliche ' +
+        'Problem zu erkennen, die Lösung zu skizzieren und sie für das Entwicklungsteam ' +
+        'zu übersetzen. Ideal für Studierende aus BWL, Management und Produkt.',
+    },
+    {
+      title: 'Marketing & Kommunikation',
+      description:
+        'Erhöhe unsere Reichweite und erzähle die Geschichte unseres Impacts – Social Media, ' +
+        'Content, Events und Partnerschaften.',
+    },
+    {
+      title: 'People & Operations',
+      description:
+        'Gewinne, onboarde und unterstütze unsere Mitglieder und halte den Club am Laufen, ' +
+        'während wir wachsen. Das organisatorische Rückgrat von Coding for Change.',
+    },
   ],
 };
 
