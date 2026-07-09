@@ -171,17 +171,35 @@ function stripTrackingParams(): void {
 export function captureAttribution(): Attribution | null {
   if (typeof window === 'undefined') return null;
 
-  const existing = readStored();
   const params = new URLSearchParams(window.location.search);
+  const source =
+    params.get('src') || params.get('utm_source') || params.get('ref') || undefined;
+
+  const existing = readStored();
 
   if (existing) {
-    // First-touch already recorded this session — keep it, just tidy the URL.
+    // First-touch wins — but only among *real* sources. If the session started
+    // source-less (direct / organic / referral) and an explicit campaign tag
+    // arrives later in the same session, upgrade to it, keeping the same
+    // sessionId so the funnel stays linked. A prior campaign is never
+    // overwritten (first campaign wins).
+    if (source && !existing.source) {
+      const upgraded: Attribution = {
+        ...existing,
+        source,
+        channel: deriveChannel(source, existing.referrer),
+        medium: params.get('utm_medium') || existing.medium,
+        campaign: params.get('utm_campaign') || existing.campaign,
+        content: params.get('utm_content') || existing.content,
+      };
+      writeStored(upgraded);
+      stripTrackingParams();
+      return upgraded;
+    }
     stripTrackingParams();
     return existing;
   }
 
-  const source =
-    params.get('src') || params.get('utm_source') || params.get('ref') || undefined;
   const referrer = externalReferrerHost();
 
   const attr: Attribution = {
