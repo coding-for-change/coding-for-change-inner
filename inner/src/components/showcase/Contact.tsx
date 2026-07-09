@@ -1,8 +1,10 @@
 'use client';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useSiteConfig, useCmsCollection, submitForm } from '../../api';
 import type { CmsForm, CmsFormField } from '../../api';
+import { getAttribution } from '../../lib/attribution';
+import { trackFormStart, trackConversion } from '../../lib/analytics';
 import { useLanguage } from '../../contexts/LanguageContext';
 import RichText from '../RichText';
 import BookingEmbed from '../general/BookingEmbed';
@@ -47,6 +49,14 @@ const Contact: React.FC<ContactProps> = (props) => {
     const [submitting, setSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [sendError, setSendError] = useState(false);
+
+    // Funnel: fire `form_start` on first focus in the contact form.
+    const formStarted = useRef(false);
+    const handleFormFocus = () => {
+        if (formStarted.current) return;
+        formStarted.current = true;
+        trackFormStart('contact');
+    };
 
     const setValue = (name: string, value: string | boolean) =>
         setValues((prev) => ({ ...prev, [name]: value }));
@@ -95,8 +105,9 @@ const Contact: React.FC<ContactProps> = (props) => {
                             : 'false'
                         : String(fieldValue(field)),
             }));
-            await submitForm(form.id, submissionData);
+            await submitForm(form.id, submissionData, getAttribution());
             setSubmitted(true);
+            trackConversion('contact');
         } catch (err) {
             setSendError(true);
         } finally {
@@ -222,7 +233,7 @@ const Contact: React.FC<ContactProps> = (props) => {
                     </div>
                 )}
 
-                <div className="lp-contact">
+                <div className="lp-contact" onFocus={handleFormFocus}>
                     <p className="lp-contact__intro">
                         <b>Email: </b>
                         <a className="lp-social" href={`mailto:${siteConfig.email}`}>

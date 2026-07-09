@@ -78,6 +78,7 @@ export interface Config {
     media: Media;
     'blog-posts': BlogPost;
     'waitlist-signups': WaitlistSignup;
+    'analytics-events': AnalyticsEvent;
     forms: Form;
     'form-submissions': FormSubmission;
     'payload-mcp-api-keys': PayloadMcpApiKey;
@@ -98,6 +99,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     'blog-posts': BlogPostsSelect<false> | BlogPostsSelect<true>;
     'waitlist-signups': WaitlistSignupsSelect<false> | WaitlistSignupsSelect<true>;
+    'analytics-events': AnalyticsEventsSelect<false> | AnalyticsEventsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     'payload-mcp-api-keys': PayloadMcpApiKeysSelect<false> | PayloadMcpApiKeysSelect<true>;
@@ -370,6 +372,124 @@ export interface WaitlistSignup {
    * Site language the person signed up in.
    */
   locale?: string | null;
+  /**
+   * Where this submission came from — captured from the landing URL (?src / utm_*) and carried through the session. Empty for direct/organic visits. Used only in aggregate for campaign analysis.
+   */
+  attribution?: {
+    /**
+     * Campaign tag from ?src=, or utm_source (e.g. "poster-tumsom").
+     */
+    source?: string | null;
+    /**
+     * Normalised traffic channel, derived from the tag + referrer: campaign (tagged link), organic_search, social, referral, or direct.
+     */
+    channel?: ('campaign' | 'organic_search' | 'social' | 'referral' | 'direct') | null;
+    /**
+     * utm_medium (e.g. poster, qr, social, newsletter).
+     */
+    medium?: string | null;
+    /**
+     * utm_campaign.
+     */
+    campaign?: string | null;
+    /**
+     * utm_content — distinguishes creatives/variants.
+     */
+    content?: string | null;
+    /**
+     * Referring site host (e.g. instagram.com), when the browser sends one.
+     */
+    referrer?: string | null;
+    /**
+     * First path the visitor landed on this session.
+     */
+    landingPath?: string | null;
+    /**
+     * Random per-visit id (sessionStorage). Links this conversion to the behavioural funnel; not a stable identifier, not personal data.
+     */
+    sessionId?: string | null;
+    /**
+     * When attribution was first captured this session.
+     */
+    firstSeenAt?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Cookieless behavioural events (page views, form starts, conversions) for campaign & funnel analysis. No cookies, no IP, no personal data — a random per-visit session id links events to a conversion.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "analytics-events".
+ */
+export interface AnalyticsEvent {
+  id: number;
+  type: 'landing' | 'pageview' | 'cta_click' | 'form_start' | 'conversion' | 'outbound_click' | 'booking_started';
+  /**
+   * Page path where the event occurred.
+   */
+  path?: string | null;
+  /**
+   * Event detail — CTA id, form name, conversion kind, or link host.
+   */
+  label?: string | null;
+  /**
+   * Site language at the time.
+   */
+  locale?: string | null;
+  /**
+   * Where this submission came from — captured from the landing URL (?src / utm_*) and carried through the session. Empty for direct/organic visits. Used only in aggregate for campaign analysis.
+   */
+  attribution?: {
+    /**
+     * Campaign tag from ?src=, or utm_source (e.g. "poster-tumsom").
+     */
+    source?: string | null;
+    /**
+     * Normalised traffic channel, derived from the tag + referrer: campaign (tagged link), organic_search, social, referral, or direct.
+     */
+    channel?: ('campaign' | 'organic_search' | 'social' | 'referral' | 'direct') | null;
+    /**
+     * utm_medium (e.g. poster, qr, social, newsletter).
+     */
+    medium?: string | null;
+    /**
+     * utm_campaign.
+     */
+    campaign?: string | null;
+    /**
+     * utm_content — distinguishes creatives/variants.
+     */
+    content?: string | null;
+    /**
+     * Referring site host (e.g. instagram.com), when the browser sends one.
+     */
+    referrer?: string | null;
+    /**
+     * First path the visitor landed on this session.
+     */
+    landingPath?: string | null;
+    /**
+     * Random per-visit id (sessionStorage). Links this conversion to the behavioural funnel; not a stable identifier, not personal data.
+     */
+    sessionId?: string | null;
+    /**
+     * When attribution was first captured this session.
+     */
+    firstSeenAt?: string | null;
+  };
+  /**
+   * Optional extra event data.
+   */
+  meta?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -543,6 +663,47 @@ export interface FormSubmission {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Where this submission came from — captured from the landing URL (?src / utm_*) and carried through the session. Empty for direct/organic visits. Used only in aggregate for campaign analysis.
+   */
+  attribution?: {
+    /**
+     * Campaign tag from ?src=, or utm_source (e.g. "poster-tumsom").
+     */
+    source?: string | null;
+    /**
+     * Normalised traffic channel, derived from the tag + referrer: campaign (tagged link), organic_search, social, referral, or direct.
+     */
+    channel?: ('campaign' | 'organic_search' | 'social' | 'referral' | 'direct') | null;
+    /**
+     * utm_medium (e.g. poster, qr, social, newsletter).
+     */
+    medium?: string | null;
+    /**
+     * utm_campaign.
+     */
+    campaign?: string | null;
+    /**
+     * utm_content — distinguishes creatives/variants.
+     */
+    content?: string | null;
+    /**
+     * Referring site host (e.g. instagram.com), when the browser sends one.
+     */
+    referrer?: string | null;
+    /**
+     * First path the visitor landed on this session.
+     */
+    landingPath?: string | null;
+    /**
+     * Random per-visit id (sessionStorage). Links this conversion to the behavioural funnel; not a stable identifier, not personal data.
+     */
+    sessionId?: string | null;
+    /**
+     * When attribution was first captured this session.
+     */
+    firstSeenAt?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -848,6 +1009,10 @@ export interface PayloadLockedDocument {
         value: number | WaitlistSignup;
       } | null)
     | ({
+        relationTo: 'analytics-events';
+        value: number | AnalyticsEvent;
+      } | null)
+    | ({
         relationTo: 'forms';
         value: number | Form;
       } | null)
@@ -1084,6 +1249,45 @@ export interface BlogPostsSelect<T extends boolean = true> {
 export interface WaitlistSignupsSelect<T extends boolean = true> {
   email?: T;
   locale?: T;
+  attribution?:
+    | T
+    | {
+        source?: T;
+        channel?: T;
+        medium?: T;
+        campaign?: T;
+        content?: T;
+        referrer?: T;
+        landingPath?: T;
+        sessionId?: T;
+        firstSeenAt?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "analytics-events_select".
+ */
+export interface AnalyticsEventsSelect<T extends boolean = true> {
+  type?: T;
+  path?: T;
+  label?: T;
+  locale?: T;
+  attribution?:
+    | T
+    | {
+        source?: T;
+        channel?: T;
+        medium?: T;
+        campaign?: T;
+        content?: T;
+        referrer?: T;
+        landingPath?: T;
+        sessionId?: T;
+        firstSeenAt?: T;
+      };
+  meta?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1212,6 +1416,19 @@ export interface FormSubmissionsSelect<T extends boolean = true> {
         field?: T;
         value?: T;
         id?: T;
+      };
+  attribution?:
+    | T
+    | {
+        source?: T;
+        channel?: T;
+        medium?: T;
+        campaign?: T;
+        content?: T;
+        referrer?: T;
+        landingPath?: T;
+        sessionId?: T;
+        firstSeenAt?: T;
       };
   updatedAt?: T;
   createdAt?: T;

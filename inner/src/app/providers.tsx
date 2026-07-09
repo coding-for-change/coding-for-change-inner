@@ -2,6 +2,8 @@
 import React from 'react';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { SiteConfigProvider } from '@/api/SiteConfigContext';
+import AttributionTracker from './AttributionTracker';
+import AnalyticsTracker from './AnalyticsTracker';
 import type { CmsSiteConfig } from '@/api/types';
 import type { Locale } from '@/i18n/translations';
 
@@ -22,6 +24,8 @@ export default function Providers({
     return (
         <LanguageProvider initialLocale={initialLocale}>
             <SiteConfigProvider initialConfig={initialConfig}>
+                <AttributionTracker />
+                <AnalyticsTracker />
                 {children}
             </SiteConfigProvider>
         </LanguageProvider>

@@ -97,7 +97,11 @@ const MOBILE_UA =
 
 app.use('/3d', (req, res, next) => {
     if (MOBILE_UA.test(req.headers['user-agent'] || '')) {
-        return res.redirect(302, '/');
+        // Preserve the query string so campaign tags (?src=/utm_*) survive the
+        // bounce to the content site — otherwise a mobile visitor who scans a
+        // QR/poster pointing at /3d loses their traffic-source attribution.
+        const q = req.originalUrl.indexOf('?');
+        return res.redirect(302, q === -1 ? '/' : `/${req.originalUrl.slice(q)}`);
     }
     next();
 });

@@ -1,4 +1,5 @@
 import { CollectionConfig } from 'payload';
+import { attributionField } from '../fields/attribution';
 
 // Emails collected on the /join page while applications are closed ("sign up to
 // know first when applications open"). The public inner site POSTs to
@@ -46,6 +47,10 @@ export const WaitlistSignups: CollectionConfig = {
         description: 'Site language the person signed up in.',
       },
     },
+    // Which campaign / traffic source this signup came from (see the shared
+    // field for details). Populated from the client on submit; empty for
+    // direct/organic signups.
+    attributionField,
   ],
   // createdAt / updatedAt are added automatically (timestamps default to true),
   // giving us the signup date used for column display and export ordering.
