@@ -16,6 +16,7 @@ import { BlogPost } from './collections/BlogPost';
 import { WaitlistSignups } from './collections/WaitlistSignups';
 import { AnalyticsEvents } from './collections/AnalyticsEvents';
 import { attributionField } from './fields/attribution';
+import { analyticsExportEndpoints } from './endpoints/analyticsExport';
 import { SiteConfig } from './globals/SiteConfig';
 import { Membership } from './globals/Membership';
 import { Legal } from './globals/Legal';
@@ -24,6 +25,8 @@ export default buildConfig({
   editor: lexicalEditor(),
   collections: [Users, Team, Projects, Events, FAQ, Sponsors, Companies, Media, BlogPost, WaitlistSignups, AnalyticsEvents],
   globals: [SiteConfig, Membership, Legal],
+  // Admin-only CSV export endpoints (campaign funnel, raw events, signups).
+  endpoints: analyticsExportEndpoints,
   localization: {
     locales: [
       { label: 'English', code: 'en' },
