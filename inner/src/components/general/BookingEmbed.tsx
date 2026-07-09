@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
 import { useSiteConfig } from '../../api';
+import { trackEvent } from '../../lib/analytics';
 import { useLanguage } from '../../contexts/LanguageContext';
 
 export interface BookingEmbedProps {
@@ -62,6 +63,17 @@ const BookingEmbed: React.FC<BookingEmbedProps> = ({ height = 700 }) => {
         );
         observer.observe(el);
         return () => observer.disconnect();
+    }, [visible, url]);
+
+    // Funnel: record that the booking widget was reached. True completion
+    // happens on cal.com (cross-origin iframe) and isn't observable here — that
+    // needs a cal.com webhook or a success-redirect (a later phase).
+    const bookingTracked = useRef(false);
+    useEffect(() => {
+        if (visible && url && !bookingTracked.current) {
+            bookingTracked.current = true;
+            trackEvent('booking_started', { label: 'calcom' });
+        }
     }, [visible, url]);
 
     if (!url) {

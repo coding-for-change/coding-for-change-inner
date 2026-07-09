@@ -16,8 +16,16 @@
  * aren't shared or bookmarked.
  */
 
+export type Channel =
+  | 'campaign'
+  | 'organic_search'
+  | 'social'
+  | 'referral'
+  | 'direct';
+
 export interface Attribution {
   source?: string;
+  channel?: Channel;
   medium?: string;
   campaign?: string;
   content?: string;
@@ -25,6 +33,53 @@ export interface Attribution {
   landingPath?: string;
   sessionId: string;
   firstSeenAt: string; // ISO 8601
+}
+
+// Substring matches against the referrer host. Deliberately loose (a `.`
+// keeps e.g. "google." from matching "notgoogle") and covers the platforms
+// that actually send us referrers. Untagged Instagram usually sends none.
+const SEARCH_HOSTS = [
+  'google.',
+  'bing.',
+  'duckduckgo.',
+  'ecosia.',
+  'yahoo.',
+  'yandex.',
+  'baidu.',
+  'startpage.',
+  'qwant.',
+  'search.brave.',
+];
+const SOCIAL_HOSTS = [
+  'instagram.',
+  'facebook.',
+  'fb.',
+  't.co',
+  'twitter.',
+  'x.com',
+  'linkedin.',
+  'lnkd.in',
+  'youtube.',
+  'youtu.be',
+  'reddit.',
+  'tiktok.',
+  't.me',
+  'wa.me',
+  'whatsapp.',
+  'mastodon.',
+  'discord.',
+];
+
+/** Normalise the traffic source into a channel for reporting. */
+function deriveChannel(source: string | undefined, referrerHost: string | undefined): Channel {
+  if (source) return 'campaign';
+  if (referrerHost) {
+    const host = referrerHost.toLowerCase();
+    if (SEARCH_HOSTS.some((h) => host.includes(h))) return 'organic_search';
+    if (SOCIAL_HOSTS.some((h) => host.includes(h))) return 'social';
+    return 'referral';
+  }
+  return 'direct';
 }
 
 const STORAGE_KEY = 'cfc.attribution';
@@ -127,13 +182,15 @@ export function captureAttribution(): Attribution | null {
 
   const source =
     params.get('src') || params.get('utm_source') || params.get('ref') || undefined;
+  const referrer = externalReferrerHost();
 
   const attr: Attribution = {
     source: source || undefined,
+    channel: deriveChannel(source || undefined, referrer),
     medium: params.get('utm_medium') || undefined,
     campaign: params.get('utm_campaign') || undefined,
     content: params.get('utm_content') || undefined,
-    referrer: externalReferrerHost(),
+    referrer,
     landingPath: window.location.pathname || '/',
     sessionId: makeSessionId(),
     firstSeenAt: new Date().toISOString(),

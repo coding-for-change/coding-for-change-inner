@@ -40,6 +40,24 @@ export const attributionField: Field = {
       },
     },
     {
+      name: 'channel',
+      type: 'select',
+      label: 'Channel',
+      index: true,
+      options: [
+        { label: 'Campaign (tagged)', value: 'campaign' },
+        { label: 'Organic search', value: 'organic_search' },
+        { label: 'Social', value: 'social' },
+        { label: 'Referral', value: 'referral' },
+        { label: 'Direct', value: 'direct' },
+      ],
+      admin: {
+        readOnly: true,
+        description:
+          'Normalised traffic channel, derived from the tag + referrer: campaign (tagged link), organic_search, social, referral, or direct.',
+      },
+    },
+    {
       name: 'medium',
       type: 'text',
       label: 'Medium',

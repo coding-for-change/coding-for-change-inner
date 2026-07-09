@@ -1,10 +1,11 @@
 'use client';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useCmsGlobal, useCmsCollection, submitForm, submitWaitlist } from '../../api';
 import type { CmsForm, CmsFormField } from '../../api';
 import { CmsMembership } from '../../api/types';
 import { getAttribution } from '../../lib/attribution';
+import { trackFormStart, trackConversion } from '../../lib/analytics';
 import { useLanguage } from '../../contexts/LanguageContext';
 import RichText from '../RichText';
 import './landing.css';
@@ -58,6 +59,7 @@ const BecomeAMember: React.FC<{
         try {
             await submitWaitlist(waitlistEmail.trim(), locale, getAttribution());
             setWaitlistSubmitted(true);
+            trackConversion('waitlist');
         } catch {
             setWaitlistError(true);
         } finally {
@@ -81,6 +83,15 @@ const BecomeAMember: React.FC<{
     const [submitting, setSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [sendError, setSendError] = useState(false);
+
+    // Funnel: fire `form_start` the first time the visitor focuses any field
+    // (whichever form is shown), so we can measure start → conversion drop-off.
+    const formStarted = useRef(false);
+    const handleFormFocus = () => {
+        if (formStarted.current) return;
+        formStarted.current = true;
+        trackFormStart(APPLICATIONS_OPEN ? 'application' : 'waitlist');
+    };
 
     const setValue = (name: string, value: string | boolean) =>
         setValues((prev) => ({ ...prev, [name]: value }));
@@ -131,6 +142,7 @@ const BecomeAMember: React.FC<{
             }));
             await submitForm(form.id, submissionData, getAttribution());
             setSubmitted(true);
+            trackConversion('application');
         } catch (err) {
             setSendError(true);
         } finally {
@@ -262,6 +274,7 @@ const BecomeAMember: React.FC<{
 
                 <motion.div
                     className="lp-form"
+                    onFocus={handleFormFocus}
                     initial={{ opacity: 0, y: 24 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.15 }}

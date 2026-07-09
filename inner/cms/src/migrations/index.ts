@@ -8,6 +8,7 @@ import * as migration_20260610_193625_team_orderable from './20260610_193625_tea
 import * as migration_20260706_221019_add_waitlist_signups from './20260706_221019_add_waitlist_signups';
 import * as migration_20260706_222240_add_membership_tracks from './20260706_222240_add_membership_tracks';
 import * as migration_20260709_090217_add_attribution_fields from './20260709_090217_add_attribution_fields';
+import * as migration_20260709_092056_add_analytics_events from './20260709_092056_add_analytics_events';
 
 export const migrations = [
   {
@@ -58,6 +59,11 @@ export const migrations = [
   {
     up: migration_20260709_090217_add_attribution_fields.up,
     down: migration_20260709_090217_add_attribution_fields.down,
-    name: '20260709_090217_add_attribution_fields'
+    name: '20260709_090217_add_attribution_fields',
+  },
+  {
+    up: migration_20260709_092056_add_analytics_events.up,
+    down: migration_20260709_092056_add_analytics_events.down,
+    name: '20260709_092056_add_analytics_events'
   },
 ];
