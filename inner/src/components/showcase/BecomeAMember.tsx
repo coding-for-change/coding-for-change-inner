@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useCmsGlobal, useCmsCollection, submitForm, submitWaitlist } from '../../api';
 import type { CmsForm, CmsFormField } from '../../api';
 import { CmsMembership } from '../../api/types';
+import { getAttribution } from '../../lib/attribution';
 import { useLanguage } from '../../contexts/LanguageContext';
 import RichText from '../RichText';
 import './landing.css';
@@ -55,7 +56,7 @@ const BecomeAMember: React.FC<{
         setWaitlistError(false);
         setWaitlistSubmitting(true);
         try {
-            await submitWaitlist(waitlistEmail.trim(), locale);
+            await submitWaitlist(waitlistEmail.trim(), locale, getAttribution());
             setWaitlistSubmitted(true);
         } catch {
             setWaitlistError(true);
@@ -128,7 +129,7 @@ const BecomeAMember: React.FC<{
                             : 'false'
                         : String(fieldValue(field)),
             }));
-            await submitForm(form.id, submissionData);
+            await submitForm(form.id, submissionData, getAttribution());
             setSubmitted(true);
         } catch (err) {
             setSendError(true);

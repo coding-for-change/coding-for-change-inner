@@ -14,6 +14,7 @@ import { Media } from './collections/Media';
 import { Users } from './collections/Users';
 import { BlogPost } from './collections/BlogPost';
 import { WaitlistSignups } from './collections/WaitlistSignups';
+import { attributionField } from './fields/attribution';
 import { SiteConfig } from './globals/SiteConfig';
 import { Membership } from './globals/Membership';
 import { Legal } from './globals/Legal';
@@ -63,6 +64,12 @@ export default buildConfig({
       // Fallback recipient when a form doesn't define its own emails.
       defaultToEmail:
         process.env.CONTACT_TO_EMAIL || 'info@codingforchange.com',
+      // Carry campaign/traffic-source attribution onto every form submission
+      // (contact + application), so we can attribute conversions to the poster
+      // or link a visitor arrived from. Same shared field as WaitlistSignups.
+      formSubmissionOverrides: {
+        fields: ({ defaultFields }) => [...defaultFields, attributionField],
+      },
     }),
     // Model Context Protocol server at /api/mcp. Full CRUD on content is exposed
     // here, but every request still needs a Bearer API key (managed in the

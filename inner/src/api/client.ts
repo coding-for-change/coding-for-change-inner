@@ -1,3 +1,5 @@
+import type { Attribution } from '../lib/attribution';
+
 const API_BASE = process.env.REACT_APP_API_URL || '/api';
 
 export interface PaginatedResponse<T> {
@@ -40,12 +42,17 @@ export interface FormSubmissionValue {
 
 export async function submitForm(
     formId: number,
-    submissionData: FormSubmissionValue[]
+    submissionData: FormSubmissionValue[],
+    attribution?: Attribution | null
 ): Promise<void> {
     const res = await fetch(`${API_BASE}/form-submissions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ form: formId, submissionData }),
+        body: JSON.stringify({
+            form: formId,
+            submissionData,
+            ...(attribution ? { attribution } : {}),
+        }),
     });
     if (!res.ok) {
         const detail = await res.text().catch(() => '');
@@ -59,12 +66,17 @@ export async function submitForm(
  */
 export async function submitWaitlist(
     email: string,
-    locale?: string
+    locale?: string,
+    attribution?: Attribution | null
 ): Promise<void> {
     const res = await fetch(`${API_BASE}/waitlist-signups`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, locale }),
+        body: JSON.stringify({
+            email,
+            locale,
+            ...(attribution ? { attribution } : {}),
+        }),
     });
     if (!res.ok) {
         const detail = await res.text().catch(() => '');

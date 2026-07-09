@@ -3,6 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useSiteConfig, useCmsCollection, submitForm } from '../../api';
 import type { CmsForm, CmsFormField } from '../../api';
+import { getAttribution } from '../../lib/attribution';
 import { useLanguage } from '../../contexts/LanguageContext';
 import RichText from '../RichText';
 import BookingEmbed from '../general/BookingEmbed';
@@ -95,7 +96,7 @@ const Contact: React.FC<ContactProps> = (props) => {
                             : 'false'
                         : String(fieldValue(field)),
             }));
-            await submitForm(form.id, submissionData);
+            await submitForm(form.id, submissionData, getAttribution());
             setSubmitted(true);
         } catch (err) {
             setSendError(true);
