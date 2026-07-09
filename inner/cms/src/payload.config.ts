@@ -17,6 +17,7 @@ import { WaitlistSignups } from './collections/WaitlistSignups';
 import { AnalyticsEvents } from './collections/AnalyticsEvents';
 import { attributionField } from './fields/attribution';
 import { analyticsExportEndpoints } from './endpoints/analyticsExport';
+import { purgeAnalyticsEvents } from './lib/purgeAnalytics';
 import { SiteConfig } from './globals/SiteConfig';
 import { Membership } from './globals/Membership';
 import { Legal } from './globals/Legal';
@@ -116,6 +117,19 @@ export default buildConfig({
     meta: {
       titleSuffix: '— Coding for Change CMS',
     },
+  },
+  // Enforce the analytics retention window (GDPR storage limitation): purge
+  // old behavioural events once at startup, then daily while the server runs.
+  // Failures are logged, never fatal; the interval is unref'd so it never
+  // holds a build/CLI process open.
+  onInit: async (payload) => {
+    const run = () =>
+      purgeAnalyticsEvents(payload).catch((err) =>
+        payload.logger.error(err, '[analytics] retention purge failed'),
+      );
+    await run();
+    const timer = setInterval(run, 24 * 60 * 60 * 1000);
+    (timer as { unref?: () => void }).unref?.();
   },
   typescript: {
     outputFile: './src/payload-types.ts',
