@@ -42,6 +42,7 @@ const siteConfig = {
     { value: '4', label: 'NGOs partnered' },
     { value: '10+', label: 'Active members' },
     { value: '1', label: 'Projects shipped' },
+    { value: 'TUM', label: 'Accredited student club' },
   ],
 };
 
@@ -291,6 +292,42 @@ const faqs = [
       'Not at all. We welcome students from any programme — designers, product-minded students, and developers all have a place here.',
     category: 'general',
   },
+  // ── About / identity FAQ (rendered on /about + emitted as FAQPage JSON-LD) ──
+  {
+    question: 'Is Coding for Change really free for nonprofits?',
+    answer:
+      'Yes. We never charge the organizations we build for — our costs are covered by sponsoring companies.',
+    category: 'about',
+  },
+  {
+    question: 'Who is behind Coding for Change?',
+    answer:
+      '10+ students from TUM and LMU Munich. It was founded by David, Jakob, Tim, and Alexander; David and Jakob are the board (Vorstand).',
+    category: 'about',
+  },
+  {
+    question: 'Is it affiliated with TUM?',
+    answer:
+      'Yes — Coding for Change is an officially accredited student club at the Technical University of Munich, with members from both TUM and LMU.',
+    category: 'about',
+  },
+  {
+    question: 'Is it a registered nonprofit?',
+    answer:
+      'Yes. Coding for Change e.V. is a gemeinnütziger (charitable) registered association based in Munich.',
+    category: 'about',
+  },
+  {
+    question: 'How is it funded?',
+    answer:
+      'Through sponsoring companies. The software we build stays free for the nonprofits we serve.',
+    category: 'about',
+  },
+  {
+    question: 'Where is it based?',
+    answer: 'Munich, Germany.',
+    category: 'about',
+  },
 ];
 
 const sponsors = [
@@ -341,6 +378,7 @@ const siteConfigDe = {
     { value: '4', label: 'NGOs unterstützt' },
     { value: '10+', label: 'Aktive Mitglieder' },
     { value: '1', label: 'Projekte umgesetzt' },
+    { value: 'TUM', label: 'Akkreditierte Hochschulgruppe' },
   ],
 };
 
@@ -501,6 +539,36 @@ const faqsDe = [
   {
     question: 'Muss ich Informatik studieren?',
     answer: 'Nein. Wir begrüßen Studierende aller Fachrichtungen – Designer:innen, produktaffine Köpfe und Entwickler:innen sind alle willkommen.',
+  },
+  // ── About / Identität (gleiche Reihenfolge wie die EN-About-Einträge) ──
+  {
+    question: 'Ist Coding for Change für gemeinnützige Organisationen wirklich kostenlos?',
+    answer:
+      'Ja. Wir stellen den Organisationen, für die wir entwickeln, nie etwas in Rechnung – unsere Kosten werden von Sponsoren getragen.',
+  },
+  {
+    question: 'Wer steht hinter Coding for Change?',
+    answer:
+      'Über 10 Studierende der TUM und LMU München. Gegründet wurde die Initiative von David, Jakob, Tim und Alexander; David und Jakob bilden den Vorstand.',
+  },
+  {
+    question: 'Ist die Initiative mit der TUM verbunden?',
+    answer:
+      'Ja – Coding for Change ist eine offiziell akkreditierte Hochschulgruppe an der Technischen Universität München, mit Mitgliedern von TUM und LMU.',
+  },
+  {
+    question: 'Ist es ein eingetragener gemeinnütziger Verein?',
+    answer:
+      'Ja. Coding for Change e.V. ist ein gemeinnütziger eingetragener Verein mit Sitz in München.',
+  },
+  {
+    question: 'Wie finanziert ihr euch?',
+    answer:
+      'Über Sponsoren. Die Software, die wir entwickeln, bleibt für die gemeinnützigen Organisationen kostenlos.',
+  },
+  {
+    question: 'Wo sitzt ihr?',
+    answer: 'In München, Deutschland.',
   },
 ];
 
@@ -691,6 +759,180 @@ const legal = {
   ),
 };
 
+// ─── About / entity page ─────────────────────────────────────────────────────
+// All About-page copy. Rich-text fields (definition, peopleBody, fundingBody)
+// use the lexical helpers above. Stable entity facts (founders, founding date,
+// socials) live in the Organization JSON-LD in inner/src/app/layout.tsx, not
+// here. Stats are reused from site-config; project cards from the Projects
+// collection; the identity FAQ from the FAQ collection (category "about").
+
+const about = {
+  kicker: 'About · Coding for Change e.V.',
+  title: 'Free, custom software for nonprofits — built by students.',
+  definition: doc(
+    para(
+      'Coding for Change is a ',
+      bold('nonprofit student initiative in Munich'),
+      ', founded by students from TUM and LMU. We build ',
+      bold('free, custom software'),
+      ' for nonprofit organizations — so they can spend less time on administration and more on their mission.'
+    )
+  ),
+  tagline: 'NGOs have the mission; students have the skills. We connect the two.',
+  facts: [
+    { label: 'Legal name', value: 'Coding for Change e.V.' },
+    { label: 'Status', value: 'Gemeinnütziger (charitable) registered association' },
+    { label: 'Recognition', value: 'Officially accredited student club at TUM' },
+    { label: 'Focus', value: 'Free custom software for nonprofit organizations' },
+    { label: 'Founded', value: 'April 2026 · Munich' },
+    { label: 'Co-founders', value: 'David Franke, Jakob Landbrecht, Tim Kausemann, Alexander Reyers' },
+    { label: 'Board (Vorstand)', value: 'David Franke & Jakob Landbrecht' },
+    { label: 'People', value: '10+ students from TUM & LMU' },
+    { label: 'Location', value: 'Munich, Germany' },
+    { label: 'Contact', value: 'info@codingforchange.com' },
+  ],
+  howTitle: 'One nonprofit, one student team, one semester',
+  howIntro:
+    'We develop software for nonprofits so they can focus on their mission. Every project runs in three phases.',
+  steps: [
+    { title: 'Match', description: "We pair a student team with a nonprofit that needs software but can't afford to build it." },
+    { title: 'Build', description: 'One semester, agile sprints, a production-ready product — mentored by experienced engineers.' },
+    { title: 'Hand off', description: 'We deliver the finished product with documentation, training, and ongoing support.' },
+  ],
+  peopleTitle: 'Run entirely by students',
+  peopleBody: doc(
+    para(
+      'Coding for Change is built by 10+ students from TUM and LMU, working across Engineering, Product, Sponsorships, and Growth. It was founded by four co-founders — David, Jakob, Tim, and Alexander — with David and Jakob serving as the board (Vorstand).'
+    )
+  ),
+  workTitle: "What we've built",
+  workIntro:
+    'We partner with nonprofits to solve real operational problems with software.',
+  fundingTitle: 'Free for nonprofits, always',
+  fundingBody: doc(
+    para(
+      'Our work is ',
+      bold('always free'),
+      " for the nonprofits we serve. As a gemeinnütziger e.V., we're supported by sponsoring companies — whose engineers also mentor our student teams."
+    )
+  ),
+  mediaTitle: 'In the media',
+  media: [{ outlet: 'Bayern 1', description: "Featured on Bavaria's public radio." }],
+  faqTitle: 'Frequently asked questions',
+  faqIntro: 'The essentials about who we are and how we work.',
+  ctaTitle: 'Three ways to work with us',
+  doors: [
+    {
+      audience: 'Nonprofits',
+      title: 'Need software?',
+      description:
+        "Tell us about your challenge and book a free intro call — we'll see if a student team can build it for you.",
+      ctaLabel: 'Book a call',
+      ctaHref: '/contact',
+    },
+    {
+      audience: 'Students',
+      title: 'Want real impact?',
+      description:
+        'Ship production software for real nonprofits — as an engineer or in product, marketing, or operations.',
+      ctaLabel: 'Join us',
+      ctaHref: '/join',
+    },
+    {
+      audience: 'Companies',
+      title: 'Want to support this?',
+      description:
+        'Fund free software for social good, mentor our teams, and reach a talented student network.',
+      ctaLabel: 'Become a sponsor',
+      ctaHref: '/contact',
+    },
+  ],
+};
+
+const aboutDe = {
+  kicker: 'Über uns · Coding for Change e.V.',
+  title: 'Kostenlose, maßgeschneiderte Software für gemeinnützige Organisationen – von Studierenden.',
+  definition: doc(
+    para(
+      'Coding for Change ist eine ',
+      bold('gemeinnützige Studierendeninitiative in München'),
+      ', gegründet von Studierenden der TUM und LMU. Wir entwickeln ',
+      bold('kostenlose, maßgeschneiderte Software'),
+      ' für gemeinnützige Organisationen – damit sie weniger Zeit mit Verwaltung und mehr mit ihrer Mission verbringen.'
+    )
+  ),
+  tagline:
+    'Gemeinnützige Organisationen haben die Mission, Studierende die Fähigkeiten. Wir bringen beide zusammen.',
+  facts: [
+    { label: 'Name', value: 'Coding for Change e.V.' },
+    { label: 'Status', value: 'Gemeinnütziger eingetragener Verein (e.V.)' },
+    { label: 'Anerkennung', value: 'Offiziell akkreditierte Hochschulgruppe an der TUM' },
+    { label: 'Fokus', value: 'Kostenlose maßgeschneiderte Software für gemeinnützige Organisationen' },
+    { label: 'Gegründet', value: 'April 2026 · München' },
+    { label: 'Mitgründer', value: 'David Franke, Jakob Landbrecht, Tim Kausemann, Alexander Reyers' },
+    { label: 'Vorstand', value: 'David Franke & Jakob Landbrecht' },
+    { label: 'Team', value: '10+ Studierende von TUM & LMU' },
+    { label: 'Standort', value: 'München, Deutschland' },
+    { label: 'Kontakt', value: 'info@codingforchange.com' },
+  ],
+  howTitle: 'Eine Organisation, ein Studierendenteam, ein Semester',
+  howIntro:
+    'Wir entwickeln Software für gemeinnützige Organisationen, damit sie sich auf ihre Mission konzentrieren können. Jedes Projekt läuft in drei Phasen.',
+  steps: [
+    { title: 'Matching', description: 'Wir bringen ein Studierendenteam mit einer Organisation zusammen, die Software braucht, sie sich aber nicht leisten kann.' },
+    { title: 'Entwicklung', description: 'Ein Semester, agile Sprints, ein einsatzbereites Produkt – begleitet von erfahrenen Mentor:innen.' },
+    { title: 'Übergabe', description: 'Wir liefern das fertige Produkt mit Dokumentation, Einführung und laufendem Support.' },
+  ],
+  peopleTitle: 'Komplett von Studierenden getragen',
+  peopleBody: doc(
+    para(
+      'Coding for Change wird von über 10 Studierenden der TUM und LMU getragen, die in den Bereichen Entwicklung, Produkt, Sponsoring und Growth arbeiten. Gegründet wurde die Initiative von vier Mitgründern – David, Jakob, Tim und Alexander –, wobei David und Jakob den Vorstand bilden.'
+    )
+  ),
+  workTitle: 'Was wir gebaut haben',
+  workIntro:
+    'Wir arbeiten mit gemeinnützigen Organisationen zusammen, um echte betriebliche Probleme mit Software zu lösen.',
+  fundingTitle: 'Für gemeinnützige Organisationen immer kostenlos',
+  fundingBody: doc(
+    para(
+      'Unsere Arbeit ist für die Organisationen, die wir unterstützen, ',
+      bold('immer kostenlos'),
+      '. Als gemeinnütziger e.V. werden wir von Sponsoren unterstützt – deren Entwickler:innen unsere Teams zugleich als Mentor:innen begleiten.'
+    )
+  ),
+  mediaTitle: 'In den Medien',
+  media: [{ outlet: 'Bayern 1', description: 'Im öffentlich-rechtlichen Radio Bayern 1 vorgestellt.' }],
+  faqTitle: 'Häufige Fragen',
+  faqIntro: 'Das Wichtigste darüber, wer wir sind und wie wir arbeiten.',
+  ctaTitle: 'Drei Wege, mit uns zu arbeiten',
+  doors: [
+    {
+      audience: 'Organisationen',
+      title: 'Brauchst du Software?',
+      description:
+        'Erzähl uns von deiner Herausforderung und buche ein kostenloses Erstgespräch – wir prüfen, ob ein Studierendenteam sie für dich umsetzen kann.',
+      ctaLabel: 'Gespräch buchen',
+      ctaHref: '/contact',
+    },
+    {
+      audience: 'Studierende',
+      title: 'Willst du echten Impact?',
+      description:
+        'Entwickle einsatzbereite Software für echte gemeinnützige Organisationen – als Engineer oder in Produkt, Marketing oder Operations.',
+      ctaLabel: 'Mitmachen',
+      ctaHref: '/join',
+    },
+    {
+      audience: 'Unternehmen',
+      title: 'Willst du uns unterstützen?',
+      description:
+        'Ermögliche kostenlose Software für den guten Zweck, begleite unsere Teams als Mentor:innen und erreiche ein talentiertes Studierendennetzwerk.',
+      ctaLabel: 'Sponsor werden',
+      ctaHref: '/contact',
+    },
+  ],
+};
+
 // ─── HTTP helpers ────────────────────────────────────────────────────────────
 
 const jsonRequest = async (method, path, body, cookie) => {
@@ -788,10 +1030,13 @@ const seed = async () => {
   await postJson('/api/globals/membership', membership, cookie).then(assertOk('membership (en)'));
   await postJson('/api/globals/membership?locale=de', membershipDe, cookie).then(assertOk('membership (de)'));
 
+  await postJson('/api/globals/about', about, cookie).then(assertOk('about (en)'));
+  await postJson('/api/globals/about?locale=de', aboutDe, cookie).then(assertOk('about (de)'));
+
   // Legal text is German by law; seeded once for the default locale (de falls back).
   await postJson('/api/globals/legal', legal, cookie).then(assertOk('legal'));
 
-  console.log('Updated globals: site-config, membership, legal (en + de)');
+  console.log('Updated globals: site-config, membership, about, legal (en + de)');
 
   // ── Collections ──────────────────────────────────────────────────────────
   // Create English items first (returns IDs), then PATCH German translations.
