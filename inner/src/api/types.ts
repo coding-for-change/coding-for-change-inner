@@ -72,7 +72,7 @@ export interface CmsFaqItem {
     id: number;
     question: string;
     answer: string;
-    category?: 'general' | 'membership' | 'projects' | 'technical';
+    category?: 'general' | 'about' | 'membership' | 'projects' | 'technical';
 }
 
 /** GET /api/globals/site-config */
@@ -144,6 +144,38 @@ export interface CmsMembership {
     /** Cross-disciplinary "Ways to contribute" cards (Engineering, Consulting, …). */
     tracks?: { title: string; description: string; id?: string }[];
     contactEmail: string;
+}
+
+/** GET /api/globals/about */
+export interface CmsAbout {
+    kicker?: string;
+    title: string;
+    /** Answer-first canonical definition (rich text). */
+    definition: LexicalRichText;
+    tagline?: string;
+    facts?: { label: string; value: string; id?: string }[];
+    howTitle?: string;
+    howIntro?: string;
+    steps?: { title: string; description: string; id?: string }[];
+    peopleTitle?: string;
+    peopleBody?: LexicalRichText | null;
+    workTitle?: string;
+    workIntro?: string;
+    fundingTitle?: string;
+    fundingBody?: LexicalRichText | null;
+    mediaTitle?: string;
+    media?: { outlet: string; description?: string; url?: string; id?: string }[];
+    faqTitle?: string;
+    faqIntro?: string;
+    ctaTitle?: string;
+    doors?: {
+        audience: string;
+        title: string;
+        description: string;
+        ctaLabel: string;
+        ctaHref: string;
+        id?: string;
+    }[];
 }
 
 export type CmsFormField =

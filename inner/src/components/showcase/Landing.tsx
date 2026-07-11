@@ -159,6 +159,13 @@ const Landing: React.FC<LandingProps> = (props) => {
                         <p className="lp-kicker">{t.about.kicker}</p>
                         <h2 className="lp-h2">{t.about.oneLiner}</h2>
                         <p className="lp-lead">{t.about.pitch}</p>
+                        <Link
+                            className="lp-card__link"
+                            href="/about"
+                            style={{ display: 'inline-block', marginTop: 18 }}
+                        >
+                            {t.common.learnMore} →
+                        </Link>
                     </motion.div>
                     <div className="lp-stats">
                         {t.about.stats.map((s, i) => (

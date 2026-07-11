@@ -70,6 +70,7 @@ const TopNav: React.FC = () => {
     const sectionLinks = [{ id: 'home', label: t.nav.home }];
 
     const pageLinks = [
+        { to: '/about', label: t.nav.about },
         { to: '/team', label: t.nav.team },
         { to: '/blog', label: t.nav.blog },
         { to: '/contact', label: t.nav.contact },

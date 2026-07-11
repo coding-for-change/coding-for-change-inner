@@ -58,20 +58,36 @@ export const viewport: Viewport = {
     initialScale: 1,
 };
 
-// Organization structured data (ported from the old index.html).
+// Organization structured data — the canonical entity description for search
+// engines and LLMs. Facts here are stable, so they live in code rather than the
+// CMS; the About page's editorial copy is CMS-managed (the `about` global).
 const ORG_JSONLD = {
     '@context': 'https://schema.org',
     '@type': ['NGO', 'EducationalOrganization'],
     name: 'Coding for Change',
-    alternateName: 'Coding for Change e.V.',
+    legalName: 'Coding for Change e.V.',
     url: 'https://codingforchange.com',
     logo: 'https://codingforchange.com/images/android-chrome-512x512.png',
     description:
-        'Munich-based, TUM-accredited student initiative and Club building software for NGOs.',
+        'Munich-based, gemeinnütziger (charitable) student initiative and TUM-accredited student club building free custom software for nonprofit organizations.',
+    slogan: 'Helping NGOs escape the digital stone age',
+    foundingDate: '2026-04',
     foundingLocation: 'Munich, Germany',
     areaServed: 'DE',
+    email: 'info@codingforchange.com',
+    founder: [
+        { '@type': 'Person', name: 'David Franke' },
+        { '@type': 'Person', name: 'Jakob Landbrecht' },
+        { '@type': 'Person', name: 'Tim Kausemann' },
+        { '@type': 'Person', name: 'Alexander Reyers' },
+    ],
+    memberOf: {
+        '@type': 'CollegeOrUniversity',
+        name: 'Technical University of Munich',
+        url: 'https://www.tum.de',
+    },
     sameAs: [
-        'https://www.linkedin.com/company/coding-for-change/',
+        'https://www.linkedin.com/company/coding-for-change-tum/',
         'https://github.com/coding-for-change',
     ],
 };

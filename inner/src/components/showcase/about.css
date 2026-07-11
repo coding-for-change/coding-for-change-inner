@@ -1,0 +1,154 @@
+/* ------------------------------------------------------------------ */
+/* About / entity page — a few page-specific blocks on top of the       */
+/* shared landing.css design language (teal accent, pixel headings).    */
+/* Reuses .lp-stats, .lp-steps, .lp-grid/.lp-card, .lp-faq, .lp-pills.   */
+/* ------------------------------------------------------------------ */
+
+/* Hero definition — the answer-first canonical sentence, set larger and
+   inkier because it's the key line for both humans and AI extraction. */
+.lp-about__definition {
+    max-width: 720px;
+}
+.lp-about__definition p {
+    font-size: 21px;
+    line-height: 1.5;
+    color: var(--ink);
+    margin: 0 0 14px;
+}
+.lp-about__definition p:last-child {
+    margin-bottom: 0;
+}
+.lp-about__definition strong,
+.lp-about__definition b {
+    color: var(--teal-dark);
+}
+.lp-about__tagline {
+    font-size: 17px;
+    color: var(--muted);
+    margin: 8px 0 0;
+}
+
+/* Section rhythm — standalone pages have no .lp-section bands, so space
+   the About sections manually. */
+.lp-about__section {
+    display: block;
+    margin-top: 64px;
+}
+.lp-about__inline-link {
+    display: inline-block;
+    margin-top: 20px;
+}
+
+/* CMS rich-text prose blocks (people / funding). */
+.lp-about__prose {
+    max-width: 680px;
+}
+.lp-about__prose p {
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--muted);
+    margin: 0 0 14px;
+}
+.lp-about__prose p:last-child {
+    margin-bottom: 14px;
+}
+
+/* About stats — auto-fit so 3 or 4 tiles both balance (base .lp-stats is 3-col). */
+.lp-stats--four {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    margin-top: 40px;
+}
+
+/* Fact box — the structured identity table. */
+.lp-facts {
+    display: block;
+    margin-top: 40px;
+    background: #fff;
+    border: 1px solid var(--line);
+}
+.lp-facts__row {
+    display: grid;
+    grid-template-columns: minmax(140px, 240px) 1fr;
+    gap: 20px;
+    padding: 14px 22px;
+    border-bottom: 1px solid var(--line);
+}
+.lp-facts__row:last-child {
+    border-bottom: none;
+}
+.lp-facts__label {
+    font-family: MSSerif, sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    align-self: center;
+}
+.lp-facts__value {
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--ink);
+}
+
+/* In the media. */
+.lp-media {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 24px;
+    max-width: 720px;
+}
+.lp-media__item {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 16px 20px;
+    background: #fff;
+    border: 1px solid var(--line);
+    text-decoration: none;
+    color: var(--ink);
+    transition: border-color 0.16s ease, transform 0.16s ease;
+}
+a.lp-media__item:hover {
+    border-color: #cfe0e0;
+    transform: translateY(-2px);
+}
+.lp-media__outlet {
+    font-family: MillenniumBold, serif;
+    font-size: 16px;
+    color: var(--teal-dark);
+    flex-shrink: 0;
+}
+.lp-media__desc {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--muted);
+}
+
+/* Get-involved "doors" — a card with the CTA pinned to the bottom. */
+.lp-about__door {
+    height: 100%;
+}
+.lp-about__door .lp-card__text {
+    flex: 1 1 auto;
+}
+.lp-about__door-btn {
+    margin-top: 18px;
+    align-self: flex-start;
+}
+
+@media (max-width: 900px) {
+    .lp-stats--four {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .lp-facts__row {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+    .lp-about__section {
+        margin-top: 48px;
+    }
+    .lp-about__definition p {
+        font-size: 19px;
+    }
+}

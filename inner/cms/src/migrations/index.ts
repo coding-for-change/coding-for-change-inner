@@ -9,6 +9,7 @@ import * as migration_20260706_221019_add_waitlist_signups from './20260706_2210
 import * as migration_20260706_222240_add_membership_tracks from './20260706_222240_add_membership_tracks';
 import * as migration_20260709_090217_add_attribution_fields from './20260709_090217_add_attribution_fields';
 import * as migration_20260709_092056_add_analytics_events from './20260709_092056_add_analytics_events';
+import * as migration_20260711_154750_add_about_page from './20260711_154750_add_about_page';
 
 export const migrations = [
   {
@@ -64,6 +65,11 @@ export const migrations = [
   {
     up: migration_20260709_092056_add_analytics_events.up,
     down: migration_20260709_092056_add_analytics_events.down,
-    name: '20260709_092056_add_analytics_events'
+    name: '20260709_092056_add_analytics_events',
+  },
+  {
+    up: migration_20260711_154750_add_about_page.up,
+    down: migration_20260711_154750_add_about_page.down,
+    name: '20260711_154750_add_about_page'
   },
 ];

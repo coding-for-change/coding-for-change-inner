@@ -21,6 +21,7 @@ export const FAQ: CollectionConfig = {
       type: 'select',
       options: [
         { label: 'General', value: 'general' },
+        { label: 'About', value: 'about' },
         { label: 'Membership', value: 'membership' },
         { label: 'Projects', value: 'projects' },
         { label: 'Technical', value: 'technical' },

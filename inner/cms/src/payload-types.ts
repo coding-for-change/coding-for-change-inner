@@ -116,11 +116,13 @@ export interface Config {
     'site-config': SiteConfig;
     membership: Membership;
     legal: Legal;
+    about: About;
   };
   globalsSelect: {
     'site-config': SiteConfigSelect<false> | SiteConfigSelect<true>;
     membership: MembershipSelect<false> | MembershipSelect<true>;
     legal: LegalSelect<false> | LegalSelect<true>;
+    about: AboutSelect<false> | AboutSelect<true>;
   };
   locale: 'en' | 'de';
   widgets: {
@@ -304,7 +306,7 @@ export interface Faq {
   id: number;
   question: string;
   answer: string;
-  category?: ('general' | 'membership' | 'projects' | 'technical') | null;
+  category?: ('general' | 'about' | 'membership' | 'projects' | 'technical') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -937,6 +939,16 @@ export interface PayloadMcpApiKey {
      */
     update?: boolean | null;
   };
+  about?: {
+    /**
+     * Allow clients to find about global.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to update about global.
+     */
+    update?: boolean | null;
+  };
   updatedAt: string;
   createdAt: string;
   enableAPIKey?: boolean | null;
@@ -1539,6 +1551,12 @@ export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
         find?: T;
         update?: T;
       };
+  about?:
+    | T
+    | {
+        find?: T;
+        update?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   enableAPIKey?: T;
@@ -1690,6 +1708,114 @@ export interface Legal {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about".
+ */
+export interface About {
+  id: number;
+  kicker?: string | null;
+  title: string;
+  /**
+   * The answer-first, one-sentence definition of the organization. Shown large at the top of the page — and the primary text AI engines extract when asked "what is Coding for Change?". Keep it factual: what we are, where, and what we do.
+   */
+  definition: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  tagline?: string | null;
+  /**
+   * Structured identity facts shown as a table (legal name, status, founded, location, …).
+   */
+  facts?:
+    | {
+        label: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  howTitle?: string | null;
+  howIntro?: string | null;
+  steps?:
+    | {
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  peopleTitle?: string | null;
+  peopleBody?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  workTitle?: string | null;
+  workIntro?: string | null;
+  fundingTitle?: string | null;
+  fundingBody?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  mediaTitle?: string | null;
+  media?:
+    | {
+        outlet: string;
+        description?: string | null;
+        url?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  faqTitle?: string | null;
+  faqIntro?: string | null;
+  ctaTitle?: string | null;
+  /**
+   * The three audiences: nonprofits, students, companies. Each links to a page (ctaHref, e.g. /contact or /join).
+   */
+  doors?:
+    | {
+        audience: string;
+        title: string;
+        description: string;
+        ctaLabel: string;
+        ctaHref: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-config_select".
  */
 export interface SiteConfigSelect<T extends boolean = true> {
@@ -1756,6 +1882,63 @@ export interface MembershipSelect<T extends boolean = true> {
 export interface LegalSelect<T extends boolean = true> {
   impressum?: T;
   privacyPolicy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about_select".
+ */
+export interface AboutSelect<T extends boolean = true> {
+  kicker?: T;
+  title?: T;
+  definition?: T;
+  tagline?: T;
+  facts?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        id?: T;
+      };
+  howTitle?: T;
+  howIntro?: T;
+  steps?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  peopleTitle?: T;
+  peopleBody?: T;
+  workTitle?: T;
+  workIntro?: T;
+  fundingTitle?: T;
+  fundingBody?: T;
+  mediaTitle?: T;
+  media?:
+    | T
+    | {
+        outlet?: T;
+        description?: T;
+        url?: T;
+        id?: T;
+      };
+  faqTitle?: T;
+  faqIntro?: T;
+  ctaTitle?: T;
+  doors?:
+    | T
+    | {
+        audience?: T;
+        title?: T;
+        description?: T;
+        ctaLabel?: T;
+        ctaHref?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

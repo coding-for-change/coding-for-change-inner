@@ -21,11 +21,12 @@ import { purgeAnalyticsEvents } from './lib/purgeAnalytics';
 import { SiteConfig } from './globals/SiteConfig';
 import { Membership } from './globals/Membership';
 import { Legal } from './globals/Legal';
+import { About } from './globals/About';
 
 export default buildConfig({
   editor: lexicalEditor(),
   collections: [Users, Team, Projects, Events, FAQ, Sponsors, Companies, Media, BlogPost, WaitlistSignups, AnalyticsEvents],
-  globals: [SiteConfig, Membership, Legal],
+  globals: [SiteConfig, Membership, Legal, About],
   // Admin-only CSV export endpoints (campaign funnel, raw events, signups).
   endpoints: analyticsExportEndpoints,
   localization: {
@@ -98,6 +99,7 @@ export default buildConfig({
         'site-config': { enabled: true },
         membership: { enabled: true },
         legal: { enabled: true },
+        about: { enabled: true },
       },
     }),
   ],
