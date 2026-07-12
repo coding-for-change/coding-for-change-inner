@@ -560,7 +560,7 @@
     display: flex;
     align-items: center;
     /* Fluid gap: roomier on wide screens, tight near the breakpoint. */
-    gap: clamp(2px, 0.5vw, 12px);
+    gap: clamp(4px, 0.6vw, 16px);
     flex: 1;
     justify-content: center;
     /* Never wrap to a second row (the bar is a fixed 64px). Links are sized to
@@ -578,7 +578,9 @@
     border: none;
     cursor: pointer;
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
-    font-size: clamp(12.5px, 0.5vw + 7px, 15.5px);
+    /* Larger on wide screens (up to 18px) yet still compact near the 1024px
+       breakpoint; the shorter sentence-case labels leave room for the bump. */
+    font-size: clamp(13px, 1.1vw + 2px, 18px);
     color: #44504f;
     text-decoration: none;
     white-space: nowrap;
@@ -618,7 +620,7 @@
     align-items: center;
     gap: 2px;
     font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
-    font-size: 12px;
+    font-size: 13px;
 }
 .lp-lang__btn {
     background: none;
@@ -627,7 +629,7 @@
     padding: 4px 6px;
     color: #8a9594;
     font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
-    font-size: 12px;
+    font-size: 13px;
     text-transform: uppercase;
 }
 .lp-lang__btn--active {
@@ -638,11 +640,11 @@
 .lp-nav__cta {
     display: inline-flex;
     align-items: center;
-    padding: 9px 18px;
+    padding: 10px 20px;
     background: #2f8f90;
     color: #fff;
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
-    font-size: 14px;
+    font-size: 15px;
     text-decoration: none;
     border: none;
     cursor: pointer;
