@@ -175,6 +175,21 @@ become available — they make the biggest difference.
 
 **outcome** — fill in once there's a milestone worth reporting (first schools onboarded, first workshops booked). Leave blank until then.
 
+### 3c. Impact story (per project — for nonprofits)
+
+Each project now branches into two views: the **Technical deep-dive** (the fields
+above) and an **Impact story** for potential NGO partners. Fill the **"Impact
+story (for nonprofits)"** collapsible on the project:
+
+- **impactHeadline** — one-line outcome (e.g. `How Lebenshilfe gave 150 companions their evenings back`).
+- **impactChallenge** — the partner's problem in their world (non-technical).
+- **impactSolution** — what the software does for them, plain language (benefits, not stack).
+- **impactResults** — the difference it made.
+- **NGO FAQ** — question/answer pairs (cost, time, what happens after). The partner quote + screenshots from the case study are reused automatically.
+
+The chooser only appears when **both** the technical and impact fields are
+filled; otherwise the project opens straight into whichever exists.
+
 ---
 
 ## 4. Partner Page (For NGOs) — new global
