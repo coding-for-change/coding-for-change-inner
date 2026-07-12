@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useCmsCollection, useSiteConfig, mediaUrl } from '../../api';
-import { CmsTeamMember, CmsCompany } from '../../api/types';
+import { CmsTeamMember, CmsCompany, CmsTeamGroup } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
 import linkedinIcon from '../../assets/icons/linkedin.png';
 import githubIcon from '../../assets/icons/github.svg';
@@ -33,10 +33,42 @@ const populatedCompanies = (member: CmsTeamMember): CmsCompany[] =>
         (c): c is CmsCompany => typeof c === 'object' && c !== null
     );
 
-const MemberCard: React.FC<{ member: CmsTeamMember; index: number }> = ({
-    member,
-    index,
-}) => {
+interface TeamSection {
+    group: CmsTeamGroup;
+    members: { member: CmsTeamMember; role: string }[];
+}
+
+/**
+ * Build the per-team sections from every member's `teamMemberships`. A member
+ * appears once under each team they're assigned to, with their per-team role
+ * (falling back to their main role). Sections are ordered by the team's
+ * `order`; members keep the incoming order (the CMS `_order`). Returns [] when
+ * no one is assigned to a team, so the caller falls back to a flat list.
+ */
+const buildTeamSections = (all: CmsTeamMember[]): TeamSection[] => {
+    const byId = new Map<number, TeamSection>();
+    for (const member of all) {
+        for (const m of member.teamMemberships ?? []) {
+            // Guard against unpopulated relationships (bare id / null).
+            if (!m.team || typeof m.team !== 'object') continue;
+            const group = m.team;
+            const role = m.role && m.role.trim() ? m.role : member.role;
+            const section = byId.get(group.id);
+            if (section) section.members.push({ member, role });
+            else byId.set(group.id, { group, members: [{ member, role }] });
+        }
+    }
+    return [...byId.values()].sort(
+        (a, b) => (a.group.order ?? 100) - (b.group.order ?? 100)
+    );
+};
+
+const MemberCard: React.FC<{
+    member: CmsTeamMember;
+    index: number;
+    // Per-team role (when grouped); falls back to the member's main role.
+    role?: string;
+}> = ({ member, index, role }) => {
     const { t } = useLanguage();
     const imgSrc = mediaUrl(member.image);
     const companies = populatedCompanies(member);
@@ -52,7 +84,7 @@ const MemberCard: React.FC<{ member: CmsTeamMember; index: number }> = ({
                 <div className="lp-member__avatar-ph">{initials(member.name)}</div>
             )}
             <span className="lp-member__name">{member.name}</span>
-            <span className="lp-member__role">{member.role}</span>
+            <span className="lp-member__role">{role ?? member.role}</span>
             <p className="lp-member__bio">{member.bio}</p>
             {member.links && member.links.length > 0 && (
                 <div className="lp-member__links">
@@ -120,6 +152,10 @@ const Team: React.FC<TeamProps> = (props) => {
     const teamHero = mediaUrl(siteConfig.teamHeroImage);
 
     const all = team ?? [];
+    // When any member is assigned to a team, group the page into a section per
+    // team; otherwise fall back to the flat member / adviser listing.
+    const sections = buildTeamSections(all);
+    const grouped = sections.length > 0;
     const members = all.filter((m) => m.category !== 'adviser');
     const advisers = all.filter((m) => m.category === 'adviser');
 
@@ -151,6 +187,36 @@ const Team: React.FC<TeamProps> = (props) => {
 
                 {loading ? (
                     <p className="lp-loading">Loading…</p>
+                ) : grouped ? (
+                    sections.map(({ group, members: people }) => {
+                        const logo = mediaUrl(group.logo);
+                        return (
+                            <div className="lp-team__group" key={group.id}>
+                                <div className="lp-team__group-head-row">
+                                    {logo && (
+                                        <img
+                                            className="lp-team__group-logo"
+                                            src={logo}
+                                            alt={group.name}
+                                        />
+                                    )}
+                                    <h2 className="lp-team__group-head">
+                                        {group.name}
+                                    </h2>
+                                </div>
+                                <div className="lp-team">
+                                    {people.map(({ member, role }, i) => (
+                                        <MemberCard
+                                            key={`${group.id}-${member.id}`}
+                                            member={member}
+                                            index={i}
+                                            role={role}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    })
                 ) : (
                     <>
                         <div className="lp-team">

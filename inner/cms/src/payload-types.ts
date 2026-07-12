@@ -70,6 +70,7 @@ export interface Config {
   collections: {
     users: User;
     team: Team;
+    'team-groups': TeamGroup;
     projects: Project;
     events: Event;
     faq: Faq;
@@ -92,6 +93,7 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     team: TeamSelect<false> | TeamSelect<true>;
+    'team-groups': TeamGroupsSelect<false> | TeamGroupsSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
     faq: FaqSelect<false> | FaqSelect<true>;
@@ -210,6 +212,19 @@ export interface Team {
   _order?: string | null;
   name: string;
   role: string;
+  /**
+   * Assign this person to one or more teams, with the role they hold in each. Leave a role blank to reuse the main role above.
+   */
+  teamMemberships?:
+    | {
+        team: number | TeamGroup;
+        /**
+         * Optional — role in this team; falls back to the main role above.
+         */
+        role?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   category: 'member' | 'adviser';
   image?: (number | null) | Media;
   bio: string;
@@ -221,6 +236,26 @@ export interface Team {
       }[]
     | null;
   companies?: (number | Company)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Team sections for the Team page (e.g. Engineering, Design). Assign people to a team under each person in "Team".
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-groups".
+ */
+export interface TeamGroup {
+  id: number;
+  name: string;
+  /**
+   * Optional logo/image shown beside the team heading.
+   */
+  logo?: (number | null) | Media;
+  /**
+   * Lower shows first (e.g. 10, 20, 30 …).
+   */
+  order: number;
   updatedAt: string;
   createdAt: string;
 }
@@ -1125,6 +1160,10 @@ export interface PayloadLockedDocument {
         value: number | Team;
       } | null)
     | ({
+        relationTo: 'team-groups';
+        value: number | TeamGroup;
+      } | null)
+    | ({
         relationTo: 'projects';
         value: number | Project;
       } | null)
@@ -1258,6 +1297,13 @@ export interface TeamSelect<T extends boolean = true> {
   _order?: T;
   name?: T;
   role?: T;
+  teamMemberships?:
+    | T
+    | {
+        team?: T;
+        role?: T;
+        id?: T;
+      };
   category?: T;
   image?: T;
   bio?: T;
@@ -1269,6 +1315,17 @@ export interface TeamSelect<T extends boolean = true> {
         id?: T;
       };
   companies?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-groups_select".
+ */
+export interface TeamGroupsSelect<T extends boolean = true> {
+  name?: T;
+  logo?: T;
+  order?: T;
   updatedAt?: T;
   createdAt?: T;
 }
