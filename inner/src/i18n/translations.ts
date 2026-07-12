@@ -147,7 +147,7 @@ const en: Translations = {
     threed: {
         kicker: 'Just for fun',
         title: 'Prefer the scenic route? Try the 3D site.',
-        text: 'There’s a playful 3D version of this site — a retro desktop you can click around right in your browser. Grab your keyboard and take a look.',
+        text: 'There’s a playful 3D version of this site — a little retro desktop you can click around right in your browser.',
         cta: 'Enter the 3D experience',
     },
     projectDetail: {
@@ -325,7 +325,7 @@ const de: Translations = {
     threed: {
         kicker: 'Einfach zum Spaß',
         title: 'Lust auf die szenische Route? Probier die 3D-Seite.',
-        text: 'Es gibt eine verspielte 3D-Version dieser Seite – ein Retro-Desktop, den du direkt im Browser erkunden kannst. Schnapp dir die Tastatur und sieh dich um.',
+        text: 'Es gibt eine verspielte 3D-Version dieser Seite – ein kleiner Retro-Desktop, den du direkt im Browser anklicken und erkunden kannst.',
         cta: '3D-Erlebnis starten',
     },
     projectDetail: {
