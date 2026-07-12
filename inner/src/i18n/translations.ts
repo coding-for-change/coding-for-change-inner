@@ -30,7 +30,10 @@ export interface Translations {
     cta: {
         heading: string; text: string; join: string; contact: string;
     };
-    projects: { title: string; subtitle: string; intro: string; viewAll: string; };
+    projects: {
+        title: string; subtitle: string; intro: string; viewAll: string;
+        status: { active: string; completed: string; recruiting: string };
+    };
     threed: {
         kicker: string; title: string; text: string; cta: string;
         backKicker: string; backTitle: string; backText: string; backCta: string;
@@ -110,6 +113,10 @@ export interface Translations {
         kicker: string; fallbackTitle: string; fallbackLead: string;
         bring: string; how: string; pastWork: string; talkCta: string;
     };
+    credits: {
+        kicker: string; title: string; lead: string;
+        sections: { title: string; rows: [string, string][] }[];
+    };
 }
 
 const en: Translations = {
@@ -163,6 +170,7 @@ const en: Translations = {
         title: 'Projects', subtitle: 'Building Tech for Social Good',
         intro: 'We partner with NGOs to build software solutions that make a real difference. Each project is led by student teams and developed in close collaboration with our partners.',
         viewAll: 'See all projects',
+        status: { active: 'Active', completed: 'Completed', recruiting: 'Recruiting' },
     },
     threed: {
         kicker: 'Just for fun',
@@ -328,6 +336,36 @@ const en: Translations = {
         pastWork: 'Recent work',
         talkCta: 'Start a conversation',
     },
+    credits: {
+        kicker: 'Colophon',
+        title: 'Credits',
+        lead: 'The people, projects and technologies behind this site.',
+        sections: [
+            {
+                title: 'Original Template',
+                rows: [['Henry Heffernan', 'Design & Engineering']],
+            },
+            {
+                title: 'CFC Adaptation',
+                rows: [['Coding for Change Team', 'Content & Customization']],
+            },
+            {
+                title: 'Technologies',
+                rows: [
+                    ['React', 'UI Framework'],
+                    ['TypeScript', 'Language'],
+                    ['Framer Motion', 'Animations'],
+                ],
+            },
+            {
+                title: 'Special Thanks',
+                rows: [
+                    ['Henry Heffernan', 'Original Portfolio Template'],
+                    ['All CFC Members', 'For making it happen'],
+                ],
+            },
+        ],
+    },
 };
 
 const de: Translations = {
@@ -381,6 +419,7 @@ const de: Translations = {
         title: 'Projekte', subtitle: 'Technologie für das Gemeinwohl',
         intro: 'Wir arbeiten mit NGOs zusammen, um Softwarelösungen zu entwickeln, die wirklich etwas bewirken. Jedes Projekt wird von Studierendenteams geleitet und in enger Zusammenarbeit mit unseren Partnern entwickelt.',
         viewAll: 'Alle Projekte ansehen',
+        status: { active: 'Aktiv', completed: 'Abgeschlossen', recruiting: 'Team gesucht' },
     },
     threed: {
         kicker: 'Einfach zum Spaß',
@@ -545,6 +584,36 @@ const de: Translations = {
         how: 'So läuft eine Partnerschaft',
         pastWork: 'Aktuelle Projekte',
         talkCta: 'Gespräch starten',
+    },
+    credits: {
+        kicker: 'Kolophon',
+        title: 'Mitwirkende',
+        lead: 'Die Menschen, Projekte und Technologien hinter dieser Website.',
+        sections: [
+            {
+                title: 'Ursprüngliche Vorlage',
+                rows: [['Henry Heffernan', 'Design & Entwicklung']],
+            },
+            {
+                title: 'CFC-Anpassung',
+                rows: [['Coding for Change Team', 'Inhalt & Anpassung']],
+            },
+            {
+                title: 'Technologien',
+                rows: [
+                    ['React', 'UI-Framework'],
+                    ['TypeScript', 'Sprache'],
+                    ['Framer Motion', 'Animationen'],
+                ],
+            },
+            {
+                title: 'Besonderer Dank',
+                rows: [
+                    ['Henry Heffernan', 'Ursprüngliche Portfolio-Vorlage'],
+                    ['Alle CFC-Mitglieder', 'Dafür, dass sie es möglich machen'],
+                ],
+            },
+        ],
     },
 };
 

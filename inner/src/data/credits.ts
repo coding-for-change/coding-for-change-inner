@@ -1,5 +1,8 @@
 import { CreditSection } from './types';
 
+// Static credits, consumed only by the legacy Win95 desktop `applications/Credits`
+// window. The canonical, localized /credits route reads from i18n translations
+// (`t.credits`) instead — keep the two in step if this list ever changes.
 export const credits: CreditSection[] = [
     {
         title: 'Original Template',

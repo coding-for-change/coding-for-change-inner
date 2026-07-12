@@ -36,14 +36,18 @@ const Paragraphs: React.FC<{ text?: string | null }> = ({ text }) =>
         </>
     ) : null;
 
-const StatusPill: React.FC<{ status: string }> = ({ status }) => (
-    <span
-        className="lp-status"
-        style={{ backgroundColor: statusColors[status] || '#808080' }}
-    >
-        {status}
-    </span>
-);
+const StatusPill: React.FC<{ status: string }> = ({ status }) => {
+    const { t } = useLanguage();
+    const label = (t.projects.status as Record<string, string>)[status] || status;
+    return (
+        <span
+            className="lp-status"
+            style={{ backgroundColor: statusColors[status] || '#808080' }}
+        >
+            {label}
+        </span>
+    );
+};
 
 const Gallery: React.FC<{ project: CmsProject }> = ({ project }) => {
     const shots = (project.gallery ?? []).filter((g) => mediaUrl(g.image));
