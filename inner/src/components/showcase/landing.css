@@ -580,9 +580,10 @@
     border-bottom: 2px solid transparent;
     transition: color 0.14s ease, border-color 0.14s ease;
 }
-/* On tighter widths (incl. the 3D monitor iframe) hide the wordmark text and
-   keep just the logo mark, so the full link row fits on one line. */
-@media (max-width: 1150px) {
+/* Below 1220px (incl. the 3D monitor iframe) hide the wordmark text and keep
+   just the logo mark, so the full link row fits on one line without clipping
+   the edge items. The full logo+wordmark only shows at >= 1220px. */
+@media (max-width: 1219px) {
     .lp-nav__name {
         display: none;
     }
