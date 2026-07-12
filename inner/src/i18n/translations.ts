@@ -29,7 +29,10 @@ export interface Translations {
     cta: {
         heading: string; text: string; join: string; contact: string;
     };
-    projects: { title: string; subtitle: string; intro: string; };
+    projects: {
+        title: string; subtitle: string; intro: string;
+        status: { active: string; completed: string; recruiting: string };
+    };
     events: {
         title: string; subtitle: string; intro: string;
         upcoming: string; past: string;
@@ -118,6 +121,7 @@ const en: Translations = {
     projects: {
         title: 'Projects', subtitle: 'Building Tech for Social Good',
         intro: 'We partner with NGOs to build software solutions that make a real difference. Each project is led by student teams and developed in close collaboration with our partners.',
+        status: { active: 'Active', completed: 'Completed', recruiting: 'Recruiting' },
     },
     events: {
         title: 'Events', subtitle: 'Workshops, Hackathons & More',
@@ -249,6 +253,7 @@ const de: Translations = {
     projects: {
         title: 'Projekte', subtitle: 'Technologie für das Gemeinwohl',
         intro: 'Wir arbeiten mit NGOs zusammen, um Softwarelösungen zu entwickeln, die wirklich etwas bewirken. Jedes Projekt wird von Studierendenteams geleitet und in enger Zusammenarbeit mit unseren Partnern entwickelt.',
+        status: { active: 'Aktiv', completed: 'Abgeschlossen', recruiting: 'Team gesucht' },
     },
     events: {
         title: 'Events', subtitle: 'Workshops, Hackathons & Mehr',

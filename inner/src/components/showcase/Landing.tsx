@@ -317,7 +317,8 @@ const Landing: React.FC<LandingProps> = (props) => {
                                                     ] || '#808080',
                                             }}
                                         >
-                                            {project.status}
+                                            {t.projects.status[project.status] ??
+                                                project.status}
                                         </span>
                                     </div>
                                     <span className="lp-card__sub">
