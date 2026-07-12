@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useCmsCollection, useCmsGlobal, useSiteConfig } from '../../api';
+import { useCmsCollection, useCmsGlobal, useSiteConfig, mediaUrl } from '../../api';
 import {
     CmsEvent,
     CmsProject,
@@ -80,6 +80,7 @@ const Landing: React.FC<LandingProps> = (props) => {
     const { data: faq, loading: faqLoading } =
         useCmsCollection<CmsFaqItem>('faq', undefined, props.faq);
     const { data: hp } = useCmsGlobal<CmsHomepage>('homepage', props.homepage);
+    const heroImage = mediaUrl(hp?.heroImage);
 
     // Homepage copy: CMS value if set, else the built-in i18n string.
     const c = {
@@ -187,7 +188,10 @@ const Landing: React.FC<LandingProps> = (props) => {
     return (
         <div className="lp lp--landing">
             {/* ---- Hero ---- */}
-            <section id="home" className="lp-hero">
+            <section
+                id="home"
+                className={'lp-hero' + (heroImage ? ' lp-hero--media' : '')}
+            >
                 <div className="lp-inner">
                     <motion.div
                         style={{ display: 'block' }}
@@ -219,6 +223,19 @@ const Landing: React.FC<LandingProps> = (props) => {
                         </div>
                         <span className="lp-scrollhint">{c.heroScrollHint}</span>
                     </motion.div>
+                    {heroImage && (
+                        <motion.div
+                            className="lp-hero__media"
+                            initial={{ opacity: 0, scale: 0.98 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.6, ease: 'easeOut', delay: 0.1 }}
+                        >
+                            <img
+                                src={heroImage}
+                                alt={siteConfig.clubName || 'Coding for Change'}
+                            />
+                        </motion.div>
+                    )}
                 </div>
             </section>
 

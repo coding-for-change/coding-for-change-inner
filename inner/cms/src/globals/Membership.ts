@@ -10,6 +10,15 @@ export const Membership: GlobalConfig = {
     { name: 'title', type: 'text', required: true, localized: true },
     { name: 'description', type: 'textarea', required: true, localized: true },
     {
+      name: 'heroImage',
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        description:
+          'Optional hero image for the Join page — an aspirational candid (a hackathon, a build night). Left empty, the page stays text-only.',
+      },
+    },
+    {
       name: 'benefits',
       type: 'array',
       fields: [{ name: 'text', type: 'text', required: true, localized: true }],

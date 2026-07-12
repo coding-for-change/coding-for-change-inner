@@ -20,6 +20,15 @@ export const Homepage: GlobalConfig = {
         { name: 'heroCtaPrimary', type: 'text', localized: true },
         { name: 'heroCtaSecondary', type: 'text', localized: true },
         { name: 'heroScrollHint', type: 'text', localized: true },
+        {
+          name: 'heroImage',
+          type: 'upload',
+          relationTo: 'media',
+          admin: {
+            description:
+              'Optional hero image beside the headline — ideally a wide candid of the team mid-build. Left empty, the hero stays text-only.',
+          },
+        },
       ],
     },
     {

@@ -1,7 +1,7 @@
 'use client';
 import React, { useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useCmsGlobal, useCmsCollection, submitForm, submitWaitlist } from '../../api';
+import { useCmsGlobal, useCmsCollection, submitForm, submitWaitlist, mediaUrl } from '../../api';
 import type { CmsForm, CmsFormField } from '../../api';
 import { CmsMembership } from '../../api/types';
 import { getAttribution } from '../../lib/attribution';
@@ -273,6 +273,20 @@ const BecomeAMember: React.FC<{
                     <h1 className="lp-page__title">{membership.title}</h1>
                     <p className="lp-lead">{membership.description}</p>
                 </motion.div>
+
+                {mediaUrl(membership.heroImage) && (
+                    <motion.div
+                        className="lp-page__hero"
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.1 }}
+                    >
+                        <img
+                            src={mediaUrl(membership.heroImage) || ''}
+                            alt={membership.title}
+                        />
+                    </motion.div>
+                )}
 
                 <motion.div
                     className="lp-form"

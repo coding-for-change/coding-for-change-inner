@@ -147,6 +147,20 @@ export const Projects: CollectionConfig = {
           admin: { description: 'The results / the difference it made.' },
         },
         {
+          name: 'impactGallery',
+          label: 'Impact photos',
+          labels: { singular: 'Photo', plural: 'Photos' },
+          type: 'array',
+          admin: {
+            description:
+              'Photos for the impact story — e.g. the partner using the tool, or the team working with the NGO. Falls back to the case-study screenshots above when left empty.',
+          },
+          fields: [
+            { name: 'image', type: 'upload', relationTo: 'media', required: true },
+            { name: 'caption', type: 'text', localized: true },
+          ],
+        },
+        {
           name: 'ngoFaq',
           label: 'NGO FAQ',
           type: 'array',

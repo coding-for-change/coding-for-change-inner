@@ -29,6 +29,19 @@ export const SiteConfig: GlobalConfig = {
       label: 'Booking page URL (Cal.com)',
     },
     {
+      // Group hero shown at the top of the /team page. Lives here because there
+      // is no dedicated Team-page global; SiteConfig is already read app-wide
+      // via useSiteConfig(), so the team page can pick it up without a new fetch.
+      name: 'teamHeroImage',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'Team page group photo',
+      admin: {
+        description:
+          'Optional wide group photo shown at the top of the Team page. Left empty, the page starts straight at the member grid.',
+      },
+    },
+    {
       // Impact figures shown on the About page. Editable here so the numbers
       // can be bumped without a code deploy. The label is localized; the value
       // (e.g. "10+") is locale-agnostic.

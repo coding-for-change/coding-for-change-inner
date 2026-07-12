@@ -331,6 +331,16 @@ export interface Project {
    */
   impactResults?: string | null;
   /**
+   * Photos for the impact story — e.g. the partner using the tool, or the team working with the NGO. Falls back to the case-study screenshots above when left empty.
+   */
+  impactGallery?:
+    | {
+        image: number | Media;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
    * Common questions from nonprofits (cost, time, what happens after).
    */
   ngoFaq?:
@@ -1309,6 +1319,13 @@ export interface ProjectsSelect<T extends boolean = true> {
   impactChallenge?: T;
   impactSolution?: T;
   impactResults?: T;
+  impactGallery?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
   ngoFaq?:
     | T
     | {
@@ -1815,6 +1832,10 @@ export interface SiteConfig {
   copyrightText?: string | null;
   windowTitle?: string | null;
   bookingUrl?: string | null;
+  /**
+   * Optional wide group photo shown at the top of the Team page. Left empty, the page starts straight at the member grid.
+   */
+  teamHeroImage?: (number | null) | Media;
   stats?:
     | {
         value: string;
@@ -1833,6 +1854,10 @@ export interface Membership {
   id: number;
   title: string;
   description: string;
+  /**
+   * Optional hero image for the Join page — an aspirational candid (a hackathon, a build night). Left empty, the page stays text-only.
+   */
+  heroImage?: (number | null) | Media;
   benefits?:
     | {
         text: string;
@@ -1913,6 +1938,10 @@ export interface Partner {
    */
   intro?: string | null;
   /**
+   * Optional hero image under the headline — e.g. the team collaborating with an NGO partner. Left empty, the page stays text-only.
+   */
+  heroImage?: (number | null) | Media;
+  /**
    * The concrete things a partner gets from working with us.
    */
   valueProps?:
@@ -1986,6 +2015,10 @@ export interface Homepage {
   heroCtaPrimary?: string | null;
   heroCtaSecondary?: string | null;
   heroScrollHint?: string | null;
+  /**
+   * Optional hero image beside the headline — ideally a wide candid of the team mid-build. Left empty, the hero stays text-only.
+   */
+  heroImage?: (number | null) | Media;
   aboutKicker?: string | null;
   aboutOneLiner?: string | null;
   aboutPitch?: string | null;
@@ -2048,6 +2081,7 @@ export interface SiteConfigSelect<T extends boolean = true> {
   copyrightText?: T;
   windowTitle?: T;
   bookingUrl?: T;
+  teamHeroImage?: T;
   stats?:
     | T
     | {
@@ -2066,6 +2100,7 @@ export interface SiteConfigSelect<T extends boolean = true> {
 export interface MembershipSelect<T extends boolean = true> {
   title?: T;
   description?: T;
+  heroImage?: T;
   benefits?:
     | T
     | {
@@ -2108,6 +2143,7 @@ export interface LegalSelect<T extends boolean = true> {
 export interface PartnerSelect<T extends boolean = true> {
   title?: T;
   intro?: T;
+  heroImage?: T;
   valueProps?:
     | T
     | {
@@ -2167,6 +2203,7 @@ export interface HomepageSelect<T extends boolean = true> {
   heroCtaPrimary?: T;
   heroCtaSecondary?: T;
   heroScrollHint?: T;
+  heroImage?: T;
   aboutKicker?: T;
   aboutOneLiner?: T;
   aboutPitch?: T;
