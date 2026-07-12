@@ -891,17 +891,28 @@ const seed = async () => {
 
   for (const { slug, en, de } of collections) {
     const ids = [];
+    const enDocs = [];
 
     for (const item of en) {
       const res = await postJson(`/api/${slug}`, item, cookie).then(assertOk(`${slug} (en)`));
       const data = await res.json();
       ids.push(data?.doc?.id);
+      enDocs.push(data?.doc);
     }
 
     for (let i = 0; i < de.length; i++) {
       const id = ids[i];
       if (!id) continue;
-      await patchJson(`/api/${slug}/${id}?locale=de`, de[i], cookie).then(assertOk(`${slug}[${i}] (de)`));
+      const body = { ...de[i] };
+      // `technologies.name` is a required *localized* field, so a DE PATCH that
+      // omits it fails validation. Tech names don't translate, so carry the EN
+      // rows over — with their row ids, so Payload updates the existing rows'
+      // DE locale rather than replacing the array (which would wipe the EN names).
+      const enTech = enDocs[i]?.technologies;
+      if (!body.technologies && Array.isArray(enTech) && enTech.length) {
+        body.technologies = enTech.map((tech) => ({ id: tech.id, name: tech.name }));
+      }
+      await patchJson(`/api/${slug}/${id}?locale=de`, body, cookie).then(assertOk(`${slug}[${i}] (de)`));
     }
 
     idsBySlug[slug] = ids;
