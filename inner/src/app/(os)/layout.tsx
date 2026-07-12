@@ -1,61 +1,13 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import TopNav from '@/components/showcase/TopNav';
-import SiteFooter from '@/components/general/SiteFooter';
-import MobileLayout from '@/components/mobile/MobileLayout';
-import useIsMobile from '@/hooks/useIsMobile';
+import React from 'react';
+import SiteShell from '@/components/general/SiteShell';
 
 /**
  * Persistent site shell shared by every content route. The active page renders
- * into `children` — the Next App Router keeps this layout mounted across
- * navigations.
- *
- * The site is now a normal website (the old Windows-95 desktop chrome is gone).
- * Desktop renders a fixed top nav over a single scroll container, mobile gets
- * its own nav/footer. The desktop shell reuses the `.site-page` / `.site-scroll`
- * structure the in-window view used, so `TopNav`'s scroll detection and the
- * landing page's hash-scroll keep working unchanged.
- *
- * Desktop vs mobile chrome is a viewport decision and only known on the client,
- * so we render the desktop shell on the server and during the first client
- * render (keeping the page content in the SSR HTML and avoiding a hydration
- * mismatch), then swap to the mobile chrome after mount if needed.
+ * into `children`; the Next App Router keeps this layout mounted across
+ * navigations. The chrome (top nav + footer, with the desktop/mobile/embedded
+ * logic) lives in `SiteShell` so the global `not-found` page can reuse the exact
+ * same treatment and read like a normal page of the site.
  */
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
-    const isMobile = useIsMobile();
-    const [mounted, setMounted] = useState(false);
-    // The 3D scene embeds the site in a ~1024px monitor iframe — right at the
-    // mobile breakpoint — so the viewport check would flip it into the mobile
-    // chrome, whose sticky header misbehaves inside the transformed iframe and
-    // makes the nav vanish. The 3D experience is desktop-only, so stay on the
-    // desktop shell whenever we're embedded.
-    const [embedded, setEmbedded] = useState(false);
-    useEffect(() => {
-        setMounted(true);
-        try {
-            setEmbedded(window.self !== window.top);
-        } catch {
-            setEmbedded(true);
-        }
-    }, []);
-
-    if (mounted && isMobile && !embedded) {
-        return (
-            <div className="App">
-                <MobileLayout>{children}</MobileLayout>
-            </div>
-        );
-    }
-
-    return (
-        <div className="App">
-            <div className="site-page">
-                <TopNav />
-                <div className="site-scroll">
-                    {children}
-                    <SiteFooter />
-                </div>
-            </div>
-        </div>
-    );
+    return <SiteShell>{children}</SiteShell>;
 }
