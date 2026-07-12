@@ -14,12 +14,24 @@ export const Sponsors: CollectionConfig = {
     { name: 'logo', type: 'upload', relationTo: 'media' },
     { name: 'url', type: 'text' },
     {
-      name: 'tier',
-      type: 'select',
-      required: true,
+      name: 'tierRef',
+      label: 'Tier',
+      type: 'relationship',
+      relationTo: 'sponsor-tiers',
       admin: {
         description:
-          'Grouped into tier sections on the public site (Platinum → Partner).',
+          'Which tier section this sponsor appears in (managed in Sponsor Tiers).',
+      },
+    },
+    {
+      // Deprecated: superseded by the `tierRef` relationship. Kept (nullable,
+      // hidden) so existing data survives the migration; the site falls back to
+      // it when a sponsor has no tierRef yet.
+      name: 'tier',
+      type: 'select',
+      admin: {
+        hidden: true,
+        description: 'Deprecated — use the Tier relationship above.',
       },
       options: [
         { label: 'Platinum', value: 'platinum' },

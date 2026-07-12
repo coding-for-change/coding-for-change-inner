@@ -74,6 +74,7 @@ export interface Config {
     events: Event;
     faq: Faq;
     sponsors: Sponsor;
+    'sponsor-tiers': SponsorTier;
     companies: Company;
     media: Media;
     'blog-posts': BlogPost;
@@ -95,6 +96,7 @@ export interface Config {
     events: EventsSelect<false> | EventsSelect<true>;
     faq: FaqSelect<false> | FaqSelect<true>;
     sponsors: SponsorsSelect<false> | SponsorsSelect<true>;
+    'sponsor-tiers': SponsorTiersSelect<false> | SponsorTiersSelect<true>;
     companies: CompaniesSelect<false> | CompaniesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     'blog-posts': BlogPostsSelect<false> | BlogPostsSelect<true>;
@@ -383,10 +385,30 @@ export interface Sponsor {
   logo?: (number | null) | Media;
   url?: string | null;
   /**
-   * Grouped into tier sections on the public site (Platinum → Partner).
+   * Which tier section this sponsor appears in (managed in Sponsor Tiers).
    */
-  tier: 'platinum' | 'gold' | 'silver' | 'bronze' | 'partner';
+  tierRef?: (number | null) | SponsorTier;
+  /**
+   * Deprecated — use the Tier relationship above.
+   */
+  tier?: ('platinum' | 'gold' | 'silver' | 'bronze' | 'partner') | null;
   description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Tier sections for the Sponsors page (e.g. Platinum, Gold …).
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sponsor-tiers".
+ */
+export interface SponsorTier {
+  id: number;
+  label: string;
+  /**
+   * Lower shows first (e.g. Platinum 10, Gold 20, Silver 30 …).
+   */
+  order: number;
   updatedAt: string;
   createdAt: string;
 }
@@ -885,6 +907,24 @@ export interface PayloadMcpApiKey {
      */
     delete?: boolean | null;
   };
+  sponsorTiers?: {
+    /**
+     * Allow clients to find sponsor-tiers.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create sponsor-tiers.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update sponsor-tiers.
+     */
+    update?: boolean | null;
+    /**
+     * Allow clients to delete sponsor-tiers.
+     */
+    delete?: boolean | null;
+  };
   companies?: {
     /**
      * Allow clients to find companies.
@@ -1089,6 +1129,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'sponsors';
         value: number | Sponsor;
+      } | null)
+    | ({
+        relationTo: 'sponsor-tiers';
+        value: number | SponsorTier;
       } | null)
     | ({
         relationTo: 'companies';
@@ -1315,8 +1359,19 @@ export interface SponsorsSelect<T extends boolean = true> {
   name?: T;
   logo?: T;
   url?: T;
+  tierRef?: T;
   tier?: T;
   description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sponsor-tiers_select".
+ */
+export interface SponsorTiersSelect<T extends boolean = true> {
+  label?: T;
+  order?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1603,6 +1658,14 @@ export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
         delete?: T;
       };
   sponsors?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+        delete?: T;
+      };
+  sponsorTiers?:
     | T
     | {
         find?: T;

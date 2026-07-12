@@ -15,7 +15,7 @@ const SponsorsList: React.FC<SponsorsListProps> = (props) => {
     const { t } = useLanguage();
     const { data: sponsors, loading } = useCmsCollection<CmsSponsor>(
         'sponsors',
-        undefined,
+        { depth: '1' },
         props.sponsors
     );
 

@@ -233,13 +233,27 @@ to sensible built-in copy if left blank, but fill it in for the real pitch.
 
 ---
 
-## 5. Lives in code, not the CMS (FYI — no action needed)
+## 5. Now editable in the CMS (Phase 2)
 
-- **Homepage / About impact stats** ("4 NGOs · 10+ members · **150+ users' time
-  saved**") are in `inner/src/i18n/translations.ts` (`about.stats`). Change them
-  there, not in the CMS. If `Site Config → stats` was populated for the old
-  About page, it's no longer read by these pages.
-- **The Events section** was removed from the homepage; the Events collection
-  still exists in the CMS for future use, and `/events` now redirects home.
-- **Blog** was removed from the primary nav (still linked in the footer and fully
-  functional) — publishing a couple of posts is what lets it back into the nav.
+These now live in the CMS and override the built-in copy per field (leave a
+field blank to keep the built-in default — an empty global is safe):
+
+- **About Page** (global) — the whole /about narrative: kicker, title, lead,
+  story paragraphs, values, team teaser.
+- **Homepage** (global) — homepage section copy: hero, about pitch + **impact
+  stats** + process steps, process, section headers, the 3D band, closing CTA.
+  (The stats you wanted — "4 NGOs · 10+ members · 150+ users' time saved" — are
+  now the Homepage global's `stats`, editable without a redeploy.)
+- **Sponsor Tiers** (collection) — add / rename / reorder tiers (Platinum, Gold,
+  …) without code; assign each sponsor to a tier via the **Tier** field, and
+  upload a logo. After the migration deploys, run
+  `docker compose exec cms node scripts/backfill-sponsor-tiers.mjs` once to
+  create the default tiers and map existing sponsors onto them.
+
+## 6. Still in code (FYI)
+
+- **The Events section** shows on the homepage + in the nav only when the Events
+  collection has entries; `/events` always exists.
+- **Blog/News** shows on the homepage + in the nav only when blog posts exist.
+- UI micro-copy (nav labels, button text, form labels) remains in
+  `inner/src/i18n/translations.ts`.

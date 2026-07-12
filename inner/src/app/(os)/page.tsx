@@ -17,7 +17,7 @@ export default async function HomePage() {
     const [events, projects, sponsors, faq, blog, homepage] = await Promise.all([
         fetchCollection<CmsEvent>('events', locale),
         fetchCollection<CmsProject>('projects', locale),
-        fetchCollection<CmsSponsor>('sponsors', locale),
+        fetchCollection<CmsSponsor>('sponsors', locale, { depth: '1' }),
         fetchCollection<CmsFaqItem>('faq', locale),
         fetchCollection<CmsBlogPost>('blog-posts', locale, {
             depth: '2',

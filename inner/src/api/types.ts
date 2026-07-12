@@ -73,13 +73,23 @@ export interface CmsProject {
     ngoFaq?: { question: string; answer: string; id?: string }[] | null;
 }
 
+/** GET /api/sponsor-tiers — CMS-managed sponsor tiers (Platinum, Gold, …). */
+export interface CmsSponsorTier {
+    id: number;
+    label: string;
+    order: number;
+}
+
 /** GET /api/sponsors */
 export interface CmsSponsor {
     id: number;
     name: string;
     logo?: CmsMedia | null;
     url?: string;
-    tier: 'platinum' | 'gold' | 'silver' | 'bronze' | 'partner';
+    /** CMS-managed tier (populated at depth >= 1). */
+    tierRef?: CmsSponsorTier | number | null;
+    /** Deprecated fixed tier — fallback when `tierRef` isn't set. */
+    tier?: 'platinum' | 'gold' | 'silver' | 'bronze' | 'partner' | null;
     description?: string;
 }
 

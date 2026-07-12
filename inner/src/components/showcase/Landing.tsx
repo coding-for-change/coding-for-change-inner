@@ -81,7 +81,7 @@ const Landing: React.FC<LandingProps> = (props) => {
     const { data: projects, loading: projectsLoading } =
         useCmsCollection<CmsProject>('projects', undefined, props.projects);
     const { data: sponsors, loading: sponsorsLoading } =
-        useCmsCollection<CmsSponsor>('sponsors', undefined, props.sponsors);
+        useCmsCollection<CmsSponsor>('sponsors', { depth: '1' }, props.sponsors);
     const { data: faq, loading: faqLoading } =
         useCmsCollection<CmsFaqItem>('faq', undefined, props.faq);
     const { data: hp } = useCmsGlobal<CmsHomepage>('homepage', props.homepage);

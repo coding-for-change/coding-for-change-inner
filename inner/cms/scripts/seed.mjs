@@ -918,6 +918,37 @@ const seed = async () => {
 
   console.log('Updated globals: site-config, membership, partner, legal (en + de)');
 
+  // ── Sponsor tiers ──────────────────────────────────────────────────────────
+  // Create the tier records first, then point each sponsor's `tierRef` at the
+  // matching tier (this is also the backfill: it maps the deprecated fixed
+  // `tier` value to a tier record).
+  const sponsorTierDefs = [
+    { value: 'platinum', label: 'Platinum', labelDe: 'Platin', order: 10 },
+    { value: 'gold', label: 'Gold', labelDe: 'Gold', order: 20 },
+    { value: 'silver', label: 'Silver', labelDe: 'Silber', order: 30 },
+    { value: 'bronze', label: 'Bronze', labelDe: 'Bronze', order: 40 },
+    { value: 'partner', label: 'Partners', labelDe: 'Partner', order: 50 },
+  ];
+  const tierIdByValue = {};
+  for (const td of sponsorTierDefs) {
+    const res = await postJson(
+      '/api/sponsor-tiers',
+      { label: td.label, order: td.order },
+      cookie
+    ).then(assertOk('sponsor-tiers (en)'));
+    const id = (await res.json())?.doc?.id;
+    tierIdByValue[td.value] = id;
+    if (id) {
+      await patchJson(
+        `/api/sponsor-tiers/${id}?locale=de`,
+        { label: td.labelDe },
+        cookie
+      ).then(assertOk('sponsor-tiers (de)'));
+    }
+  }
+  for (const s of sponsors) s.tierRef = tierIdByValue[s.tier];
+  console.log(`Created ${sponsorTierDefs.length} sponsor-tiers (en + de)`);
+
   // ── Collections ──────────────────────────────────────────────────────────
   // Create English items first (returns IDs), then PATCH German translations.
   const collections = [

@@ -12,6 +12,8 @@ export const metadata = {
 
 export default async function SponsorsPage() {
     const locale = await getServerLocale();
-    const sponsors = await fetchCollection<CmsSponsor>('sponsors', locale);
+    const sponsors = await fetchCollection<CmsSponsor>('sponsors', locale, {
+        depth: '1',
+    });
     return <SponsorsList sponsors={sponsors} />;
 }

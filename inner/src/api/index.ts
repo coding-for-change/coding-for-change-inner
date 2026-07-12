@@ -9,6 +9,7 @@ export type {
     CmsEvent,
     CmsProject,
     CmsSponsor,
+    CmsSponsorTier,
     CmsCompany,
     CmsFaqItem,
     CmsSiteConfig,

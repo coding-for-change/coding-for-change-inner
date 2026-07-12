@@ -9,6 +9,7 @@ import { Projects } from './collections/Projects';
 import { Events } from './collections/Events';
 import { FAQ } from './collections/FAQ';
 import { Sponsors } from './collections/Sponsors';
+import { SponsorTiers } from './collections/SponsorTiers';
 import { Companies } from './collections/Companies';
 import { Media } from './collections/Media';
 import { Users } from './collections/Users';
@@ -27,7 +28,7 @@ import { Homepage } from './globals/Homepage';
 
 export default buildConfig({
   editor: lexicalEditor(),
-  collections: [Users, Team, Projects, Events, FAQ, Sponsors, Companies, Media, BlogPost, WaitlistSignups, AnalyticsEvents],
+  collections: [Users, Team, Projects, Events, FAQ, Sponsors, SponsorTiers, Companies, Media, BlogPost, WaitlistSignups, AnalyticsEvents],
   globals: [SiteConfig, Membership, Legal, Partner, About, Homepage],
   // Admin-only CSV export endpoints (campaign funnel, raw events, signups).
   endpoints: analyticsExportEndpoints,
@@ -91,6 +92,7 @@ export default buildConfig({
         events: { enabled: true },
         faq: { enabled: true },
         sponsors: { enabled: true },
+        'sponsor-tiers': { enabled: true },
         companies: { enabled: true },
         media: { enabled: true },
         'blog-posts': { enabled: true },
