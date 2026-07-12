@@ -425,12 +425,12 @@ const partnerDe = {
 };
 
 const membershipDe = {
-  title: 'Werden Sie Mitglied',
+  title: 'Werde Mitglied',
   description:
     'Wir sind eine interdisziplinäre Gemeinschaft von Studierenden, die echte Software für ' +
     'gemeinnützige Organisationen entwickeln – und dafür braucht es mehr als Entwickler:innen. ' +
     'Es braucht Menschen, die mit Partnern sprechen und das eigentliche Problem finden, die unsere ' +
-    'Geschichte erzählen und das Team wachsen lassen. Egal was Sie studieren – bei uns finden Sie ' +
+    'Geschichte erzählen und das Team wachsen lassen. Egal was du studierst – bei uns findest du ' +
     'einen Weg, echten Impact zu schaffen.',
   benefits: [
     { text: 'Echte Arbeit für echte gemeinnützige Kunden leisten' },
@@ -440,11 +440,11 @@ const membershipDe = {
     { text: 'Workshops, Hackathons und Socializing während des Semesters' },
   ],
   requirements: [
-    { text: 'Sie studieren oder arbeiten in Deutschland' },
-    { text: 'Sie können sich ca. 5 Stunden pro Woche während des Semesters einbringen' },
+    { text: 'Du studierst oder arbeitest in Deutschland' },
+    { text: 'Du kannst dich ca. 5 Stunden pro Woche während des Semesters einbringen' },
     {
       text:
-        'Ihnen liegt gesellschaftlicher Impact am Herzen – Programmiererfahrung ist ' +
+        'Dir liegt gesellschaftlicher Impact am Herzen – Programmiererfahrung ist ' +
         'willkommen, aber nicht für jede Rolle nötig',
     },
   ],
@@ -452,26 +452,26 @@ const membershipDe = {
     {
       title: 'Entwicklung',
       description:
-        'Entwerfen und entwickeln Sie die Software, die die Probleme unserer Partner löst – ' +
+        'Entwirf und entwickle die Software, die die Probleme unserer Partner löst – ' +
         'Frontend, Backend und alles dazwischen. Alle Erfahrungsstufen willkommen.',
     },
     {
       title: 'Consulting & Produkt',
       description:
-        'Arbeiten Sie direkt mit unseren gemeinnützigen Partnern zusammen, um das eigentliche ' +
+        'Arbeite direkt mit unseren gemeinnützigen Partnern zusammen, um das eigentliche ' +
         'Problem zu erkennen, die Lösung zu skizzieren und sie für das Entwicklungsteam ' +
         'zu übersetzen. Ideal für Studierende aus BWL, Management und Produkt.',
     },
     {
       title: 'Marketing & Kommunikation',
       description:
-        'Erhöhen Sie unsere Reichweite und erzählen Sie die Geschichte unseres Impacts – Social Media, ' +
+        'Erhöhe unsere Reichweite und erzähle die Geschichte unseres Impacts – Social Media, ' +
         'Content, Events und Partnerschaften.',
     },
     {
       title: 'People & Operations',
       description:
-        'Gewinnen, onboarden und unterstützen Sie unsere Mitglieder und halten Sie den Club am Laufen, ' +
+        'Gewinne, onboarde und unterstütze unsere Mitglieder und halte den Club am Laufen, ' +
         'während wir wachsen. Das organisatorische Rückgrat von Coding for Change.',
     },
   ],
@@ -546,7 +546,7 @@ const eventsDe = [
   {
     title: 'Semesterauftakt',
     location: 'TUM Hauptcampus, Raum 1100',
-    description: 'Lernen Sie die Teams kennen, erfahren Sie mehr über die NGO-Projekte dieses Semesters und wie Sie mitmachen können. Pizza inklusive.',
+    description: 'Lern die Teams kennen, erfahre mehr über die NGO-Projekte dieses Semesters und wie du mitmachen kannst. Pizza inklusive.',
   },
   {
     title: 'Code for Good Hackathon',
@@ -557,7 +557,7 @@ const eventsDe = [
   {
     title: 'Einführung in React – Workshop',
     location: 'Online',
-    description: 'Ein praxisorientierter Anfänger-Workshop zu Komponenten, State und Hooks – alles, was Sie für Ihr erstes Projektteam brauchen.',
+    description: 'Ein praxisorientierter Anfänger-Workshop zu Komponenten, State und Hooks – alles, was du für dein erstes Projektteam brauchst.',
   },
   {
     title: 'Semesterabschluss-Feier',
