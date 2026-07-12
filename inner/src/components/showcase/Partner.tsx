@@ -32,7 +32,8 @@ const Partner: React.FC<PartnerProps> = (props) => {
     const projects = (props.projects ?? []).slice(0, 3);
 
     return (
-        <div className="lp lp-page">
+        <div className="lp">
+            <div className="lp-page">
             <div className="lp-inner">
                 <motion.div
                     className="lp-page__head"
@@ -135,6 +136,7 @@ const Partner: React.FC<PartnerProps> = (props) => {
                         </div>
                     </>
                 )}
+            </div>
             </div>
 
             {/* ---- Closing CTA ---- */}

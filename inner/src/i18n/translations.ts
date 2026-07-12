@@ -134,7 +134,7 @@ const en: Translations = {
         intro: 'From first conversation to finished software in a single semester — here is the path every project follows.',
     },
     cta: {
-        heading: 'Ready to build something good?',
+        heading: 'Ready to build something great?',
         text: 'Whether you are a student who wants to ship real code or a nonprofit with a problem worth solving — let us talk.',
         join: 'Join the club',
         contact: 'Partner with us',
@@ -145,9 +145,9 @@ const en: Translations = {
         viewAll: 'See all projects',
     },
     threed: {
-        kicker: 'Made by the team',
-        title: 'Curious how we build? Step inside.',
-        text: 'The same students who ship our NGO software built this site’s 3D workspace from scratch — a small proof that we sweat the details. Grab your keyboard and take a look around.',
+        kicker: 'Just for fun',
+        title: 'Prefer the scenic route? Try the 3D site.',
+        text: 'There’s a playful 3D version of this site — a retro desktop you can click around right in your browser. Grab your keyboard and take a look.',
         cta: 'Enter the 3D experience',
     },
     projectDetail: {
@@ -312,7 +312,7 @@ const de: Translations = {
         intro: 'Vom ersten Gespräch bis zur fertigen Software in einem einzigen Semester – diesen Weg geht jedes Projekt.',
     },
     cta: {
-        heading: 'Bereit, etwas Gutes zu bauen?',
+        heading: 'Bereit, etwas Großartiges zu bauen?',
         text: 'Ob Studierende:r, die:der echten Code liefern will, oder NGO mit einem Problem, das es zu lösen lohnt – sprich mit uns.',
         join: 'Mitglied werden',
         contact: 'Partner werden',
@@ -323,9 +323,9 @@ const de: Translations = {
         viewAll: 'Alle Projekte ansehen',
     },
     threed: {
-        kicker: 'Vom Team gebaut',
-        title: 'Neugierig, wie wir bauen? Komm rein.',
-        text: 'Dieselben Studierenden, die unsere NGO-Software liefern, haben den 3D-Arbeitsplatz dieser Seite von Grund auf gebaut – ein kleiner Beweis, dass wir aufs Detail achten. Schnapp dir die Tastatur und sieh dich um.',
+        kicker: 'Einfach zum Spaß',
+        title: 'Lust auf die szenische Route? Probier die 3D-Seite.',
+        text: 'Es gibt eine verspielte 3D-Version dieser Seite – ein Retro-Desktop, den du direkt im Browser erkunden kannst. Schnapp dir die Tastatur und sieh dich um.',
         cta: '3D-Erlebnis starten',
     },
     projectDetail: {

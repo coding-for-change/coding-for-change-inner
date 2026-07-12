@@ -22,7 +22,8 @@ const About: React.FC = () => {
     const stats = t.about.stats;
 
     return (
-        <div className="lp lp-page">
+        <div className="lp">
+            <div className="lp-page">
             <div className="lp-inner">
                 {/* ---- Head ---- */}
                 <motion.div
@@ -109,6 +110,7 @@ const About: React.FC = () => {
                         {t.aboutPage.teamCta} →
                     </Link>
                 </motion.div>
+            </div>
             </div>
 
             {/* ---- Closing CTA (shared teal band) ---- */}
