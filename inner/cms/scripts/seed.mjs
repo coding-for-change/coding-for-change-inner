@@ -404,33 +404,33 @@ const partnerDe = {
   intro:
     'Wir entwickeln gemeinsam mit gemeinnützigen Organisationen die Software, die sie brauchen – ' +
     'kostenlos, geliefert von einem festen Studierendenteam in einem Semester. Kein Lock-in, ' +
-    'keine Rechnung: Was wir bauen, gehört euch.',
+    'keine Rechnung: Was wir bauen, gehört Ihnen.',
   valueProps: [
-    { title: 'Ein festes Team', description: 'Engineering, Produkt und Design, die ein Semester lang nur an eurem Projekt arbeiten.' },
+    { title: 'Ein festes Team', description: 'Engineering, Produkt und Design, die ein Semester lang nur an Ihrem Projekt arbeiten.' },
     { title: 'Produktreife Software, kein Prototyp', description: 'Echte, wartbare Software, die live geht und nach der Übergabe weiterläuft.' },
-    { title: 'Kostenlos', description: 'Finanziert durch unsere universitäre Anbindung und Sponsoren – für euch entstehen keine Kosten.' },
-    { title: 'Saubere Übergabe', description: 'Dokumentation, ein Walkthrough und der Code – alles gehört euch, ganz ohne Abhängigkeit von uns.' },
+    { title: 'Kostenlos', description: 'Finanziert durch unsere universitäre Anbindung und Sponsoren – für Sie entstehen keine Kosten.' },
+    { title: 'Saubere Übergabe', description: 'Dokumentation, ein Walkthrough und der Code – alles gehört Ihnen, ganz ohne Abhängigkeit von uns.' },
   ],
   process: [
-    { title: 'Erzählt uns das Problem', description: 'Ein erstes Gespräch, um eure Arbeit und den größten Schmerzpunkt zu verstehen.' },
+    { title: 'Erzählen Sie uns das Problem', description: 'Ein erstes Gespräch, um Ihre Arbeit und den größten Schmerzpunkt zu verstehen.' },
     { title: 'Wir schneiden es gemeinsam zu', description: 'Wir formen eine Lösung, die realistisch in einem Semester lieferbar ist.' },
-    { title: 'Das Team entwickelt', description: 'Ein Studierendenteam baut sie in agilen Sprints – ihr seid durchgehend eingebunden.' },
+    { title: 'Das Team entwickelt', description: 'Ein Studierendenteam baut sie in agilen Sprints – Sie sind durchgehend eingebunden.' },
     { title: 'Übergabe & Support', description: 'Wir liefern das fertige Produkt mit Dokumentation und einem Support-Zeitraum.' },
   ],
   commitment:
     'Was wir brauchen: eine feste Ansprechperson und etwas ihrer Zeit über das Semester, damit wir das Richtige bauen.',
   ctaHeading: 'Bereit für ein Gespräch?',
   ctaText:
-    'Erzähl uns von eurer Organisation und eurem Problem – wir kümmern uns um den Rest.',
+    'Erzählen Sie uns von Ihrer Organisation und Ihrem Problem – wir kümmern uns um den Rest.',
 };
 
 const membershipDe = {
-  title: 'Werde Mitglied',
+  title: 'Werden Sie Mitglied',
   description:
     'Wir sind eine interdisziplinäre Gemeinschaft von Studierenden, die echte Software für ' +
     'gemeinnützige Organisationen entwickeln – und dafür braucht es mehr als Entwickler:innen. ' +
     'Es braucht Menschen, die mit Partnern sprechen und das eigentliche Problem finden, die unsere ' +
-    'Geschichte erzählen und das Team wachsen lassen. Egal was du studierst – bei uns findest du ' +
+    'Geschichte erzählen und das Team wachsen lassen. Egal was Sie studieren – bei uns finden Sie ' +
     'einen Weg, echten Impact zu schaffen.',
   benefits: [
     { text: 'Echte Arbeit für echte gemeinnützige Kunden leisten' },
@@ -440,11 +440,11 @@ const membershipDe = {
     { text: 'Workshops, Hackathons und Socializing während des Semesters' },
   ],
   requirements: [
-    { text: 'Du studierst oder arbeitest in Deutschland' },
-    { text: 'Du kannst dich ca. 5 Stunden pro Woche während des Semesters einbringen' },
+    { text: 'Sie studieren oder arbeiten in Deutschland' },
+    { text: 'Sie können sich ca. 5 Stunden pro Woche während des Semesters einbringen' },
     {
       text:
-        'Dir liegt gesellschaftlicher Impact am Herzen – Programmiererfahrung ist ' +
+        'Ihnen liegt gesellschaftlicher Impact am Herzen – Programmiererfahrung ist ' +
         'willkommen, aber nicht für jede Rolle nötig',
     },
   ],
@@ -452,26 +452,26 @@ const membershipDe = {
     {
       title: 'Entwicklung',
       description:
-        'Entwirf und entwickle die Software, die die Probleme unserer Partner löst – ' +
+        'Entwerfen und entwickeln Sie die Software, die die Probleme unserer Partner löst – ' +
         'Frontend, Backend und alles dazwischen. Alle Erfahrungsstufen willkommen.',
     },
     {
       title: 'Consulting & Produkt',
       description:
-        'Arbeite direkt mit unseren gemeinnützigen Partnern zusammen, um das eigentliche ' +
+        'Arbeiten Sie direkt mit unseren gemeinnützigen Partnern zusammen, um das eigentliche ' +
         'Problem zu erkennen, die Lösung zu skizzieren und sie für das Entwicklungsteam ' +
         'zu übersetzen. Ideal für Studierende aus BWL, Management und Produkt.',
     },
     {
       title: 'Marketing & Kommunikation',
       description:
-        'Erhöhe unsere Reichweite und erzähle die Geschichte unseres Impacts – Social Media, ' +
+        'Erhöhen Sie unsere Reichweite und erzählen Sie die Geschichte unseres Impacts – Social Media, ' +
         'Content, Events und Partnerschaften.',
     },
     {
       title: 'People & Operations',
       description:
-        'Gewinne, onboarde und unterstütze unsere Mitglieder und halte den Club am Laufen, ' +
+        'Gewinnen, onboarden und unterstützen Sie unsere Mitglieder und halten Sie den Club am Laufen, ' +
         'während wir wachsen. Das organisatorische Rückgrat von Coding for Change.',
     },
   ],
@@ -511,9 +511,9 @@ const projectsDe = [
     impactResults:
       'Tabellen und Telefon-Pingpong sind Geschichte. Freiwillige organisieren sich selbst, No-Shows gingen zurück, und das Koordinationsteam gewann Stunden pro Woche zurück – für die Mission statt für den Dienstplan.',
     ngoFaq: [
-      { question: 'Was kostet uns das?', answer: 'Nichts. Unsere Arbeit wird durch unsere universitäre Anbindung und Sponsoren finanziert – für eure Organisation entstehen keine Kosten.' },
-      { question: 'Wie lange dauert es?', answer: 'Ein einziges Semester, vom ersten Gespräch bis zum fertigen Produkt, das an euer Team übergeben wird.' },
-      { question: 'Was passiert nach der Übergabe?', answer: 'Es gehört euch – der Code, die Dokumentation und ein Walkthrough – mit einem Support-Zeitraum danach. Kein Lock-in.' },
+      { question: 'Was kostet uns das?', answer: 'Nichts. Unsere Arbeit wird durch unsere universitäre Anbindung und Sponsoren finanziert – für Ihre Organisation entstehen keine Kosten.' },
+      { question: 'Wie lange dauert es?', answer: 'Ein einziges Semester, vom ersten Gespräch bis zum fertigen Produkt, das an Ihr Team übergeben wird.' },
+      { question: 'Was passiert nach der Übergabe?', answer: 'Es gehört Ihnen – der Code, die Dokumentation und ein Walkthrough – mit einem Support-Zeitraum danach. Kein Lock-in.' },
     ],
   },
   {
@@ -546,7 +546,7 @@ const eventsDe = [
   {
     title: 'Semesterauftakt',
     location: 'TUM Hauptcampus, Raum 1100',
-    description: 'Lern die Teams kennen, erfahre mehr über die NGO-Projekte dieses Semesters und wie du mitmachen kannst. Pizza inklusive.',
+    description: 'Lernen Sie die Teams kennen, erfahren Sie mehr über die NGO-Projekte dieses Semesters und wie Sie mitmachen können. Pizza inklusive.',
   },
   {
     title: 'Code for Good Hackathon',
@@ -557,7 +557,7 @@ const eventsDe = [
   {
     title: 'Einführung in React – Workshop',
     location: 'Online',
-    description: 'Ein praxisorientierter Anfänger-Workshop zu Komponenten, State und Hooks – alles, was du für dein erstes Projektteam brauchst.',
+    description: 'Ein praxisorientierter Anfänger-Workshop zu Komponenten, State und Hooks – alles, was Sie für Ihr erstes Projektteam brauchen.',
   },
   {
     title: 'Semesterabschluss-Feier',
@@ -1158,7 +1158,7 @@ const seed = async () => {
   // Localise field labels + confirmation message for German. Block rows are
   // matched by their generated `id`, so reuse the ids from the create response.
   const deLabels = {
-    name: 'Dein Name',
+    name: 'Ihr Name',
     email: 'E-Mail',
     organization: 'Organisation / NGO (optional)',
     message: 'Nachricht',
@@ -1171,7 +1171,7 @@ const seed = async () => {
         submitButtonLabel: 'Nachricht senden',
         confirmationMessage: makeDoc(
           lexicalParagraph(
-            'Danke für deine Nachricht! Wir haben sie erhalten und melden uns bald bei dir.'
+            'Danke für Ihre Nachricht! Wir haben sie erhalten und melden uns bald bei Ihnen.'
           )
         ),
         fields: (formDoc.fields ?? []).map((f) => ({
