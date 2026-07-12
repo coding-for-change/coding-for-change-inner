@@ -1571,10 +1571,21 @@
 .lp-cs__meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 48px;
+    gap: 40px 64px;
     margin-top: 48px;
     padding-top: 28px;
     border-top: 1px solid var(--line);
+}
+/* Each meta column stacks its heading above its content, left-aligned.
+   (Without this, the global `div { display: flex }` rule lays it out as a row,
+   putting the heading beside the pills/links.) */
+.lp-cs__meta-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.lp-cs__meta-col .lp-pills {
+    margin-top: 0;
 }
 .lp-cs__meta-h {
     font-family: MSSerif, sans-serif;

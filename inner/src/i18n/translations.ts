@@ -31,7 +31,10 @@ export interface Translations {
         heading: string; text: string; join: string; contact: string;
     };
     projects: { title: string; subtitle: string; intro: string; viewAll: string; };
-    threed: { kicker: string; title: string; text: string; cta: string; };
+    threed: {
+        kicker: string; title: string; text: string; cta: string;
+        backKicker: string; backTitle: string; backText: string; backCta: string;
+    };
     projectDetail: {
         back: string; problem: string; approach: string; outcome: string;
         impact: string; stack: string; links: string;
@@ -149,6 +152,10 @@ const en: Translations = {
         title: 'Prefer the scenic route? Try the 3D site.',
         text: 'There’s a playful 3D version of this site — a little retro desktop you can click around right in your browser.',
         cta: 'Enter the 3D experience',
+        backKicker: 'You’re in 3D mode',
+        backTitle: 'Prefer the fast, simple version?',
+        backText: 'You’re exploring the 3D version of the site. Hop back to the standard site any time — it’s quicker to get around.',
+        backCta: 'Back to the standard site',
     },
     projectDetail: {
         back: 'Back to projects', problem: 'The problem', approach: 'Our approach',
@@ -327,6 +334,10 @@ const de: Translations = {
         title: 'Lust auf die szenische Route? Probier die 3D-Seite.',
         text: 'Es gibt eine verspielte 3D-Version dieser Seite – ein kleiner Retro-Desktop, den du direkt im Browser anklicken und erkunden kannst.',
         cta: '3D-Erlebnis starten',
+        backKicker: 'Du bist im 3D-Modus',
+        backTitle: 'Lieber die schnelle, schlichte Version?',
+        backText: 'Du erkundest gerade die 3D-Version der Seite. Wechsle jederzeit zurück zur normalen Seite – dort kommst du schneller voran.',
+        backCta: 'Zurück zur normalen Seite',
     },
     projectDetail: {
         back: 'Zurück zu Projekten', problem: 'Das Problem', approach: 'Unser Vorgehen',

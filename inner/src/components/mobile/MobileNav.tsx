@@ -3,6 +3,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import RouterLink from 'next/link';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useCmsCollection } from '../../api';
+import type { CmsEvent, CmsSponsor } from '../../api/types';
 import Logo from '../../assets/Logo.webp';
 import './mobile.css';
 
@@ -65,14 +67,19 @@ const MobileNav: React.FC = () => {
         return () => document.removeEventListener('mousedown', onDown);
     }, [langOpen]);
 
+    // Events & Sponsors only appear when they have content (pages exist either way).
+    const { data: events } = useCmsCollection<CmsEvent>('events');
+    const { data: sponsors } = useCmsCollection<CmsSponsor>('sponsors');
+    const hasEvents = (events?.length ?? 0) > 0;
+    const hasSponsors = (sponsors?.length ?? 0) > 0;
+
     const navLinks = [
-        // Standalone pages.
         { to: '/about', label: t.nav.about },
         { to: '/projects', label: t.nav.projects },
+        ...(hasEvents ? [{ to: '/events', label: t.nav.events }] : []),
         { to: '/team', label: t.nav.team },
-        // Sections on the single-scroll landing page.
-        { to: '/#sponsors', label: t.nav.sponsors },
-        { to: '/#qa', label: t.nav.qa },
+        ...(hasSponsors ? [{ to: '/sponsors', label: t.nav.sponsors }] : []),
+        { to: '/#qa', label: t.nav.qa }, // FAQ stays a homepage section
         { to: '/contact', label: t.nav.contact },
     ];
 

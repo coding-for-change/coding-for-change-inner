@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCmsCollection, mediaUrl, useSiteConfig } from '../../api';
 import {
+    CmsEvent,
     CmsProject,
     CmsSponsor,
     CmsFaqItem,
@@ -28,6 +29,7 @@ const statusColors: Record<string, string> = {
 };
 
 export interface LandingProps {
+    events?: CmsEvent[] | null;
     projects?: CmsProject[] | null;
     sponsors?: CmsSponsor[] | null;
     faq?: CmsFaqItem[] | null;
@@ -39,6 +41,33 @@ const Landing: React.FC<LandingProps> = (props) => {
     const pathname = usePathname();
     const router = useRouter();
 
+    // True when running inside the 3D scene's monitor iframe — resolved after
+    // mount to avoid a hydration mismatch (window.top is unreadable server-side).
+    const [embedded, setEmbedded] = useState(false);
+    useEffect(() => {
+        try {
+            setEmbedded(window.self !== window.top);
+        } catch {
+            setEmbedded(true);
+        }
+    }, []);
+    const exitThreeD = () => {
+        try {
+            if (window.top) {
+                window.top.location.href = window.location.pathname || '/';
+                return;
+            }
+        } catch {
+            /* cross-origin parent — fall through */
+        }
+        window.location.href = '/';
+    };
+
+    const { data: events } = useCmsCollection<CmsEvent>(
+        'events',
+        undefined,
+        props.events
+    );
     const { data: projects, loading: projectsLoading } =
         useCmsCollection<CmsProject>('projects', undefined, props.projects);
     const { data: sponsors, loading: sponsorsLoading } =
@@ -76,6 +105,40 @@ const Landing: React.FC<LandingProps> = (props) => {
             if (scrollTimer.current) clearTimeout(scrollTimer.current);
         };
     }, [pathname]);
+
+    // Events are only shown when the collection has content (the /events page
+    // exists regardless). Split into upcoming / past for the homepage teaser.
+    const upcoming = (events ?? []).filter((e) => e.isUpcoming);
+    const past = (events ?? []).filter((e) => !e.isUpcoming);
+    const hasEvents = (events?.length ?? 0) > 0;
+    const hasSponsors = (sponsors?.length ?? 0) > 0;
+
+    const renderEventCard = (event: CmsEvent, i: number) => (
+        <motion.div
+            key={event.id}
+            className="lp-card"
+            {...reveal}
+            transition={{ duration: 0.45, delay: Math.min(i * 0.05, 0.3) }}
+        >
+            <span className="lp-badge">{event.type}</span>
+            <h3 className="lp-card__title">{event.title}</h3>
+            <span className="lp-card__meta">
+                {event.date} {t.common.at} {event.time}
+            </span>
+            <span className="lp-card__sub">{event.location}</span>
+            <p className="lp-card__text">{event.description}</p>
+            {event.link?.url && (
+                <a
+                    className="lp-card__link"
+                    href={event.link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    {event.link.label || t.common.learnMore} →
+                </a>
+            )}
+        </motion.div>
+    );
 
     return (
         <div className="lp lp--landing">
@@ -259,7 +322,38 @@ const Landing: React.FC<LandingProps> = (props) => {
                 </div>
             </section>
 
-            {/* ---- 3D experience (a craft flex for engineers; hidden on mobile) ---- */}
+            {/* ---- Events (homepage teaser; only shown when events exist) ---- */}
+            {hasEvents && (
+                <section id="events" className="lp-section lp-section--alt">
+                    <div className="lp-inner">
+                        <motion.div style={{ display: 'block' }} {...reveal} transition={{ duration: 0.5 }}>
+                            <p className="lp-kicker">{t.events.subtitle}</p>
+                            <h2 className="lp-h2">{t.events.title}</h2>
+                            <p className="lp-lead">{t.events.intro}</p>
+                        </motion.div>
+                        {upcoming.length > 0 && (
+                            <>
+                                <h3 className="lp-subhead">{t.events.upcoming}</h3>
+                                <div className="lp-grid">{upcoming.map(renderEventCard)}</div>
+                            </>
+                        )}
+                        {past.length > 0 && (
+                            <>
+                                <h3 className="lp-subhead">{t.events.past}</h3>
+                                <div className="lp-grid">{past.map(renderEventCard)}</div>
+                            </>
+                        )}
+                        <div className="lp-section__more">
+                            <Link className="lp-btn lp-btn--ghost" href="/events">
+                                {t.events.title} →
+                            </Link>
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* ---- 3D experience (hidden on mobile). Inside the 3D scene it
+                 flips to a "back to the standard site" prompt. ---- */}
             <section className="lp-3d">
                 <div className="lp-inner">
                     <motion.div
@@ -267,17 +361,34 @@ const Landing: React.FC<LandingProps> = (props) => {
                         {...reveal}
                         transition={{ duration: 0.5 }}
                     >
-                        <p className="lp-kicker lp-3d__kicker">{t.threed.kicker}</p>
-                        <h2 className="lp-3d__title">{t.threed.title}</h2>
-                        <p className="lp-3d__text">{t.threed.text}</p>
-                        <a className="lp-btn lp-btn--light" href="/3d">
-                            {t.threed.cta} →
-                        </a>
+                        <p className="lp-kicker lp-3d__kicker">
+                            {embedded ? t.threed.backKicker : t.threed.kicker}
+                        </p>
+                        <h2 className="lp-3d__title">
+                            {embedded ? t.threed.backTitle : t.threed.title}
+                        </h2>
+                        <p className="lp-3d__text">
+                            {embedded ? t.threed.backText : t.threed.text}
+                        </p>
+                        {embedded ? (
+                            <button
+                                type="button"
+                                className="lp-btn lp-btn--light"
+                                onClick={exitThreeD}
+                            >
+                                {t.threed.backCta} →
+                            </button>
+                        ) : (
+                            <a className="lp-btn lp-btn--light" href="/3d">
+                                {t.threed.cta} →
+                            </a>
+                        )}
                     </motion.div>
                 </div>
             </section>
 
-            {/* ---- Sponsors ---- */}
+            {/* ---- Sponsors (only shown when there are sponsors) ---- */}
+            {hasSponsors && (
             <section id="sponsors" className="lp-section lp-section--alt">
                 <div className="lp-inner">
                     <motion.div
@@ -325,6 +436,7 @@ const Landing: React.FC<LandingProps> = (props) => {
                     )}
                 </div>
             </section>
+            )}
 
             {/* ---- FAQ ---- */}
             <section id="qa" className="lp-section">

@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import Enter3DButton from '../general/Enter3DButton';
 import { useLanguage } from '../../contexts/LanguageContext';
-import { useSiteConfig } from '../../api';
+import { useSiteConfig, useCmsCollection } from '../../api';
+import type { CmsEvent, CmsSponsor } from '../../api/types';
 import Logo from '../../assets/Logo.webp';
 import './landing.css';
 
@@ -69,13 +70,23 @@ const TopNav: React.FC = () => {
 
     const sectionLinks = [{ id: 'home', label: t.nav.home }];
 
+    // Events and Sponsors are only advertised in the nav when they actually have
+    // content (their pages exist regardless). Fetched client-side; the nav is a
+    // persistent layout so this runs once per session, not per navigation.
+    const { data: events } = useCmsCollection<CmsEvent>('events');
+    const { data: sponsors } = useCmsCollection<CmsSponsor>('sponsors');
+    const hasEvents = (events?.length ?? 0) > 0;
+    const hasSponsors = (sponsors?.length ?? 0) > 0;
+
     // Blog moved out of the primary nav (lives in the footer); About and
     // Projects are now standalone pages and Join gets a text link here in
     // addition to the top-right CTA.
     const pageLinks = [
         { to: '/about', label: t.nav.about },
         { to: '/projects', label: t.nav.projects },
+        ...(hasEvents ? [{ to: '/events', label: t.nav.events }] : []),
         { to: '/team', label: t.nav.team },
+        ...(hasSponsors ? [{ to: '/sponsors', label: t.nav.sponsors }] : []),
         { to: '/join', label: t.nav.join },
         { to: '/contact', label: t.nav.contact },
     ];
@@ -83,7 +94,12 @@ const TopNav: React.FC = () => {
     return (
         <nav
             ref={navRef}
-            className={'lp-nav' + (scrolled ? ' lp-nav--scrolled' : '')}
+            // Transparent only over the homepage hero; solid everywhere else
+            // (and once scrolled) so it can never read as "invisible" on a
+            // short standalone page — e.g. inside the 3D monitor.
+            className={
+                'lp-nav' + (scrolled || !onLanding ? ' lp-nav--scrolled' : '')
+            }
         >
             <button
                 className="lp-nav__brand"
