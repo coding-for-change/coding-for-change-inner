@@ -126,51 +126,90 @@ app.get('/robots.txt', (req, res) => {
     );
 });
 
-// Does a CMS collection have at least one entry? Used to keep content pages out
-// of the sitemap until they actually have something to show. Fails open (treats
-// the page as present) if the CMS can't be reached, so a transient CMS blip
-// never drops real pages from the sitemap.
-const cmsHasDocs = async (slug) => {
+// Fetch a CMS collection's docs for the sitemap (we use `slug` + `updatedAt`).
+// Returns null when the CMS can't be reached so callers can fail open — a
+// transient CMS blip keeps the list pages in the sitemap rather than dropping
+// real pages, while emitting no bogus detail URLs.
+const cmsDocs = async (slug) => {
     try {
-        const res = await fetch(`${CMS_URL}/api/${slug}?limit=1&depth=0`, {
-            signal: AbortSignal.timeout(4000),
-        });
-        if (!res.ok) return true;
+        const res = await fetch(
+            `${CMS_URL}/api/${slug}?limit=500&depth=0&sort=-updatedAt`,
+            { signal: AbortSignal.timeout(4000) }
+        );
+        if (!res.ok) return null;
         const data = await res.json();
-        return (data.totalDocs ?? 0) > 0;
+        return Array.isArray(data.docs) ? data.docs : [];
     } catch {
-        return true;
+        return null;
     }
 };
 
-// SEO: the inner site is the canonical site at /. Content pages (projects,
-// blog, events, sponsors) are only listed once their CMS collection has
-// entries, so we never advertise an empty page.
+// Normalise a CMS timestamp to YYYY-MM-DD, or null if missing/invalid.
+const isoDate = (value) => {
+    if (!value) return null;
+    const d = new Date(value);
+    return isNaN(d.getTime()) ? null : d.toISOString().slice(0, 10);
+};
+
+// SEO: the inner site is the canonical site at /. Static pages are always
+// listed; the content list pages (projects, blog, events, sponsors) only once
+// their collection has entries; and every individual project case study and
+// blog article is enumerated from the CMS, so new content is added to the
+// sitemap automatically. (/3d is intentionally excluded — it's noindex.)
 app.get('/sitemap.xml', async (req, res) => {
-    const lastmod = new Date().toISOString().slice(0, 10);
-    // `slug` present → include only when that collection has entries.
-    const routes = [
-        { route: '/' },
-        { route: '/about' },
-        { route: '/projects', slug: 'projects' },
-        { route: '/blog', slug: 'blog-posts' },
-        { route: '/events', slug: 'events' },
-        { route: '/sponsors', slug: 'sponsors' },
-        { route: '/partner' },
-        { route: '/team' },
-        { route: '/qa' },
-        { route: '/join' },
-        { route: '/contact' },
-    ];
-    const included = await Promise.all(
-        routes.map(async (r) => (r.slug ? await cmsHasDocs(r.slug) : true))
-    );
-    const urls = routes
-        .filter((_, i) => included[i])
-        .map(({ route }) => {
-            const priority = route === '/' ? '1.0' : '0.8';
-            return `  <url><loc>https://codingforchange.com${route}</loc><lastmod>${lastmod}</lastmod><priority>${priority}</priority></url>`;
-        })
+    const ORIGIN = 'https://codingforchange.com';
+    const today = new Date().toISOString().slice(0, 10);
+
+    // Projects + blog posts drive both a list page and per-item detail pages;
+    // events + sponsors only gate their own list page (no detail routes).
+    const [projects, posts, events, sponsors] = await Promise.all([
+        cmsDocs('projects'),
+        cmsDocs('blog-posts'),
+        cmsDocs('events'),
+        cmsDocs('sponsors'),
+    ]);
+    // null → CMS unreachable → fail open (keep the list page listed).
+    const has = (docs) => docs === null || docs.length > 0;
+
+    const entries = [];
+    const add = (route, priority, lastmod) =>
+        entries.push({ route, priority, lastmod: lastmod || today });
+
+    // Static pages + content list pages.
+    add('/', '1.0');
+    add('/about', '0.8');
+    if (has(projects)) add('/projects', '0.8');
+    if (has(posts)) add('/blog', '0.8');
+    if (has(events)) add('/events', '0.8');
+    if (has(sponsors)) add('/sponsors', '0.8');
+    add('/partner', '0.8');
+    add('/team', '0.8');
+    add('/qa', '0.7');
+    add('/join', '0.8');
+    add('/contact', '0.7');
+    add('/imprint', '0.3');
+    add('/privacy', '0.3');
+    add('/credits', '0.2');
+
+    // Detail pages. A project needs a slug to have a detail route (see
+    // projects/[slug]); blog articles are keyed by slug too. Both 404 if the
+    // doc is missing, so we only ever list slugs the CMS actually has.
+    (projects || [])
+        .filter((p) => p.slug)
+        .forEach((p) =>
+            add(`/projects/${encodeURIComponent(p.slug)}`, '0.7', isoDate(p.updatedAt))
+        );
+    (posts || [])
+        .filter((p) => p.slug)
+        .forEach((p) =>
+            add(`/blog/${encodeURIComponent(p.slug)}`, '0.6', isoDate(p.updatedAt))
+        );
+
+    const urls = entries
+        .map(
+            ({ route, priority, lastmod }) =>
+                `  <url><loc>${ORIGIN}${route}</loc><lastmod>${lastmod}</lastmod><priority>${priority}</priority></url>`
+        )
         .join('\n');
     res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
