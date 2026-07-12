@@ -787,6 +787,27 @@ const jsonRequest = async (method, path, body, cookie) => {
 const postJson = (path, body, cookie) => jsonRequest('POST', path, body, cookie);
 const patchJson = (path, body, cookie) => jsonRequest('PATCH', path, body, cookie);
 
+/**
+ * Seed a global that has localized *array* fields so BOTH locales are kept.
+ * Writing EN then DE without row ids makes the DE write replace the arrays and
+ * null out the EN values, so we read the row ids back after the EN write and
+ * attach them to the DE rows (Payload then updates the same rows per-locale).
+ */
+const seedGlobalLocalized = async (slug, en, de, arrayKeys, cookie) => {
+  await postJson(`/api/globals/${slug}`, en, cookie).then(assertOk(`${slug} (en)`));
+  const current = await (
+    await fetch(`${BASE}/api/globals/${slug}`, { headers: { cookie } })
+  ).json();
+  const deBody = { ...de };
+  for (const key of arrayKeys) {
+    const ids = (current[key] || []).map((row) => row.id);
+    deBody[key] = (de[key] || []).map((row, i) => ({ ...row, id: ids[i] }));
+  }
+  await postJson(`/api/globals/${slug}?locale=de`, deBody, cookie).then(
+    assertOk(`${slug} (de)`)
+  );
+};
+
 /** Extract the Payload auth cookie (name=value) from a login response. */
 const authCookieFrom = (res) => {
   const cookies = res.headers.getSetCookie?.() || [];
@@ -864,11 +885,9 @@ const seed = async () => {
   await postJson('/api/globals/site-config', siteConfig, cookie).then(assertOk('site-config (en)'));
   await postJson('/api/globals/site-config?locale=de', siteConfigDe, cookie).then(assertOk('site-config (de)'));
 
-  await postJson('/api/globals/membership', membership, cookie).then(assertOk('membership (en)'));
-  await postJson('/api/globals/membership?locale=de', membershipDe, cookie).then(assertOk('membership (de)'));
-
-  await postJson('/api/globals/partner', partner, cookie).then(assertOk('partner (en)'));
-  await postJson('/api/globals/partner?locale=de', partnerDe, cookie).then(assertOk('partner (de)'));
+  // membership + partner have localized array fields — keep both locales.
+  await seedGlobalLocalized('membership', membership, membershipDe, ['benefits', 'requirements', 'tracks'], cookie);
+  await seedGlobalLocalized('partner', partner, partnerDe, ['valueProps', 'process'], cookie);
 
   // Legal text is German by law; seeded once for the default locale (de falls back).
   await postJson('/api/globals/legal', legal, cookie).then(assertOk('legal'));

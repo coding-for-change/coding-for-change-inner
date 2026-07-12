@@ -17,7 +17,12 @@ export const Sponsors: CollectionConfig = {
       name: 'tier',
       type: 'select',
       required: true,
+      admin: {
+        description:
+          'Grouped into tier sections on the public site (Platinum → Partner).',
+      },
       options: [
+        { label: 'Platinum', value: 'platinum' },
         { label: 'Gold', value: 'gold' },
         { label: 'Silver', value: 'silver' },
         { label: 'Bronze', value: 'bronze' },

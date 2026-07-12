@@ -70,7 +70,10 @@ export interface Translations {
         formUnavailable: string; successFallback: string;
     };
     book: { title: string; intro: string; fallback: string; openInNewTab: string; };
-    sponsors: { title: string; subtitle: string; intro: string; };
+    sponsors: {
+        title: string; subtitle: string; intro: string;
+        tiers: { platinum: string; gold: string; silver: string; bronze: string; partner: string };
+    };
     blog: {
         title: string; subtitle: string; searchPlaceholder: string;
         all: string; noPosts: string; back: string; notFound: string;
@@ -234,6 +237,7 @@ const en: Translations = {
     sponsors: {
         title: 'Sponsors', subtitle: 'Our Supporters',
         intro: 'We are grateful for the support of our sponsors who make our work possible. Interested in sponsoring? Reach out to us!',
+        tiers: { platinum: 'Platinum', gold: 'Gold', silver: 'Silver', bronze: 'Bronze', partner: 'Partners' },
     },
     blog: {
         title: 'News', subtitle: 'Projects, lessons, and reflections from our teams',
@@ -416,6 +420,7 @@ const de: Translations = {
     sponsors: {
         title: 'Sponsoren', subtitle: 'Unsere Unterstützer',
         intro: 'Wir sind dankbar für die Unterstützung unserer Sponsoren, die unsere Arbeit erst möglich machen. Interesse am Sponsoring? Meld dich bei uns!',
+        tiers: { platinum: 'Platin', gold: 'Gold', silver: 'Silber', bronze: 'Bronze', partner: 'Partner' },
     },
     blog: {
         title: 'News', subtitle: 'Projekte, Erkenntnisse und Rückblicke unserer Teams',

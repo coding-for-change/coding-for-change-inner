@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import Enter3DButton from '../general/Enter3DButton';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useSiteConfig, useCmsCollection } from '../../api';
-import type { CmsEvent, CmsSponsor } from '../../api/types';
+import type { CmsEvent, CmsSponsor, CmsBlogPost } from '../../api/types';
 import Logo from '../../assets/Logo.webp';
 import './landing.css';
 
@@ -68,23 +68,25 @@ const TopNav: React.FC = () => {
         router.push(id === 'home' ? '/' : `/#${id}`);
     };
 
-    const sectionLinks = [{ id: 'home', label: t.nav.home }];
+    // No "Home" text link — the logo/wordmark already links home, and dropping
+    // it keeps the row from overflowing as conditional items are added.
+    const sectionLinks: { id: string; label: string }[] = [];
 
-    // Events and Sponsors are only advertised in the nav when they actually have
+    // Events, Blog and Sponsors are only advertised in the nav when they have
     // content (their pages exist regardless). Fetched client-side; the nav is a
     // persistent layout so this runs once per session, not per navigation.
     const { data: events } = useCmsCollection<CmsEvent>('events');
+    const { data: posts } = useCmsCollection<CmsBlogPost>('blog-posts');
     const { data: sponsors } = useCmsCollection<CmsSponsor>('sponsors');
     const hasEvents = (events?.length ?? 0) > 0;
+    const hasBlog = (posts?.length ?? 0) > 0;
     const hasSponsors = (sponsors?.length ?? 0) > 0;
 
-    // Blog moved out of the primary nav (lives in the footer); About and
-    // Projects are now standalone pages and Join gets a text link here in
-    // addition to the top-right CTA.
     const pageLinks = [
         { to: '/about', label: t.nav.about },
         { to: '/projects', label: t.nav.projects },
         ...(hasEvents ? [{ to: '/events', label: t.nav.events }] : []),
+        ...(hasBlog ? [{ to: '/blog', label: t.nav.blog }] : []),
         { to: '/team', label: t.nav.team },
         ...(hasSponsors ? [{ to: '/sponsors', label: t.nav.sponsors }] : []),
         { to: '/join', label: t.nav.join },

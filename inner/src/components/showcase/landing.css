@@ -334,6 +334,27 @@
 }
 
 /* ---- Sponsors ---- */
+.lp-tiers {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    margin-top: 28px;
+    width: 100%;
+}
+.lp-tier {
+    display: block;
+}
+.lp-tier__head {
+    font-family: MSSerif, sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--teal-dark);
+    margin: 0 0 16px;
+}
+.lp-tier .lp-sponsors {
+    margin-top: 0;
+}
 .lp-sponsors {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
@@ -536,26 +557,39 @@
 .lp-nav__links {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
     flex: 1;
     justify-content: center;
-    flex-wrap: wrap;
+    /* Never wrap to a second row (the bar is a fixed 64px). Links are sized to
+       fit up to ~8 items down to ~1024px; below that the mobile menu takes over. */
+    flex-wrap: nowrap;
     overflow: hidden;
 }
 .lp-nav__link {
     display: inline-flex;
     align-items: center;
-    padding: 8px 10px;
+    padding: 7px 8px;
     background: none;
     border: none;
     cursor: pointer;
     font-family: MillenniumBold, serif;
-    font-size: 14.5px;
+    font-size: 13px;
     color: #44504f;
     text-decoration: none;
     white-space: nowrap;
     border-bottom: 2px solid transparent;
     transition: color 0.14s ease, border-color 0.14s ease;
+}
+/* On tighter widths (incl. the 3D monitor iframe) hide the wordmark text and
+   keep just the logo mark, so the full link row fits on one line. */
+@media (max-width: 1150px) {
+    .lp-nav__name {
+        display: none;
+    }
+    .lp-nav__link {
+        font-size: 12.5px;
+        padding: 7px 6px;
+    }
 }
 .lp-nav__link:hover {
     color: #2f8f90;

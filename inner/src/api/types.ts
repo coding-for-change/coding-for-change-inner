@@ -73,7 +73,7 @@ export interface CmsSponsor {
     name: string;
     logo?: CmsMedia | null;
     url?: string;
-    tier: 'gold' | 'silver' | 'bronze' | 'partner';
+    tier: 'platinum' | 'gold' | 'silver' | 'bronze' | 'partner';
     description?: string;
 }
 

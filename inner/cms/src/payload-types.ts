@@ -352,7 +352,10 @@ export interface Sponsor {
   name: string;
   logo?: (number | null) | Media;
   url?: string | null;
-  tier: 'gold' | 'silver' | 'bronze' | 'partner';
+  /**
+   * Grouped into tier sections on the public site (Platinum → Partner).
+   */
+  tier: 'platinum' | 'gold' | 'silver' | 'bronze' | 'partner';
   description?: string | null;
   updatedAt: string;
   createdAt: string;

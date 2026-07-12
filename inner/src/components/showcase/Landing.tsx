@@ -3,16 +3,18 @@ import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useCmsCollection, mediaUrl, useSiteConfig } from '../../api';
+import { useCmsCollection, useSiteConfig } from '../../api';
 import {
     CmsEvent,
     CmsProject,
     CmsSponsor,
     CmsFaqItem,
+    CmsBlogPost,
 } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
 import BookingEmbed from '../general/BookingEmbed';
 import { hasCaseStudy } from './ProjectsList';
+import SponsorTiers from './SponsorTiers';
 import './landing.css';
 
 // Shared scroll-reveal animation. Sections fade/slide in once on first view.
@@ -33,6 +35,7 @@ export interface LandingProps {
     projects?: CmsProject[] | null;
     sponsors?: CmsSponsor[] | null;
     faq?: CmsFaqItem[] | null;
+    blog?: CmsBlogPost[] | null;
 }
 
 const Landing: React.FC<LandingProps> = (props) => {
@@ -67,6 +70,11 @@ const Landing: React.FC<LandingProps> = (props) => {
         'events',
         undefined,
         props.events
+    );
+    const { data: blog } = useCmsCollection<CmsBlogPost>(
+        'blog-posts',
+        { depth: '2', sort: '-publishedAt', limit: '3' },
+        props.blog
     );
     const { data: projects, loading: projectsLoading } =
         useCmsCollection<CmsProject>('projects', undefined, props.projects);
@@ -112,6 +120,8 @@ const Landing: React.FC<LandingProps> = (props) => {
     const past = (events ?? []).filter((e) => !e.isUpcoming);
     const hasEvents = (events?.length ?? 0) > 0;
     const hasSponsors = (sponsors?.length ?? 0) > 0;
+    const recentPosts = (blog ?? []).slice(0, 3);
+    const hasBlog = recentPosts.length > 0;
 
     const renderEventCard = (event: CmsEvent, i: number) => (
         <motion.div
@@ -352,6 +362,39 @@ const Landing: React.FC<LandingProps> = (props) => {
                 </section>
             )}
 
+            {/* ---- News / blog teaser (only when posts exist) ---- */}
+            {hasBlog && (
+                <section id="news" className="lp-section">
+                    <div className="lp-inner">
+                        <motion.div style={{ display: 'block' }} {...reveal} transition={{ duration: 0.5 }}>
+                            <p className="lp-kicker">{t.blog.subtitle}</p>
+                            <h2 className="lp-h2">{t.blog.title}</h2>
+                        </motion.div>
+                        <div className="lp-grid">
+                            {recentPosts.map((post, i) => (
+                                <motion.div
+                                    key={post.id}
+                                    className="lp-card"
+                                    {...reveal}
+                                    transition={{ duration: 0.45, delay: Math.min(i * 0.05, 0.3) }}
+                                >
+                                    <h3 className="lp-card__title">{post.title}</h3>
+                                    <p className="lp-card__text">{post.excerpt}</p>
+                                    <Link className="lp-card__link" href={`/blog/${post.slug}`}>
+                                        {t.common.learnMore} →
+                                    </Link>
+                                </motion.div>
+                            ))}
+                        </div>
+                        <div className="lp-section__more">
+                            <Link className="lp-btn lp-btn--ghost" href="/blog">
+                                {t.blog.title} →
+                            </Link>
+                        </div>
+                    </div>
+                </section>
+            )}
+
             {/* ---- 3D experience (hidden on mobile). Inside the 3D scene it
                  flips to a "back to the standard site" prompt. ---- */}
             <section className="lp-3d">
@@ -403,36 +446,7 @@ const Landing: React.FC<LandingProps> = (props) => {
                     {sponsorsLoading ? (
                         <p className="lp-loading">Loading…</p>
                     ) : (
-                        <div className="lp-sponsors">
-                            {(sponsors ?? []).map((sponsor) => {
-                                const logo = mediaUrl(sponsor.logo);
-                                const inner = logo ? (
-                                    <img src={logo} alt={sponsor.name} />
-                                ) : (
-                                    <span className="lp-sponsor__name">
-                                        {sponsor.name}
-                                    </span>
-                                );
-                                return sponsor.url ? (
-                                    <a
-                                        key={sponsor.id}
-                                        className="lp-sponsor"
-                                        href={sponsor.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        {inner}
-                                    </a>
-                                ) : (
-                                    <div
-                                        key={sponsor.id}
-                                        className="lp-sponsor"
-                                    >
-                                        {inner}
-                                    </div>
-                                );
-                            })}
-                        </div>
+                        <SponsorTiers sponsors={sponsors} />
                     )}
                 </div>
             </section>

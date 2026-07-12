@@ -1,9 +1,10 @@
 'use client';
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useCmsCollection, mediaUrl } from '../../api';
+import { useCmsCollection } from '../../api';
 import { CmsSponsor } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
+import SponsorTiers from './SponsorTiers';
 import './landing.css';
 
 export interface SponsorsListProps {
@@ -35,35 +36,7 @@ const SponsorsList: React.FC<SponsorsListProps> = (props) => {
                 {loading ? (
                     <p className="lp-loading">Loading…</p>
                 ) : (
-                    (sponsors?.length ?? 0) > 0 && (
-                        <div className="lp-sponsors">
-                            {(sponsors ?? []).map((sponsor) => {
-                                const logo = mediaUrl(sponsor.logo);
-                                const inner = logo ? (
-                                    <img src={logo} alt={sponsor.name} />
-                                ) : (
-                                    <span className="lp-sponsor__name">
-                                        {sponsor.name}
-                                    </span>
-                                );
-                                return sponsor.url ? (
-                                    <a
-                                        key={sponsor.id}
-                                        className="lp-sponsor"
-                                        href={sponsor.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        {inner}
-                                    </a>
-                                ) : (
-                                    <div key={sponsor.id} className="lp-sponsor">
-                                        {inner}
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    )
+                    <SponsorTiers sponsors={sponsors} />
                 )}
             </div>
         </div>
