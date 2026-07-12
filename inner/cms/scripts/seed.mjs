@@ -1007,6 +1007,25 @@ const assertOk = (label) => async (res) => {
   return res;
 };
 
+/**
+ * Update a global in both locales WITHOUT orphaning localized-array values.
+ * A per-locale POST that omits array-row ids makes Payload REPLACE the rows,
+ * discarding the other locale's values (only the last-written locale survives).
+ * So: post EN (creates rows), read the row ids back, then post DE with those
+ * ids so the same rows are updated per-locale. `arrayKeys` names the global's
+ * array fields to id-match.
+ */
+const postGlobalBilingual = async (slug, en, de, arrayKeys, cookie) => {
+  await postJson(`/api/globals/${slug}`, en, cookie).then(assertOk(`${slug} (en)`));
+  const enDoc = await (
+    await fetch(`${BASE}/api/globals/${slug}?locale=en`, { headers: { cookie } })
+  ).json();
+  const withIds = (deArr, enArr) => (deArr ?? []).map((it, i) => ({ ...it, id: enArr?.[i]?.id }));
+  const deBody = { ...de };
+  for (const key of arrayKeys) deBody[key] = withIds(de[key], enDoc[key]);
+  await postJson(`/api/globals/${slug}?locale=de`, deBody, cookie).then(assertOk(`${slug} (de)`));
+};
+
 // ─── Seed ────────────────────────────────────────────────────────────────────
 
 const seed = async () => {
@@ -1024,14 +1043,11 @@ const seed = async () => {
   console.log(`\nAuthenticated as ${ADMIN_EMAIL}`);
 
   // ── Globals ──────────────────────────────────────────────────────────────
-  await postJson('/api/globals/site-config', siteConfig, cookie).then(assertOk('site-config (en)'));
-  await postJson('/api/globals/site-config?locale=de', siteConfigDe, cookie).then(assertOk('site-config (de)'));
-
-  await postJson('/api/globals/membership', membership, cookie).then(assertOk('membership (en)'));
-  await postJson('/api/globals/membership?locale=de', membershipDe, cookie).then(assertOk('membership (de)'));
-
-  await postJson('/api/globals/about', about, cookie).then(assertOk('about (en)'));
-  await postJson('/api/globals/about?locale=de', aboutDe, cookie).then(assertOk('about (de)'));
+  // Bilingual globals that contain localized arrays — id-matched so the DE
+  // write doesn't orphan the EN array values (see postGlobalBilingual).
+  await postGlobalBilingual('site-config', siteConfig, siteConfigDe, ['stats'], cookie);
+  await postGlobalBilingual('membership', membership, membershipDe, ['benefits', 'requirements', 'tracks'], cookie);
+  await postGlobalBilingual('about', about, aboutDe, ['facts', 'steps', 'media', 'doors'], cookie);
 
   // Legal text is German by law; seeded once for the default locale (de falls back).
   await postJson('/api/globals/legal', legal, cookie).then(assertOk('legal'));
