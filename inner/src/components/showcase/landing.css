@@ -1,8 +1,9 @@
 /* ------------------------------------------------------------------ */
 /* Landing — a modern, single-scroll site that lives INSIDE the retro  */
 /* Win95 window. Window chrome stays nostalgic; the content here is     */
-/* clean and modern: Space Grotesk for display/headings, IBM Plex Sans  */
-/* for body/UI (both exposed as CSS vars on <html> from layout.tsx).    */
+/* clean and modern: Roboto Mono for display/headings (echoing the logo  */
+/* wordmark), Space Grotesk for the nav, IBM Plex Sans for body/UI       */
+/* (all exposed as CSS vars on <html> from layout.tsx).                  */
 /* NOTE: a global `div { display: flex }` rule is in App.css, so every  */
 /* container below sets its own `display` explicitly.                   */
 /* ------------------------------------------------------------------ */
@@ -50,7 +51,7 @@
     margin: 0 0 14px;
 }
 .lp-h2 {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 40px;
     line-height: 1.05;
     margin: 0 0 18px;
@@ -82,7 +83,7 @@
     scroll-margin-top: 72px;
 }
 .lp-hero__title {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 76px;
     line-height: 0.96;
     margin: 14px 0 20px;
@@ -116,7 +117,7 @@
     align-items: center;
     justify-content: center;
     padding: 14px 26px;
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 16px;
     text-decoration: none;
     cursor: pointer;
@@ -165,7 +166,7 @@
     border-top: 3px solid var(--teal);
 }
 .lp-stat__value {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 52px;
     line-height: 1;
     color: var(--teal-dark);
@@ -203,11 +204,11 @@
     border-radius: 50%;
     background: var(--teal);
     color: #fff;
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 22px;
 }
 .lp-step__title {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 22px;
     margin-bottom: 8px;
 }
@@ -236,7 +237,7 @@
     margin-top: 28px;
 }
 .lp-subhead {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 22px;
     margin: 40px 0 0;
 }
@@ -257,7 +258,7 @@
     box-shadow: 0 10px 30px rgba(36, 107, 108, 0.12);
 }
 .lp-card__title {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 21px;
     margin: 12px 0 6px;
 }
@@ -287,7 +288,7 @@
 }
 .lp-card__link {
     margin-top: 16px;
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 14px;
     color: var(--teal-dark);
     text-decoration: none;
@@ -393,7 +394,7 @@
     opacity: 1;
 }
 .lp-sponsor__name {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 18px;
     text-align: center;
     color: var(--ink);
@@ -421,7 +422,7 @@
     border: none;
     cursor: pointer;
     text-align: left;
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 18px;
     color: var(--ink);
 }
@@ -455,7 +456,7 @@
     scroll-margin-top: 72px;
 }
 .lp-cta__heading {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 40px;
     line-height: 1.05;
     margin-bottom: 16px;
@@ -577,6 +578,8 @@
     background: none;
     border: none;
     cursor: pointer;
+    /* Nav stays on Space Grotesk — Roboto Mono is much wider and would
+       reintroduce the nav-overflow problem near the 1024px breakpoint. */
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     /* Larger on wide screens (up to 18px) yet still compact near the 1024px
        breakpoint; the shorter sentence-case labels leave room for the bump. */
@@ -667,7 +670,7 @@
     margin-bottom: 40px;
 }
 .lp-page__title {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 46px;
     line-height: 1.04;
     margin: 0 0 14px;
@@ -713,11 +716,11 @@
     border-radius: 50%;
     background: linear-gradient(135deg, var(--teal), var(--teal-dark));
     color: #fff;
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 30px;
 }
 .lp-member__name {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 19px;
 }
 .lp-member__role {
@@ -753,7 +756,7 @@
     border-top: 1px solid var(--line);
 }
 .lp-companies__head {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 24px;
     margin-bottom: 20px;
 }
@@ -792,7 +795,7 @@
     border: 1px solid var(--line);
     background: #fff;
     cursor: pointer;
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 13px;
     color: var(--muted);
     border-radius: 999px;
@@ -849,7 +852,7 @@
     padding: 24px;
 }
 .lp-post__title {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 23px;
     margin-bottom: 10px;
 }
@@ -887,7 +890,7 @@
     border: 1px solid var(--line);
     background: #fff;
     cursor: pointer;
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 14px;
     color: var(--teal-dark);
     transition: border-color 0.15s ease, color 0.15s ease;
@@ -914,7 +917,7 @@
     display: block;
 }
 .lp-article__title {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 40px;
     line-height: 1.06;
     margin-bottom: 18px;
@@ -945,7 +948,7 @@
     justify-content: center;
     background: linear-gradient(135deg, var(--teal), var(--teal-dark));
     color: #fff;
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 15px;
 }
 .lp-author__text {
@@ -953,7 +956,7 @@
     flex-direction: column;
 }
 .lp-author__name {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 15px;
 }
 .lp-author__role {
@@ -999,7 +1002,7 @@
     margin-bottom: 28px;
 }
 .lp-social {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 14px;
     color: var(--teal-dark);
     text-decoration: none;
@@ -1015,7 +1018,7 @@
     margin-bottom: 18px;
 }
 .lp-label {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 15px;
     margin-bottom: 6px;
 }
@@ -1064,7 +1067,7 @@
     color: #fff;
     border: none;
     cursor: pointer;
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 16px;
     transition: background 0.15s ease;
 }
@@ -1096,7 +1099,7 @@
     display: block;
 }
 .lp-col__head {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 22px;
     margin-bottom: 4px;
 }
@@ -1122,7 +1125,7 @@
     left: 6px;
     top: 0;
     color: var(--teal);
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
 }
 .lp-form {
     display: flex;
@@ -1236,7 +1239,7 @@
     box-sizing: border-box;
 }
 .lp-credits__heading {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 18px;
     margin: 0 0 14px;
 }
@@ -1255,7 +1258,7 @@
     border-top: none;
 }
 .lp-credits__name {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 15px;
 }
 .lp-credits__role {
@@ -1265,7 +1268,7 @@
 
 /* ---- Advisers section heading ---- */
 .lp-team__group-head {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 24px;
     margin: 64px 0 8px;
     grid-column: 1 / -1;
@@ -1326,7 +1329,7 @@
 .lp-booking__link {
     align-self: flex-start;
     margin-top: 14px;
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 14px;
     color: var(--teal-dark, #246b6c);
     text-decoration: none;
@@ -1416,7 +1419,7 @@
     color: #7fe3e4;
 }
 .lp-3d__title {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 40px;
     line-height: 1.05;
     margin: 0 0 16px;
@@ -1472,14 +1475,14 @@
     box-sizing: border-box;
 }
 .lp-proj-feat__title {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 30px;
     line-height: 1.06;
     margin: 14px 0 6px;
 }
 .lp-proj-feat__impact {
     margin-top: 16px;
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 16px;
     line-height: 1.5;
     color: var(--teal-dark);
@@ -1512,7 +1515,7 @@
     align-items: flex-start;
 }
 .lp-cs__title {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 44px;
     line-height: 1.04;
     margin: 14px 0 6px;
@@ -1525,7 +1528,7 @@
     padding: 12px 18px;
     background: #eaf2f2;
     border-left: 3px solid var(--teal);
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 17px;
     line-height: 1.45;
     color: var(--teal-dark);
@@ -1552,7 +1555,7 @@
     margin-top: 36px;
 }
 .lp-cs__h {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 24px;
     margin: 0 0 12px;
 }
@@ -1570,7 +1573,7 @@
     border-left: 4px solid var(--teal);
 }
 .lp-cs__quote-text {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 22px;
     line-height: 1.4;
     color: var(--ink);
@@ -1686,7 +1689,7 @@
     border-left-color: var(--teal);
 }
 .lp-cs-choice__tag {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 22px;
     color: var(--ink);
 }
@@ -1697,7 +1700,7 @@
 }
 .lp-cs-choice__go {
     margin-top: 6px;
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 14px;
     color: var(--teal-dark);
     border-bottom: 2px solid var(--teal);
@@ -1721,7 +1724,7 @@
     background: none;
     cursor: pointer;
     border-radius: 999px;
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 14px;
     color: var(--muted);
     transition: background 0.15s ease, color 0.15s ease;
@@ -1749,7 +1752,7 @@
     border: 1px solid var(--line);
 }
 .lp-cs-cta__heading {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 26px;
     margin: 0 0 10px;
     color: #fff;
@@ -1792,7 +1795,7 @@
     border-top: 1px solid var(--line);
 }
 .lp-cs-faq__q {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 17px;
     margin: 0 0 6px;
     color: var(--ink);
@@ -1850,4 +1853,27 @@
    many across as the width allows and wrap cleanly, without connectors. */
 .lp-steps--wrap {
     grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+
+/* Roboto Mono is monospaced, so at display sizes its fixed-width space glyph
+   makes inter-word gaps read very wide (and letters a touch loose). Tighten the
+   heading/display layer. Placed last so it wins by order for the equal-
+   specificity display classes; `.lp h1..h4` also out-specifies the per-title
+   letter-spacing set elsewhere. (Remove this block if headings revert to a
+   proportional face — the negatives are tuned for the monospace only.) */
+.lp h1,
+.lp h2,
+.lp h3,
+.lp h4,
+.lp-h2,
+.lp-subhead,
+.lp-stat__value,
+.lp-step__num,
+.lp-btn,
+h1,
+h2,
+h3,
+h4 {
+    letter-spacing: -0.04em;
+    word-spacing: -0.28em;
 }

@@ -68,7 +68,7 @@ h6 {
 
 /* Base element typography for CMS rich-text (RichText.tsx emits classless
    <p>/<b>/<h2..h4>/<li>) — the Imprint / Privacy pages and About prose read
-   through these. Body = IBM Plex Sans, headings = Space Grotesk. */
+   through these. Body = IBM Plex Sans, headings = Roboto Mono. */
 p {
     font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, -apple-system,
         sans-serif;
@@ -93,23 +93,23 @@ p b {
 }
 
 h1 {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 64px;
 }
 
 h2 {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 32px;
 }
 
 h3 {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 24px;
     letter-spacing: 0px;
 }
 
 h4 {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-family: var(--font-roboto-mono), 'Roboto Mono', ui-monospace, monospace;
     font-size: 18px;
     letter-spacing: 0px;
 }
