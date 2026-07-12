@@ -5,8 +5,9 @@ import { motion } from 'framer-motion';
 import { useCmsGlobal, useSiteConfig } from '../../api';
 import { CmsPartner, CmsProject } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
-import { hasCaseStudy } from './ProjectsList';
+import { hasCaseStudy } from './ProjectShowcase';
 import BookingEmbed from '../general/BookingEmbed';
+import ClosingCta from './ClosingCta';
 import './landing.css';
 
 const reveal = {
@@ -167,6 +168,8 @@ const Partner: React.FC<PartnerProps> = (props) => {
                     </motion.div>
                 </div>
             </section>
+
+            <ClosingCta />
         </div>
     );
 };

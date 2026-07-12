@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useCmsGlobal } from '../../api';
 import { CmsAbout, CmsHomepage } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
+import ClosingCta from './ClosingCta';
 import './landing.css';
 
 const reveal = {
@@ -42,10 +43,6 @@ const About: React.FC<AboutProps> = (props) => {
     const processKicker = hp?.processKicker || t.process.kicker;
     const processHeading = hp?.processHeading || t.process.heading;
     const processIntro = hp?.processIntro || t.process.intro;
-    const ctaHeading = hp?.ctaHeading || t.cta.heading;
-    const ctaText = hp?.ctaText || t.cta.text;
-    const ctaJoin = hp?.ctaJoin || t.cta.join;
-    const ctaContact = hp?.ctaContact || t.cta.contact;
 
     return (
         <div className="lp">
@@ -138,22 +135,7 @@ const About: React.FC<AboutProps> = (props) => {
             </div>
 
             {/* ---- Closing CTA ---- */}
-            <section className="lp-cta">
-                <div className="lp-inner">
-                    <motion.div style={{ display: 'block' }} {...reveal} transition={{ duration: 0.5 }}>
-                        <h2 className="lp-cta__heading">{ctaHeading}</h2>
-                        <p className="lp-cta__text">{ctaText}</p>
-                        <div className="lp-cta__btns">
-                            <Link className="lp-btn lp-btn--light" href="/join">
-                                {ctaJoin}
-                            </Link>
-                            <Link className="lp-btn lp-btn--light" href="/partner">
-                                {ctaContact}
-                            </Link>
-                        </div>
-                    </motion.div>
-                </div>
-            </section>
+            <ClosingCta homepage={props.homepage} />
         </div>
     );
 };

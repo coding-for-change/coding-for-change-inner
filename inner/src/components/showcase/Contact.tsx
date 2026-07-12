@@ -8,6 +8,7 @@ import { trackFormStart, trackConversion } from '../../lib/analytics';
 import { useLanguage } from '../../contexts/LanguageContext';
 import RichText from '../RichText';
 import BookingEmbed from '../general/BookingEmbed';
+import ClosingCta from './ClosingCta';
 import './landing.css';
 
 export interface ContactProps {
@@ -204,7 +205,8 @@ const Contact: React.FC<ContactProps> = (props) => {
     };
 
     return (
-        <div className="lp lp-page">
+        <div className="lp">
+            <div className="lp-page">
             <div className="lp-inner">
                 <motion.div
                     className="lp-page__head"
@@ -313,6 +315,8 @@ const Contact: React.FC<ContactProps> = (props) => {
                     <BookingEmbed />
                 </section>
             </div>
+            </div>
+            <ClosingCta />
         </div>
     );
 };

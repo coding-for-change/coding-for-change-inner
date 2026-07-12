@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useCmsCollection, mediaUrl } from '../../api';
 import { CmsBlogPost } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
+import ClosingCta from './ClosingCta';
 import './landing.css';
 
 const BLOG_PARAMS = { depth: '2' };
@@ -115,7 +116,8 @@ const Blog: React.FC<{ posts?: CmsBlogPost[] | null }> = (props) => {
         );
 
     return (
-        <div className="lp lp-page">
+        <div className="lp">
+            <div className="lp-page">
             <div className="lp-inner">
                 <motion.div
                     className="lp-page__head"
@@ -193,6 +195,8 @@ const Blog: React.FC<{ posts?: CmsBlogPost[] | null }> = (props) => {
                     </>
                 )}
             </div>
+            </div>
+            <ClosingCta />
         </div>
     );
 };

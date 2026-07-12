@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useCmsCollection } from '../../api';
 import { CmsEvent } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
+import ClosingCta from './ClosingCta';
 import './landing.css';
 
 const reveal = {
@@ -57,7 +58,8 @@ const EventsList: React.FC<EventsListProps> = (props) => {
     );
 
     return (
-        <div className="lp lp-page">
+        <div className="lp">
+            <div className="lp-page">
             <div className="lp-inner">
                 <motion.div
                     className="lp-page__head"
@@ -101,6 +103,8 @@ const EventsList: React.FC<EventsListProps> = (props) => {
                     </>
                 )}
             </div>
+            </div>
+            <ClosingCta />
         </div>
     );
 };

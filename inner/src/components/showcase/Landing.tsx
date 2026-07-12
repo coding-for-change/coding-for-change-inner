@@ -14,8 +14,9 @@ import {
 } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
 import BookingEmbed from '../general/BookingEmbed';
-import { hasCaseStudy } from './ProjectsList';
+import ProjectShowcase from './ProjectShowcase';
 import SponsorTiers from './SponsorTiers';
+import ClosingCta from './ClosingCta';
 import './landing.css';
 
 // Shared scroll-reveal animation. Sections fade/slide in once on first view.
@@ -24,12 +25,6 @@ const reveal = {
     whileInView: { opacity: 1, y: 0 },
     viewport: { once: true, amount: 0.15 },
 } as const;
-
-const statusColors: Record<string, string> = {
-    active: '#2f8f90',
-    completed: '#246b6c',
-    recruiting: '#b5651d',
-};
 
 export interface LandingProps {
     events?: CmsEvent[] | null;
@@ -304,64 +299,7 @@ const Landing: React.FC<LandingProps> = (props) => {
                     {projectsLoading ? (
                         <p className="lp-loading">Loading…</p>
                     ) : (
-                        <div className="lp-grid">
-                            {(projects ?? []).map((project, i) => (
-                                <motion.div
-                                    key={project.id}
-                                    className="lp-card"
-                                    {...reveal}
-                                    transition={{
-                                        duration: 0.45,
-                                        delay: Math.min(i * 0.05, 0.3),
-                                    }}
-                                >
-                                    <div className="lp-card__row">
-                                        <h3 className="lp-card__title">
-                                            {project.title}
-                                        </h3>
-                                        <span
-                                            className="lp-status"
-                                            style={{
-                                                backgroundColor:
-                                                    statusColors[
-                                                        project.status
-                                                    ] || '#808080',
-                                            }}
-                                        >
-                                            {project.status}
-                                        </span>
-                                    </div>
-                                    <span className="lp-card__sub">
-                                        {t.common.partner} {project.ngoPartner}
-                                    </span>
-                                    <p className="lp-card__text">
-                                        {project.description}
-                                    </p>
-                                    {(project.technologies ?? []).length > 0 && (
-                                        <div className="lp-pills">
-                                            {(project.technologies ?? []).map(
-                                                (tech) => (
-                                                    <span
-                                                        key={tech.name}
-                                                        className="lp-pill"
-                                                    >
-                                                        {tech.name}
-                                                    </span>
-                                                )
-                                            )}
-                                        </div>
-                                    )}
-                                    {hasCaseStudy(project) && (
-                                        <Link
-                                            className="lp-card__link"
-                                            href={`/projects/${project.slug}`}
-                                        >
-                                            {t.common.learnMore} →
-                                        </Link>
-                                    )}
-                                </motion.div>
-                            ))}
-                        </div>
+                        <ProjectShowcase projects={projects ?? []} />
                     )}
                     <div className="lp-section__more">
                         <Link className="lp-btn lp-btn--ghost" href="/projects">
@@ -592,32 +530,7 @@ const Landing: React.FC<LandingProps> = (props) => {
             </section>
 
             {/* ---- Closing CTA ---- */}
-            <section className="lp-cta">
-                <div className="lp-inner">
-                    <motion.div
-                        style={{ display: 'block' }}
-                        {...reveal}
-                        transition={{ duration: 0.5 }}
-                    >
-                        <h2 className="lp-cta__heading">{c.ctaHeading}</h2>
-                        <p className="lp-cta__text">{c.ctaText}</p>
-                        <div className="lp-cta__btns">
-                            <Link
-                                className="lp-btn lp-btn--light"
-                                href="/join"
-                            >
-                                {c.ctaJoin}
-                            </Link>
-                            <Link
-                                className="lp-btn lp-btn--light"
-                                href="/partner"
-                            >
-                                {c.ctaContact}
-                            </Link>
-                        </div>
-                    </motion.div>
-                </div>
-            </section>
+            <ClosingCta homepage={props.homepage} />
         </div>
     );
 };

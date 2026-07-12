@@ -6,6 +6,7 @@ import { CmsTeamMember, CmsCompany } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
 import linkedinIcon from '../../assets/icons/linkedin.png';
 import githubIcon from '../../assets/icons/git.png';
+import ClosingCta from './ClosingCta';
 import './landing.css';
 
 const linkIconMap: Record<string, string> = {
@@ -121,7 +122,8 @@ const Team: React.FC<TeamProps> = (props) => {
     const advisers = all.filter((m) => m.category === 'adviser');
 
     return (
-        <div className="lp lp-page">
+        <div className="lp">
+            <div className="lp-page">
             <div className="lp-inner">
                 <motion.div
                     className="lp-page__head"
@@ -165,6 +167,8 @@ const Team: React.FC<TeamProps> = (props) => {
                     </>
                 )}
             </div>
+            </div>
+            <ClosingCta />
         </div>
     );
 };

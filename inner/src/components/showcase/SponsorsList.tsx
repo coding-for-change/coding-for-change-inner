@@ -5,6 +5,7 @@ import { useCmsCollection } from '../../api';
 import { CmsSponsor } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
 import SponsorTiers from './SponsorTiers';
+import ClosingCta from './ClosingCta';
 import './landing.css';
 
 export interface SponsorsListProps {
@@ -20,7 +21,8 @@ const SponsorsList: React.FC<SponsorsListProps> = (props) => {
     );
 
     return (
-        <div className="lp lp-page">
+        <div className="lp">
+            <div className="lp-page">
             <div className="lp-inner">
                 <motion.div
                     className="lp-page__head"
@@ -39,6 +41,8 @@ const SponsorsList: React.FC<SponsorsListProps> = (props) => {
                     <SponsorTiers sponsors={sponsors} />
                 )}
             </div>
+            </div>
+            <ClosingCta />
         </div>
     );
 };
