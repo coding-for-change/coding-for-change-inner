@@ -12,6 +12,7 @@ import * as migration_20260709_092056_add_analytics_events from './20260709_0920
 import * as migration_20260712_090410_add_case_study_and_partner from './20260712_090410_add_case_study_and_partner';
 import * as migration_20260712_130720_add_platinum_sponsor_tier from './20260712_130720_add_platinum_sponsor_tier';
 import * as migration_20260712_132402_add_impact_story_fields from './20260712_132402_add_impact_story_fields';
+import * as migration_20260712_140635_add_about_homepage_globals from './20260712_140635_add_about_homepage_globals';
 
 export const migrations = [
   {
@@ -82,6 +83,11 @@ export const migrations = [
   {
     up: migration_20260712_132402_add_impact_story_fields.up,
     down: migration_20260712_132402_add_impact_story_fields.down,
-    name: '20260712_132402_add_impact_story_fields'
+    name: '20260712_132402_add_impact_story_fields',
+  },
+  {
+    up: migration_20260712_140635_add_about_homepage_globals.up,
+    down: migration_20260712_140635_add_about_homepage_globals.down,
+    name: '20260712_140635_add_about_homepage_globals'
   },
 ];

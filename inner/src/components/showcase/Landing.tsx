@@ -3,13 +3,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useCmsCollection, useSiteConfig } from '../../api';
+import { useCmsCollection, useCmsGlobal, useSiteConfig } from '../../api';
 import {
     CmsEvent,
     CmsProject,
     CmsSponsor,
     CmsFaqItem,
     CmsBlogPost,
+    CmsHomepage,
 } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
 import BookingEmbed from '../general/BookingEmbed';
@@ -36,6 +37,7 @@ export interface LandingProps {
     sponsors?: CmsSponsor[] | null;
     faq?: CmsFaqItem[] | null;
     blog?: CmsBlogPost[] | null;
+    homepage?: CmsHomepage | null;
 }
 
 const Landing: React.FC<LandingProps> = (props) => {
@@ -82,6 +84,43 @@ const Landing: React.FC<LandingProps> = (props) => {
         useCmsCollection<CmsSponsor>('sponsors', undefined, props.sponsors);
     const { data: faq, loading: faqLoading } =
         useCmsCollection<CmsFaqItem>('faq', undefined, props.faq);
+    const { data: hp } = useCmsGlobal<CmsHomepage>('homepage', props.homepage);
+
+    // Homepage copy: CMS value if set, else the built-in i18n string.
+    const c = {
+        heroKicker: hp?.heroKicker || t.home.kicker,
+        heroCtaPrimary: hp?.heroCtaPrimary || t.home.ctaPrimary,
+        heroCtaSecondary: hp?.heroCtaSecondary || t.home.ctaSecondary,
+        heroScrollHint: hp?.heroScrollHint || t.home.scrollHint,
+        aboutKicker: hp?.aboutKicker || t.about.kicker,
+        aboutOneLiner: hp?.aboutOneLiner || t.about.oneLiner,
+        aboutPitch: hp?.aboutPitch || t.about.pitch,
+        processKicker: hp?.processKicker || t.process.kicker,
+        processHeading: hp?.processHeading || t.process.heading,
+        processIntro: hp?.processIntro || t.process.intro,
+        projectsSubtitle: hp?.projectsSubtitle || t.projects.subtitle,
+        projectsTitle: hp?.projectsTitle || t.projects.title,
+        projectsIntro: hp?.projectsIntro || t.projects.intro,
+        eventsSubtitle: hp?.eventsSubtitle || t.events.subtitle,
+        eventsTitle: hp?.eventsTitle || t.events.title,
+        eventsIntro: hp?.eventsIntro || t.events.intro,
+        sponsorsSubtitle: hp?.sponsorsSubtitle || t.sponsors.subtitle,
+        sponsorsTitle: hp?.sponsorsTitle || t.sponsors.title,
+        sponsorsIntro: hp?.sponsorsIntro || t.sponsors.intro,
+        qaSubtitle: hp?.qaSubtitle || t.qa.subtitle,
+        qaTitle: hp?.qaTitle || t.qa.title,
+        qaIntro: hp?.qaIntro || t.qa.intro,
+        threedKicker: hp?.threedKicker || t.threed.kicker,
+        threedTitle: hp?.threedTitle || t.threed.title,
+        threedText: hp?.threedText || t.threed.text,
+        threedCta: hp?.threedCta || t.threed.cta,
+        ctaHeading: hp?.ctaHeading || t.cta.heading,
+        ctaText: hp?.ctaText || t.cta.text,
+        ctaJoin: hp?.ctaJoin || t.cta.join,
+        ctaContact: hp?.ctaContact || t.cta.contact,
+    };
+    const stats = hp?.stats?.length ? hp.stats : t.about.stats;
+    const steps = hp?.steps?.length ? hp.steps : t.about.steps;
 
     const [openFaq, setOpenFaq] = useState<number | null>(null);
 
@@ -161,7 +200,7 @@ const Landing: React.FC<LandingProps> = (props) => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.55, ease: 'easeOut' }}
                     >
-                        <p className="lp-kicker">{t.home.kicker}</p>
+                        <p className="lp-kicker">{c.heroKicker}</p>
                         <h1 className="lp-hero__title">
                             {siteConfig.clubName || 'Coding for Change'}
                         </h1>
@@ -170,7 +209,7 @@ const Landing: React.FC<LandingProps> = (props) => {
                         </p>
                         <div className="lp-hero__ctas">
                             <Link className="lp-btn lp-btn--primary" href="/join">
-                                {t.home.ctaPrimary}
+                                {c.heroCtaPrimary}
                             </Link>
                             <a
                                 className="lp-btn lp-btn--ghost"
@@ -180,10 +219,10 @@ const Landing: React.FC<LandingProps> = (props) => {
                                     router.push('/#projects');
                                 }}
                             >
-                                {t.home.ctaSecondary}
+                                {c.heroCtaSecondary}
                             </a>
                         </div>
-                        <span className="lp-scrollhint">{t.home.scrollHint}</span>
+                        <span className="lp-scrollhint">{c.heroScrollHint}</span>
                     </motion.div>
                 </div>
             </section>
@@ -196,12 +235,12 @@ const Landing: React.FC<LandingProps> = (props) => {
                         {...reveal}
                         transition={{ duration: 0.5 }}
                     >
-                        <p className="lp-kicker">{t.about.kicker}</p>
-                        <h2 className="lp-h2">{t.about.oneLiner}</h2>
-                        <p className="lp-lead">{t.about.pitch}</p>
+                        <p className="lp-kicker">{c.aboutKicker}</p>
+                        <h2 className="lp-h2">{c.aboutOneLiner}</h2>
+                        <p className="lp-lead">{c.aboutPitch}</p>
                     </motion.div>
                     <div className="lp-stats">
-                        {t.about.stats.map((s, i) => (
+                        {stats.map((s, i) => (
                             <motion.div
                                 key={s.label}
                                 className="lp-stat"
@@ -224,19 +263,19 @@ const Landing: React.FC<LandingProps> = (props) => {
                         {...reveal}
                         transition={{ duration: 0.5 }}
                     >
-                        <p className="lp-kicker">{t.process.kicker}</p>
-                        <h2 className="lp-h2">{t.process.heading}</h2>
-                        <p className="lp-lead">{t.process.intro}</p>
+                        <p className="lp-kicker">{c.processKicker}</p>
+                        <h2 className="lp-h2">{c.processHeading}</h2>
+                        <p className="lp-lead">{c.processIntro}</p>
                     </motion.div>
                     <div className="lp-steps">
-                        {t.about.steps.map((step, i) => (
+                        {steps.map((step, i) => (
                             <motion.div
                                 key={step.title}
                                 className="lp-step"
                                 {...reveal}
                                 transition={{ duration: 0.45, delay: i * 0.12 }}
                             >
-                                {i < t.about.steps.length - 1 && (
+                                {i < steps.length - 1 && (
                                     <span className="lp-step__connector" />
                                 )}
                                 <span className="lp-step__num">{i + 1}</span>
@@ -258,9 +297,9 @@ const Landing: React.FC<LandingProps> = (props) => {
                         {...reveal}
                         transition={{ duration: 0.5 }}
                     >
-                        <p className="lp-kicker">{t.projects.subtitle}</p>
-                        <h2 className="lp-h2">{t.projects.title}</h2>
-                        <p className="lp-lead">{t.projects.intro}</p>
+                        <p className="lp-kicker">{c.projectsSubtitle}</p>
+                        <h2 className="lp-h2">{c.projectsTitle}</h2>
+                        <p className="lp-lead">{c.projectsIntro}</p>
                     </motion.div>
                     {projectsLoading ? (
                         <p className="lp-loading">Loading…</p>
@@ -337,9 +376,9 @@ const Landing: React.FC<LandingProps> = (props) => {
                 <section id="events" className="lp-section lp-section--alt">
                     <div className="lp-inner">
                         <motion.div style={{ display: 'block' }} {...reveal} transition={{ duration: 0.5 }}>
-                            <p className="lp-kicker">{t.events.subtitle}</p>
-                            <h2 className="lp-h2">{t.events.title}</h2>
-                            <p className="lp-lead">{t.events.intro}</p>
+                            <p className="lp-kicker">{c.eventsSubtitle}</p>
+                            <h2 className="lp-h2">{c.eventsTitle}</h2>
+                            <p className="lp-lead">{c.eventsIntro}</p>
                         </motion.div>
                         {upcoming.length > 0 && (
                             <>
@@ -355,7 +394,7 @@ const Landing: React.FC<LandingProps> = (props) => {
                         )}
                         <div className="lp-section__more">
                             <Link className="lp-btn lp-btn--ghost" href="/events">
-                                {t.events.title} →
+                                {c.eventsTitle} →
                             </Link>
                         </div>
                     </div>
@@ -405,13 +444,13 @@ const Landing: React.FC<LandingProps> = (props) => {
                         transition={{ duration: 0.5 }}
                     >
                         <p className="lp-kicker lp-3d__kicker">
-                            {embedded ? t.threed.backKicker : t.threed.kicker}
+                            {embedded ? t.threed.backKicker : c.threedKicker}
                         </p>
                         <h2 className="lp-3d__title">
-                            {embedded ? t.threed.backTitle : t.threed.title}
+                            {embedded ? t.threed.backTitle : c.threedTitle}
                         </h2>
                         <p className="lp-3d__text">
-                            {embedded ? t.threed.backText : t.threed.text}
+                            {embedded ? t.threed.backText : c.threedText}
                         </p>
                         {embedded ? (
                             <button
@@ -423,7 +462,7 @@ const Landing: React.FC<LandingProps> = (props) => {
                             </button>
                         ) : (
                             <a className="lp-btn lp-btn--light" href="/3d">
-                                {t.threed.cta} →
+                                {c.threedCta} →
                             </a>
                         )}
                     </motion.div>
@@ -439,9 +478,9 @@ const Landing: React.FC<LandingProps> = (props) => {
                         {...reveal}
                         transition={{ duration: 0.5 }}
                     >
-                        <p className="lp-kicker">{t.sponsors.subtitle}</p>
-                        <h2 className="lp-h2">{t.sponsors.title}</h2>
-                        <p className="lp-lead">{t.sponsors.intro}</p>
+                        <p className="lp-kicker">{c.sponsorsSubtitle}</p>
+                        <h2 className="lp-h2">{c.sponsorsTitle}</h2>
+                        <p className="lp-lead">{c.sponsorsIntro}</p>
                     </motion.div>
                     {sponsorsLoading ? (
                         <p className="lp-loading">Loading…</p>
@@ -460,9 +499,9 @@ const Landing: React.FC<LandingProps> = (props) => {
                         {...reveal}
                         transition={{ duration: 0.5 }}
                     >
-                        <p className="lp-kicker">{t.qa.subtitle}</p>
-                        <h2 className="lp-h2">{t.qa.title}</h2>
-                        <p className="lp-lead">{t.qa.intro}</p>
+                        <p className="lp-kicker">{c.qaSubtitle}</p>
+                        <h2 className="lp-h2">{c.qaTitle}</h2>
+                        <p className="lp-lead">{c.qaIntro}</p>
                     </motion.div>
                     {faqLoading ? (
                         <p className="lp-loading">Loading…</p>
@@ -560,20 +599,20 @@ const Landing: React.FC<LandingProps> = (props) => {
                         {...reveal}
                         transition={{ duration: 0.5 }}
                     >
-                        <h2 className="lp-cta__heading">{t.cta.heading}</h2>
-                        <p className="lp-cta__text">{t.cta.text}</p>
+                        <h2 className="lp-cta__heading">{c.ctaHeading}</h2>
+                        <p className="lp-cta__text">{c.ctaText}</p>
                         <div className="lp-cta__btns">
                             <Link
                                 className="lp-btn lp-btn--light"
                                 href="/join"
                             >
-                                {t.cta.join}
+                                {c.ctaJoin}
                             </Link>
                             <Link
                                 className="lp-btn lp-btn--light"
                                 href="/partner"
                             >
-                                {t.cta.contact}
+                                {c.ctaContact}
                             </Link>
                         </div>
                     </motion.div>

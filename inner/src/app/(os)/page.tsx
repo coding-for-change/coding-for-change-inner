@@ -1,5 +1,5 @@
 import Landing from '@/components/showcase/Landing';
-import { fetchCollection } from '@/lib/cms';
+import { fetchCollection, fetchGlobal } from '@/lib/cms';
 import { getServerLocale } from '@/lib/locale';
 import type {
     CmsEvent,
@@ -7,13 +7,14 @@ import type {
     CmsSponsor,
     CmsFaqItem,
     CmsBlogPost,
+    CmsHomepage,
 } from '@/api/types';
 
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
     const locale = await getServerLocale();
-    const [events, projects, sponsors, faq, blog] = await Promise.all([
+    const [events, projects, sponsors, faq, blog, homepage] = await Promise.all([
         fetchCollection<CmsEvent>('events', locale),
         fetchCollection<CmsProject>('projects', locale),
         fetchCollection<CmsSponsor>('sponsors', locale),
@@ -23,6 +24,7 @@ export default async function HomePage() {
             sort: '-publishedAt',
             limit: '3',
         }),
+        fetchGlobal<CmsHomepage>('homepage', locale),
     ]);
     return (
         <Landing
@@ -31,6 +33,7 @@ export default async function HomePage() {
             sponsors={sponsors}
             faq={faq}
             blog={blog}
+            homepage={homepage}
         />
     );
 }

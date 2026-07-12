@@ -117,12 +117,16 @@ export interface Config {
     membership: Membership;
     legal: Legal;
     partner: Partner;
+    about: About;
+    homepage: Homepage;
   };
   globalsSelect: {
     'site-config': SiteConfigSelect<false> | SiteConfigSelect<true>;
     membership: MembershipSelect<false> | MembershipSelect<true>;
     legal: LegalSelect<false> | LegalSelect<true>;
     partner: PartnerSelect<false> | PartnerSelect<true>;
+    about: AboutSelect<false> | AboutSelect<true>;
+    homepage: HomepageSelect<false> | HomepageSelect<true>;
   };
   locale: 'en' | 'de';
   widgets: {
@@ -1011,6 +1015,26 @@ export interface PayloadMcpApiKey {
      */
     update?: boolean | null;
   };
+  about?: {
+    /**
+     * Allow clients to find about global.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to update about global.
+     */
+    update?: boolean | null;
+  };
+  homepage?: {
+    /**
+     * Allow clients to find homepage global.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to update homepage global.
+     */
+    update?: boolean | null;
+  };
   updatedAt: string;
   createdAt: string;
   enableAPIKey?: boolean | null;
@@ -1650,6 +1674,18 @@ export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
         find?: T;
         update?: T;
       };
+  about?:
+    | T
+    | {
+        find?: T;
+        update?: T;
+      };
+  homepage?:
+    | T
+    | {
+        find?: T;
+        update?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   enableAPIKey?: T;
@@ -1845,6 +1881,93 @@ export interface Partner {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about".
+ */
+export interface About {
+  id: number;
+  kicker?: string | null;
+  /**
+   * Page headline.
+   */
+  title?: string | null;
+  lead?: string | null;
+  /**
+   * Narrative paragraphs.
+   */
+  story?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  valuesTitle?: string | null;
+  values?:
+    | {
+        title: string;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  teamTeaser?: string | null;
+  teamCta?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage".
+ */
+export interface Homepage {
+  id: number;
+  heroKicker?: string | null;
+  heroCtaPrimary?: string | null;
+  heroCtaSecondary?: string | null;
+  heroScrollHint?: string | null;
+  aboutKicker?: string | null;
+  aboutOneLiner?: string | null;
+  aboutPitch?: string | null;
+  stats?:
+    | {
+        value: string;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  steps?:
+    | {
+        title: string;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  processKicker?: string | null;
+  processHeading?: string | null;
+  processIntro?: string | null;
+  projectsSubtitle?: string | null;
+  projectsTitle?: string | null;
+  projectsIntro?: string | null;
+  eventsSubtitle?: string | null;
+  eventsTitle?: string | null;
+  eventsIntro?: string | null;
+  sponsorsSubtitle?: string | null;
+  sponsorsTitle?: string | null;
+  sponsorsIntro?: string | null;
+  qaSubtitle?: string | null;
+  qaTitle?: string | null;
+  qaIntro?: string | null;
+  threedKicker?: string | null;
+  threedTitle?: string | null;
+  threedText?: string | null;
+  threedCta?: string | null;
+  ctaHeading?: string | null;
+  ctaText?: string | null;
+  ctaJoin?: string | null;
+  ctaContact?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-config_select".
  */
 export interface SiteConfigSelect<T extends boolean = true> {
@@ -1940,6 +2063,87 @@ export interface PartnerSelect<T extends boolean = true> {
   ctaHeading?: T;
   ctaText?: T;
   contactEmail?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about_select".
+ */
+export interface AboutSelect<T extends boolean = true> {
+  kicker?: T;
+  title?: T;
+  lead?: T;
+  story?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  valuesTitle?: T;
+  values?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  teamTeaser?: T;
+  teamCta?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage_select".
+ */
+export interface HomepageSelect<T extends boolean = true> {
+  heroKicker?: T;
+  heroCtaPrimary?: T;
+  heroCtaSecondary?: T;
+  heroScrollHint?: T;
+  aboutKicker?: T;
+  aboutOneLiner?: T;
+  aboutPitch?: T;
+  stats?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
+  steps?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  processKicker?: T;
+  processHeading?: T;
+  processIntro?: T;
+  projectsSubtitle?: T;
+  projectsTitle?: T;
+  projectsIntro?: T;
+  eventsSubtitle?: T;
+  eventsTitle?: T;
+  eventsIntro?: T;
+  sponsorsSubtitle?: T;
+  sponsorsTitle?: T;
+  sponsorsIntro?: T;
+  qaSubtitle?: T;
+  qaTitle?: T;
+  qaIntro?: T;
+  threedKicker?: T;
+  threedTitle?: T;
+  threedText?: T;
+  threedCta?: T;
+  ctaHeading?: T;
+  ctaText?: T;
+  ctaJoin?: T;
+  ctaContact?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

@@ -182,6 +182,54 @@ export interface CmsPartner {
     contactEmail?: string | null;
 }
 
+/** GET /api/globals/about — About page content (frontend falls back to i18n). */
+export interface CmsAbout {
+    kicker?: string | null;
+    title?: string | null;
+    lead?: string | null;
+    story?: { text: string; id?: string }[] | null;
+    valuesTitle?: string | null;
+    values?: { title: string; text: string; id?: string }[] | null;
+    teamTeaser?: string | null;
+    teamCta?: string | null;
+}
+
+/** GET /api/globals/homepage — homepage section copy (falls back to i18n). */
+export interface CmsHomepage {
+    heroKicker?: string | null;
+    heroCtaPrimary?: string | null;
+    heroCtaSecondary?: string | null;
+    heroScrollHint?: string | null;
+    aboutKicker?: string | null;
+    aboutOneLiner?: string | null;
+    aboutPitch?: string | null;
+    stats?: { value: string; label: string; id?: string }[] | null;
+    steps?: { title: string; text: string; id?: string }[] | null;
+    processKicker?: string | null;
+    processHeading?: string | null;
+    processIntro?: string | null;
+    projectsSubtitle?: string | null;
+    projectsTitle?: string | null;
+    projectsIntro?: string | null;
+    eventsSubtitle?: string | null;
+    eventsTitle?: string | null;
+    eventsIntro?: string | null;
+    sponsorsSubtitle?: string | null;
+    sponsorsTitle?: string | null;
+    sponsorsIntro?: string | null;
+    qaSubtitle?: string | null;
+    qaTitle?: string | null;
+    qaIntro?: string | null;
+    threedKicker?: string | null;
+    threedTitle?: string | null;
+    threedText?: string | null;
+    threedCta?: string | null;
+    ctaHeading?: string | null;
+    ctaText?: string | null;
+    ctaJoin?: string | null;
+    ctaContact?: string | null;
+}
+
 export type CmsFormField =
     | {
           blockType: 'text';

@@ -22,11 +22,13 @@ import { SiteConfig } from './globals/SiteConfig';
 import { Membership } from './globals/Membership';
 import { Legal } from './globals/Legal';
 import { Partner } from './globals/Partner';
+import { About } from './globals/About';
+import { Homepage } from './globals/Homepage';
 
 export default buildConfig({
   editor: lexicalEditor(),
   collections: [Users, Team, Projects, Events, FAQ, Sponsors, Companies, Media, BlogPost, WaitlistSignups, AnalyticsEvents],
-  globals: [SiteConfig, Membership, Legal, Partner],
+  globals: [SiteConfig, Membership, Legal, Partner, About, Homepage],
   // Admin-only CSV export endpoints (campaign funnel, raw events, signups).
   endpoints: analyticsExportEndpoints,
   localization: {
@@ -100,6 +102,8 @@ export default buildConfig({
         membership: { enabled: true },
         legal: { enabled: true },
         partner: { enabled: true },
+        about: { enabled: true },
+        homepage: { enabled: true },
       },
     }),
   ],

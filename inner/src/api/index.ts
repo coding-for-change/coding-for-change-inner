@@ -14,6 +14,8 @@ export type {
     CmsSiteConfig,
     CmsMembership,
     CmsPartner,
+    CmsAbout,
+    CmsHomepage,
     CmsLegal,
     CmsForm,
     CmsFormField,
