@@ -126,9 +126,9 @@ export interface Translations {
 
 const en: Translations = {
     nav: {
-        home: 'HOME', about: 'ABOUT', events: 'EVENTS', projects: 'PROJECTS',
-        sponsors: 'SPONSORS', team: 'TEAM', blog: 'BLOG', qa: 'Q&A', join: 'JOIN', contact: 'CONTACT',
-        partner: 'FOR NGOS',
+        home: 'Home', about: 'About', events: 'Events', projects: 'Projects',
+        sponsors: 'Sponsors', team: 'Team', blog: 'Blog', qa: 'Q&A', join: 'Join', contact: 'Contact',
+        partner: 'For NGOs',
     },
     common: {
         learnMore: 'Learn More', partner: 'Partner:', at: 'at',
@@ -385,9 +385,9 @@ const en: Translations = {
 
 const de: Translations = {
     nav: {
-        home: 'START', about: 'ÜBER UNS', events: 'EVENTS', projects: 'PROJEKTE',
-        sponsors: 'SPONSOREN', team: 'TEAM', blog: 'BLOG', qa: 'F&A', join: 'MITMACHEN', contact: 'KONTAKT',
-        partner: 'FÜR NGOS',
+        home: 'Start', about: 'Über uns', events: 'Events', projects: 'Projekte',
+        sponsors: 'Sponsoren', team: 'Team', blog: 'Blog', qa: 'F&A', join: 'Mitmachen', contact: 'Kontakt',
+        partner: 'Für NGOs',
     },
     common: {
         learnMore: 'Mehr erfahren', partner: 'Partner:', at: 'um',

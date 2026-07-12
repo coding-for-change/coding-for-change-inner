@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
+import { IBM_Plex_Sans, Space_Grotesk } from 'next/font/google';
 // All four global stylesheets — importing every one here is what the old CRA
 // build did via index.tsx/App.tsx. (The abandoned migration dropped App.css and
 // mobile.css, which is what broke its formatting.)
@@ -19,6 +20,25 @@ const robotoMono = localFont({
     weight: '100 700',
     display: 'swap',
     variable: '--font-roboto-mono',
+});
+
+// Modern content typography (replaces the illegible Win95 pixel fonts).
+// Next self-hosts both at build time, so there is no runtime request to Google.
+// Body/UI workhorse — IBM Plex Sans: highly legible at small sizes, full German
+// coverage (ä ö ü ß), and an engineering pedigree that pairs with the mono wordmark.
+const plexSans = IBM_Plex_Sans({
+    subsets: ['latin'],
+    weight: ['400', '500', '600', '700'],
+    display: 'swap',
+    variable: '--font-plex-sans',
+});
+// Display/headings — Space Grotesk: a proportional grotesque derived from Space
+// Mono, so it echoes the Roboto Mono wordmark while staying crisp and legible.
+const spaceGrotesk = Space_Grotesk({
+    subsets: ['latin'],
+    weight: ['500', '600', '700'],
+    display: 'swap',
+    variable: '--font-space-grotesk',
 });
 
 export const metadata: Metadata = {
@@ -85,7 +105,10 @@ export default async function RootLayout({
     const siteConfig = await fetchGlobal<CmsSiteConfig>('site-config', locale);
 
     return (
-        <html lang={locale} className={robotoMono.variable}>
+        <html
+            lang={locale}
+            className={`${robotoMono.variable} ${plexSans.variable} ${spaceGrotesk.variable}`}
+        >
             <head>
                 {/* `_parent` keeps links working when the OS is embedded in the
                     3D scene's monitor iframe. */}
@@ -130,27 +153,6 @@ export default async function RootLayout({
                         <a href="/join">Join</a> · <a href="/contact">Contact</a>
                     </nav>
                 </noscript>
-
-                {/* Force the custom pixel fonts to load before first paint. */}
-                <div
-                    className="font_preload"
-                    style={{
-                        opacity: 0,
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: 0,
-                        height: 0,
-                        overflow: 'hidden',
-                        pointerEvents: 'none',
-                    }}
-                    aria-hidden
-                >
-                    <span style={{ fontFamily: "'MSSerif', Arial, sans-serif" }}>abc</span>
-                    <span style={{ fontFamily: "'Millennium', Arial, sans-serif" }}>abc</span>
-                    <span style={{ fontFamily: "'MillenniumBold', Arial, sans-serif" }}>abc</span>
-                    <span style={{ fontFamily: "'Terminal', Arial, sans-serif" }}>abc</span>
-                </div>
 
                 <InputRelay />
                 <Providers initialLocale={locale} initialConfig={siteConfig}>

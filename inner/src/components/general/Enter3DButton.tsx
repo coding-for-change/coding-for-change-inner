@@ -160,7 +160,7 @@ const styles: StyleSheetCSS = {
         whiteSpace: 'nowrap',
         backgroundColor: '#0f2040',
         color: '#fff',
-        fontFamily: 'MillenniumBold, sans-serif',
+        fontFamily: "var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif",
         fontSize: 13,
         padding: '7px 11px',
         borderRadius: 6,

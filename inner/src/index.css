@@ -66,13 +66,18 @@ h6 {
     margin: 0;
 }
 
+/* Base element typography for CMS rich-text (RichText.tsx emits classless
+   <p>/<b>/<h2..h4>/<li>) — the Imprint / Privacy pages and About prose read
+   through these. Body = IBM Plex Sans, headings = Space Grotesk. */
 p {
-    font-family: Millennium, 'Times New Roman', Times, serif;
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, -apple-system,
+        sans-serif;
     font-size: 18px;
 }
 
 p b {
-    font-family: MillenniumBold, 'Times New Roman', Times, serif;
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, -apple-system,
+        sans-serif;
 }
 
 .showcase-header {
@@ -88,30 +93,31 @@ p b {
 }
 
 h1 {
-    font-family: gastromond, sans-serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 64px;
 }
 
 h2 {
-    font-family: MillenniumBold, 'Times New Roman', Times, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 32px;
 }
 
 h3 {
-    font-family: MillenniumBold, 'Times New Roman', Times, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 24px;
     letter-spacing: 0px;
 }
 
 h4 {
-    font-family: MillenniumBold, 'Times New Roman', Times, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 18px;
     letter-spacing: 0px;
 }
 
 li {
     margin-bottom: 16px;
-    font-family: Millennium, 'Times New Roman', Times, serif;
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, -apple-system,
+        sans-serif;
     font-size: 18px;
 }
 
@@ -161,7 +167,7 @@ input {
     border: none;
     resize: none;
     box-shadow: var(--border-field);
-    font-family: Millennium, sans-serif;
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 18px;
 }
 
@@ -173,7 +179,7 @@ textarea {
     box-sizing: border-box;
     resize: none;
     box-shadow: var(--border-field);
-    font-family: Millennium, sans-serif;
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 18px;
 }
 
