@@ -557,7 +557,8 @@
 .lp-nav__links {
     display: flex;
     align-items: center;
-    gap: 2px;
+    /* Fluid gap: roomier on wide screens, tight near the breakpoint. */
+    gap: clamp(2px, 0.5vw, 12px);
     flex: 1;
     justify-content: center;
     /* Never wrap to a second row (the bar is a fixed 64px). Links are sized to
@@ -568,12 +569,14 @@
 .lp-nav__link {
     display: inline-flex;
     align-items: center;
-    padding: 7px 8px;
+    /* Fluid so the bar scales with the viewport — larger and roomier on big
+       screens, compact (but never clipped) near the mobile breakpoint. */
+    padding: 8px clamp(7px, 0.7vw, 15px);
     background: none;
     border: none;
     cursor: pointer;
     font-family: MillenniumBold, serif;
-    font-size: 13px;
+    font-size: clamp(12.5px, 0.5vw + 7px, 15.5px);
     color: #44504f;
     text-decoration: none;
     white-space: nowrap;
@@ -586,10 +589,6 @@
 @media (max-width: 1219px) {
     .lp-nav__name {
         display: none;
-    }
-    .lp-nav__link {
-        font-size: 12.5px;
-        padding: 7px 6px;
     }
 }
 .lp-nav__link:hover {
