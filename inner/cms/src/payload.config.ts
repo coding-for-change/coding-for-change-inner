@@ -5,6 +5,7 @@ import { formBuilderPlugin } from '@payloadcms/plugin-form-builder';
 import { mcpPlugin } from '@payloadcms/plugin-mcp';
 import { resendAdapter } from '@payloadcms/email-resend';
 import { Team } from './collections/Team';
+import { TeamGroups } from './collections/TeamGroups';
 import { Projects } from './collections/Projects';
 import { Events } from './collections/Events';
 import { FAQ } from './collections/FAQ';
@@ -28,7 +29,7 @@ import { Homepage } from './globals/Homepage';
 
 export default buildConfig({
   editor: lexicalEditor(),
-  collections: [Users, Team, Projects, Events, FAQ, Sponsors, SponsorTiers, Companies, Media, BlogPost, WaitlistSignups, AnalyticsEvents],
+  collections: [Users, Team, TeamGroups, Projects, Events, FAQ, Sponsors, SponsorTiers, Companies, Media, BlogPost, WaitlistSignups, AnalyticsEvents],
   globals: [SiteConfig, Membership, Legal, Partner, About, Homepage],
   // Admin-only CSV export endpoints (campaign funnel, raw events, signups).
   endpoints: analyticsExportEndpoints,

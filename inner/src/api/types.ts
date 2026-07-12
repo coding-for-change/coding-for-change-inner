@@ -10,6 +10,14 @@ export interface CmsMedia {
     height?: number;
 }
 
+/** GET /api/team-groups — teams shown as sections on the Team page. */
+export interface CmsTeamGroup {
+    id: number;
+    name: string;
+    logo?: CmsMedia | null;
+    order: number;
+}
+
 /** GET /api/team */
 export interface CmsTeamMember {
     id: number;
@@ -22,6 +30,14 @@ export interface CmsTeamMember {
     // Companies this person worked at (populated at depth >= 2). Logos shown
     // on hover. May be IDs if fetched at insufficient depth.
     companies?: (CmsCompany | number)[] | null;
+    // Team assignments (populated at depth >= 1). When any member has these,
+    // the Team page groups people by team; `role` overrides the main role for
+    // that team (falls back to `role` when blank).
+    teamMemberships?: {
+        team?: CmsTeamGroup | number | null;
+        role?: string | null;
+        id?: string;
+    }[] | null;
 }
 
 /** GET /api/events */

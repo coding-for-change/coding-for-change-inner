@@ -17,6 +17,28 @@ export const Team: CollectionConfig = {
     { name: 'name', type: 'text', required: true },
     { name: 'role', type: 'text', required: true, localized: true },
     {
+      // Team assignments. When any member has memberships, the Team page groups
+      // people into a section per team (heading + optional logo) instead of one
+      // flat list; a person appears once under each team they're in. Leave a
+      // row's role blank to reuse the main `role` above for that team.
+      name: 'teamMemberships',
+      label: 'Team memberships',
+      type: 'array',
+      admin: {
+        description:
+          'Assign this person to one or more teams, with the role they hold in each. Leave a role blank to reuse the main role above.',
+      },
+      fields: [
+        { name: 'team', type: 'relationship', relationTo: 'team-groups', required: true },
+        {
+          name: 'role',
+          type: 'text',
+          localized: true,
+          admin: { description: 'Optional — role in this team; falls back to the main role above.' },
+        },
+      ],
+    },
+    {
       // Splits the Team page into the core team and a separate "Advisers"
       // section. Defaults to a regular member.
       name: 'category',

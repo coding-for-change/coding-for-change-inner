@@ -1330,6 +1330,32 @@
     margin: 64px 0 8px;
     grid-column: 1 / -1;
 }
+/* CMS-driven team sections: heading (+ optional logo) above each team's grid.
+   `.lp-team__group` is a plain wrapper, so force block to escape the global
+   `div { display: flex }` rule (else the heading and grid would sit in a row). */
+.lp-team__group {
+    display: block;
+}
+.lp-team__group-head-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 64px 0 8px;
+}
+.lp-team__group:first-child .lp-team__group-head-row {
+    margin-top: 24px;
+}
+.lp-team__group-head-row .lp-team__group-head {
+    margin: 0;
+}
+.lp-team__group-logo {
+    display: block;
+    flex-shrink: 0;
+    height: 40px;
+    width: auto;
+    max-width: 130px;
+    object-fit: contain;
+}
 
 /* ---- Per-member company logos (always visible — a member's experience is
    one of the strongest signals on the site, so it must show on touch too) ---- */
