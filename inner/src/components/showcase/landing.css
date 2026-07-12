@@ -1,7 +1,8 @@
 /* ------------------------------------------------------------------ */
 /* Landing — a modern, single-scroll site that lives INSIDE the retro  */
 /* Win95 window. Window chrome stays nostalgic; the content here is     */
-/* clean and modern, but keeps the pixel display font for headings.     */
+/* clean and modern: Space Grotesk for display/headings, IBM Plex Sans  */
+/* for body/UI (both exposed as CSS vars on <html> from layout.tsx).    */
 /* NOTE: a global `div { display: flex }` rule is in App.css, so every  */
 /* container below sets its own `display` explicitly.                   */
 /* ------------------------------------------------------------------ */
@@ -17,7 +18,8 @@
     width: 100%;
     color: var(--ink);
     background: #ffffff;
-    font-family: Millennium, 'Times New Roman', Times, serif;
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, -apple-system,
+        sans-serif;
 }
 
 /* ---- Section scaffolding ---- */
@@ -40,7 +42,7 @@
     box-sizing: border-box;
 }
 .lp-kicker {
-    font-family: MSSerif, sans-serif;
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 13px;
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -48,7 +50,7 @@
     margin: 0 0 14px;
 }
 .lp-h2 {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 40px;
     line-height: 1.05;
     margin: 0 0 18px;
@@ -80,7 +82,7 @@
     scroll-margin-top: 72px;
 }
 .lp-hero__title {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 76px;
     line-height: 0.96;
     margin: 14px 0 20px;
@@ -101,7 +103,7 @@
 .lp-scrollhint {
     display: block;
     margin-top: 56px;
-    font-family: MSSerif, sans-serif;
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 12px;
     letter-spacing: 1px;
     color: var(--teal-dark);
@@ -114,7 +116,7 @@
     align-items: center;
     justify-content: center;
     padding: 14px 26px;
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 16px;
     text-decoration: none;
     cursor: pointer;
@@ -163,7 +165,7 @@
     border-top: 3px solid var(--teal);
 }
 .lp-stat__value {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 52px;
     line-height: 1;
     color: var(--teal-dark);
@@ -201,11 +203,11 @@
     border-radius: 50%;
     background: var(--teal);
     color: #fff;
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 22px;
 }
 .lp-step__title {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 22px;
     margin-bottom: 8px;
 }
@@ -234,7 +236,7 @@
     margin-top: 28px;
 }
 .lp-subhead {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 22px;
     margin: 40px 0 0;
 }
@@ -255,7 +257,7 @@
     box-shadow: 0 10px 30px rgba(36, 107, 108, 0.12);
 }
 .lp-card__title {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 21px;
     margin: 12px 0 6px;
 }
@@ -285,7 +287,7 @@
 }
 .lp-card__link {
     margin-top: 16px;
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 14px;
     color: var(--teal-dark);
     text-decoration: none;
@@ -299,7 +301,7 @@
 .lp-badge {
     display: inline-block;
     padding: 4px 12px;
-    font-family: MSSerif, sans-serif;
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 12px;
     letter-spacing: 0.5px;
     background: var(--teal);
@@ -309,7 +311,7 @@
 .lp-status {
     display: inline-block;
     padding: 3px 11px;
-    font-family: MSSerif, sans-serif;
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -345,7 +347,7 @@
     display: block;
 }
 .lp-tier__head {
-    font-family: MSSerif, sans-serif;
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 12px;
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -391,7 +393,7 @@
     opacity: 1;
 }
 .lp-sponsor__name {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 18px;
     text-align: center;
     color: var(--ink);
@@ -419,7 +421,7 @@
     border: none;
     cursor: pointer;
     text-align: left;
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 18px;
     color: var(--ink);
 }
@@ -453,7 +455,7 @@
     scroll-margin-top: 72px;
 }
 .lp-cta__heading {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 40px;
     line-height: 1.05;
     margin-bottom: 16px;
@@ -475,7 +477,7 @@
 .lp-loading {
     display: block;
     margin-top: 28px;
-    font-family: MSSerif, sans-serif;
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     color: var(--muted);
 }
 
@@ -575,7 +577,7 @@
     background: none;
     border: none;
     cursor: pointer;
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: clamp(12.5px, 0.5vw + 7px, 15.5px);
     color: #44504f;
     text-decoration: none;
@@ -615,7 +617,7 @@
     display: flex;
     align-items: center;
     gap: 2px;
-    font-family: MSSerif, sans-serif;
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 12px;
 }
 .lp-lang__btn {
@@ -624,7 +626,7 @@
     cursor: pointer;
     padding: 4px 6px;
     color: #8a9594;
-    font-family: MSSerif, sans-serif;
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 12px;
     text-transform: uppercase;
 }
@@ -639,7 +641,7 @@
     padding: 9px 18px;
     background: #2f8f90;
     color: #fff;
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 14px;
     text-decoration: none;
     border: none;
@@ -663,7 +665,7 @@
     margin-bottom: 40px;
 }
 .lp-page__title {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 46px;
     line-height: 1.04;
     margin: 0 0 14px;
@@ -709,11 +711,11 @@
     border-radius: 50%;
     background: linear-gradient(135deg, var(--teal), var(--teal-dark));
     color: #fff;
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 30px;
 }
 .lp-member__name {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 19px;
 }
 .lp-member__role {
@@ -749,7 +751,7 @@
     border-top: 1px solid var(--line);
 }
 .lp-companies__head {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 24px;
     margin-bottom: 20px;
 }
@@ -768,7 +770,7 @@
     border: 1px solid var(--line);
     box-shadow: none;
     background: #fff;
-    font-family: Millennium, serif;
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 16px;
     box-sizing: border-box;
 }
@@ -788,7 +790,7 @@
     border: 1px solid var(--line);
     background: #fff;
     cursor: pointer;
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 13px;
     color: var(--muted);
     border-radius: 999px;
@@ -845,7 +847,7 @@
     padding: 24px;
 }
 .lp-post__title {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 23px;
     margin-bottom: 10px;
 }
@@ -855,7 +857,7 @@
     align-items: center;
     gap: 14px;
     margin-bottom: 12px;
-    font-family: MSSerif, sans-serif;
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 12px;
     color: var(--muted);
 }
@@ -883,7 +885,7 @@
     border: 1px solid var(--line);
     background: #fff;
     cursor: pointer;
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 14px;
     color: var(--teal-dark);
     transition: border-color 0.15s ease, color 0.15s ease;
@@ -910,7 +912,7 @@
     display: block;
 }
 .lp-article__title {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 40px;
     line-height: 1.06;
     margin-bottom: 18px;
@@ -941,7 +943,7 @@
     justify-content: center;
     background: linear-gradient(135deg, var(--teal), var(--teal-dark));
     color: #fff;
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 15px;
 }
 .lp-author__text {
@@ -949,7 +951,7 @@
     flex-direction: column;
 }
 .lp-author__name {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 15px;
 }
 .lp-author__role {
@@ -958,7 +960,7 @@
     font-style: italic;
 }
 .lp-article__date {
-    font-family: MSSerif, sans-serif;
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 13px;
     color: var(--muted);
 }
@@ -995,7 +997,7 @@
     margin-bottom: 28px;
 }
 .lp-social {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 14px;
     color: var(--teal-dark);
     text-decoration: none;
@@ -1011,7 +1013,7 @@
     margin-bottom: 18px;
 }
 .lp-label {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 15px;
     margin-bottom: 6px;
 }
@@ -1023,7 +1025,7 @@
     border: 1px solid var(--line);
     box-shadow: none;
     background: #fff;
-    font-family: Millennium, serif;
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 16px;
     box-sizing: border-box;
 }
@@ -1060,7 +1062,7 @@
     color: #fff;
     border: none;
     cursor: pointer;
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 16px;
     transition: background 0.15s ease;
 }
@@ -1092,7 +1094,7 @@
     display: block;
 }
 .lp-col__head {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 22px;
     margin-bottom: 4px;
 }
@@ -1107,7 +1109,7 @@
     position: relative;
     padding-left: 24px;
     margin-bottom: 12px;
-    font-family: Millennium, serif;
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 16px;
     line-height: 1.5;
     color: #41494a;
@@ -1118,7 +1120,7 @@
     left: 6px;
     top: 0;
     color: var(--teal);
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
 }
 .lp-form {
     display: flex;
@@ -1232,7 +1234,7 @@
     box-sizing: border-box;
 }
 .lp-credits__heading {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 18px;
     margin: 0 0 14px;
 }
@@ -1251,7 +1253,7 @@
     border-top: none;
 }
 .lp-credits__name {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 15px;
 }
 .lp-credits__role {
@@ -1261,7 +1263,7 @@
 
 /* ---- Advisers section heading ---- */
 .lp-team__group-head {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 24px;
     margin: 64px 0 8px;
     grid-column: 1 / -1;
@@ -1283,7 +1285,7 @@
 .lp-member__companies-label {
     width: 100%;
     margin-bottom: 2px;
-    font-family: MSSerif, sans-serif;
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 10px;
     letter-spacing: 1px;
     text-transform: uppercase;
@@ -1322,7 +1324,7 @@
 .lp-booking__link {
     align-self: flex-start;
     margin-top: 14px;
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 14px;
     color: var(--teal-dark, #246b6c);
     text-decoration: none;
@@ -1412,7 +1414,7 @@
     color: #7fe3e4;
 }
 .lp-3d__title {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 40px;
     line-height: 1.05;
     margin: 0 0 16px;
@@ -1468,14 +1470,14 @@
     box-sizing: border-box;
 }
 .lp-proj-feat__title {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 30px;
     line-height: 1.06;
     margin: 14px 0 6px;
 }
 .lp-proj-feat__impact {
     margin-top: 16px;
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 16px;
     line-height: 1.5;
     color: var(--teal-dark);
@@ -1508,7 +1510,7 @@
     align-items: flex-start;
 }
 .lp-cs__title {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 44px;
     line-height: 1.04;
     margin: 14px 0 6px;
@@ -1521,7 +1523,7 @@
     padding: 12px 18px;
     background: #eaf2f2;
     border-left: 3px solid var(--teal);
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 17px;
     line-height: 1.45;
     color: var(--teal-dark);
@@ -1548,7 +1550,7 @@
     margin-top: 36px;
 }
 .lp-cs__h {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 24px;
     margin: 0 0 12px;
 }
@@ -1566,7 +1568,7 @@
     border-left: 4px solid var(--teal);
 }
 .lp-cs__quote-text {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 22px;
     line-height: 1.4;
     color: var(--ink);
@@ -1622,7 +1624,7 @@
     margin-top: 0;
 }
 .lp-cs__meta-h {
-    font-family: MSSerif, sans-serif;
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 12px;
     letter-spacing: 1px;
     text-transform: uppercase;
@@ -1682,7 +1684,7 @@
     border-left-color: var(--teal);
 }
 .lp-cs-choice__tag {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 22px;
     color: var(--ink);
 }
@@ -1693,7 +1695,7 @@
 }
 .lp-cs-choice__go {
     margin-top: 6px;
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 14px;
     color: var(--teal-dark);
     border-bottom: 2px solid var(--teal);
@@ -1717,7 +1719,7 @@
     background: none;
     cursor: pointer;
     border-radius: 999px;
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 14px;
     color: var(--muted);
     transition: background 0.15s ease, color 0.15s ease;
@@ -1745,7 +1747,7 @@
     border: 1px solid var(--line);
 }
 .lp-cs-cta__heading {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 26px;
     margin: 0 0 10px;
     color: #fff;
@@ -1788,7 +1790,7 @@
     border-top: 1px solid var(--line);
 }
 .lp-cs-faq__q {
-    font-family: MillenniumBold, serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 17px;
     margin: 0 0 6px;
     color: var(--ink);
