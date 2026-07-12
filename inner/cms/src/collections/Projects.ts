@@ -112,5 +112,51 @@ export const Projects: CollectionConfig = {
         },
       ],
     },
+    // ---- Impact story (the persuasive, non-technical view for NGOs) ----
+    {
+      type: 'collapsible',
+      label: 'Impact story (for nonprofits)',
+      admin: {
+        initCollapsed: true,
+        description:
+          'The persuasive, plain-language version shown to potential NGO partners (the "Impact story" view). The partner quote and screenshots above are reused here.',
+      },
+      fields: [
+        {
+          name: 'impactHeadline',
+          type: 'text',
+          localized: true,
+          admin: { description: 'One-line outcome for the impact hero (e.g. "How Lebenshilfe gave 150 companions their evenings back").' },
+        },
+        {
+          name: 'impactChallenge',
+          type: 'textarea',
+          localized: true,
+          admin: { description: "The partner's challenge, in their world — non-technical." },
+        },
+        {
+          name: 'impactSolution',
+          type: 'textarea',
+          localized: true,
+          admin: { description: 'What the software does for them, in plain language (benefits, not stack).' },
+        },
+        {
+          name: 'impactResults',
+          type: 'textarea',
+          localized: true,
+          admin: { description: 'The results / the difference it made.' },
+        },
+        {
+          name: 'ngoFaq',
+          label: 'NGO FAQ',
+          type: 'array',
+          admin: { description: 'Common questions from nonprofits (cost, time, what happens after).' },
+          fields: [
+            { name: 'question', type: 'text', required: true, localized: true },
+            { name: 'answer', type: 'textarea', required: true, localized: true },
+          ],
+        },
+      ],
+    },
   ],
 };

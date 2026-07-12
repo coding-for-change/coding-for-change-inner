@@ -39,6 +39,16 @@ export interface Translations {
         back: string; problem: string; approach: string; outcome: string;
         impact: string; stack: string; links: string;
     };
+    caseStudy: {
+        chooseKicker: string; chooseTitle: string;
+        technicalCardTitle: string; technicalCardText: string;
+        impactCardTitle: string; impactCardText: string;
+        technicalLabel: string; impactLabel: string;
+        joinHeading: string; joinText: string; joinButton: string;
+        challengeHeading: string; solutionHeading: string; resultsHeading: string;
+        workingHeading: string; workingPoints: string[]; partnerLink: string;
+        faqHeading: string; bookHeading: string; bookText: string;
+    };
     events: {
         title: string; subtitle: string; intro: string;
         upcoming: string; past: string;
@@ -163,6 +173,32 @@ const en: Translations = {
     projectDetail: {
         back: 'Back to projects', problem: 'The problem', approach: 'Our approach',
         outcome: 'What we shipped', impact: 'Impact', stack: 'Built with', links: 'Links',
+    },
+    caseStudy: {
+        chooseKicker: 'Two ways to read this',
+        chooseTitle: 'How would you like to read it?',
+        technicalCardTitle: 'Technical deep-dive',
+        technicalCardText: 'How we built it — the problem, our approach and the stack. Best if you’re a student thinking about joining.',
+        impactCardTitle: 'Impact story',
+        impactCardText: 'What a project like this could mean for your organisation. Best if you’re a nonprofit exploring a partnership.',
+        technicalLabel: 'Technical deep-dive',
+        impactLabel: 'Impact story',
+        joinHeading: 'Want to build things like this?',
+        joinText: 'This is the kind of real, shipped software you’ll work on as a member — with a team, a real partner, and people who depend on it.',
+        joinButton: 'Join the club',
+        challengeHeading: 'The challenge',
+        solutionHeading: 'What we built',
+        resultsHeading: 'The impact',
+        workingHeading: 'Working with us',
+        workingPoints: [
+            'Free of charge — funded by our university backing and sponsors',
+            'Delivered in a single semester by a dedicated student team',
+            'You own the result — documented, handed over, no lock-in',
+        ],
+        partnerLink: 'See how partnering works',
+        faqHeading: 'Questions nonprofits ask',
+        bookHeading: 'Have a problem worth solving?',
+        bookText: 'Tell us about it — grab a slot and we’ll explore whether we can help.',
     },
     events: {
         title: 'Events', subtitle: 'Workshops, Hackathons & More',
@@ -346,6 +382,32 @@ const de: Translations = {
     projectDetail: {
         back: 'Zurück zu Projekten', problem: 'Das Problem', approach: 'Unser Vorgehen',
         outcome: 'Was wir geliefert haben', impact: 'Wirkung', stack: 'Gebaut mit', links: 'Links',
+    },
+    caseStudy: {
+        chooseKicker: 'Zwei Perspektiven',
+        chooseTitle: 'Wie möchtest du es lesen?',
+        technicalCardTitle: 'Technischer Deep-Dive',
+        technicalCardText: 'Wie wir es gebaut haben – das Problem, unser Vorgehen und der Stack. Ideal, wenn du als Studierende:r übers Mitmachen nachdenkst.',
+        impactCardTitle: 'Impact-Story',
+        impactCardText: 'Was ein solches Projekt für eure Organisation bedeuten könnte. Ideal, wenn ihr als NGO eine Partnerschaft erwägt.',
+        technicalLabel: 'Technischer Deep-Dive',
+        impactLabel: 'Impact-Story',
+        joinHeading: 'Willst du sowas bauen?',
+        joinText: 'Genau solche echte, ausgelieferte Software baust du als Mitglied – im Team, mit echtem Partner und Menschen, die darauf angewiesen sind.',
+        joinButton: 'Mitglied werden',
+        challengeHeading: 'Die Herausforderung',
+        solutionHeading: 'Was wir gebaut haben',
+        resultsHeading: 'Die Wirkung',
+        workingHeading: 'Zusammenarbeit mit uns',
+        workingPoints: [
+            'Kostenlos – finanziert durch unsere universitäre Anbindung und Sponsoren',
+            'Geliefert in einem Semester von einem festen Studierendenteam',
+            'Das Ergebnis gehört euch – dokumentiert, übergeben, kein Lock-in',
+        ],
+        partnerLink: 'So funktioniert eine Partnerschaft',
+        faqHeading: 'Fragen von NGOs',
+        bookHeading: 'Ein Problem, das es zu lösen lohnt?',
+        bookText: 'Erzähl uns davon – wähl einen Termin und wir schauen, ob wir helfen können.',
     },
     events: {
         title: 'Events', subtitle: 'Workshops, Hackathons & Mehr',

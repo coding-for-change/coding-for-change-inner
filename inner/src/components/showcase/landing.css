@@ -1640,3 +1640,156 @@
         font-size: 32px;
     }
 }
+
+/* ---- Case-study chooser (branch on open) ---- */
+.lp-cs-choose {
+    display: block;
+    max-width: 900px;
+}
+.lp-cs-choose__head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 32px;
+}
+.lp-cs-choose__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+@media (max-width: 720px) {
+    .lp-cs-choose__grid {
+        grid-template-columns: 1fr;
+    }
+}
+.lp-cs-choice {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    text-align: left;
+    padding: 28px;
+    cursor: pointer;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--teal);
+    transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+.lp-cs-choice:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(36, 107, 108, 0.12);
+    border-color: #cfe0e0;
+    border-left-color: var(--teal);
+}
+.lp-cs-choice__tag {
+    font-family: MillenniumBold, serif;
+    font-size: 22px;
+    color: var(--ink);
+}
+.lp-cs-choice__text {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--muted);
+}
+.lp-cs-choice__go {
+    margin-top: 6px;
+    font-family: MillenniumBold, serif;
+    font-size: 14px;
+    color: var(--teal-dark);
+    border-bottom: 2px solid var(--teal);
+    padding-bottom: 2px;
+}
+
+/* ---- View toggle ---- */
+.lp-cs-toggle {
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    margin-bottom: 28px;
+    background: var(--alt);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+}
+.lp-cs-toggle__btn {
+    display: inline-flex;
+    padding: 8px 18px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 999px;
+    font-family: MillenniumBold, serif;
+    font-size: 14px;
+    color: var(--muted);
+    transition: background 0.15s ease, color 0.15s ease;
+}
+.lp-cs-toggle__btn--active {
+    background: var(--teal);
+    color: #fff;
+}
+
+/* ---- End-of-view CTAs ---- */
+.lp-cs-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 48px;
+    padding: 32px;
+}
+.lp-cs-cta--join {
+    background: linear-gradient(135deg, var(--teal-dark), var(--teal));
+    color: #fff;
+}
+.lp-cs-cta--book {
+    align-items: stretch;
+    background: var(--alt);
+    border: 1px solid var(--line);
+}
+.lp-cs-cta__heading {
+    font-family: MillenniumBold, serif;
+    font-size: 26px;
+    margin: 0 0 10px;
+    color: #fff;
+}
+.lp-cs-cta__heading--dark {
+    color: var(--ink);
+}
+.lp-cs-cta__text {
+    font-size: 17px;
+    line-height: 1.5;
+    margin: 0 0 20px;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 560px;
+}
+.lp-cs-cta__text--dark {
+    color: var(--muted);
+}
+
+/* ---- Impact: working-with-us + NGO FAQ ---- */
+.lp-cs-working {
+    margin-top: 44px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+}
+.lp-cs-working .lp-list {
+    margin-bottom: 18px;
+}
+.lp-cs-faq {
+    margin-top: 40px;
+}
+.lp-cs-faq__item {
+    padding: 16px 0;
+    border-top: 1px solid var(--line);
+}
+.lp-cs-faq__q {
+    font-family: MillenniumBold, serif;
+    font-size: 17px;
+    margin: 0 0 6px;
+    color: var(--ink);
+}
+.lp-cs-faq__a {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--muted);
+    margin: 0;
+    max-width: 70ch;
+}

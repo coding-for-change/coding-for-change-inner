@@ -189,6 +189,18 @@ const projects = [
       author: 'Coordinator',
       role: 'Münchner Tafel',
     },
+    impactHeadline: 'How Münchner Tafel gave its coordinators their week back',
+    impactChallenge:
+      'Every week, Münchner Tafel relies on hundreds of volunteers to move food to the people who need it. Keeping track of who was coming, and when, meant a tangle of spreadsheets and phone calls — and volunteers still turned up at the wrong place.',
+    impactSolution:
+      'We built a simple portal where volunteers see the week ahead and sign up in a couple of taps, while coordinators get a live picture of who is covering what. No training required — it works the way the team already thinks about their week.',
+    impactResults:
+      'The spreadsheets and phone-tag are gone. Volunteers organise themselves, no-shows dropped, and the coordination team got hours of their week back to spend on the mission instead of the rota.',
+    ngoFaq: [
+      { question: 'What does it cost us?', answer: 'Nothing. Our work is funded by our university backing and sponsors — there is no cost to your organisation.' },
+      { question: 'How long does it take?', answer: 'A single semester, from first conversation to a working product handed over to your team.' },
+      { question: 'What happens after hand-off?', answer: 'You own it — the code, the documentation and a walkthrough — with a support window afterwards. No lock-in.' },
+    ],
   },
   {
     title: 'Donation Tracker',
@@ -491,6 +503,18 @@ const projectsDe = [
       text: 'Zum ersten Mal sehen wir unsere ganze Woche an Schichten auf einen Blick. Das hat dem Team enorm viel Last abgenommen.',
       role: 'Münchner Tafel',
     },
+    impactHeadline: 'Wie die Münchner Tafel ihren Koordinator:innen die Woche zurückgab',
+    impactChallenge:
+      'Jede Woche verlässt sich die Münchner Tafel auf Hunderte Freiwillige, um Lebensmittel zu den Menschen zu bringen, die sie brauchen. Den Überblick zu behalten – wer wann kommt – bedeutete ein Gewirr aus Tabellen und Telefonaten, und Freiwillige standen trotzdem am falschen Ort.',
+    impactSolution:
+      'Wir haben ein einfaches Portal gebaut, in dem Freiwillige die kommende Woche sehen und sich mit wenigen Klicks eintragen, während Koordinator:innen live sehen, wer welche Schicht abdeckt. Keine Schulung nötig – es funktioniert so, wie das Team ohnehin über seine Woche denkt.',
+    impactResults:
+      'Tabellen und Telefon-Pingpong sind Geschichte. Freiwillige organisieren sich selbst, No-Shows gingen zurück, und das Koordinationsteam gewann Stunden pro Woche zurück – für die Mission statt für den Dienstplan.',
+    ngoFaq: [
+      { question: 'Was kostet uns das?', answer: 'Nichts. Unsere Arbeit wird durch unsere universitäre Anbindung und Sponsoren finanziert – für eure Organisation entstehen keine Kosten.' },
+      { question: 'Wie lange dauert es?', answer: 'Ein einziges Semester, vom ersten Gespräch bis zum fertigen Produkt, das an euer Team übergeben wird.' },
+      { question: 'Was passiert nach der Übergabe?', answer: 'Es gehört euch – der Code, die Dokumentation und ein Walkthrough – mit einem Support-Zeitraum danach. Kein Lock-in.' },
+    ],
   },
   {
     title: 'Spenden-Tracker',
@@ -923,13 +947,25 @@ const seed = async () => {
       const id = ids[i];
       if (!id) continue;
       const body = { ...de[i] };
-      // `technologies.name` is a required *localized* field, so a DE PATCH that
-      // omits it fails validation. Tech names don't translate, so carry the EN
-      // rows over — with their row ids, so Payload updates the existing rows'
-      // DE locale rather than replacing the array (which would wipe the EN names).
-      const enTech = enDocs[i]?.technologies;
-      if (!body.technologies && Array.isArray(enTech) && enTech.length) {
-        body.technologies = enTech.map((tech) => ({ id: tech.id, name: tech.name }));
+      const enDoc = enDocs[i] || {};
+      // Localized *array* fields need the EN row ids carried into the DE write,
+      // or Payload replaces the array and nulls the EN values. For arrays the DE
+      // payload omits (e.g. technologies — names don't translate) we carry the EN
+      // rows verbatim; for arrays it provides (links, ngoFaq, …) we attach the EN
+      // ids by index so the same rows are updated per-locale.
+      for (const [key, enArr] of Object.entries(enDoc)) {
+        const isRowArray =
+          Array.isArray(enArr) &&
+          enArr.length > 0 &&
+          enArr[0] &&
+          typeof enArr[0] === 'object' &&
+          'id' in enArr[0];
+        if (!isRowArray) continue;
+        if (body[key] === undefined) {
+          body[key] = enArr.map((row) => ({ ...row }));
+        } else if (Array.isArray(body[key])) {
+          body[key] = body[key].map((row, j) => ({ ...row, id: enArr[j]?.id }));
+        }
       }
       await patchJson(`/api/${slug}/${id}?locale=de`, body, cookie).then(assertOk(`${slug}[${i}] (de)`));
     }

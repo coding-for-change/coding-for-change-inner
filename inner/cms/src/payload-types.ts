@@ -308,6 +308,32 @@ export interface Project {
         id?: string | null;
       }[]
     | null;
+  /**
+   * One-line outcome for the impact hero (e.g. "How Lebenshilfe gave 150 companions their evenings back").
+   */
+  impactHeadline?: string | null;
+  /**
+   * The partner's challenge, in their world — non-technical.
+   */
+  impactChallenge?: string | null;
+  /**
+   * What the software does for them, in plain language (benefits, not stack).
+   */
+  impactSolution?: string | null;
+  /**
+   * The results / the difference it made.
+   */
+  impactResults?: string | null;
+  /**
+   * Common questions from nonprofits (cost, time, what happens after).
+   */
+  ngoFaq?:
+    | {
+        question: string;
+        answer: string;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1209,6 +1235,17 @@ export interface ProjectsSelect<T extends boolean = true> {
     | {
         image?: T;
         caption?: T;
+        id?: T;
+      };
+  impactHeadline?: T;
+  impactChallenge?: T;
+  impactSolution?: T;
+  impactResults?: T;
+  ngoFaq?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
         id?: T;
       };
   updatedAt?: T;

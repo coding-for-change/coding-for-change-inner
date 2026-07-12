@@ -65,6 +65,12 @@ export interface CmsProject {
         caption?: string | null;
         id?: string;
     }[] | null;
+    // "Impact story" view (persuasive, for nonprofits).
+    impactHeadline?: string | null;
+    impactChallenge?: string | null;
+    impactSolution?: string | null;
+    impactResults?: string | null;
+    ngoFaq?: { question: string; answer: string; id?: string }[] | null;
 }
 
 /** GET /api/sponsors */

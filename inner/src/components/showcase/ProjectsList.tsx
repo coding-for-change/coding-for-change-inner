@@ -19,9 +19,19 @@ const statusColors: Record<string, string> = {
     recruiting: '#b5651d',
 };
 
-/** A project has a case-study detail page once it has a slug + some narrative. */
+/** A project has a case-study detail page once it has a slug + some narrative
+ *  (technical or impact). */
 export const hasCaseStudy = (p: CmsProject): boolean =>
-    !!p.slug && !!(p.problem || p.approach || p.outcome);
+    !!p.slug &&
+    !!(
+        p.problem ||
+        p.approach ||
+        p.outcome ||
+        p.impactHeadline ||
+        p.impactChallenge ||
+        p.impactSolution ||
+        p.impactResults
+    );
 
 const TechPills: React.FC<{ project: CmsProject }> = ({ project }) =>
     (project.technologies ?? []).length > 0 ? (
