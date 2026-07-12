@@ -1,5 +1,6 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { mediaUrl } from '../../api';
@@ -49,21 +50,152 @@ const StatusPill: React.FC<{ status: string }> = ({ status }) => {
     );
 };
 
+type Shot = NonNullable<CmsProject['gallery']>[number];
+
+/**
+ * Full-screen, keyboard-navigable image viewer for the gallery. Rendered in a
+ * portal on <body> so it covers the whole viewport regardless of the
+ * transformed page shell (`.site-page` has a transform → new containing block).
+ * ← / → navigate (wrapping), Esc closes, backdrop click closes.
+ */
+const Lightbox: React.FC<{
+    shots: Shot[];
+    index: number;
+    title: string;
+    onClose: () => void;
+    onNavigate: (index: number) => void;
+}> = ({ shots, index, title, onClose, onNavigate }) => {
+    const count = shots.length;
+    const go = useCallback(
+        (delta: number) => onNavigate((index + delta + count) % count),
+        [index, count, onNavigate]
+    );
+
+    useEffect(() => {
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') onClose();
+            else if (e.key === 'ArrowRight') go(1);
+            else if (e.key === 'ArrowLeft') go(-1);
+        };
+        window.addEventListener('keydown', onKey);
+        // Lock background scroll (the desktop scroller is `.site-scroll`, not
+        // <body>, so lock both) and restore on close.
+        const scroller = document.querySelector<HTMLElement>('.site-scroll');
+        const prevBody = document.body.style.overflow;
+        const prevScroller = scroller?.style.overflow ?? '';
+        document.body.style.overflow = 'hidden';
+        if (scroller) scroller.style.overflow = 'hidden';
+        return () => {
+            window.removeEventListener('keydown', onKey);
+            document.body.style.overflow = prevBody;
+            if (scroller) scroller.style.overflow = prevScroller;
+        };
+    }, [go, onClose]);
+
+    if (typeof document === 'undefined') return null;
+
+    const shot = shots[index];
+    const src = mediaUrl(shot.image) || '';
+
+    return createPortal(
+        <div
+            className="lp-lightbox"
+            role="dialog"
+            aria-modal="true"
+            aria-label={shot.caption || title}
+            onClick={onClose}
+        >
+            <button
+                type="button"
+                className="lp-lightbox__close"
+                aria-label="Close"
+                onClick={onClose}
+            >
+                ×
+            </button>
+            {count > 1 && (
+                <button
+                    type="button"
+                    className="lp-lightbox__nav lp-lightbox__nav--prev"
+                    aria-label="Previous image"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        go(-1);
+                    }}
+                >
+                    ‹
+                </button>
+            )}
+            <figure
+                className="lp-lightbox__figure"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <img className="lp-lightbox__img" src={src} alt={shot.caption ?? title} />
+                {(shot.caption || count > 1) && (
+                    <figcaption className="lp-lightbox__cap">
+                        {shot.caption && <span>{shot.caption}</span>}
+                        {count > 1 && (
+                            <span className="lp-lightbox__count">
+                                {index + 1} / {count}
+                            </span>
+                        )}
+                    </figcaption>
+                )}
+            </figure>
+            {count > 1 && (
+                <button
+                    type="button"
+                    className="lp-lightbox__nav lp-lightbox__nav--next"
+                    aria-label="Next image"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        go(1);
+                    }}
+                >
+                    ›
+                </button>
+            )}
+        </div>,
+        document.body
+    );
+};
+
 const Gallery: React.FC<{
     project: CmsProject;
     shots?: CmsProject['gallery'];
 }> = ({ project, shots }) => {
     const items = (shots ?? project.gallery ?? []).filter((g) => mediaUrl(g.image));
+    const [openIndex, setOpenIndex] = useState<number | null>(null);
     if (items.length === 0) return null;
     return (
-        <div className="lp-cs__gallery">
-            {items.map((g, i) => (
-                <figure className="lp-cs__shot" key={g.id ?? i}>
-                    <img src={mediaUrl(g.image) || ''} alt={g.caption ?? project.title} />
-                    {g.caption && <figcaption className="lp-cs__caption">{g.caption}</figcaption>}
-                </figure>
-            ))}
-        </div>
+        <>
+            <div className="lp-cs__gallery">
+                {items.map((g, i) => (
+                    <figure className="lp-cs__shot" key={g.id ?? i}>
+                        <button
+                            type="button"
+                            className="lp-cs__shot-btn"
+                            onClick={() => setOpenIndex(i)}
+                            aria-label={
+                                g.caption ? `View image: ${g.caption}` : `View image ${i + 1}`
+                            }
+                        >
+                            <img src={mediaUrl(g.image) || ''} alt={g.caption ?? project.title} />
+                        </button>
+                        {g.caption && <figcaption className="lp-cs__caption">{g.caption}</figcaption>}
+                    </figure>
+                ))}
+            </div>
+            {openIndex !== null && (
+                <Lightbox
+                    shots={items}
+                    index={openIndex}
+                    title={project.title}
+                    onClose={() => setOpenIndex(null)}
+                    onNavigate={setOpenIndex}
+                />
+            )}
+        </>
     );
 };
 
