@@ -591,6 +591,13 @@
         display: none;
     }
 }
+/* German nav labels are longer, so the wordmark needs more clearance before it
+   fits alongside them without clipping the edge links. */
+@media (max-width: 1499px) {
+    html[lang='de'] .lp-nav__name {
+        display: none;
+    }
+}
 .lp-nav__link:hover {
     color: #2f8f90;
 }

@@ -89,7 +89,7 @@ const TopNav: React.FC = () => {
         ...(hasBlog ? [{ to: '/blog', label: t.nav.blog }] : []),
         { to: '/team', label: t.nav.team },
         ...(hasSponsors ? [{ to: '/sponsors', label: t.nav.sponsors }] : []),
-        { to: '/join', label: t.nav.join },
+        // Join is intentionally omitted here — the top-right JOIN button covers it.
         { to: '/contact', label: t.nav.contact },
     ];
 
