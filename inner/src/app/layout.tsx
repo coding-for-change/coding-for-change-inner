@@ -154,27 +154,6 @@ export default async function RootLayout({
                     </nav>
                 </noscript>
 
-                {/* Force the custom pixel fonts to load before first paint. */}
-                <div
-                    className="font_preload"
-                    style={{
-                        opacity: 0,
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: 0,
-                        height: 0,
-                        overflow: 'hidden',
-                        pointerEvents: 'none',
-                    }}
-                    aria-hidden
-                >
-                    <span style={{ fontFamily: "'MSSerif', Arial, sans-serif" }}>abc</span>
-                    <span style={{ fontFamily: "'Millennium', Arial, sans-serif" }}>abc</span>
-                    <span style={{ fontFamily: "'MillenniumBold', Arial, sans-serif" }}>abc</span>
-                    <span style={{ fontFamily: "'Terminal', Arial, sans-serif" }}>abc</span>
-                </div>
-
                 <InputRelay />
                 <Providers initialLocale={locale} initialConfig={siteConfig}>
                     {children}

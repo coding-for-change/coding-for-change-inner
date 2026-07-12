@@ -93,7 +93,7 @@ p b {
 }
 
 h1 {
-    font-family: gastromond, sans-serif;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 64px;
 }
 
@@ -167,7 +167,7 @@ input {
     border: none;
     resize: none;
     box-shadow: var(--border-field);
-    font-family: Millennium, sans-serif;
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 18px;
 }
 
@@ -179,7 +179,7 @@ textarea {
     box-sizing: border-box;
     resize: none;
     box-shadow: var(--border-field);
-    font-family: Millennium, sans-serif;
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 18px;
 }
 
