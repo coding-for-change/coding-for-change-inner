@@ -10,7 +10,7 @@ import './landing.css';
 
 // Sections that live on the single-scroll landing page (`/`). Clicking one
 // navigates to /#id; the Landing component handles the smooth scroll.
-const SECTION_IDS = ['home', 'about', 'process', 'events', 'projects', 'sponsors', 'qa'];
+const SECTION_IDS = ['home', 'process', 'sponsors', 'qa'];
 
 const TopNav: React.FC = () => {
     const { t, locale, setLocale } = useLanguage();
@@ -69,9 +69,14 @@ const TopNav: React.FC = () => {
 
     const sectionLinks = [{ id: 'home', label: t.nav.home }];
 
+    // Blog moved out of the primary nav (lives in the footer); About and
+    // Projects are now standalone pages and Join gets a text link here in
+    // addition to the top-right CTA.
     const pageLinks = [
+        { to: '/about', label: t.nav.about },
+        { to: '/projects', label: t.nav.projects },
         { to: '/team', label: t.nav.team },
-        { to: '/blog', label: t.nav.blog },
+        { to: '/join', label: t.nav.join },
         { to: '/contact', label: t.nav.contact },
     ];
 

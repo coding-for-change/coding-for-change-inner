@@ -1,5 +1,5 @@
 import 'server-only';
-import type { CmsBlogPost } from '@/api/types';
+import type { CmsBlogPost, CmsProject } from '@/api/types';
 
 // Server-side CMS fetching. Unlike the browser client (`@/api/client`, which
 // hits the relative `/api` proxied by the outer Express server), server
@@ -56,6 +56,22 @@ export async function fetchCollection<T>(
 /** Fetch a global. Returns null on any failure. */
 export async function fetchGlobal<T>(slug: string, locale = 'en'): Promise<T | null> {
     return getJson<T>(buildUrl(`globals/${slug}`, { locale }));
+}
+
+/** Fetch a single project by slug (depth=2 to populate image + gallery media). */
+export async function fetchProjectBySlug(
+    slug: string,
+    locale = 'en'
+): Promise<CmsProject | null> {
+    const data = await getJson<PaginatedResponse<CmsProject>>(
+        buildUrl('projects', {
+            locale,
+            depth: '2',
+            limit: '1',
+            'where[slug][equals]': slug,
+        })
+    );
+    return data?.docs?.[0] ?? null;
 }
 
 /** Fetch a single blog post by slug (depth=2 to populate author/project/media). */

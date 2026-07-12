@@ -13,6 +13,7 @@ export type {
     CmsFaqItem,
     CmsSiteConfig,
     CmsMembership,
+    CmsPartner,
     CmsLegal,
     CmsForm,
     CmsFormField,

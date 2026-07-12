@@ -1226,7 +1226,8 @@
     grid-column: 1 / -1;
 }
 
-/* ---- Per-member company logos (revealed on card hover) ---- */
+/* ---- Per-member company logos (always visible — a member's experience is
+   one of the strongest signals on the site, so it must show on touch too) ---- */
 .lp-member__companies {
     display: flex;
     flex-wrap: wrap;
@@ -1234,38 +1235,36 @@
     justify-content: center;
     gap: 12px;
     width: 100%;
-    max-height: 0;
-    opacity: 0;
-    margin-top: 0;
-    padding-top: 0;
-    overflow: hidden;
-    border-top: 1px solid transparent;
-    transition: max-height 0.28s ease, opacity 0.2s ease,
-        margin-top 0.28s ease, padding-top 0.28s ease, border-color 0.28s ease;
-}
-.lp-member:hover .lp-member__companies,
-.lp-member:focus-within .lp-member__companies {
-    max-height: 120px;
-    opacity: 1;
-    margin-top: 14px;
+    margin-top: 16px;
     padding-top: 14px;
-    border-top-color: var(--line);
+    border-top: 1px solid var(--line);
+}
+.lp-member__companies-label {
+    width: 100%;
+    margin-bottom: 2px;
+    font-family: MSSerif, sans-serif;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
 }
 .lp-member__company {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 34px;
+    height: 30px;
 }
 .lp-member__company img {
-    max-height: 28px;
-    max-width: 96px;
+    max-height: 26px;
+    max-width: 92px;
     object-fit: contain;
+    /* Muted by default for a calm logo wall; full colour on hover/focus. */
     filter: grayscale(1);
-    opacity: 0.8;
+    opacity: 0.85;
     transition: filter 0.2s ease, opacity 0.2s ease;
 }
-.lp-member:hover .lp-member__company img {
+.lp-member:hover .lp-member__company img,
+.lp-member:focus-within .lp-member__company img {
     filter: grayscale(0);
     opacity: 1;
 }
@@ -1312,4 +1311,287 @@
 }
 .lp-section--book {
     border-top: 1px solid var(--line);
+}
+
+/* ================================================================== */
+/* About page                                                          */
+/* ================================================================== */
+.lp-prose {
+    display: block;
+    max-width: 680px;
+    margin-top: 8px;
+}
+.lp-prose__p {
+    font-size: 18px;
+    line-height: 1.7;
+    color: #3a4342;
+    margin: 0 0 18px;
+}
+.lp-stats--about {
+    margin-top: 52px;
+}
+.lp-about-block {
+    display: block;
+    margin-top: 72px;
+}
+.lp-about-teaser {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-top: 64px;
+    padding: 28px 30px;
+    background: var(--alt);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--teal);
+}
+.lp-about-teaser .lp-lead {
+    margin: 0;
+    color: var(--ink);
+}
+
+/* ---- "See all" link row under a section grid ---- */
+.lp-section__more {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+/* ================================================================== */
+/* 3D experience band — a dark craft-flex interlude on the homepage.   */
+/* Hidden on mobile, where the 3D scene isn't offered.                 */
+/* ================================================================== */
+.lp-3d {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 88px 0;
+    background: radial-gradient(
+            900px 420px at 82% -25%,
+            rgba(47, 143, 144, 0.3),
+            transparent 62%
+        ),
+        #0f2040;
+    color: #fff;
+}
+.lp-3d__kicker {
+    color: #7fe3e4;
+}
+.lp-3d__title {
+    font-family: MillenniumBold, serif;
+    font-size: 40px;
+    line-height: 1.05;
+    margin: 0 0 16px;
+    color: #fff;
+    max-width: 20ch;
+}
+.lp-3d__text {
+    font-size: 19px;
+    line-height: 1.6;
+    max-width: 620px;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0 0 32px;
+}
+@media (max-width: 900px) {
+    .lp-3d {
+        display: none;
+    }
+}
+
+/* ================================================================== */
+/* Projects list — featured flagship + grid                            */
+/* ================================================================== */
+.lp-grid--projects {
+    margin-top: 32px;
+}
+.lp-proj-feat {
+    display: grid;
+    grid-template-columns: 1fr;
+    margin: 12px 0 40px;
+    border: 1px solid var(--line);
+    background: #fff;
+    overflow: hidden;
+}
+.lp-proj-feat--media {
+    grid-template-columns: 1.05fr 1fr;
+}
+.lp-proj-feat__media {
+    display: block;
+    background: var(--alt);
+}
+.lp-proj-feat__media img {
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+    object-fit: cover;
+    display: block;
+}
+.lp-proj-feat__body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 40px;
+    box-sizing: border-box;
+}
+.lp-proj-feat__title {
+    font-family: MillenniumBold, serif;
+    font-size: 30px;
+    line-height: 1.06;
+    margin: 14px 0 6px;
+}
+.lp-proj-feat__impact {
+    margin-top: 16px;
+    font-family: MillenniumBold, serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--teal-dark);
+}
+.lp-proj-feat__cta {
+    margin-top: 24px;
+}
+@media (max-width: 820px) {
+    .lp-proj-feat--media {
+        grid-template-columns: 1fr;
+    }
+    .lp-proj-feat__media img {
+        min-height: 200px;
+    }
+    .lp-proj-feat__body {
+        padding: 28px;
+    }
+}
+
+/* ================================================================== */
+/* Project case study (/projects/<slug>)                               */
+/* ================================================================== */
+.lp-cs {
+    display: block;
+    max-width: 820px;
+}
+.lp-cs__head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.lp-cs__title {
+    font-family: MillenniumBold, serif;
+    font-size: 44px;
+    line-height: 1.04;
+    margin: 14px 0 6px;
+}
+.lp-cs__lead {
+    margin-top: 14px;
+}
+.lp-cs__impact {
+    margin-top: 18px;
+    padding: 12px 18px;
+    background: #eaf2f2;
+    border-left: 3px solid var(--teal);
+    font-family: MillenniumBold, serif;
+    font-size: 17px;
+    line-height: 1.45;
+    color: var(--teal-dark);
+}
+.lp-cs__hero {
+    display: block;
+    width: 100%;
+    margin: 32px 0;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+}
+.lp-cs__hero img {
+    width: 100%;
+    max-height: 440px;
+    object-fit: cover;
+    display: block;
+}
+.lp-cs__body {
+    display: block;
+}
+.lp-cs__block {
+    display: block;
+    margin-top: 36px;
+}
+.lp-cs__h {
+    font-family: MillenniumBold, serif;
+    font-size: 24px;
+    margin: 0 0 12px;
+}
+.lp-cs__p {
+    font-size: 18px;
+    line-height: 1.7;
+    color: #3a4342;
+    margin: 0 0 14px;
+    max-width: 70ch;
+}
+.lp-cs__quote {
+    margin: 44px 0 8px;
+    padding: 28px 32px;
+    background: var(--alt);
+    border-left: 4px solid var(--teal);
+}
+.lp-cs__quote-text {
+    font-family: MillenniumBold, serif;
+    font-size: 22px;
+    line-height: 1.4;
+    color: var(--ink);
+    margin: 0;
+}
+.lp-cs__quote-by {
+    margin-top: 14px;
+    font-size: 15px;
+    color: var(--muted);
+}
+.lp-cs__gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 18px;
+    margin: 40px 0 8px;
+}
+.lp-cs__shot {
+    display: block;
+    margin: 0;
+    border: 1px solid var(--line);
+    background: #fff;
+    overflow: hidden;
+}
+.lp-cs__shot img {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+}
+.lp-cs__caption {
+    display: block;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--muted);
+    border-top: 1px solid var(--line);
+}
+.lp-cs__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 48px;
+    margin-top: 48px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+}
+.lp-cs__meta-h {
+    font-family: MSSerif, sans-serif;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 12px;
+}
+.lp-cs__links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+}
+@media (max-width: 900px) {
+    .lp-cs__title {
+        font-size: 32px;
+    }
 }

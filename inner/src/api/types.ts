@@ -47,6 +47,24 @@ export interface CmsProject {
     technologies?: { name: string; id?: string }[];
     status: 'active' | 'completed' | 'recruiting';
     links?: { label: string; url: string; id?: string }[];
+    // Case-study fields (optional). `slug` drives the /projects/<slug> detail
+    // page; `featured` marks the flagship for a differentiated treatment.
+    slug?: string | null;
+    featured?: boolean | null;
+    problem?: string | null;
+    approach?: string | null;
+    outcome?: string | null;
+    impact?: string | null;
+    quote?: {
+        text?: string | null;
+        author?: string | null;
+        role?: string | null;
+    } | null;
+    gallery?: {
+        image?: CmsMedia | null;
+        caption?: string | null;
+        id?: string;
+    }[] | null;
 }
 
 /** GET /api/sponsors */
@@ -144,6 +162,18 @@ export interface CmsMembership {
     /** Cross-disciplinary "Ways to contribute" cards (Engineering, Consulting, …). */
     tracks?: { title: string; description: string; id?: string }[];
     contactEmail: string;
+}
+
+/** GET /api/globals/partner — the "Partner with us / For NGOs" page content. */
+export interface CmsPartner {
+    title?: string | null;
+    intro?: string | null;
+    valueProps?: { title: string; description: string; id?: string }[] | null;
+    process?: { title: string; description: string; id?: string }[] | null;
+    commitment?: string | null;
+    ctaHeading?: string | null;
+    ctaText?: string | null;
+    contactEmail?: string | null;
 }
 
 export type CmsFormField =

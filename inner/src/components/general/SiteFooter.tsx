@@ -1,41 +1,43 @@
 'use client';
 import React from 'react';
 import RouterLink from 'next/link';
-import { useSiteConfig } from '../../api';
+import { useSiteConfig, useLanguage } from '../../api';
 import Logo from '../../assets/Logo.webp';
 
 const NAVY = '#0f2040';
 const GRAY = '#6b7280';
 const FONT = '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif';
 
-const PAGE_LINKS = [
-    { to: '/', label: 'Startseite' },
-    { to: '/about', label: 'Über uns' },
-    { to: '/events', label: 'Events' },
-    { to: '/projects', label: 'Projekte' },
-    { to: '/team', label: 'Team' },
-    { to: '/blog', label: 'Blog' },
-    { to: '/sponsors', label: 'Sponsoren' },
-    { to: '/join', label: 'Mitmachen' },
-];
-
-const INFO_LINKS = [
-    { to: '/contact', label: 'Kontakt' },
-    { to: '/qa', label: 'F&A' },
-    { to: '/imprint', label: 'Datenschutz' },
-    { to: '/imprint', label: 'Impressum' },
-    { to: '/credits', label: 'Credits' },
-];
-
 /**
  * Site-wide footer. Shared by the desktop site shell and the mobile layout —
  * with the Windows-95 desktop chrome (and its shortcuts) gone, this is now the
- * canonical way to reach the Imprint, Privacy and Credits pages. A centered
- * max-width inner block keeps it readable full-width on desktop and stacked on
- * mobile.
+ * canonical way to reach the Imprint, Privacy and Credits pages. Labels are
+ * localized (EN/DE) via the translation table. A centered max-width inner block
+ * keeps it readable full-width on desktop and stacked on mobile.
  */
 const SiteFooter: React.FC = () => {
     const siteConfig = useSiteConfig();
+    const { t } = useLanguage();
+
+    const f = t.footer;
+    const PAGE_LINKS = [
+        { to: '/', label: f.home },
+        { to: '/about', label: f.about },
+        { to: '/projects', label: f.projects },
+        { to: '/team', label: f.team },
+        { to: '/blog', label: f.blog },
+        { to: '/#sponsors', label: f.sponsors },
+        { to: '/partner', label: f.partner },
+        { to: '/join', label: f.join },
+    ];
+
+    const INFO_LINKS = [
+        { to: '/contact', label: f.contact },
+        { to: '/qa', label: f.qa },
+        { to: '/privacy', label: f.privacy },
+        { to: '/imprint', label: f.imprint },
+        { to: '/credits', label: f.credits },
+    ];
 
     return (
         <footer style={styles.footer}>
@@ -60,7 +62,7 @@ const SiteFooter: React.FC = () => {
 
                 <div style={styles.columns}>
                     <div style={styles.column}>
-                        <p style={styles.columnHeading}>SEITEN</p>
+                        <p style={styles.columnHeading}>{f.pages.toUpperCase()}</p>
                         {PAGE_LINKS.map((link) => (
                             <RouterLink key={link.label} href={link.to} style={styles.columnLink}>
                                 {link.label}
@@ -68,7 +70,7 @@ const SiteFooter: React.FC = () => {
                         ))}
                     </div>
                     <div style={styles.column}>
-                        <p style={styles.columnHeading}>INFORMATIONEN</p>
+                        <p style={styles.columnHeading}>{f.info.toUpperCase()}</p>
                         {INFO_LINKS.map((link) => (
                             <RouterLink key={link.label} href={link.to} style={styles.columnLink}>
                                 {link.label}

@@ -36,6 +36,7 @@ const MemberCard: React.FC<{ member: CmsTeamMember; index: number }> = ({
     member,
     index,
 }) => {
+    const { t } = useLanguage();
     const imgSrc = mediaUrl(member.image);
     const companies = populatedCompanies(member);
     return (
@@ -76,8 +77,11 @@ const MemberCard: React.FC<{ member: CmsTeamMember; index: number }> = ({
             {companies.length > 0 && (
                 <div
                     className="lp-member__companies"
-                    aria-label="Previously worked at"
+                    aria-label={t.team.experienceLabel}
                 >
+                    <span className="lp-member__companies-label">
+                        {t.team.experienceLabel}
+                    </span>
                     {companies.map((company) => {
                         const logo = mediaUrl(company.logo);
                         return (

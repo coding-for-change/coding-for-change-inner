@@ -66,15 +66,13 @@ const MobileNav: React.FC = () => {
     }, [langOpen]);
 
     const navLinks = [
+        // Standalone pages.
+        { to: '/about', label: t.nav.about },
+        { to: '/projects', label: t.nav.projects },
+        { to: '/team', label: t.nav.team },
         // Sections on the single-scroll landing page.
-        { to: '/#about', label: t.nav.about },
-        { to: '/#events', label: t.nav.events },
-        { to: '/#projects', label: t.nav.projects },
         { to: '/#sponsors', label: t.nav.sponsors },
         { to: '/#qa', label: t.nav.qa },
-        // Standalone pages.
-        { to: '/team', label: t.nav.team },
-        { to: '/blog', label: t.nav.blog },
         { to: '/contact', label: t.nav.contact },
     ];
 

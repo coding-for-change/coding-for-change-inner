@@ -6,16 +6,16 @@ import type { CmsLegal } from '@/api/types';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-    title: 'Imprint — Coding for Change',
+    title: 'Privacy Policy — Coding for Change',
 };
 
-export default async function ImprintPage() {
+export default async function PrivacyPage() {
     const locale = await getServerLocale();
     const legal = await fetchGlobal<CmsLegal>('legal', locale);
     return (
         <div className="lp lp-page">
             <div className="lp-inner">
-                <ImprintContent legal={legal} section="impressum" />
+                <ImprintContent legal={legal} section="privacy" />
             </div>
         </div>
     );

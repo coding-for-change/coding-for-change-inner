@@ -5,13 +5,13 @@ import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCmsCollection, mediaUrl, useSiteConfig } from '../../api';
 import {
-    CmsEvent,
     CmsProject,
     CmsSponsor,
     CmsFaqItem,
 } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
 import BookingEmbed from '../general/BookingEmbed';
+import { hasCaseStudy } from './ProjectsList';
 import './landing.css';
 
 // Shared scroll-reveal animation. Sections fade/slide in once on first view.
@@ -28,7 +28,6 @@ const statusColors: Record<string, string> = {
 };
 
 export interface LandingProps {
-    events?: CmsEvent[] | null;
     projects?: CmsProject[] | null;
     sponsors?: CmsSponsor[] | null;
     faq?: CmsFaqItem[] | null;
@@ -40,8 +39,6 @@ const Landing: React.FC<LandingProps> = (props) => {
     const pathname = usePathname();
     const router = useRouter();
 
-    const { data: events, loading: eventsLoading } =
-        useCmsCollection<CmsEvent>('events', undefined, props.events);
     const { data: projects, loading: projectsLoading } =
         useCmsCollection<CmsProject>('projects', undefined, props.projects);
     const { data: sponsors, loading: sponsorsLoading } =
@@ -79,36 +76,6 @@ const Landing: React.FC<LandingProps> = (props) => {
             if (scrollTimer.current) clearTimeout(scrollTimer.current);
         };
     }, [pathname]);
-
-    const upcoming = (events ?? []).filter((e) => e.isUpcoming);
-    const past = (events ?? []).filter((e) => !e.isUpcoming);
-
-    const renderEventCard = (event: CmsEvent, i: number) => (
-        <motion.div
-            key={event.id}
-            className="lp-card"
-            {...reveal}
-            transition={{ duration: 0.45, delay: Math.min(i * 0.05, 0.3) }}
-        >
-            <span className="lp-badge">{event.type}</span>
-            <h3 className="lp-card__title">{event.title}</h3>
-            <span className="lp-card__meta">
-                {event.date} {t.common.at} {event.time}
-            </span>
-            <span className="lp-card__sub">{event.location}</span>
-            <p className="lp-card__text">{event.description}</p>
-            {event.link?.url && (
-                <a
-                    className="lp-card__link"
-                    href={event.link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    {event.link.label || t.common.learnMore} →
-                </a>
-            )}
-        </motion.div>
-    );
 
     return (
         <div className="lp lp--landing">
@@ -210,69 +177,8 @@ const Landing: React.FC<LandingProps> = (props) => {
                 </div>
             </section>
 
-            {/* ---- Events ---- */}
-            <section id="events" className="lp-section">
-                <div className="lp-inner">
-                    <motion.div
-                        style={{ display: 'block' }}
-                        {...reveal}
-                        transition={{ duration: 0.5 }}
-                    >
-                        <p className="lp-kicker">{t.events.subtitle}</p>
-                        <h2 className="lp-h2">{t.events.title}</h2>
-                        <p className="lp-lead">{t.events.intro}</p>
-                    </motion.div>
-                    {eventsLoading ? (
-                        <p className="lp-loading">Loading…</p>
-                    ) : (
-                        <>
-                            {upcoming.length > 0 && (
-                                <>
-                                    <h3 className="lp-subhead">
-                                        {t.events.upcoming}
-                                    </h3>
-                                    <div className="lp-grid">
-                                        {upcoming.map(renderEventCard)}
-                                    </div>
-                                </>
-                            )}
-                            {past.length > 0 && (
-                                <>
-                                    <h3 className="lp-subhead">
-                                        {t.events.past}
-                                    </h3>
-                                    <div className="lp-grid">
-                                        {past.map(renderEventCard)}
-                                    </div>
-                                </>
-                            )}
-                            {upcoming.length === 0 && past.length === 0 && (
-                                <motion.div
-                                    className="lp-card lp-event-empty"
-                                    {...reveal}
-                                    transition={{ duration: 0.45 }}
-                                >
-                                    <h3 className="lp-card__title">
-                                        {t.events.emptyTitle}
-                                    </h3>
-                                    <p className="lp-card__text">
-                                        {t.events.emptyText}
-                                    </p>
-                                    <Link
-                                        className="lp-card__link"
-                                        href="/contact"
-                                    >
-                                        {t.events.emptyCta} →
-                                    </Link>
-                                </motion.div>
-                            )}
-                        </>
-                    )}
-                </div>
-            </section>
-
             {/* ---- Projects ---- */}
-            <section id="projects" className="lp-section lp-section--alt">
+            <section id="projects" className="lp-section">
                 <div className="lp-inner">
                     <motion.div
                         style={{ display: 'block' }}
@@ -333,15 +239,46 @@ const Landing: React.FC<LandingProps> = (props) => {
                                             )}
                                         </div>
                                     )}
+                                    {hasCaseStudy(project) && (
+                                        <Link
+                                            className="lp-card__link"
+                                            href={`/projects/${project.slug}`}
+                                        >
+                                            {t.common.learnMore} →
+                                        </Link>
+                                    )}
                                 </motion.div>
                             ))}
                         </div>
                     )}
+                    <div className="lp-section__more">
+                        <Link className="lp-btn lp-btn--ghost" href="/projects">
+                            {t.projects.viewAll} →
+                        </Link>
+                    </div>
+                </div>
+            </section>
+
+            {/* ---- 3D experience (a craft flex for engineers; hidden on mobile) ---- */}
+            <section className="lp-3d">
+                <div className="lp-inner">
+                    <motion.div
+                        style={{ display: 'block' }}
+                        {...reveal}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <p className="lp-kicker lp-3d__kicker">{t.threed.kicker}</p>
+                        <h2 className="lp-3d__title">{t.threed.title}</h2>
+                        <p className="lp-3d__text">{t.threed.text}</p>
+                        <a className="lp-btn lp-btn--light" href="/3d">
+                            {t.threed.cta} →
+                        </a>
+                    </motion.div>
                 </div>
             </section>
 
             {/* ---- Sponsors ---- */}
-            <section id="sponsors" className="lp-section">
+            <section id="sponsors" className="lp-section lp-section--alt">
                 <div className="lp-inner">
                     <motion.div
                         style={{ display: 'block' }}
@@ -390,7 +327,7 @@ const Landing: React.FC<LandingProps> = (props) => {
             </section>
 
             {/* ---- FAQ ---- */}
-            <section id="qa" className="lp-section lp-section--alt">
+            <section id="qa" className="lp-section">
                 <div className="lp-inner">
                     <motion.div
                         style={{ display: 'block' }}
@@ -492,7 +429,7 @@ const Landing: React.FC<LandingProps> = (props) => {
                             </Link>
                             <Link
                                 className="lp-btn lp-btn--light"
-                                href="/contact"
+                                href="/partner"
                             >
                                 {t.cta.contact}
                             </Link>

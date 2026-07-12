@@ -116,11 +116,13 @@ export interface Config {
     'site-config': SiteConfig;
     membership: Membership;
     legal: Legal;
+    partner: Partner;
   };
   globalsSelect: {
     'site-config': SiteConfigSelect<false> | SiteConfigSelect<true>;
     membership: MembershipSelect<false> | MembershipSelect<true>;
     legal: LegalSelect<false> | LegalSelect<true>;
+    partner: PartnerSelect<false> | PartnerSelect<true>;
   };
   locale: 'en' | 'de';
   widgets: {
@@ -257,6 +259,11 @@ export interface Project {
   id: number;
   title: string;
   ngoPartner: string;
+  /**
+   * Lowercase, hyphenated (e.g. "lebenshilfe-muenchen"). Needed for the detail page.
+   */
+  slug?: string | null;
+  featured?: boolean | null;
   description: string;
   image?: (number | null) | Media;
   technologies?:
@@ -270,6 +277,34 @@ export interface Project {
     | {
         label: string;
         url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The problem the partner faced, in their terms.
+   */
+  problem?: string | null;
+  /**
+   * How the team approached and built the solution.
+   */
+  approach?: string | null;
+  /**
+   * What shipped and what changed as a result.
+   */
+  outcome?: string | null;
+  /**
+   * A one-line impact highlight (e.g. "Saves ~150 companions hours of paperwork a month").
+   */
+  impact?: string | null;
+  quote?: {
+    text?: string | null;
+    author?: string | null;
+    role?: string | null;
+  };
+  gallery?:
+    | {
+        image: number | Media;
+        caption?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -937,6 +972,16 @@ export interface PayloadMcpApiKey {
      */
     update?: boolean | null;
   };
+  partner?: {
+    /**
+     * Allow clients to find partner global.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to update partner global.
+     */
+    update?: boolean | null;
+  };
   updatedAt: string;
   createdAt: string;
   enableAPIKey?: boolean | null;
@@ -1127,6 +1172,8 @@ export interface TeamSelect<T extends boolean = true> {
 export interface ProjectsSelect<T extends boolean = true> {
   title?: T;
   ngoPartner?: T;
+  slug?: T;
+  featured?: T;
   description?: T;
   image?: T;
   technologies?:
@@ -1141,6 +1188,24 @@ export interface ProjectsSelect<T extends boolean = true> {
     | {
         label?: T;
         url?: T;
+        id?: T;
+      };
+  problem?: T;
+  approach?: T;
+  outcome?: T;
+  impact?: T;
+  quote?:
+    | T
+    | {
+        text?: T;
+        author?: T;
+        role?: T;
+      };
+  gallery?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
         id?: T;
       };
   updatedAt?: T;
@@ -1539,6 +1604,12 @@ export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
         find?: T;
         update?: T;
       };
+  partner?:
+    | T
+    | {
+        find?: T;
+        update?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   enableAPIKey?: T;
@@ -1690,6 +1761,50 @@ export interface Legal {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partner".
+ */
+export interface Partner {
+  id: number;
+  /**
+   * Page headline.
+   */
+  title?: string | null;
+  /**
+   * Lead paragraph under the headline.
+   */
+  intro?: string | null;
+  /**
+   * The concrete things a partner gets from working with us.
+   */
+  valueProps?:
+    | {
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The steps of a partnership, from first conversation to hand-off.
+   */
+  process?:
+    | {
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional: what we ask of a partner (time, a point of contact, etc.).
+   */
+  commitment?: string | null;
+  ctaHeading?: string | null;
+  ctaText?: string | null;
+  contactEmail?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-config_select".
  */
 export interface SiteConfigSelect<T extends boolean = true> {
@@ -1756,6 +1871,35 @@ export interface MembershipSelect<T extends boolean = true> {
 export interface LegalSelect<T extends boolean = true> {
   impressum?: T;
   privacyPolicy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partner_select".
+ */
+export interface PartnerSelect<T extends boolean = true> {
+  title?: T;
+  intro?: T;
+  valueProps?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  process?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  commitment?: T;
+  ctaHeading?: T;
+  ctaText?: T;
+  contactEmail?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
