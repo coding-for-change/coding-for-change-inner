@@ -1299,14 +1299,7 @@
     max-height: 26px;
     max-width: 92px;
     object-fit: contain;
-    /* Muted by default for a calm logo wall; full colour on hover/focus. */
-    filter: grayscale(1);
-    opacity: 0.85;
-    transition: filter 0.2s ease, opacity 0.2s ease;
-}
-.lp-member:hover .lp-member__company img,
-.lp-member:focus-within .lp-member__company img {
-    filter: grayscale(0);
+    /* Full colour so the employer logos read at a glance, no hover needed. */
     opacity: 1;
 }
 .lp-member__company-name {

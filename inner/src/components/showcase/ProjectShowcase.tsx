@@ -51,6 +51,8 @@ const TechPills: React.FC<{ project: CmsProject }> = ({ project }) =>
  */
 const ProjectShowcase: React.FC<{ projects: CmsProject[] }> = ({ projects }) => {
     const { t, locale } = useLanguage();
+    const statusLabel = (s: string) =>
+        (t.projects.status as Record<string, string>)[s] || s;
     const featured = projects.find((p) => p.featured) ?? null;
     const rest = projects.filter((p) => p !== featured);
     const featuredHero = featured ? mediaUrl(featured.image) : '';
@@ -79,7 +81,7 @@ const ProjectShowcase: React.FC<{ projects: CmsProject[] }> = ({ projects }) => 
                                     statusColors[featured.status] || '#808080',
                             }}
                         >
-                            {featured.status}
+                            {statusLabel(featured.status)}
                         </span>
                         <h2 className="lp-proj-feat__title">{featured.title}</h2>
                         <span className="lp-card__sub">
@@ -120,7 +122,7 @@ const ProjectShowcase: React.FC<{ projects: CmsProject[] }> = ({ projects }) => 
                                             statusColors[project.status] || '#808080',
                                     }}
                                 >
-                                    {project.status}
+                                    {statusLabel(project.status)}
                                 </span>
                             </div>
                             <span className="lp-card__sub">
