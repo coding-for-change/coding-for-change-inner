@@ -70,6 +70,12 @@ export interface CmsProject {
     impactChallenge?: string | null;
     impactSolution?: string | null;
     impactResults?: string | null;
+    // Impact-story photos; the ImpactView falls back to `gallery` when empty.
+    impactGallery?: {
+        image?: CmsMedia | null;
+        caption?: string | null;
+        id?: string;
+    }[] | null;
     ngoFaq?: { question: string; answer: string; id?: string }[] | null;
 }
 
@@ -119,6 +125,7 @@ export interface CmsSiteConfig {
     copyrightText?: string;
     windowTitle?: string;
     bookingUrl?: string;
+    teamHeroImage?: CmsMedia | null;
     stats?: { value: string; label: string; id?: string }[];
 }
 
@@ -173,6 +180,7 @@ export interface CmsBlogPost {
 export interface CmsMembership {
     title: string;
     description: string;
+    heroImage?: CmsMedia | null;
     benefits?: { text: string; id?: string }[];
     requirements?: { text: string; id?: string }[];
     /** Cross-disciplinary "Ways to contribute" cards (Engineering, Consulting, …). */
@@ -184,6 +192,7 @@ export interface CmsMembership {
 export interface CmsPartner {
     title?: string | null;
     intro?: string | null;
+    heroImage?: CmsMedia | null;
     valueProps?: { title: string; description: string; id?: string }[] | null;
     process?: { title: string; description: string; id?: string }[] | null;
     commitment?: string | null;
@@ -210,6 +219,7 @@ export interface CmsHomepage {
     heroCtaPrimary?: string | null;
     heroCtaSecondary?: string | null;
     heroScrollHint?: string | null;
+    heroImage?: CmsMedia | null;
     aboutKicker?: string | null;
     aboutOneLiner?: string | null;
     aboutPitch?: string | null;

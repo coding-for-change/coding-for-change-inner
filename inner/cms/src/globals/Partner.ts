@@ -14,6 +14,15 @@ export const Partner: GlobalConfig = {
     { name: 'title', type: 'text', localized: true, admin: { description: 'Page headline.' } },
     { name: 'intro', type: 'textarea', localized: true, admin: { description: 'Lead paragraph under the headline.' } },
     {
+      name: 'heroImage',
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        description:
+          'Optional hero image under the headline — e.g. the team collaborating with an NGO partner. Left empty, the page stays text-only.',
+      },
+    },
+    {
       name: 'valueProps',
       label: 'What we bring',
       type: 'array',

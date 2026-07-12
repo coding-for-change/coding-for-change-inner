@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useCmsCollection, mediaUrl } from '../../api';
+import { useCmsCollection, useSiteConfig, mediaUrl } from '../../api';
 import { CmsTeamMember, CmsCompany } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
 import linkedinIcon from '../../assets/icons/linkedin.png';
@@ -116,6 +116,8 @@ const Team: React.FC<TeamProps> = (props) => {
         props.team
     );
     const { t } = useLanguage();
+    const siteConfig = useSiteConfig();
+    const teamHero = mediaUrl(siteConfig.teamHeroImage);
 
     const all = team ?? [];
     const members = all.filter((m) => m.category !== 'adviser');
@@ -135,6 +137,17 @@ const Team: React.FC<TeamProps> = (props) => {
                     <h1 className="lp-page__title">{t.team.title}</h1>
                     <p className="lp-lead">{t.team.intro}</p>
                 </motion.div>
+
+                {teamHero && (
+                    <motion.div
+                        className="lp-team__hero"
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.1 }}
+                    >
+                        <img src={teamHero} alt={t.team.title} />
+                    </motion.div>
+                )}
 
                 {loading ? (
                     <p className="lp-loading">Loading…</p>

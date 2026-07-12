@@ -2,7 +2,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { useCmsGlobal, useSiteConfig } from '../../api';
+import { useCmsGlobal, useSiteConfig, mediaUrl } from '../../api';
 import { CmsPartner, CmsProject } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { hasCaseStudy } from './ProjectShowcase';
@@ -30,6 +30,7 @@ const Partner: React.FC<PartnerProps> = (props) => {
     const intro = partner?.intro || t.partner.fallbackLead;
     const valueProps = partner?.valueProps ?? [];
     const process = partner?.process ?? [];
+    const heroImage = mediaUrl(partner?.heroImage);
     const email = partner?.contactEmail || siteConfig.email;
     const projects = (props.projects ?? []).slice(0, 3);
 
@@ -52,6 +53,17 @@ const Partner: React.FC<PartnerProps> = (props) => {
                         </a>
                     </div>
                 </motion.div>
+
+                {heroImage && (
+                    <motion.div
+                        className="lp-page__hero"
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.1 }}
+                    >
+                        <img src={heroImage} alt={title} />
+                    </motion.div>
+                )}
 
                 {/* ---- What we bring ---- */}
                 {valueProps.length > 0 && (

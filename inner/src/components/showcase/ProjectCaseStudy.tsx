@@ -49,12 +49,15 @@ const StatusPill: React.FC<{ status: string }> = ({ status }) => {
     );
 };
 
-const Gallery: React.FC<{ project: CmsProject }> = ({ project }) => {
-    const shots = (project.gallery ?? []).filter((g) => mediaUrl(g.image));
-    if (shots.length === 0) return null;
+const Gallery: React.FC<{
+    project: CmsProject;
+    shots?: CmsProject['gallery'];
+}> = ({ project, shots }) => {
+    const items = (shots ?? project.gallery ?? []).filter((g) => mediaUrl(g.image));
+    if (items.length === 0) return null;
     return (
         <div className="lp-cs__gallery">
-            {shots.map((g, i) => (
+            {items.map((g, i) => (
                 <figure className="lp-cs__shot" key={g.id ?? i}>
                     <img src={mediaUrl(g.image) || ''} alt={g.caption ?? project.title} />
                     {g.caption && <figcaption className="lp-cs__caption">{g.caption}</figcaption>}
@@ -211,7 +214,14 @@ const ImpactView: React.FC<{ project: CmsProject }> = ({ project }) => {
                 )}
             </div>
 
-            <Gallery project={project} />
+            <Gallery
+                project={project}
+                shots={
+                    project.impactGallery?.length
+                        ? project.impactGallery
+                        : project.gallery
+                }
+            />
 
             {project.impactResults && (
                 <div className="lp-cs__body">

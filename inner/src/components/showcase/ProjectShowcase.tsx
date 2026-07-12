@@ -113,6 +113,14 @@ const ProjectShowcase: React.FC<{ projects: CmsProject[] }> = ({ projects }) => 
                             {...reveal}
                             transition={{ duration: 0.45, delay: Math.min(i * 0.05, 0.3) }}
                         >
+                            {mediaUrl(project.image) && (
+                                <div className="lp-card__media">
+                                    <img
+                                        src={mediaUrl(project.image) || ''}
+                                        alt={project.title}
+                                    />
+                                </div>
+                            )}
                             <div className="lp-card__row">
                                 <h3 className="lp-card__title">{project.title}</h3>
                                 <span
