@@ -1841,3 +1841,9 @@
 .lp-card__title {
     min-width: 0;
 }
+
+/* Process steps that vary in count (e.g. the 4-step partner process): fit as
+   many across as the width allows and wrap cleanly, without connectors. */
+.lp-steps--wrap {
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}

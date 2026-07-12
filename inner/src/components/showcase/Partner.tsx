@@ -6,6 +6,7 @@ import { useCmsGlobal, useSiteConfig } from '../../api';
 import { CmsPartner, CmsProject } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { hasCaseStudy } from './ProjectsList';
+import BookingEmbed from '../general/BookingEmbed';
 import './landing.css';
 
 const reveal = {
@@ -44,13 +45,11 @@ const Partner: React.FC<PartnerProps> = (props) => {
                     <p className="lp-kicker">{t.partner.kicker}</p>
                     <h1 className="lp-page__title">{title}</h1>
                     <p className="lp-lead">{intro}</p>
-                    {email && (
-                        <div className="lp-cta__btns" style={{ marginTop: 28 }}>
-                            <a className="lp-btn lp-btn--primary" href={`mailto:${email}`}>
-                                {t.partner.talkCta}
-                            </a>
-                        </div>
-                    )}
+                    <div className="lp-cta__btns" style={{ marginTop: 28 }}>
+                        <a className="lp-btn lp-btn--primary" href="#partner-book">
+                            {t.partner.talkCta} →
+                        </a>
+                    </div>
                 </motion.div>
 
                 {/* ---- What we bring ---- */}
@@ -81,7 +80,7 @@ const Partner: React.FC<PartnerProps> = (props) => {
                         <motion.h2 className="lp-h2 lp-about-block" {...reveal} transition={{ duration: 0.5 }}>
                             {t.partner.how}
                         </motion.h2>
-                        <div className="lp-steps">
+                        <div className="lp-steps lp-steps--wrap">
                             {process.map((step, i) => (
                                 <motion.div
                                     key={step.id ?? i}
@@ -89,9 +88,6 @@ const Partner: React.FC<PartnerProps> = (props) => {
                                     {...reveal}
                                     transition={{ duration: 0.45, delay: i * 0.12 }}
                                 >
-                                    {i < process.length - 1 && (
-                                        <span className="lp-step__connector" />
-                                    )}
                                     <span className="lp-step__num">{i + 1}</span>
                                     <span className="lp-step__title">{step.title}</span>
                                     <span className="lp-step__text">{step.description}</span>
@@ -139,24 +135,35 @@ const Partner: React.FC<PartnerProps> = (props) => {
             </div>
             </div>
 
-            {/* ---- Closing CTA ---- */}
-            <section className="lp-cta">
+            {/* ---- Book a meeting (primary partner action) ---- */}
+            <section id="partner-book" className="lp-section lp-section--book">
                 <div className="lp-inner">
-                    <motion.div style={{ display: 'block' }} {...reveal} transition={{ duration: 0.5 }}>
-                        <h2 className="lp-cta__heading">
+                    <motion.div
+                        style={{ display: 'block', width: '100%' }}
+                        {...reveal}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <p className="lp-kicker">{t.partner.kicker}</p>
+                        <h2 className="lp-h2">
                             {partner?.ctaHeading || t.cta.heading}
                         </h2>
-                        <p className="lp-cta__text">{partner?.ctaText || t.cta.text}</p>
-                        <div className="lp-cta__btns">
-                            {email && (
-                                <a className="lp-btn lp-btn--light" href={`mailto:${email}`}>
-                                    {t.partner.talkCta}
-                                </a>
-                            )}
-                            <Link className="lp-btn lp-btn--light" href="/contact">
-                                {t.nav.contact}
-                            </Link>
+                        <p className="lp-lead">{partner?.ctaText || t.cta.text}</p>
+                        <div style={{ marginTop: 28, width: '100%' }}>
+                            <BookingEmbed />
                         </div>
+                        <p className="lp-form-note" style={{ marginTop: 16 }}>
+                            {email && (
+                                <>
+                                    <a className="lp-social" href={`mailto:${email}`}>
+                                        {email}
+                                    </a>
+                                    {'  ·  '}
+                                </>
+                            )}
+                            <Link className="lp-social" href="/contact">
+                                {t.contact.title}
+                            </Link>
+                        </p>
                     </motion.div>
                 </div>
             </section>
