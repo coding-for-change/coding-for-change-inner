@@ -9,7 +9,9 @@ import Logo from '../../assets/Logo.webp';
 import './mobile.css';
 
 const NAVY = '#0f2040';
-const PIXEL_FONT = "MillenniumBold, 'Times New Roman', Times, serif";
+// The nav uses the site's display face (Space Grotesk) via the CSS variable set
+// on <html> in layout.tsx, matching the desktop TopNav.
+const NAV_FONT = "var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif";
 
 // Distance (px) the user scrolls before the "Coding for Change" wordmark
 // is fully revealed next to the logo.
@@ -254,7 +256,7 @@ const styles: StyleSheetCSS = {
         objectFit: 'contain',
     },
     wordmark: {
-        fontFamily: PIXEL_FONT,
+        fontFamily: NAV_FONT,
         fontSize: 20,
         color: '#000',
         whiteSpace: 'nowrap',
@@ -329,7 +331,7 @@ const styles: StyleSheetCSS = {
         padding: '16px 0',
         fontSize: 24,
         color: '#000',
-        fontFamily: PIXEL_FONT,
+        fontFamily: NAV_FONT,
         textDecoration: 'none',
         borderBottom: '1px solid #f0f0f0',
     },
@@ -341,7 +343,7 @@ const styles: StyleSheetCSS = {
         borderRadius: 32,
         padding: '18px 0',
         fontSize: 20,
-        fontFamily: PIXEL_FONT,
+        fontFamily: NAV_FONT,
         textDecoration: 'none',
         justifyContent: 'center',
         alignItems: 'center',
@@ -363,7 +365,7 @@ const styles: StyleSheetCSS = {
         cursor: 'pointer',
         fontSize: 15,
         color: '#000',
-        fontFamily: PIXEL_FONT,
+        fontFamily: NAV_FONT,
     },
     caret: {
         fontSize: 12,
@@ -393,7 +395,7 @@ const styles: StyleSheetCSS = {
         cursor: 'pointer',
         fontSize: 15,
         color: '#000',
-        fontFamily: PIXEL_FONT,
+        fontFamily: NAV_FONT,
         whiteSpace: 'nowrap',
         textAlign: 'left',
     },

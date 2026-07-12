@@ -5,7 +5,7 @@ import { useCmsCollection, useSiteConfig, mediaUrl } from '../../api';
 import { CmsTeamMember, CmsCompany } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
 import linkedinIcon from '../../assets/icons/linkedin.png';
-import githubIcon from '../../assets/icons/git.png';
+import githubIcon from '../../assets/icons/github.svg';
 import ClosingCta from './ClosingCta';
 import './landing.css';
 

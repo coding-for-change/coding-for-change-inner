@@ -117,13 +117,18 @@ export interface Translations {
         kicker: string; title: string; lead: string;
         sections: { title: string; rows: [string, string][] }[];
     };
+    notFound: {
+        kicker: string; title: string; lead: string;
+        backHome: string; helpfulLinks: string;
+        projects: string; about: string; join: string;
+    };
 }
 
 const en: Translations = {
     nav: {
-        home: 'HOME', about: 'ABOUT', events: 'EVENTS', projects: 'PROJECTS',
-        sponsors: 'SPONSORS', team: 'TEAM', blog: 'BLOG', qa: 'Q&A', join: 'JOIN', contact: 'CONTACT',
-        partner: 'FOR NGOS',
+        home: 'Home', about: 'About', events: 'Events', projects: 'Projects',
+        sponsors: 'Sponsors', team: 'Team', blog: 'Blog', qa: 'Q&A', join: 'Join', contact: 'Contact',
+        partner: 'For NGOs',
     },
     common: {
         learnMore: 'Learn More', partner: 'Partner:', at: 'at',
@@ -366,13 +371,23 @@ const en: Translations = {
             },
         ],
     },
+    notFound: {
+        kicker: 'Error 404',
+        title: 'This page wandered off',
+        lead: "The page you're looking for doesn't exist or may have moved — but there's plenty more to explore. Let's get you back on track.",
+        backHome: 'Back to home',
+        helpfulLinks: 'Or head somewhere useful',
+        projects: 'Our projects',
+        about: 'About us',
+        join: 'Join us',
+    },
 };
 
 const de: Translations = {
     nav: {
-        home: 'START', about: 'ÜBER UNS', events: 'EVENTS', projects: 'PROJEKTE',
-        sponsors: 'SPONSOREN', team: 'TEAM', blog: 'BLOG', qa: 'F&A', join: 'MITMACHEN', contact: 'KONTAKT',
-        partner: 'FÜR NGOS',
+        home: 'Start', about: 'Über uns', events: 'Events', projects: 'Projekte',
+        sponsors: 'Sponsoren', team: 'Team', blog: 'Blog', qa: 'F&A', join: 'Mitmachen', contact: 'Kontakt',
+        partner: 'Für NGOs',
     },
     common: {
         learnMore: 'Mehr erfahren', partner: 'Partner:', at: 'um',
@@ -614,6 +629,16 @@ const de: Translations = {
                 ],
             },
         ],
+    },
+    notFound: {
+        kicker: 'Fehler 404',
+        title: 'Diese Seite ist abhandengekommen',
+        lead: 'Die gesuchte Seite existiert nicht oder wurde verschoben — es gibt aber noch viel zu entdecken. Wir bringen dich zurück auf den richtigen Weg.',
+        backHome: 'Zurück zur Startseite',
+        helpfulLinks: 'Oder geh direkt weiter',
+        projects: 'Unsere Projekte',
+        about: 'Über uns',
+        join: 'Mitmachen',
     },
 };
 
