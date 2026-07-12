@@ -59,6 +59,13 @@ export const LanguageProvider: React.FC<{
     const setLocale = (next: Locale) => {
         localStorage.setItem(STORAGE_KEY, next);
         writeLocaleCookie(next);
+        // Reflect the language on <html> immediately so locale-aware CSS (e.g.
+        // the wider German nav) applies before the server refresh completes.
+        try {
+            document.documentElement.lang = next;
+        } catch {
+            /* ignore */
+        }
         setLocaleState(next); // instant UI-label (translations) switch
         // Re-run the server components with the new locale cookie so the SSR'd
         // CMS content updates — the client never fetches the CMS directly.

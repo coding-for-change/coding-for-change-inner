@@ -4,6 +4,7 @@ export interface Translations {
     nav: {
         home: string; about: string; events: string; projects: string;
         sponsors: string; team: string; blog: string; qa: string; join: string; contact: string;
+        partner: string;
     };
     common: {
         learnMore: string; partner: string; at: string;
@@ -29,13 +30,31 @@ export interface Translations {
     cta: {
         heading: string; text: string; join: string; contact: string;
     };
-    projects: { title: string; subtitle: string; intro: string; };
+    projects: { title: string; subtitle: string; intro: string; viewAll: string; };
+    threed: {
+        kicker: string; title: string; text: string; cta: string;
+        backKicker: string; backTitle: string; backText: string; backCta: string;
+    };
+    projectDetail: {
+        back: string; problem: string; approach: string; outcome: string;
+        impact: string; stack: string; links: string;
+    };
+    caseStudy: {
+        chooseKicker: string; chooseTitle: string;
+        technicalCardTitle: string; technicalCardText: string;
+        impactCardTitle: string; impactCardText: string;
+        technicalLabel: string; impactLabel: string;
+        joinHeading: string; joinText: string; joinButton: string;
+        challengeHeading: string; solutionHeading: string; resultsHeading: string;
+        workingHeading: string; workingPoints: string[]; partnerLink: string;
+        faqHeading: string; bookHeading: string; bookText: string;
+    };
     events: {
         title: string; subtitle: string; intro: string;
         upcoming: string; past: string;
         emptyTitle: string; emptyText: string; emptyCta: string;
     };
-    team: { title: string; subtitle: string; intro: string; advisersTitle: string; };
+    team: { title: string; subtitle: string; intro: string; advisersTitle: string; experienceLabel: string; };
     qa: { title: string; subtitle: string; intro: string; };
     join: {
         benefits: string; requirements: string; waysToContribute: string; applyNow: string;
@@ -61,18 +80,43 @@ export interface Translations {
         formUnavailable: string; successFallback: string;
     };
     book: { title: string; intro: string; fallback: string; openInNewTab: string; };
-    sponsors: { title: string; subtitle: string; intro: string; };
+    talk: {
+        ngoKicker: string; ngoHeading: string; ngoText: string;
+        studentKicker: string; studentHeading: string; studentText: string; studentCta: string;
+    };
+    sponsors: {
+        title: string; subtitle: string; intro: string;
+        tiers: { platinum: string; gold: string; silver: string; bronze: string; partner: string };
+    };
     blog: {
         title: string; subtitle: string; searchPlaceholder: string;
         all: string; noPosts: string; back: string; notFound: string;
     };
     navbar: { title: string; subtitle: string; };
+    footer: {
+        pages: string; info: string;
+        home: string; about: string; projects: string; team: string; blog: string;
+        sponsors: string; join: string; contact: string; qa: string; partner: string;
+        privacy: string; imprint: string; credits: string;
+    };
+    aboutPage: {
+        kicker: string; title: string; lead: string;
+        story: string[];
+        valuesTitle: string;
+        values: { title: string; text: string }[];
+        teamTeaser: string; teamCta: string;
+    };
+    partner: {
+        kicker: string; fallbackTitle: string; fallbackLead: string;
+        bring: string; how: string; pastWork: string; talkCta: string;
+    };
 }
 
 const en: Translations = {
     nav: {
         home: 'HOME', about: 'ABOUT', events: 'EVENTS', projects: 'PROJECTS',
         sponsors: 'SPONSORS', team: 'TEAM', blog: 'BLOG', qa: 'Q&A', join: 'JOIN', contact: 'CONTACT',
+        partner: 'FOR NGOS',
     },
     common: {
         learnMore: 'Learn More', partner: 'Partner:', at: 'at',
@@ -94,7 +138,7 @@ const en: Translations = {
         stats: [
             { value: '4', label: 'NGOs partnered' },
             { value: '10+', label: 'Active members' },
-            { value: '1', label: 'Projects shipped' },
+            { value: '150+', label: 'Users’ time saved' },
         ],
         howItWorks: 'How it works',
         steps: [
@@ -110,7 +154,7 @@ const en: Translations = {
         intro: 'From first conversation to finished software in a single semester — here is the path every project follows.',
     },
     cta: {
-        heading: 'Ready to build something good?',
+        heading: 'Ready to build something great?',
         text: 'Whether you are a student who wants to ship real code or a nonprofit with a problem worth solving — let us talk.',
         join: 'Join the club',
         contact: 'Partner with us',
@@ -118,6 +162,47 @@ const en: Translations = {
     projects: {
         title: 'Projects', subtitle: 'Building Tech for Social Good',
         intro: 'We partner with NGOs to build software solutions that make a real difference. Each project is led by student teams and developed in close collaboration with our partners.',
+        viewAll: 'See all projects',
+    },
+    threed: {
+        kicker: 'Just for fun',
+        title: 'Prefer the scenic route? Try the 3D site.',
+        text: 'There’s a playful 3D version of this site — a little retro desktop you can click around right in your browser.',
+        cta: 'Enter the 3D experience',
+        backKicker: 'You’re in 3D mode',
+        backTitle: 'Prefer the fast, simple version?',
+        backText: 'You’re exploring the 3D version of the site. Hop back to the standard site any time — it’s quicker to get around.',
+        backCta: 'Back to the standard site',
+    },
+    projectDetail: {
+        back: 'Back to projects', problem: 'The problem', approach: 'Our approach',
+        outcome: 'What we shipped', impact: 'Impact', stack: 'Built with', links: 'Links',
+    },
+    caseStudy: {
+        chooseKicker: 'Two ways to read this',
+        chooseTitle: 'How would you like to read it?',
+        technicalCardTitle: 'Technical deep-dive',
+        technicalCardText: 'How we built it — the problem, our approach and the stack. Best if you’re a student thinking about joining.',
+        impactCardTitle: 'Impact story',
+        impactCardText: 'What a project like this could mean for your organisation. Best if you’re a nonprofit exploring a partnership.',
+        technicalLabel: 'Technical deep-dive',
+        impactLabel: 'Impact story',
+        joinHeading: 'Want to build things like this?',
+        joinText: 'This is the kind of real, shipped software you’ll work on as a member — with a team, a real partner, and people who depend on it.',
+        joinButton: 'Join the club',
+        challengeHeading: 'The challenge',
+        solutionHeading: 'What we built',
+        resultsHeading: 'The impact',
+        workingHeading: 'Working with us',
+        workingPoints: [
+            'Free of charge — funded by our university backing and sponsors',
+            'Delivered in a single semester by a dedicated student team',
+            'You own the result — documented, handed over, no lock-in',
+        ],
+        partnerLink: 'See how partnering works',
+        faqHeading: 'Questions nonprofits ask',
+        bookHeading: 'Have a problem worth solving?',
+        bookText: 'Tell us about it — grab a slot and we’ll explore whether we can help.',
     },
     events: {
         title: 'Events', subtitle: 'Workshops, Hackathons & More',
@@ -131,6 +216,7 @@ const en: Translations = {
         title: 'Our Team', subtitle: 'The People Behind CFC',
         intro: 'Meet the team that drives Coding for Change. We are a diverse group of students passionate about using technology for social good.',
         advisersTitle: 'Advisers',
+        experienceLabel: 'Previously at',
     },
     qa: {
         title: 'Q&A', subtitle: 'Frequently Asked Questions',
@@ -188,9 +274,19 @@ const en: Translations = {
         fallback: 'Online booking is not set up yet — email us and we will find a time.',
         openInNewTab: 'Open booking page',
     },
+    talk: {
+        ngoKicker: 'For NGOs',
+        ngoHeading: 'Have a problem worth solving?',
+        ngoText: 'You’re an NGO and interested? Speak with us — grab a slot below and we’ll explore whether we can help.',
+        studentKicker: 'For students',
+        studentHeading: 'Want to make an impact?',
+        studentText: 'You’re a student who’s passionate about having an impact? Whatever your background, there’s something for you at Coding for Change.',
+        studentCta: 'Join the club',
+    },
     sponsors: {
         title: 'Sponsors', subtitle: 'Our Supporters',
         intro: 'We are grateful for the support of our sponsors who make our work possible. Interested in sponsoring? Reach out to us!',
+        tiers: { platinum: 'Platinum', gold: 'Gold', silver: 'Silver', bronze: 'Bronze', partner: 'Partners' },
     },
     blog: {
         title: 'News', subtitle: 'Projects, lessons, and reflections from our teams',
@@ -198,12 +294,47 @@ const en: Translations = {
         noPosts: 'No posts found.', back: 'Back to Blog', notFound: 'Post not found.',
     },
     navbar: { title: 'Coding for Change', subtitle: 'Munich Student Club' },
+    footer: {
+        pages: 'Pages', info: 'Information',
+        home: 'Home', about: 'About', projects: 'Projects', team: 'Team', blog: 'Blog',
+        sponsors: 'Sponsors', join: 'Join', contact: 'Contact', qa: 'Q&A', partner: 'For NGOs',
+        privacy: 'Privacy', imprint: 'Imprint', credits: 'Credits',
+    },
+    aboutPage: {
+        kicker: 'About us',
+        title: 'We turn student skill into software that nonprofits keep.',
+        lead: 'Coding for Change is a Munich student initiative. We pair ambitious students with non-profit organisations and ship them real, production software — in a single semester, at no cost.',
+        story: [
+            'NGOs run on tight budgets and even tighter time. The tools they need — to schedule volunteers, track impact, bill hours, reach the people they serve — are usually out of financial reach, so the work happens in spreadsheets and on paper.',
+            'We think that is a waste of two things at once: the potential of the organisation, and the talent of students who want to build something that matters. So we bring them together. Students from TUM and LMU — engineers, product and consulting minds, designers, organisers — form a team around one partner and one real problem.',
+            'Every project is scoped to ship in a semester, handed off with documentation and support, and owned by the partner afterwards. No lock-in, no invoice. Just software that keeps working after we leave.',
+        ],
+        valuesTitle: 'What we care about',
+        values: [
+            { title: 'Real work, real stakes', text: 'No toy projects. Everything we build goes into production and gets used by real people.' },
+            { title: 'Craft over credit', text: 'We ship things we are proud to put our names on — documented, maintainable, handed over cleanly.' },
+            { title: 'Open to every discipline', text: 'Great software needs more than engineers. Product, design, comms and operations shape every project.' },
+            { title: 'Impact you can point at', text: 'Success is measured by what changes for our partner and the people they serve — not by lines of code.' },
+        ],
+        teamTeaser: 'A cross-disciplinary group of students from TUM and LMU, with experience at companies like Bloomberg, Optiver and Picus Capital.',
+        teamCta: 'Meet the team',
+    },
+    partner: {
+        kicker: 'For NGOs',
+        fallbackTitle: 'Have a problem worth solving? Let’s build it together.',
+        fallbackLead: 'We partner with non-profits to design and ship the software they need — free of charge, delivered by a dedicated student team in a single semester.',
+        bring: 'What we bring',
+        how: 'How a partnership works',
+        pastWork: 'Recent work',
+        talkCta: 'Start a conversation',
+    },
 };
 
 const de: Translations = {
     nav: {
         home: 'START', about: 'ÜBER UNS', events: 'EVENTS', projects: 'PROJEKTE',
         sponsors: 'SPONSOREN', team: 'TEAM', blog: 'BLOG', qa: 'F&A', join: 'MITMACHEN', contact: 'KONTAKT',
+        partner: 'FÜR NGOS',
     },
     common: {
         learnMore: 'Mehr erfahren', partner: 'Partner:', at: 'um',
@@ -225,7 +356,7 @@ const de: Translations = {
         stats: [
             { value: '4', label: 'NGOs unterstützt' },
             { value: '10+', label: 'Aktive Mitglieder' },
-            { value: '1', label: 'Projekte umgesetzt' },
+            { value: '150+', label: 'Nutzer:innen sparen Zeit' },
         ],
         howItWorks: 'So funktioniert es',
         steps: [
@@ -241,7 +372,7 @@ const de: Translations = {
         intro: 'Vom ersten Gespräch bis zur fertigen Software in einem einzigen Semester – diesen Weg geht jedes Projekt.',
     },
     cta: {
-        heading: 'Bereit, etwas Gutes zu bauen?',
+        heading: 'Bereit, etwas Großartiges zu bauen?',
         text: 'Ob Studierende:r, die:der echten Code liefern will, oder NGO mit einem Problem, das es zu lösen lohnt – sprich mit uns.',
         join: 'Mitglied werden',
         contact: 'Partner werden',
@@ -249,6 +380,47 @@ const de: Translations = {
     projects: {
         title: 'Projekte', subtitle: 'Technologie für das Gemeinwohl',
         intro: 'Wir arbeiten mit NGOs zusammen, um Softwarelösungen zu entwickeln, die wirklich etwas bewirken. Jedes Projekt wird von Studierendenteams geleitet und in enger Zusammenarbeit mit unseren Partnern entwickelt.',
+        viewAll: 'Alle Projekte ansehen',
+    },
+    threed: {
+        kicker: 'Einfach zum Spaß',
+        title: 'Lust auf die szenische Route? Probier die 3D-Seite.',
+        text: 'Es gibt eine verspielte 3D-Version dieser Seite – ein kleiner Retro-Desktop, den du direkt im Browser anklicken und erkunden kannst.',
+        cta: '3D-Erlebnis starten',
+        backKicker: 'Du bist im 3D-Modus',
+        backTitle: 'Lieber die schnelle, schlichte Version?',
+        backText: 'Du erkundest gerade die 3D-Version der Seite. Wechsle jederzeit zurück zur normalen Seite – dort kommst du schneller voran.',
+        backCta: 'Zurück zur normalen Seite',
+    },
+    projectDetail: {
+        back: 'Zurück zu Projekten', problem: 'Das Problem', approach: 'Unser Vorgehen',
+        outcome: 'Was wir geliefert haben', impact: 'Wirkung', stack: 'Gebaut mit', links: 'Links',
+    },
+    caseStudy: {
+        chooseKicker: 'Zwei Perspektiven',
+        chooseTitle: 'Wie möchtest du es lesen?',
+        technicalCardTitle: 'Technischer Deep-Dive',
+        technicalCardText: 'Wie wir es gebaut haben – das Problem, unser Vorgehen und der Stack. Ideal, wenn du als Studierende:r übers Mitmachen nachdenkst.',
+        impactCardTitle: 'Impact-Story',
+        impactCardText: 'Was ein solches Projekt für eure Organisation bedeuten könnte. Ideal, wenn ihr als NGO eine Partnerschaft erwägt.',
+        technicalLabel: 'Technischer Deep-Dive',
+        impactLabel: 'Impact-Story',
+        joinHeading: 'Willst du sowas bauen?',
+        joinText: 'Genau solche echte, ausgelieferte Software baust du als Mitglied – im Team, mit echtem Partner und Menschen, die darauf angewiesen sind.',
+        joinButton: 'Mitglied werden',
+        challengeHeading: 'Die Herausforderung',
+        solutionHeading: 'Was wir gebaut haben',
+        resultsHeading: 'Die Wirkung',
+        workingHeading: 'Zusammenarbeit mit uns',
+        workingPoints: [
+            'Kostenlos – finanziert durch unsere universitäre Anbindung und Sponsoren',
+            'Geliefert in einem Semester von einem festen Studierendenteam',
+            'Das Ergebnis gehört euch – dokumentiert, übergeben, kein Lock-in',
+        ],
+        partnerLink: 'So funktioniert eine Partnerschaft',
+        faqHeading: 'Fragen von NGOs',
+        bookHeading: 'Ein Problem, das es zu lösen lohnt?',
+        bookText: 'Erzähl uns davon – wähl einen Termin und wir schauen, ob wir helfen können.',
     },
     events: {
         title: 'Events', subtitle: 'Workshops, Hackathons & Mehr',
@@ -262,6 +434,7 @@ const de: Translations = {
         title: 'Unser Team', subtitle: 'Die Menschen hinter CFC',
         intro: 'Lern das Team kennen, das Coding for Change antreibt. Wir sind eine vielfältige Gruppe von Studierenden, die Technologie für soziale Zwecke einsetzen wollen.',
         advisersTitle: 'Beirat',
+        experienceLabel: 'Zuvor bei',
     },
     qa: {
         title: 'F&A', subtitle: 'Häufig Gestellte Fragen',
@@ -319,9 +492,19 @@ const de: Translations = {
         fallback: 'Online-Buchung ist noch nicht eingerichtet — schreib uns und wir finden einen Termin.',
         openInNewTab: 'Buchungsseite öffnen',
     },
+    talk: {
+        ngoKicker: 'Für NGOs',
+        ngoHeading: 'Ein Problem, das es zu lösen lohnt?',
+        ngoText: 'Ihr seid eine NGO und interessiert? Sprecht mit uns – bucht unten einen Termin und wir schauen, ob wir helfen können.',
+        studentKicker: 'Für Studierende',
+        studentHeading: 'Willst du etwas bewegen?',
+        studentText: 'Du bist Studierende:r und brennst dafür, etwas zu bewirken? Egal welcher Hintergrund – bei Coding for Change ist etwas für dich dabei.',
+        studentCta: 'Mitglied werden',
+    },
     sponsors: {
         title: 'Sponsoren', subtitle: 'Unsere Unterstützer',
         intro: 'Wir sind dankbar für die Unterstützung unserer Sponsoren, die unsere Arbeit erst möglich machen. Interesse am Sponsoring? Meld dich bei uns!',
+        tiers: { platinum: 'Platin', gold: 'Gold', silver: 'Silber', bronze: 'Bronze', partner: 'Partner' },
     },
     blog: {
         title: 'News', subtitle: 'Projekte, Erkenntnisse und Rückblicke unserer Teams',
@@ -329,6 +512,40 @@ const de: Translations = {
         noPosts: 'Keine Beiträge gefunden.', back: 'Zurück zum Blog', notFound: 'Beitrag nicht gefunden.',
     },
     navbar: { title: 'Coding for Change', subtitle: 'Münchner Studierendenclub' },
+    footer: {
+        pages: 'Seiten', info: 'Informationen',
+        home: 'Startseite', about: 'Über uns', projects: 'Projekte', team: 'Team', blog: 'Blog',
+        sponsors: 'Sponsoren', join: 'Mitmachen', contact: 'Kontakt', qa: 'F&A', partner: 'Für NGOs',
+        privacy: 'Datenschutz', imprint: 'Impressum', credits: 'Credits',
+    },
+    aboutPage: {
+        kicker: 'Über uns',
+        title: 'Wir machen aus studentischem Können Software, die NGOs behalten.',
+        lead: 'Coding for Change ist eine Münchner Studierendeninitiative. Wir bringen engagierte Studierende mit gemeinnützigen Organisationen zusammen und liefern echte, produktreife Software – in einem einzigen Semester, kostenlos.',
+        story: [
+            'NGOs arbeiten mit knappen Budgets und noch knapperer Zeit. Die Tools, die sie brauchen – um Freiwillige zu planen, Wirkung zu messen, Stunden abzurechnen, Menschen zu erreichen – sind finanziell meist außer Reichweite. Also passiert die Arbeit in Tabellen und auf Papier.',
+            'Wir finden, das verschwendet zweierlei zugleich: das Potenzial der Organisation und das Talent von Studierenden, die etwas Sinnvolles bauen wollen. Also bringen wir beide zusammen. Studierende von TUM und LMU – Engineering, Produkt und Consulting, Design, Organisation – bilden ein Team rund um einen Partner und ein echtes Problem.',
+            'Jedes Projekt ist so zugeschnitten, dass es in einem Semester fertig wird, wird mit Dokumentation und Support übergeben und gehört danach dem Partner. Kein Lock-in, keine Rechnung. Einfach Software, die weiterläuft, wenn wir gehen.',
+        ],
+        valuesTitle: 'Worauf es uns ankommt',
+        values: [
+            { title: 'Echte Arbeit, echte Verantwortung', text: 'Keine Spielprojekte. Alles, was wir bauen, geht in Produktion und wird von echten Menschen genutzt.' },
+            { title: 'Handwerk vor Anerkennung', text: 'Wir liefern Dinge, auf die wir stolz sind – dokumentiert, wartbar, sauber übergeben.' },
+            { title: 'Offen für jede Disziplin', text: 'Gute Software braucht mehr als Entwickler:innen. Produkt, Design, Kommunikation und Operations prägen jedes Projekt.' },
+            { title: 'Wirkung, auf die man zeigen kann', text: 'Erfolg misst sich daran, was sich für unsere Partner und die Menschen, die sie erreichen, verändert – nicht an Codezeilen.' },
+        ],
+        teamTeaser: 'Eine interdisziplinäre Gruppe Studierender von TUM und LMU – mit Erfahrung bei Unternehmen wie Bloomberg, Optiver und Picus Capital.',
+        teamCta: 'Team kennenlernen',
+    },
+    partner: {
+        kicker: 'Für NGOs',
+        fallbackTitle: 'Ein Problem, das es zu lösen lohnt? Lass es uns gemeinsam bauen.',
+        fallbackLead: 'Wir entwickeln gemeinsam mit gemeinnützigen Organisationen die Software, die sie brauchen – kostenlos, geliefert von einem festen Studierendenteam in einem einzigen Semester.',
+        bring: 'Was wir mitbringen',
+        how: 'So läuft eine Partnerschaft',
+        pastWork: 'Aktuelle Projekte',
+        talkCta: 'Gespräch starten',
+    },
 };
 
 export const translations: Record<Locale, Translations> = { en, de };

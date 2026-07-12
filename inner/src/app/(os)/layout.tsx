@@ -24,9 +24,22 @@ import useIsMobile from '@/hooks/useIsMobile';
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
     const isMobile = useIsMobile();
     const [mounted, setMounted] = useState(false);
-    useEffect(() => setMounted(true), []);
+    // The 3D scene embeds the site in a ~1024px monitor iframe — right at the
+    // mobile breakpoint — so the viewport check would flip it into the mobile
+    // chrome, whose sticky header misbehaves inside the transformed iframe and
+    // makes the nav vanish. The 3D experience is desktop-only, so stay on the
+    // desktop shell whenever we're embedded.
+    const [embedded, setEmbedded] = useState(false);
+    useEffect(() => {
+        setMounted(true);
+        try {
+            setEmbedded(window.self !== window.top);
+        } catch {
+            setEmbedded(true);
+        }
+    }, []);
 
-    if (mounted && isMobile) {
+    if (mounted && isMobile && !embedded) {
         return (
             <div className="App">
                 <MobileLayout>{children}</MobileLayout>

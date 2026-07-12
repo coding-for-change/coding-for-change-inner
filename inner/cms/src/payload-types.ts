@@ -74,6 +74,7 @@ export interface Config {
     events: Event;
     faq: Faq;
     sponsors: Sponsor;
+    'sponsor-tiers': SponsorTier;
     companies: Company;
     media: Media;
     'blog-posts': BlogPost;
@@ -95,6 +96,7 @@ export interface Config {
     events: EventsSelect<false> | EventsSelect<true>;
     faq: FaqSelect<false> | FaqSelect<true>;
     sponsors: SponsorsSelect<false> | SponsorsSelect<true>;
+    'sponsor-tiers': SponsorTiersSelect<false> | SponsorTiersSelect<true>;
     companies: CompaniesSelect<false> | CompaniesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     'blog-posts': BlogPostsSelect<false> | BlogPostsSelect<true>;
@@ -116,11 +118,17 @@ export interface Config {
     'site-config': SiteConfig;
     membership: Membership;
     legal: Legal;
+    partner: Partner;
+    about: About;
+    homepage: Homepage;
   };
   globalsSelect: {
     'site-config': SiteConfigSelect<false> | SiteConfigSelect<true>;
     membership: MembershipSelect<false> | MembershipSelect<true>;
     legal: LegalSelect<false> | LegalSelect<true>;
+    partner: PartnerSelect<false> | PartnerSelect<true>;
+    about: AboutSelect<false> | AboutSelect<true>;
+    homepage: HomepageSelect<false> | HomepageSelect<true>;
   };
   locale: 'en' | 'de';
   widgets: {
@@ -257,6 +265,11 @@ export interface Project {
   id: number;
   title: string;
   ngoPartner: string;
+  /**
+   * Lowercase, hyphenated (e.g. "lebenshilfe-muenchen"). Needed for the detail page.
+   */
+  slug?: string | null;
+  featured?: boolean | null;
   description: string;
   image?: (number | null) | Media;
   technologies?:
@@ -270,6 +283,60 @@ export interface Project {
     | {
         label: string;
         url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The problem the partner faced, in their terms.
+   */
+  problem?: string | null;
+  /**
+   * How the team approached and built the solution.
+   */
+  approach?: string | null;
+  /**
+   * What shipped and what changed as a result.
+   */
+  outcome?: string | null;
+  /**
+   * A one-line impact highlight (e.g. "Saves ~150 companions hours of paperwork a month").
+   */
+  impact?: string | null;
+  quote?: {
+    text?: string | null;
+    author?: string | null;
+    role?: string | null;
+  };
+  gallery?:
+    | {
+        image: number | Media;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * One-line outcome for the impact hero (e.g. "How Lebenshilfe gave 150 companions their evenings back").
+   */
+  impactHeadline?: string | null;
+  /**
+   * The partner's challenge, in their world — non-technical.
+   */
+  impactChallenge?: string | null;
+  /**
+   * What the software does for them, in plain language (benefits, not stack).
+   */
+  impactSolution?: string | null;
+  /**
+   * The results / the difference it made.
+   */
+  impactResults?: string | null;
+  /**
+   * Common questions from nonprofits (cost, time, what happens after).
+   */
+  ngoFaq?:
+    | {
+        question: string;
+        answer: string;
         id?: string | null;
       }[]
     | null;
@@ -317,8 +384,31 @@ export interface Sponsor {
   name: string;
   logo?: (number | null) | Media;
   url?: string | null;
-  tier: 'gold' | 'silver' | 'bronze' | 'partner';
+  /**
+   * Which tier section this sponsor appears in (managed in Sponsor Tiers).
+   */
+  tierRef?: (number | null) | SponsorTier;
+  /**
+   * Deprecated — use the Tier relationship above.
+   */
+  tier?: ('platinum' | 'gold' | 'silver' | 'bronze' | 'partner') | null;
   description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Tier sections for the Sponsors page (e.g. Platinum, Gold …).
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sponsor-tiers".
+ */
+export interface SponsorTier {
+  id: number;
+  label: string;
+  /**
+   * Lower shows first (e.g. Platinum 10, Gold 20, Silver 30 …).
+   */
+  order: number;
   updatedAt: string;
   createdAt: string;
 }
@@ -817,6 +907,24 @@ export interface PayloadMcpApiKey {
      */
     delete?: boolean | null;
   };
+  sponsorTiers?: {
+    /**
+     * Allow clients to find sponsor-tiers.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create sponsor-tiers.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update sponsor-tiers.
+     */
+    update?: boolean | null;
+    /**
+     * Allow clients to delete sponsor-tiers.
+     */
+    delete?: boolean | null;
+  };
   companies?: {
     /**
      * Allow clients to find companies.
@@ -937,6 +1045,36 @@ export interface PayloadMcpApiKey {
      */
     update?: boolean | null;
   };
+  partner?: {
+    /**
+     * Allow clients to find partner global.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to update partner global.
+     */
+    update?: boolean | null;
+  };
+  about?: {
+    /**
+     * Allow clients to find about global.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to update about global.
+     */
+    update?: boolean | null;
+  };
+  homepage?: {
+    /**
+     * Allow clients to find homepage global.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to update homepage global.
+     */
+    update?: boolean | null;
+  };
   updatedAt: string;
   createdAt: string;
   enableAPIKey?: boolean | null;
@@ -991,6 +1129,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'sponsors';
         value: number | Sponsor;
+      } | null)
+    | ({
+        relationTo: 'sponsor-tiers';
+        value: number | SponsorTier;
       } | null)
     | ({
         relationTo: 'companies';
@@ -1127,6 +1269,8 @@ export interface TeamSelect<T extends boolean = true> {
 export interface ProjectsSelect<T extends boolean = true> {
   title?: T;
   ngoPartner?: T;
+  slug?: T;
+  featured?: T;
   description?: T;
   image?: T;
   technologies?:
@@ -1141,6 +1285,35 @@ export interface ProjectsSelect<T extends boolean = true> {
     | {
         label?: T;
         url?: T;
+        id?: T;
+      };
+  problem?: T;
+  approach?: T;
+  outcome?: T;
+  impact?: T;
+  quote?:
+    | T
+    | {
+        text?: T;
+        author?: T;
+        role?: T;
+      };
+  gallery?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  impactHeadline?: T;
+  impactChallenge?: T;
+  impactSolution?: T;
+  impactResults?: T;
+  ngoFaq?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
         id?: T;
       };
   updatedAt?: T;
@@ -1186,8 +1359,19 @@ export interface SponsorsSelect<T extends boolean = true> {
   name?: T;
   logo?: T;
   url?: T;
+  tierRef?: T;
   tier?: T;
   description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sponsor-tiers_select".
+ */
+export interface SponsorTiersSelect<T extends boolean = true> {
+  label?: T;
+  order?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1481,6 +1665,14 @@ export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
         update?: T;
         delete?: T;
       };
+  sponsorTiers?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+        delete?: T;
+      };
   companies?:
     | T
     | {
@@ -1534,6 +1726,24 @@ export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
         update?: T;
       };
   legal?:
+    | T
+    | {
+        find?: T;
+        update?: T;
+      };
+  partner?:
+    | T
+    | {
+        find?: T;
+        update?: T;
+      };
+  about?:
+    | T
+    | {
+        find?: T;
+        update?: T;
+      };
+  homepage?:
     | T
     | {
         find?: T;
@@ -1690,6 +1900,137 @@ export interface Legal {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partner".
+ */
+export interface Partner {
+  id: number;
+  /**
+   * Page headline.
+   */
+  title?: string | null;
+  /**
+   * Lead paragraph under the headline.
+   */
+  intro?: string | null;
+  /**
+   * The concrete things a partner gets from working with us.
+   */
+  valueProps?:
+    | {
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The steps of a partnership, from first conversation to hand-off.
+   */
+  process?:
+    | {
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional: what we ask of a partner (time, a point of contact, etc.).
+   */
+  commitment?: string | null;
+  ctaHeading?: string | null;
+  ctaText?: string | null;
+  contactEmail?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about".
+ */
+export interface About {
+  id: number;
+  kicker?: string | null;
+  /**
+   * Page headline.
+   */
+  title?: string | null;
+  lead?: string | null;
+  /**
+   * Narrative paragraphs.
+   */
+  story?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  valuesTitle?: string | null;
+  values?:
+    | {
+        title: string;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  teamTeaser?: string | null;
+  teamCta?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage".
+ */
+export interface Homepage {
+  id: number;
+  heroKicker?: string | null;
+  heroCtaPrimary?: string | null;
+  heroCtaSecondary?: string | null;
+  heroScrollHint?: string | null;
+  aboutKicker?: string | null;
+  aboutOneLiner?: string | null;
+  aboutPitch?: string | null;
+  stats?:
+    | {
+        value: string;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  steps?:
+    | {
+        title: string;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  processKicker?: string | null;
+  processHeading?: string | null;
+  processIntro?: string | null;
+  projectsSubtitle?: string | null;
+  projectsTitle?: string | null;
+  projectsIntro?: string | null;
+  eventsSubtitle?: string | null;
+  eventsTitle?: string | null;
+  eventsIntro?: string | null;
+  sponsorsSubtitle?: string | null;
+  sponsorsTitle?: string | null;
+  sponsorsIntro?: string | null;
+  qaSubtitle?: string | null;
+  qaTitle?: string | null;
+  qaIntro?: string | null;
+  threedKicker?: string | null;
+  threedTitle?: string | null;
+  threedText?: string | null;
+  threedCta?: string | null;
+  ctaHeading?: string | null;
+  ctaText?: string | null;
+  ctaJoin?: string | null;
+  ctaContact?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-config_select".
  */
 export interface SiteConfigSelect<T extends boolean = true> {
@@ -1756,6 +2097,116 @@ export interface MembershipSelect<T extends boolean = true> {
 export interface LegalSelect<T extends boolean = true> {
   impressum?: T;
   privacyPolicy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partner_select".
+ */
+export interface PartnerSelect<T extends boolean = true> {
+  title?: T;
+  intro?: T;
+  valueProps?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  process?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  commitment?: T;
+  ctaHeading?: T;
+  ctaText?: T;
+  contactEmail?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about_select".
+ */
+export interface AboutSelect<T extends boolean = true> {
+  kicker?: T;
+  title?: T;
+  lead?: T;
+  story?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  valuesTitle?: T;
+  values?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  teamTeaser?: T;
+  teamCta?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage_select".
+ */
+export interface HomepageSelect<T extends boolean = true> {
+  heroKicker?: T;
+  heroCtaPrimary?: T;
+  heroCtaSecondary?: T;
+  heroScrollHint?: T;
+  aboutKicker?: T;
+  aboutOneLiner?: T;
+  aboutPitch?: T;
+  stats?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
+  steps?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  processKicker?: T;
+  processHeading?: T;
+  processIntro?: T;
+  projectsSubtitle?: T;
+  projectsTitle?: T;
+  projectsIntro?: T;
+  eventsSubtitle?: T;
+  eventsTitle?: T;
+  eventsIntro?: T;
+  sponsorsSubtitle?: T;
+  sponsorsTitle?: T;
+  sponsorsIntro?: T;
+  qaSubtitle?: T;
+  qaTitle?: T;
+  qaIntro?: T;
+  threedKicker?: T;
+  threedTitle?: T;
+  threedText?: T;
+  threedCta?: T;
+  ctaHeading?: T;
+  ctaText?: T;
+  ctaJoin?: T;
+  ctaContact?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

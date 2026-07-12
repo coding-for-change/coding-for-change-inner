@@ -126,23 +126,48 @@ app.get('/robots.txt', (req, res) => {
     );
 });
 
-// SEO: the inner desktop OS is now the canonical site at /, so the
-// sitemap lists every content route.
-app.get('/sitemap.xml', (req, res) => {
+// Does a CMS collection have at least one entry? Used to keep content pages out
+// of the sitemap until they actually have something to show. Fails open (treats
+// the page as present) if the CMS can't be reached, so a transient CMS blip
+// never drops real pages from the sitemap.
+const cmsHasDocs = async (slug) => {
+    try {
+        const res = await fetch(`${CMS_URL}/api/${slug}?limit=1&depth=0`, {
+            signal: AbortSignal.timeout(4000),
+        });
+        if (!res.ok) return true;
+        const data = await res.json();
+        return (data.totalDocs ?? 0) > 0;
+    } catch {
+        return true;
+    }
+};
+
+// SEO: the inner site is the canonical site at /. Content pages (projects,
+// blog, events, sponsors) are only listed once their CMS collection has
+// entries, so we never advertise an empty page.
+app.get('/sitemap.xml', async (req, res) => {
     const lastmod = new Date().toISOString().slice(0, 10);
+    // `slug` present → include only when that collection has entries.
     const routes = [
-        '/',
-        '/about',
-        '/events',
-        '/projects',
-        '/sponsors',
-        '/team',
-        '/qa',
-        '/join',
-        '/contact',
+        { route: '/' },
+        { route: '/about' },
+        { route: '/projects', slug: 'projects' },
+        { route: '/blog', slug: 'blog-posts' },
+        { route: '/events', slug: 'events' },
+        { route: '/sponsors', slug: 'sponsors' },
+        { route: '/partner' },
+        { route: '/team' },
+        { route: '/qa' },
+        { route: '/join' },
+        { route: '/contact' },
     ];
+    const included = await Promise.all(
+        routes.map(async (r) => (r.slug ? await cmsHasDocs(r.slug) : true))
+    );
     const urls = routes
-        .map((route) => {
+        .filter((_, i) => included[i])
+        .map(({ route }) => {
             const priority = route === '/' ? '1.0' : '0.8';
             return `  <url><loc>https://codingforchange.com${route}</loc><lastmod>${lastmod}</lastmod><priority>${priority}</priority></url>`;
         })

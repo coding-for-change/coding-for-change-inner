@@ -3,6 +3,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import RouterLink from 'next/link';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useCmsCollection } from '../../api';
+import type { CmsEvent, CmsSponsor, CmsBlogPost } from '../../api/types';
 import Logo from '../../assets/Logo.webp';
 import './mobile.css';
 
@@ -65,16 +67,22 @@ const MobileNav: React.FC = () => {
         return () => document.removeEventListener('mousedown', onDown);
     }, [langOpen]);
 
+    // Events, Blog & Sponsors only appear when they have content (pages exist either way).
+    const { data: events } = useCmsCollection<CmsEvent>('events');
+    const { data: posts } = useCmsCollection<CmsBlogPost>('blog-posts');
+    const { data: sponsors } = useCmsCollection<CmsSponsor>('sponsors');
+    const hasEvents = (events?.length ?? 0) > 0;
+    const hasBlog = (posts?.length ?? 0) > 0;
+    const hasSponsors = (sponsors?.length ?? 0) > 0;
+
     const navLinks = [
-        // Sections on the single-scroll landing page.
-        { to: '/#about', label: t.nav.about },
-        { to: '/#events', label: t.nav.events },
-        { to: '/#projects', label: t.nav.projects },
-        { to: '/#sponsors', label: t.nav.sponsors },
-        { to: '/#qa', label: t.nav.qa },
-        // Standalone pages.
+        { to: '/about', label: t.nav.about },
+        { to: '/projects', label: t.nav.projects },
+        ...(hasEvents ? [{ to: '/events', label: t.nav.events }] : []),
+        ...(hasBlog ? [{ to: '/blog', label: t.nav.blog }] : []),
         { to: '/team', label: t.nav.team },
-        { to: '/blog', label: t.nav.blog },
+        ...(hasSponsors ? [{ to: '/sponsors', label: t.nav.sponsors }] : []),
+        { to: '/#qa', label: t.nav.qa }, // FAQ stays a homepage section
         { to: '/contact', label: t.nav.contact },
     ];
 

@@ -47,6 +47,37 @@ export interface CmsProject {
     technologies?: { name: string; id?: string }[];
     status: 'active' | 'completed' | 'recruiting';
     links?: { label: string; url: string; id?: string }[];
+    // Case-study fields (optional). `slug` drives the /projects/<slug> detail
+    // page; `featured` marks the flagship for a differentiated treatment.
+    slug?: string | null;
+    featured?: boolean | null;
+    problem?: string | null;
+    approach?: string | null;
+    outcome?: string | null;
+    impact?: string | null;
+    quote?: {
+        text?: string | null;
+        author?: string | null;
+        role?: string | null;
+    } | null;
+    gallery?: {
+        image?: CmsMedia | null;
+        caption?: string | null;
+        id?: string;
+    }[] | null;
+    // "Impact story" view (persuasive, for nonprofits).
+    impactHeadline?: string | null;
+    impactChallenge?: string | null;
+    impactSolution?: string | null;
+    impactResults?: string | null;
+    ngoFaq?: { question: string; answer: string; id?: string }[] | null;
+}
+
+/** GET /api/sponsor-tiers — CMS-managed sponsor tiers (Platinum, Gold, …). */
+export interface CmsSponsorTier {
+    id: number;
+    label: string;
+    order: number;
 }
 
 /** GET /api/sponsors */
@@ -55,7 +86,10 @@ export interface CmsSponsor {
     name: string;
     logo?: CmsMedia | null;
     url?: string;
-    tier: 'gold' | 'silver' | 'bronze' | 'partner';
+    /** CMS-managed tier (populated at depth >= 1). */
+    tierRef?: CmsSponsorTier | number | null;
+    /** Deprecated fixed tier — fallback when `tierRef` isn't set. */
+    tier?: 'platinum' | 'gold' | 'silver' | 'bronze' | 'partner' | null;
     description?: string;
 }
 
@@ -144,6 +178,66 @@ export interface CmsMembership {
     /** Cross-disciplinary "Ways to contribute" cards (Engineering, Consulting, …). */
     tracks?: { title: string; description: string; id?: string }[];
     contactEmail: string;
+}
+
+/** GET /api/globals/partner — the "Partner with us / For NGOs" page content. */
+export interface CmsPartner {
+    title?: string | null;
+    intro?: string | null;
+    valueProps?: { title: string; description: string; id?: string }[] | null;
+    process?: { title: string; description: string; id?: string }[] | null;
+    commitment?: string | null;
+    ctaHeading?: string | null;
+    ctaText?: string | null;
+    contactEmail?: string | null;
+}
+
+/** GET /api/globals/about — About page content (frontend falls back to i18n). */
+export interface CmsAbout {
+    kicker?: string | null;
+    title?: string | null;
+    lead?: string | null;
+    story?: { text: string; id?: string }[] | null;
+    valuesTitle?: string | null;
+    values?: { title: string; text: string; id?: string }[] | null;
+    teamTeaser?: string | null;
+    teamCta?: string | null;
+}
+
+/** GET /api/globals/homepage — homepage section copy (falls back to i18n). */
+export interface CmsHomepage {
+    heroKicker?: string | null;
+    heroCtaPrimary?: string | null;
+    heroCtaSecondary?: string | null;
+    heroScrollHint?: string | null;
+    aboutKicker?: string | null;
+    aboutOneLiner?: string | null;
+    aboutPitch?: string | null;
+    stats?: { value: string; label: string; id?: string }[] | null;
+    steps?: { title: string; text: string; id?: string }[] | null;
+    processKicker?: string | null;
+    processHeading?: string | null;
+    processIntro?: string | null;
+    projectsSubtitle?: string | null;
+    projectsTitle?: string | null;
+    projectsIntro?: string | null;
+    eventsSubtitle?: string | null;
+    eventsTitle?: string | null;
+    eventsIntro?: string | null;
+    sponsorsSubtitle?: string | null;
+    sponsorsTitle?: string | null;
+    sponsorsIntro?: string | null;
+    qaSubtitle?: string | null;
+    qaTitle?: string | null;
+    qaIntro?: string | null;
+    threedKicker?: string | null;
+    threedTitle?: string | null;
+    threedText?: string | null;
+    threedCta?: string | null;
+    ctaHeading?: string | null;
+    ctaText?: string | null;
+    ctaJoin?: string | null;
+    ctaContact?: string | null;
 }
 
 export type CmsFormField =

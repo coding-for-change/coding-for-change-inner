@@ -8,6 +8,7 @@ import { getAttribution } from '../../lib/attribution';
 import { trackFormStart, trackConversion } from '../../lib/analytics';
 import { useLanguage } from '../../contexts/LanguageContext';
 import RichText from '../RichText';
+import ClosingCta from './ClosingCta';
 import './landing.css';
 
 const validateEmail = (email: string) => {
@@ -259,7 +260,8 @@ const BecomeAMember: React.FC<{
     }
 
     return (
-        <div className="lp lp-page">
+        <div className="lp">
+            <div className="lp-page">
             <div className="lp-inner">
                 <motion.div
                     className="lp-page__head"
@@ -274,6 +276,7 @@ const BecomeAMember: React.FC<{
 
                 <motion.div
                     className="lp-form"
+                    id="join-form"
                     onFocus={handleFormFocus}
                     initial={{ opacity: 0, y: 24 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -462,6 +465,8 @@ const BecomeAMember: React.FC<{
                     </div>
                 </motion.div>
             </div>
+            </div>
+            <ClosingCta />
         </div>
     );
 };

@@ -23,7 +23,8 @@ const ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD || 'ChangeMe!1234';
 
 const siteConfig = {
   clubName: 'Coding for Change',
-  tagline: 'Students building software for social good',
+  tagline:
+    "We build the software nonprofits can't afford to build themselves — free, in a single semester.",
   description:
     'Coding for Change is a student initiative at the Technical University ' +
     'of Munich. We build software for non-profits, host hackathons, and ' +
@@ -41,8 +42,35 @@ const siteConfig = {
   stats: [
     { value: '4', label: 'NGOs partnered' },
     { value: '10+', label: 'Active members' },
-    { value: '1', label: 'Projects shipped' },
+    { value: '150+', label: "Users' time saved" },
   ],
+};
+
+// "Partner with us / For NGOs" page (global `partner`).
+const partner = {
+  title: "Have a problem worth solving? Let's build it together.",
+  intro:
+    'We partner with non-profits to design and ship the software they need — free of charge, ' +
+    'delivered by a dedicated student team over a single semester. No lock-in, no invoice: ' +
+    'you own what we build.',
+  valueProps: [
+    { title: 'A dedicated team', description: 'Engineers, product and design working only on your project for the semester.' },
+    { title: 'Production software, not a prototype', description: 'Real, maintainable software that goes live and keeps working after we hand it over.' },
+    { title: 'Free of charge', description: 'Funded by our university backing and sponsors — there is no cost to you.' },
+    { title: 'Clean hand-off', description: 'Documentation, a walkthrough, and the code — you own it, with no dependency on us.' },
+  ],
+  process: [
+    { title: 'Tell us the problem', description: 'A first conversation to understand your work and the pain point worth solving.' },
+    { title: 'We scope it together', description: 'We shape a solution that can realistically ship in one semester.' },
+    { title: 'The team builds', description: 'A student team builds it in agile sprints, with you in the loop throughout.' },
+    { title: 'Hand-off & support', description: 'We deliver the finished product with docs and a support window.' },
+  ],
+  commitment:
+    'All we ask: a main point of contact and a little of their time through the semester, so we build the right thing.',
+  ctaHeading: 'Ready to talk?',
+  ctaText:
+    "Tell us about your organisation and the problem you're facing — we'll take it from there.",
+  contactEmail: 'info@codingforchange.com',
 };
 
 const membership = {
@@ -142,11 +170,37 @@ const projects = [
   {
     title: 'Volunteer Portal',
     ngoPartner: 'Münchner Tafel',
+    slug: 'volunteer-portal',
+    featured: true,
     description:
       'A web portal for coordinating volunteer shifts and food-bank logistics, replacing a tangle of spreadsheets and phone calls.',
     technologies: [{ name: 'React' }, { name: 'Node.js' }, { name: 'PostgreSQL' }],
     status: 'completed',
-    links: [{ label: 'Case study', url: 'https://codingforchange.com/projects' }],
+    links: [{ label: 'Repository', url: 'https://github.com/coding-for-change' }],
+    impact: 'Coordinates 200+ volunteer shifts a week — hours of admin turned into a few clicks.',
+    problem:
+      'Münchner Tafel coordinated hundreds of volunteer shifts every week using spreadsheets and phone calls. Staff spent hours reconciling schedules, and volunteers often turned up to the wrong location.',
+    approach:
+      'A student team built a web portal with a React frontend and a Node.js / PostgreSQL backend, designed around the real daily workflow. Volunteers see upcoming shifts and sign up in seconds; staff get a live dashboard of coverage across locations.',
+    outcome:
+      'The portal replaced the spreadsheet-and-phone process entirely. Volunteers self-serve their shifts, no-shows dropped, and the coordination team got hours of their week back.',
+    quote: {
+      text: 'For the first time we can see our whole week of shifts at a glance. It has taken a huge weight off the team.',
+      author: 'Coordinator',
+      role: 'Münchner Tafel',
+    },
+    impactHeadline: 'How Münchner Tafel gave its coordinators their week back',
+    impactChallenge:
+      'Every week, Münchner Tafel relies on hundreds of volunteers to move food to the people who need it. Keeping track of who was coming, and when, meant a tangle of spreadsheets and phone calls — and volunteers still turned up at the wrong place.',
+    impactSolution:
+      'We built a simple portal where volunteers see the week ahead and sign up in a couple of taps, while coordinators get a live picture of who is covering what. No training required — it works the way the team already thinks about their week.',
+    impactResults:
+      'The spreadsheets and phone-tag are gone. Volunteers organise themselves, no-shows dropped, and the coordination team got hours of their week back to spend on the mission instead of the rota.',
+    ngoFaq: [
+      { question: 'What does it cost us?', answer: 'Nothing. Our work is funded by our university backing and sponsors — there is no cost to your organisation.' },
+      { question: 'How long does it take?', answer: 'A single semester, from first conversation to a working product handed over to your team.' },
+      { question: 'What happens after hand-off?', answer: 'You own it — the code, the documentation and a walkthrough — with a support window afterwards. No lock-in.' },
+    ],
   },
   {
     title: 'Donation Tracker',
@@ -329,7 +383,8 @@ const sponsors = [
 // ─── German translations (localized fields only) ────────────────────────────
 
 const siteConfigDe = {
-  tagline: 'Studierende entwickeln Software für das Gemeinwohl',
+  tagline:
+    'Wir entwickeln die Software, die sich gemeinnützige Organisationen sonst nicht leisten können – kostenlos, in einem einzigen Semester.',
   description:
     'Coding for Change ist eine Studierendeninitiative an der Technischen Universität München. ' +
     'Wir entwickeln Software für gemeinnützige Organisationen, veranstalten Hackathons und bringen ' +
@@ -340,8 +395,33 @@ const siteConfigDe = {
   stats: [
     { value: '4', label: 'NGOs unterstützt' },
     { value: '10+', label: 'Aktive Mitglieder' },
-    { value: '1', label: 'Projekte umgesetzt' },
+    { value: '150+', label: 'Nutzer:innen sparen Zeit' },
   ],
+};
+
+const partnerDe = {
+  title: 'Ein Problem, das es zu lösen lohnt? Lass es uns gemeinsam bauen.',
+  intro:
+    'Wir entwickeln gemeinsam mit gemeinnützigen Organisationen die Software, die sie brauchen – ' +
+    'kostenlos, geliefert von einem festen Studierendenteam in einem Semester. Kein Lock-in, ' +
+    'keine Rechnung: Was wir bauen, gehört euch.',
+  valueProps: [
+    { title: 'Ein festes Team', description: 'Engineering, Produkt und Design, die ein Semester lang nur an eurem Projekt arbeiten.' },
+    { title: 'Produktreife Software, kein Prototyp', description: 'Echte, wartbare Software, die live geht und nach der Übergabe weiterläuft.' },
+    { title: 'Kostenlos', description: 'Finanziert durch unsere universitäre Anbindung und Sponsoren – für euch entstehen keine Kosten.' },
+    { title: 'Saubere Übergabe', description: 'Dokumentation, ein Walkthrough und der Code – alles gehört euch, ganz ohne Abhängigkeit von uns.' },
+  ],
+  process: [
+    { title: 'Erzählt uns das Problem', description: 'Ein erstes Gespräch, um eure Arbeit und den größten Schmerzpunkt zu verstehen.' },
+    { title: 'Wir schneiden es gemeinsam zu', description: 'Wir formen eine Lösung, die realistisch in einem Semester lieferbar ist.' },
+    { title: 'Das Team entwickelt', description: 'Ein Studierendenteam baut sie in agilen Sprints – ihr seid durchgehend eingebunden.' },
+    { title: 'Übergabe & Support', description: 'Wir liefern das fertige Produkt mit Dokumentation und einem Support-Zeitraum.' },
+  ],
+  commitment:
+    'Was wir brauchen: eine feste Ansprechperson und etwas ihrer Zeit über das Semester, damit wir das Richtige bauen.',
+  ctaHeading: 'Bereit für ein Gespräch?',
+  ctaText:
+    'Erzähl uns von eurer Organisation und eurem Problem – wir kümmern uns um den Rest.',
 };
 
 const membershipDe = {
@@ -411,7 +491,30 @@ const projectsDe = [
     title: 'Ehrenamtsportal',
     ngoPartner: 'Münchner Tafel',
     description: 'Ein Webportal zur Koordination von Freiwilligenschichten und Lebensmittellogistik, das ein Gewirr aus Tabellen und Telefonaten ersetzt.',
-    links: [{ label: 'Fallstudie', url: 'https://codingforchange.com/projects' }],
+    links: [{ label: 'Repository', url: 'https://github.com/coding-for-change' }],
+    impact: 'Koordiniert über 200 Freiwilligenschichten pro Woche – aus stundenlanger Verwaltung werden wenige Klicks.',
+    problem:
+      'Die Münchner Tafel koordinierte jede Woche Hunderte Freiwilligenschichten über Tabellen und Telefonate. Das Team verbrachte Stunden mit dem Abgleich von Plänen, und Freiwillige erschienen oft am falschen Ort.',
+    approach:
+      'Ein Studierendenteam baute ein Webportal mit React-Frontend und Node.js/PostgreSQL-Backend – ausgelegt auf den echten Arbeitsalltag. Freiwillige sehen kommende Schichten und melden sich in Sekunden an; das Team erhält ein Live-Dashboard über alle Standorte.',
+    outcome:
+      'Das Portal ersetzte den Tabellen-und-Telefon-Prozess vollständig. Freiwillige verwalten ihre Schichten selbst, No-Shows gingen zurück, und das Koordinationsteam gewann Stunden pro Woche zurück.',
+    quote: {
+      text: 'Zum ersten Mal sehen wir unsere ganze Woche an Schichten auf einen Blick. Das hat dem Team enorm viel Last abgenommen.',
+      role: 'Münchner Tafel',
+    },
+    impactHeadline: 'Wie die Münchner Tafel ihren Koordinator:innen die Woche zurückgab',
+    impactChallenge:
+      'Jede Woche verlässt sich die Münchner Tafel auf Hunderte Freiwillige, um Lebensmittel zu den Menschen zu bringen, die sie brauchen. Den Überblick zu behalten – wer wann kommt – bedeutete ein Gewirr aus Tabellen und Telefonaten, und Freiwillige standen trotzdem am falschen Ort.',
+    impactSolution:
+      'Wir haben ein einfaches Portal gebaut, in dem Freiwillige die kommende Woche sehen und sich mit wenigen Klicks eintragen, während Koordinator:innen live sehen, wer welche Schicht abdeckt. Keine Schulung nötig – es funktioniert so, wie das Team ohnehin über seine Woche denkt.',
+    impactResults:
+      'Tabellen und Telefon-Pingpong sind Geschichte. Freiwillige organisieren sich selbst, No-Shows gingen zurück, und das Koordinationsteam gewann Stunden pro Woche zurück – für die Mission statt für den Dienstplan.',
+    ngoFaq: [
+      { question: 'Was kostet uns das?', answer: 'Nichts. Unsere Arbeit wird durch unsere universitäre Anbindung und Sponsoren finanziert – für eure Organisation entstehen keine Kosten.' },
+      { question: 'Wie lange dauert es?', answer: 'Ein einziges Semester, vom ersten Gespräch bis zum fertigen Produkt, das an euer Team übergeben wird.' },
+      { question: 'Was passiert nach der Übergabe?', answer: 'Es gehört euch – der Code, die Dokumentation und ein Walkthrough – mit einem Support-Zeitraum danach. Kein Lock-in.' },
+    ],
   },
   {
     title: 'Spenden-Tracker',
@@ -708,6 +811,27 @@ const jsonRequest = async (method, path, body, cookie) => {
 const postJson = (path, body, cookie) => jsonRequest('POST', path, body, cookie);
 const patchJson = (path, body, cookie) => jsonRequest('PATCH', path, body, cookie);
 
+/**
+ * Seed a global that has localized *array* fields so BOTH locales are kept.
+ * Writing EN then DE without row ids makes the DE write replace the arrays and
+ * null out the EN values, so we read the row ids back after the EN write and
+ * attach them to the DE rows (Payload then updates the same rows per-locale).
+ */
+const seedGlobalLocalized = async (slug, en, de, arrayKeys, cookie) => {
+  await postJson(`/api/globals/${slug}`, en, cookie).then(assertOk(`${slug} (en)`));
+  const current = await (
+    await fetch(`${BASE}/api/globals/${slug}`, { headers: { cookie } })
+  ).json();
+  const deBody = { ...de };
+  for (const key of arrayKeys) {
+    const ids = (current[key] || []).map((row) => row.id);
+    deBody[key] = (de[key] || []).map((row, i) => ({ ...row, id: ids[i] }));
+  }
+  await postJson(`/api/globals/${slug}?locale=de`, deBody, cookie).then(
+    assertOk(`${slug} (de)`)
+  );
+};
+
 /** Extract the Payload auth cookie (name=value) from a login response. */
 const authCookieFrom = (res) => {
   const cookies = res.headers.getSetCookie?.() || [];
@@ -785,13 +909,45 @@ const seed = async () => {
   await postJson('/api/globals/site-config', siteConfig, cookie).then(assertOk('site-config (en)'));
   await postJson('/api/globals/site-config?locale=de', siteConfigDe, cookie).then(assertOk('site-config (de)'));
 
-  await postJson('/api/globals/membership', membership, cookie).then(assertOk('membership (en)'));
-  await postJson('/api/globals/membership?locale=de', membershipDe, cookie).then(assertOk('membership (de)'));
+  // membership + partner have localized array fields — keep both locales.
+  await seedGlobalLocalized('membership', membership, membershipDe, ['benefits', 'requirements', 'tracks'], cookie);
+  await seedGlobalLocalized('partner', partner, partnerDe, ['valueProps', 'process'], cookie);
 
   // Legal text is German by law; seeded once for the default locale (de falls back).
   await postJson('/api/globals/legal', legal, cookie).then(assertOk('legal'));
 
-  console.log('Updated globals: site-config, membership, legal (en + de)');
+  console.log('Updated globals: site-config, membership, partner, legal (en + de)');
+
+  // ── Sponsor tiers ──────────────────────────────────────────────────────────
+  // Create the tier records first, then point each sponsor's `tierRef` at the
+  // matching tier (this is also the backfill: it maps the deprecated fixed
+  // `tier` value to a tier record).
+  const sponsorTierDefs = [
+    { value: 'platinum', label: 'Platinum', labelDe: 'Platin', order: 10 },
+    { value: 'gold', label: 'Gold', labelDe: 'Gold', order: 20 },
+    { value: 'silver', label: 'Silver', labelDe: 'Silber', order: 30 },
+    { value: 'bronze', label: 'Bronze', labelDe: 'Bronze', order: 40 },
+    { value: 'partner', label: 'Partners', labelDe: 'Partner', order: 50 },
+  ];
+  const tierIdByValue = {};
+  for (const td of sponsorTierDefs) {
+    const res = await postJson(
+      '/api/sponsor-tiers',
+      { label: td.label, order: td.order },
+      cookie
+    ).then(assertOk('sponsor-tiers (en)'));
+    const id = (await res.json())?.doc?.id;
+    tierIdByValue[td.value] = id;
+    if (id) {
+      await patchJson(
+        `/api/sponsor-tiers/${id}?locale=de`,
+        { label: td.labelDe },
+        cookie
+      ).then(assertOk('sponsor-tiers (de)'));
+    }
+  }
+  for (const s of sponsors) s.tierRef = tierIdByValue[s.tier];
+  console.log(`Created ${sponsorTierDefs.length} sponsor-tiers (en + de)`);
 
   // ── Collections ──────────────────────────────────────────────────────────
   // Create English items first (returns IDs), then PATCH German translations.
@@ -809,17 +965,40 @@ const seed = async () => {
 
   for (const { slug, en, de } of collections) {
     const ids = [];
+    const enDocs = [];
 
     for (const item of en) {
       const res = await postJson(`/api/${slug}`, item, cookie).then(assertOk(`${slug} (en)`));
       const data = await res.json();
       ids.push(data?.doc?.id);
+      enDocs.push(data?.doc);
     }
 
     for (let i = 0; i < de.length; i++) {
       const id = ids[i];
       if (!id) continue;
-      await patchJson(`/api/${slug}/${id}?locale=de`, de[i], cookie).then(assertOk(`${slug}[${i}] (de)`));
+      const body = { ...de[i] };
+      const enDoc = enDocs[i] || {};
+      // Localized *array* fields need the EN row ids carried into the DE write,
+      // or Payload replaces the array and nulls the EN values. For arrays the DE
+      // payload omits (e.g. technologies — names don't translate) we carry the EN
+      // rows verbatim; for arrays it provides (links, ngoFaq, …) we attach the EN
+      // ids by index so the same rows are updated per-locale.
+      for (const [key, enArr] of Object.entries(enDoc)) {
+        const isRowArray =
+          Array.isArray(enArr) &&
+          enArr.length > 0 &&
+          enArr[0] &&
+          typeof enArr[0] === 'object' &&
+          'id' in enArr[0];
+        if (!isRowArray) continue;
+        if (body[key] === undefined) {
+          body[key] = enArr.map((row) => ({ ...row }));
+        } else if (Array.isArray(body[key])) {
+          body[key] = body[key].map((row, j) => ({ ...row, id: enArr[j]?.id }));
+        }
+      }
+      await patchJson(`/api/${slug}/${id}?locale=de`, body, cookie).then(assertOk(`${slug}[${i}] (de)`));
     }
 
     idsBySlug[slug] = ids;
