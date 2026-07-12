@@ -518,7 +518,7 @@ const Landing: React.FC<LandingProps> = (props) => {
                 </div>
             </section>
 
-            {/* ---- Book a meeting ---- */}
+            {/* ---- Talk to us: dual-audience (NGO → book · student → join) ---- */}
             <section id="book" className="lp-section lp-section--book">
                 <div className="lp-inner">
                     <motion.div
@@ -526,10 +526,26 @@ const Landing: React.FC<LandingProps> = (props) => {
                         {...reveal}
                         transition={{ duration: 0.5 }}
                     >
-                        <p className="lp-kicker">{t.nav.contact}</p>
-                        <h2 className="lp-h2">{t.book.title}</h2>
-                        <p className="lp-lead">{t.book.intro}</p>
-                        <div style={{ marginTop: 28, width: '100%' }}>
+                        <div className="lp-talk">
+                            <div className="lp-talk__panel">
+                                <p className="lp-kicker">{t.talk.ngoKicker}</p>
+                                <h2 className="lp-h2">{t.talk.ngoHeading}</h2>
+                                <p className="lp-lead">{t.talk.ngoText}</p>
+                            </div>
+                            <div className="lp-talk__panel">
+                                <p className="lp-kicker">{t.talk.studentKicker}</p>
+                                <h2 className="lp-h2">{t.talk.studentHeading}</h2>
+                                <p className="lp-lead">{t.talk.studentText}</p>
+                                <Link
+                                    className="lp-btn lp-btn--primary"
+                                    href="/join"
+                                    style={{ marginTop: 20 }}
+                                >
+                                    {t.talk.studentCta} →
+                                </Link>
+                            </div>
+                        </div>
+                        <div style={{ marginTop: 32, width: '100%' }}>
                             <BookingEmbed />
                         </div>
                     </motion.div>

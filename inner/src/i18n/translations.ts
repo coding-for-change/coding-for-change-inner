@@ -80,6 +80,10 @@ export interface Translations {
         formUnavailable: string; successFallback: string;
     };
     book: { title: string; intro: string; fallback: string; openInNewTab: string; };
+    talk: {
+        ngoKicker: string; ngoHeading: string; ngoText: string;
+        studentKicker: string; studentHeading: string; studentText: string; studentCta: string;
+    };
     sponsors: {
         title: string; subtitle: string; intro: string;
         tiers: { platinum: string; gold: string; silver: string; bronze: string; partner: string };
@@ -269,6 +273,15 @@ const en: Translations = {
         intro: 'Prefer to talk? Grab a slot that suits you and we will meet you there.',
         fallback: 'Online booking is not set up yet — email us and we will find a time.',
         openInNewTab: 'Open booking page',
+    },
+    talk: {
+        ngoKicker: 'For NGOs',
+        ngoHeading: 'Have a problem worth solving?',
+        ngoText: 'You’re an NGO and interested? Speak with us — grab a slot below and we’ll explore whether we can help.',
+        studentKicker: 'For students',
+        studentHeading: 'Want to make an impact?',
+        studentText: 'You’re a student who’s passionate about having an impact? Whatever your background, there’s something for you at Coding for Change.',
+        studentCta: 'Join the club',
     },
     sponsors: {
         title: 'Sponsors', subtitle: 'Our Supporters',
@@ -478,6 +491,15 @@ const de: Translations = {
         intro: 'Lieber sprechen? Wähl einen passenden Slot und wir treffen uns dort.',
         fallback: 'Online-Buchung ist noch nicht eingerichtet — schreib uns und wir finden einen Termin.',
         openInNewTab: 'Buchungsseite öffnen',
+    },
+    talk: {
+        ngoKicker: 'Für NGOs',
+        ngoHeading: 'Ein Problem, das es zu lösen lohnt?',
+        ngoText: 'Ihr seid eine NGO und interessiert? Sprecht mit uns – bucht unten einen Termin und wir schauen, ob wir helfen können.',
+        studentKicker: 'Für Studierende',
+        studentHeading: 'Willst du etwas bewegen?',
+        studentText: 'Du bist Studierende:r und brennst dafür, etwas zu bewirken? Egal welcher Hintergrund – bei Coding for Change ist etwas für dich dabei.',
+        studentCta: 'Mitglied werden',
     },
     sponsors: {
         title: 'Sponsoren', subtitle: 'Unsere Unterstützer',

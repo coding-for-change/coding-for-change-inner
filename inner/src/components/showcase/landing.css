@@ -1800,3 +1800,44 @@
     margin: 0;
     max-width: 70ch;
 }
+
+/* ================================================================== */
+/* Homepage dual-audience CTA (NGO booking + student join)             */
+/* ================================================================== */
+.lp-talk {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+}
+.lp-talk__panel {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+@media (max-width: 820px) {
+    .lp-talk {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/* German compound words can be very long — let big headings break /   */
+/* hyphenate instead of overflowing their container.                   */
+/* ------------------------------------------------------------------ */
+.lp-h2,
+.lp-hero__title,
+.lp-page__title,
+.lp-card__title,
+.lp-cs__title,
+.lp-proj-feat__title,
+.lp-3d__title,
+.lp-cs-choice__tag,
+.lp-step__title,
+.lp-cs-cta__heading {
+    overflow-wrap: break-word;
+    hyphens: auto;
+}
+.lp-card__title {
+    min-width: 0;
+}
