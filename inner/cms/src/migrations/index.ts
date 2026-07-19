@@ -17,6 +17,7 @@ import * as migration_20260712_141559_add_sponsor_tiers_collection from './20260
 import * as migration_20260712_184709_add_media_fields from './20260712_184709_add_media_fields';
 import * as migration_20260712_214450_add_team_groups from './20260712_214450_add_team_groups';
 import * as migration_20260719_183539_add_case_study_elements from './20260719_183539_add_case_study_elements';
+import * as migration_20260719_205115_add_case_study_content_blocks from './20260719_205115_add_case_study_content_blocks';
 
 export const migrations = [
   {
@@ -112,6 +113,11 @@ export const migrations = [
   {
     up: migration_20260719_183539_add_case_study_elements.up,
     down: migration_20260719_183539_add_case_study_elements.down,
-    name: '20260719_183539_add_case_study_elements'
+    name: '20260719_183539_add_case_study_elements',
+  },
+  {
+    up: migration_20260719_205115_add_case_study_content_blocks.up,
+    down: migration_20260719_205115_add_case_study_content_blocks.down,
+    name: '20260719_205115_add_case_study_content_blocks'
   },
 ];

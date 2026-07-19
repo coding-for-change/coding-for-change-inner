@@ -322,79 +322,52 @@ export interface Project {
       }[]
     | null;
   /**
-   * The problem the partner faced, in their terms.
-   */
-  problem?: string | null;
-  /**
-   * How the team approached and built the solution.
-   */
-  approach?: string | null;
-  /**
-   * What shipped and what changed as a result.
-   */
-  outcome?: string | null;
-  /**
-   * A one-line impact highlight (e.g. "Saves ~150 companions hours of paperwork a month").
-   */
-  impact?: string | null;
-  quote?: {
-    text?: string | null;
-    author?: string | null;
-    role?: string | null;
-  };
-  gallery?:
-    | {
-        image: number | Media;
-        caption?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * One-line outcome for the impact hero (e.g. "How Lebenshilfe gave 150 companions their evenings back").
+   * The case-study page headline (falls back to the project title).
    */
   impactHeadline?: string | null;
   /**
-   * The partner's challenge, in their world — non-technical.
+   * A one-line impact highlight shown under the headline (e.g. "Saves ~150 companions hours of paperwork a month").
    */
-  impactChallenge?: string | null;
+  impact?: string | null;
   /**
-   * What the software does for them, in plain language (benefits, not stack).
-   */
-  impactSolution?: string | null;
-  /**
-   * The results / the difference it made.
-   */
-  impactResults?: string | null;
-  /**
-   * Photos for the impact story — e.g. the partner using the tool, or the team working with the NGO. Falls back to the case-study screenshots above when left empty.
-   */
-  impactGallery?:
-    | {
-        image: number | Media;
-        caption?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Common questions from nonprofits (cost, time, what happens after).
-   */
-  ngoFaq?:
-    | {
-        question: string;
-        answer: string;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Optional modular elements for the detail page (timeline, team). Add, remove and reorder as needed; each element chooses which view it appears in.
+   * The body of the case-study page. Add, remove and reorder blocks freely — text sections, quote, gallery, timeline, team and FAQ.
    */
   layout?:
     | (
         | {
             /**
-             * Which version of the case study this element appears in (the page offers a technical and an impact view).
+             * Optional section heading (e.g. "The challenge").
              */
-            visibility?: ('both' | 'technical' | 'impact') | null;
+            heading?: string | null;
+            /**
+             * Paragraph text. Separate paragraphs with a blank line.
+             */
+            body: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'text';
+          }
+        | {
+            text: string;
+            author?: string | null;
+            role?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'quote';
+          }
+        | {
+            images?:
+              | {
+                  image: number | Media;
+                  caption?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'gallery';
+          }
+        | {
             /**
              * Optional section heading (e.g. "How it came together").
              */
@@ -416,10 +389,6 @@ export interface Project {
           }
         | {
             /**
-             * Which version of the case study this element appears in (the page offers a technical and an impact view).
-             */
-            visibility?: ('both' | 'technical' | 'impact') | null;
-            /**
              * Optional section heading (e.g. "The team behind it").
              */
             heading?: string | null;
@@ -436,6 +405,18 @@ export interface Project {
             id?: string | null;
             blockName?: string | null;
             blockType: 'team';
+          }
+        | {
+            items?:
+              | {
+                  question: string;
+                  answer: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'faq';
           }
       )[]
     | null;
@@ -1408,49 +1389,44 @@ export interface ProjectsSelect<T extends boolean = true> {
         url?: T;
         id?: T;
       };
-  problem?: T;
-  approach?: T;
-  outcome?: T;
-  impact?: T;
-  quote?:
-    | T
-    | {
-        text?: T;
-        author?: T;
-        role?: T;
-      };
-  gallery?:
-    | T
-    | {
-        image?: T;
-        caption?: T;
-        id?: T;
-      };
   impactHeadline?: T;
-  impactChallenge?: T;
-  impactSolution?: T;
-  impactResults?: T;
-  impactGallery?:
-    | T
-    | {
-        image?: T;
-        caption?: T;
-        id?: T;
-      };
-  ngoFaq?:
-    | T
-    | {
-        question?: T;
-        answer?: T;
-        id?: T;
-      };
+  impact?: T;
   layout?:
     | T
     | {
+        text?:
+          | T
+          | {
+              heading?: T;
+              body?: T;
+              id?: T;
+              blockName?: T;
+            };
+        quote?:
+          | T
+          | {
+              text?: T;
+              author?: T;
+              role?: T;
+              id?: T;
+              blockName?: T;
+            };
+        gallery?:
+          | T
+          | {
+              images?:
+                | T
+                | {
+                    image?: T;
+                    caption?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
         timeline?:
           | T
           | {
-              visibility?: T;
               heading?: T;
               points?:
                 | T
@@ -1466,13 +1442,25 @@ export interface ProjectsSelect<T extends boolean = true> {
         team?:
           | T
           | {
-              visibility?: T;
               heading?: T;
               members?:
                 | T
                 | {
                     member?: T;
                     role?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        faq?:
+          | T
+          | {
+              items?:
+                | T
+                | {
+                    question?: T;
+                    answer?: T;
                     id?: T;
                   };
               id?: T;

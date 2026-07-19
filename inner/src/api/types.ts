@@ -63,49 +63,49 @@ export interface CmsProject {
     technologies?: { name: string; id?: string }[];
     status: 'active' | 'completed' | 'recruiting';
     links?: { label: string; url: string; id?: string }[];
-    // Case-study fields (optional). `slug` drives the /projects/<slug> detail
-    // page; `featured` marks the flagship for a differentiated treatment.
+    // `slug` drives the /projects/<slug> detail page; `featured` marks the
+    // flagship for a differentiated treatment on the projects list.
     slug?: string | null;
     featured?: boolean | null;
-    problem?: string | null;
-    approach?: string | null;
-    outcome?: string | null;
-    impact?: string | null;
-    quote?: {
-        text?: string | null;
-        author?: string | null;
-        role?: string | null;
-    } | null;
-    gallery?: {
-        image?: CmsMedia | null;
-        caption?: string | null;
-        id?: string;
-    }[] | null;
-    // "Impact story" view (persuasive, for nonprofits).
+    // Case-study head.
     impactHeadline?: string | null;
-    impactChallenge?: string | null;
-    impactSolution?: string | null;
-    impactResults?: string | null;
-    // Impact-story photos; the ImpactView falls back to `gallery` when empty.
-    impactGallery?: {
-        image?: CmsMedia | null;
-        caption?: string | null;
-        id?: string;
-    }[] | null;
-    ngoFaq?: { question: string; answer: string; id?: string }[] | null;
-    // Flexible, editor-composed elements (Payload blocks). Each block chooses
-    // which case-study view it appears in via `visibility`.
+    impact?: string | null;
+    // Case-study body — freely-orderable content blocks, rendered in order.
     layout?: CmsCaseStudyBlock[] | null;
 }
 
-/** Which case-study view an element appears in. */
-export type CaseStudyVisibility = 'both' | 'technical' | 'impact';
+/** A shared { image, caption } item used by gallery blocks. */
+export interface CmsGalleryImage {
+    image?: CmsMedia | null;
+    caption?: string | null;
+    id?: string | null;
+}
 
-/** A "timeline" case-study element: an ordered list of milestones. */
+export interface CmsTextBlock {
+    blockType: 'text';
+    id?: string | null;
+    heading?: string | null;
+    body: string;
+}
+
+export interface CmsQuoteBlock {
+    blockType: 'quote';
+    id?: string | null;
+    text: string;
+    author?: string | null;
+    role?: string | null;
+}
+
+export interface CmsGalleryBlock {
+    blockType: 'gallery';
+    id?: string | null;
+    images?: CmsGalleryImage[] | null;
+}
+
+/** An ordered list of milestones. */
 export interface CmsTimelineBlock {
     blockType: 'timeline';
     id?: string | null;
-    visibility?: CaseStudyVisibility | null;
     heading?: string | null;
     points?: {
         /** Shown inside the circle; falls back to the point's position. */
@@ -116,11 +116,10 @@ export interface CmsTimelineBlock {
     }[] | null;
 }
 
-/** A "team" case-study element: the teammates involved, with per-project roles. */
+/** The teammates involved, with per-project roles. */
 export interface CmsTeamBlock {
     blockType: 'team';
     id?: string | null;
-    visibility?: CaseStudyVisibility | null;
     heading?: string | null;
     members?: {
         /** Populated at depth >= 1; may be an ID at insufficient depth. */
@@ -131,8 +130,20 @@ export interface CmsTeamBlock {
     }[] | null;
 }
 
-/** A block in a project's flexible case-study `layout`. */
-export type CmsCaseStudyBlock = CmsTimelineBlock | CmsTeamBlock;
+export interface CmsFaqBlock {
+    blockType: 'faq';
+    id?: string | null;
+    items?: { question: string; answer: string; id?: string | null }[] | null;
+}
+
+/** A block in a project's freely-orderable case-study `layout`. */
+export type CmsCaseStudyBlock =
+    | CmsTextBlock
+    | CmsQuoteBlock
+    | CmsGalleryBlock
+    | CmsTimelineBlock
+    | CmsTeamBlock
+    | CmsFaqBlock;
 
 /** GET /api/sponsor-tiers — CMS-managed sponsor tiers (Platinum, Gold, …). */
 export interface CmsSponsorTier {
