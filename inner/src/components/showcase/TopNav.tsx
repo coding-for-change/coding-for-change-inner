@@ -6,7 +6,6 @@ import Enter3DButton from '../general/Enter3DButton';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useSiteConfig, useCmsCollection } from '../../api';
 import type { CmsEvent, CmsSponsor, CmsBlogPost } from '../../api/types';
-import Logo from '../../assets/Logo.webp';
 import './landing.css';
 
 // Sections that live on the single-scroll landing page (`/`). Clicking one
@@ -110,14 +109,11 @@ const TopNav: React.FC = () => {
             >
                 <img
                     className="lp-nav__logo"
-                    src={Logo.src}
+                    src="/images/logo.svg"
                     alt=""
-                    width={Logo.width}
-                    height={Logo.height}
+                    width={220}
+                    height={30}
                 />
-                <span className="lp-nav__name">
-                    {siteConfig.clubName || 'Coding for Change'}
-                </span>
             </button>
 
             <div className="lp-nav__links">

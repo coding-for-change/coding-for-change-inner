@@ -5,17 +5,12 @@ import RouterLink from 'next/link';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useCmsCollection } from '../../api';
 import type { CmsEvent, CmsSponsor, CmsBlogPost } from '../../api/types';
-import Logo from '../../assets/Logo.webp';
 import './mobile.css';
 
 const NAVY = '#0f2040';
 // The nav uses the site's display face (Space Grotesk) via the CSS variable set
 // on <html> in layout.tsx, matching the desktop TopNav.
 const NAV_FONT = "var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif";
-
-// Distance (px) the user scrolls before the "Coding for Change" wordmark
-// is fully revealed next to the logo.
-const REVEAL_DISTANCE = 90;
 
 const LANGUAGES: { code: 'de' | 'en'; label: string; flag: string }[] = [
     { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
@@ -25,7 +20,6 @@ const LANGUAGES: { code: 'de' | 'en'; label: string; flag: string }[] = [
 const MobileNav: React.FC = () => {
     const [open, setOpen] = useState(false);
     const [langOpen, setLangOpen] = useState(false);
-    const [reveal, setReveal] = useState(0);
     const pathname = usePathname();
     const { t, locale, setLocale } = useLanguage();
     const langRef = useRef<HTMLDivElement>(null);
@@ -34,17 +28,6 @@ const MobileNav: React.FC = () => {
     useEffect(() => {
         setOpen(false);
     }, [pathname]);
-
-    // Reveal the wordmark progressively as the page scrolls.
-    useEffect(() => {
-        const onScroll = () => {
-            const y = window.scrollY || document.documentElement.scrollTop || 0;
-            setReveal(Math.min(1, y / REVEAL_DISTANCE));
-        };
-        onScroll();
-        window.addEventListener('scroll', onScroll, { passive: true });
-        return () => window.removeEventListener('scroll', onScroll);
-    }, []);
 
     // Lock background scroll while the overlay is open.
     useEffect(() => {
@@ -94,23 +77,15 @@ const MobileNav: React.FC = () => {
         <>
             <header style={styles.header}>
                 <div style={styles.brand}>
-                    <RouterLink href="/" style={styles.logoLink}>
+                    <RouterLink href="/" style={styles.logoLink} aria-label="Coding for Change">
                         <img
-                            src={Logo.src}
+                            src="/images/logo.svg"
                             alt="Coding for Change"
-                            width={Logo.width}
-                            height={Logo.height}
+                            width={190}
+                            height={26}
                             style={styles.logo}
                         />
                     </RouterLink>
-                    <span
-                        style={Object.assign({}, styles.wordmark, {
-                            opacity: reveal,
-                            transform: `translateX(${(1 - reveal) * -8}px)`,
-                        })}
-                    >
-                        Coding for Change
-                    </span>
                 </div>
                 <button
                     onClick={() => setOpen(true)}
@@ -133,10 +108,10 @@ const MobileNav: React.FC = () => {
                                 onClick={() => setOpen(false)}
                             >
                                 <img
-                                    src={Logo.src}
+                                    src="/images/logo.svg"
                                     alt="Coding for Change"
-                                    width={Logo.width}
-                                    height={Logo.height}
+                                    width={190}
+                                    height={26}
                                     style={styles.logo}
                                 />
                             </RouterLink>
@@ -251,17 +226,9 @@ const styles: StyleSheetCSS = {
         flexShrink: 0,
     },
     logo: {
-        height: 30,
+        height: 26,
         width: 'auto',
         objectFit: 'contain',
-    },
-    wordmark: {
-        fontFamily: NAV_FONT,
-        fontSize: 20,
-        color: '#000',
-        whiteSpace: 'nowrap',
-        transition: 'opacity 0.2s ease-out, transform 0.2s ease-out',
-        pointerEvents: 'none',
     },
     menuButton: {
         display: 'flex',
