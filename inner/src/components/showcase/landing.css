@@ -1403,11 +1403,24 @@
     flex-direction: column;
     width: 100%;
 }
-.lp-booking__frame {
+/* Cal.com renders large in a bare iframe. The frame is laid out 25% larger than
+   this box in both axes, then scaled to 0.8 — so the widget keeps its full
+   desktop layout but appears smaller (more of the calendar visible at once),
+   while the box still reserves the correct scaled height (no empty gap). Tune
+   the scale (and the matching width/height %) to taste. */
+.lp-booking__scale {
     width: 100%;
-    min-height: 640px;
+    overflow: hidden;
+}
+.lp-booking__frame {
+    width: 125%;
+    height: 125%;
+    box-sizing: border-box;
     border: 1px solid var(--line);
     background: #fff;
+    transform: scale(0.8);
+    transform-origin: top left;
+    display: block;
 }
 .lp-booking__link {
     align-self: flex-start;
@@ -1621,8 +1634,6 @@
     width: 100%;
     margin: 32px 0;
     overflow: hidden;
-    border: 1px solid var(--line);
-    border-radius: 4px;
 }
 .lp-cs__hero img {
     width: 100%;
@@ -1676,21 +1687,21 @@
 .lp-cs__shot {
     display: block;
     margin: 0;
-    border: 1px solid var(--line);
-    background: #fff;
     overflow: hidden;
 }
+/* Fixed height + cover keeps every gallery thumbnail the same size regardless of
+   the source image's aspect ratio; widths still flex with the grid columns. */
 .lp-cs__shot img {
     width: 100%;
+    height: 200px;
     display: block;
     object-fit: cover;
 }
 .lp-cs__caption {
     display: block;
-    padding: 10px 14px;
+    padding: 8px 0 0;
     font-size: 13px;
     color: var(--muted);
-    border-top: 1px solid var(--line);
 }
 /* Gallery thumbnails are buttons that open the full-screen viewer. */
 .lp-cs__shot-btn {
@@ -1703,16 +1714,117 @@
     cursor: zoom-in;
     overflow: hidden;
 }
-.lp-cs__shot-btn img {
-    transition: transform 0.25s ease;
-}
-.lp-cs__shot-btn:hover img,
-.lp-cs__shot-btn:focus-visible img {
-    transform: scale(1.04);
-}
 .lp-cs__shot-btn:focus-visible {
     outline: 2px solid var(--teal);
     outline-offset: 2px;
+}
+
+/* ---- Case-study element: timeline ---- */
+.lp-cs__timeline {
+    margin-top: 36px;
+}
+.lp-cs-tl {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+}
+.lp-cs-tl__item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 18px;
+    padding-bottom: 28px;
+}
+.lp-cs-tl__item:last-child {
+    padding-bottom: 0;
+}
+/* Connecting line running down through the markers. */
+.lp-cs-tl__item::before {
+    content: '';
+    position: absolute;
+    left: 21px;
+    top: 44px;
+    bottom: -4px;
+    width: 2px;
+    background: var(--line);
+}
+.lp-cs-tl__item:last-child::before {
+    display: none;
+}
+.lp-cs-tl__marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--teal);
+    color: #fff;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1;
+    z-index: 1;
+}
+.lp-cs-tl__content {
+    display: flex;
+    flex-direction: column;
+    padding-top: 8px;
+}
+.lp-cs-tl__title {
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-size: 19px;
+    margin: 0 0 4px;
+    color: var(--ink);
+}
+.lp-cs-tl__sub {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--muted);
+    margin: 0;
+    max-width: 60ch;
+}
+
+/* ---- Case-study element: team ---- */
+.lp-cs__team {
+    margin-top: 36px;
+}
+.lp-cs-team {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 24px 20px;
+    margin: 8px 0 0;
+    padding: 0;
+}
+.lp-cs-team__card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 4px;
+}
+.lp-cs-team__photo {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--alt);
+    margin-bottom: 6px;
+}
+.lp-cs-team__photo--empty {
+    display: block;
+}
+.lp-cs-team__name {
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+}
+.lp-cs-team__role {
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--muted);
 }
 
 /* ---- Full-screen gallery viewer (lightbox) ---- */
@@ -1814,9 +1926,6 @@
 @media (prefers-reduced-motion: reduce) {
     .lp-lightbox {
         animation: none;
-    }
-    .lp-cs__shot-btn img {
-        transition: none;
     }
 }
 @media (max-width: 640px) {

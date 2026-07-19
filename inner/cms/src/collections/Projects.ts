@@ -1,4 +1,22 @@
-import { CollectionConfig } from 'payload';
+import { CollectionConfig, Field } from 'payload';
+
+// The "which view does this element show in?" select, reused by every case-study
+// element block. A factory (not a shared object) so each block gets its own
+// field instance rather than aliasing one config.
+const visibility = (): Field => ({
+  name: 'visibility',
+  type: 'select',
+  defaultValue: 'both',
+  options: [
+    { label: 'Both views', value: 'both' },
+    { label: 'Technical view only', value: 'technical' },
+    { label: 'Impact view only', value: 'impact' },
+  ],
+  admin: {
+    description:
+      'Which version of the case study this element appears in (the page offers a technical and an impact view).',
+  },
+});
 
 export const Projects: CollectionConfig = {
   slug: 'projects',
@@ -168,6 +186,80 @@ export const Projects: CollectionConfig = {
           fields: [
             { name: 'question', type: 'text', required: true, localized: true },
             { name: 'answer', type: 'textarea', required: true, localized: true },
+          ],
+        },
+      ],
+    },
+    // ---- Flexible case-study elements (editor-composed; each targets a view) ----
+    {
+      name: 'layout',
+      label: 'Case study elements',
+      type: 'blocks',
+      admin: {
+        description:
+          'Optional modular elements for the detail page (timeline, team). Add, remove and reorder as needed; each element chooses which view it appears in.',
+      },
+      blocks: [
+        {
+          slug: 'timeline',
+          labels: { singular: 'Timeline', plural: 'Timelines' },
+          fields: [
+            visibility(),
+            {
+              name: 'heading',
+              type: 'text',
+              localized: true,
+              admin: { description: 'Optional section heading (e.g. "How it came together").' },
+            },
+            {
+              name: 'points',
+              type: 'array',
+              minRows: 1,
+              labels: { singular: 'Point', plural: 'Points' },
+              fields: [
+                {
+                  name: 'marker',
+                  type: 'text',
+                  admin: {
+                    description:
+                      'Shown inside the circle — a number (1, 2, 3) or a symbol (e.g. ✓). Leave blank to auto-number by position.',
+                  },
+                },
+                { name: 'title', type: 'text', required: true, localized: true },
+                { name: 'subtitle', type: 'text', localized: true },
+              ],
+            },
+          ],
+        },
+        {
+          slug: 'team',
+          labels: { singular: 'Team', plural: 'Teams' },
+          fields: [
+            visibility(),
+            {
+              name: 'heading',
+              type: 'text',
+              localized: true,
+              admin: { description: 'Optional section heading (e.g. "The team behind it").' },
+            },
+            {
+              name: 'members',
+              type: 'array',
+              minRows: 1,
+              labels: { singular: 'Member', plural: 'Members' },
+              fields: [
+                { name: 'member', type: 'relationship', relationTo: 'team', required: true },
+                {
+                  name: 'role',
+                  type: 'text',
+                  localized: true,
+                  admin: {
+                    description:
+                      'Role on this project (e.g. "Project Lead"). Falls back to the member\'s main role if blank.',
+                  },
+                },
+              ],
+            },
           ],
         },
       ],

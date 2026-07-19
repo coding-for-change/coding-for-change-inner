@@ -93,7 +93,46 @@ export interface CmsProject {
         id?: string;
     }[] | null;
     ngoFaq?: { question: string; answer: string; id?: string }[] | null;
+    // Flexible, editor-composed elements (Payload blocks). Each block chooses
+    // which case-study view it appears in via `visibility`.
+    layout?: CmsCaseStudyBlock[] | null;
 }
+
+/** Which case-study view an element appears in. */
+export type CaseStudyVisibility = 'both' | 'technical' | 'impact';
+
+/** A "timeline" case-study element: an ordered list of milestones. */
+export interface CmsTimelineBlock {
+    blockType: 'timeline';
+    id?: string | null;
+    visibility?: CaseStudyVisibility | null;
+    heading?: string | null;
+    points?: {
+        /** Shown inside the circle; falls back to the point's position. */
+        marker?: string | null;
+        title: string;
+        subtitle?: string | null;
+        id?: string | null;
+    }[] | null;
+}
+
+/** A "team" case-study element: the teammates involved, with per-project roles. */
+export interface CmsTeamBlock {
+    blockType: 'team';
+    id?: string | null;
+    visibility?: CaseStudyVisibility | null;
+    heading?: string | null;
+    members?: {
+        /** Populated at depth >= 1; may be an ID at insufficient depth. */
+        member?: CmsTeamMember | number | null;
+        /** Role on this project; falls back to the member's main role. */
+        role?: string | null;
+        id?: string | null;
+    }[] | null;
+}
+
+/** A block in a project's flexible case-study `layout`. */
+export type CmsCaseStudyBlock = CmsTimelineBlock | CmsTeamBlock;
 
 /** GET /api/sponsor-tiers — CMS-managed sponsor tiers (Platinum, Gold, …). */
 export interface CmsSponsorTier {

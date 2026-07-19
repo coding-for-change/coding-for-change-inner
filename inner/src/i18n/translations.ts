@@ -41,6 +41,7 @@ export interface Translations {
     projectDetail: {
         back: string; problem: string; approach: string; outcome: string;
         impact: string; stack: string; links: string;
+        timeline: string; team: string;
     };
     caseStudy: {
         chooseKicker: string; chooseTitle: string;
@@ -190,6 +191,7 @@ const en: Translations = {
     projectDetail: {
         back: 'Back to projects', problem: 'The problem', approach: 'Our approach',
         outcome: 'What we shipped', impact: 'Impact', stack: 'Built with', links: 'Links',
+        timeline: 'Timeline', team: 'The team',
     },
     caseStudy: {
         chooseKicker: 'Two ways to read this',
@@ -449,6 +451,7 @@ const de: Translations = {
     projectDetail: {
         back: 'Zurück zu Projekten', problem: 'Das Problem', approach: 'Unser Vorgehen',
         outcome: 'Was wir geliefert haben', impact: 'Wirkung', stack: 'Gebaut mit', links: 'Links',
+        timeline: 'Ablauf', team: 'Das Team',
     },
     caseStudy: {
         chooseKicker: 'Zwei Perspektiven',

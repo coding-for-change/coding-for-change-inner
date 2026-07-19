@@ -385,6 +385,60 @@ export interface Project {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Optional modular elements for the detail page (timeline, team). Add, remove and reorder as needed; each element chooses which view it appears in.
+   */
+  layout?:
+    | (
+        | {
+            /**
+             * Which version of the case study this element appears in (the page offers a technical and an impact view).
+             */
+            visibility?: ('both' | 'technical' | 'impact') | null;
+            /**
+             * Optional section heading (e.g. "How it came together").
+             */
+            heading?: string | null;
+            points?:
+              | {
+                  /**
+                   * Shown inside the circle — a number (1, 2, 3) or a symbol (e.g. ✓). Leave blank to auto-number by position.
+                   */
+                  marker?: string | null;
+                  title: string;
+                  subtitle?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'timeline';
+          }
+        | {
+            /**
+             * Which version of the case study this element appears in (the page offers a technical and an impact view).
+             */
+            visibility?: ('both' | 'technical' | 'impact') | null;
+            /**
+             * Optional section heading (e.g. "The team behind it").
+             */
+            heading?: string | null;
+            members?:
+              | {
+                  member: number | Team;
+                  /**
+                   * Role on this project (e.g. "Project Lead"). Falls back to the member's main role if blank.
+                   */
+                  role?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'team';
+          }
+      )[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1389,6 +1443,41 @@ export interface ProjectsSelect<T extends boolean = true> {
         question?: T;
         answer?: T;
         id?: T;
+      };
+  layout?:
+    | T
+    | {
+        timeline?:
+          | T
+          | {
+              visibility?: T;
+              heading?: T;
+              points?:
+                | T
+                | {
+                    marker?: T;
+                    title?: T;
+                    subtitle?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        team?:
+          | T
+          | {
+              visibility?: T;
+              heading?: T;
+              members?:
+                | T
+                | {
+                    member?: T;
+                    role?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
       };
   updatedAt?: T;
   createdAt?: T;
