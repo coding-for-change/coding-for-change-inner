@@ -93,22 +93,22 @@ const BookingEmbed: React.FC<BookingEmbedProps> = ({ height = 700 }) => {
 
     return (
         <div className="lp-booking" ref={containerRef}>
-            {visible ? (
-                <iframe
-                    className="lp-booking__frame"
-                    src={url}
-                    style={{ minHeight: height }}
-                    title={t.book.title}
-                    frameBorder={0}
-                    loading="lazy"
-                />
-            ) : (
-                <div
-                    className="lp-booking__frame"
-                    style={{ minHeight: height }}
-                    aria-hidden
-                />
-            )}
+            {/* `height` sizes the visible box; the iframe inside is rendered larger
+                and scaled down (see .lp-booking__frame) so the widget appears
+                smaller while keeping Cal.com's desktop layout. */}
+            <div className="lp-booking__scale" style={{ height }}>
+                {visible ? (
+                    <iframe
+                        className="lp-booking__frame"
+                        src={url}
+                        title={t.book.title}
+                        frameBorder={0}
+                        loading="lazy"
+                    />
+                ) : (
+                    <div className="lp-booking__frame" aria-hidden />
+                )}
+            </div>
             <a
                 className="lp-booking__link"
                 href={url}

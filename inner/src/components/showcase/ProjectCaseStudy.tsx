@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { mediaUrl } from '../../api';
-import { CmsProject } from '../../api/types';
+import { CmsProject, CmsTeamMember, CmsTimelineBlock, CmsTeamBlock } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
 import BookingEmbed from '../general/BookingEmbed';
 import './landing.css';
@@ -213,6 +213,105 @@ const Quote: React.FC<{ project: CmsProject }> = ({ project }) =>
         </blockquote>
     ) : null;
 
+/* ---- Flexible, CMS-composed elements (timeline, team) ---- */
+const TimelineBlock: React.FC<{ block: CmsTimelineBlock }> = ({ block }) => {
+    const points = (block.points ?? []).filter((p) => p.title);
+    if (points.length === 0) return null;
+    return (
+        <section className="lp-cs__block lp-cs__timeline">
+            {block.heading && <h2 className="lp-cs__h">{block.heading}</h2>}
+            <ol className="lp-cs-tl">
+                {points.map((p, i) => (
+                    <li className="lp-cs-tl__item" key={p.id ?? i}>
+                        {/* Marker: the editor's number/symbol, or the position as a fallback. */}
+                        <span className="lp-cs-tl__marker">{p.marker?.trim() || i + 1}</span>
+                        <div className="lp-cs-tl__content">
+                            <h3 className="lp-cs-tl__title">{p.title}</h3>
+                            {p.subtitle && <p className="lp-cs-tl__sub">{p.subtitle}</p>}
+                        </div>
+                    </li>
+                ))}
+            </ol>
+        </section>
+    );
+};
+
+const TeamBlock: React.FC<{ block: CmsTeamBlock; fallbackHeading: string }> = ({
+    block,
+    fallbackHeading,
+}) => {
+    // Keep only rows whose relationship actually populated (object, not an ID).
+    const members = (block.members ?? []).filter(
+        (m) => m.member && typeof m.member === 'object'
+    );
+    if (members.length === 0) return null;
+    return (
+        <section className="lp-cs__block lp-cs__team">
+            <h2 className="lp-cs__h">{block.heading || fallbackHeading}</h2>
+            <ul className="lp-cs-team">
+                {members.map((m, i) => {
+                    const person = m.member as CmsTeamMember;
+                    const photo = mediaUrl(person.image);
+                    return (
+                        <li className="lp-cs-team__card" key={m.id ?? i}>
+                            {photo ? (
+                                <img
+                                    className="lp-cs-team__photo"
+                                    src={photo}
+                                    alt={person.name}
+                                    loading="lazy"
+                                />
+                            ) : (
+                                <span
+                                    className="lp-cs-team__photo lp-cs-team__photo--empty"
+                                    aria-hidden
+                                />
+                            )}
+                            <span className="lp-cs-team__name">{person.name}</span>
+                            {/* Project role overrides the member's default role. */}
+                            <span className="lp-cs-team__role">{m.role || person.role}</span>
+                        </li>
+                    );
+                })}
+            </ul>
+        </section>
+    );
+};
+
+/**
+ * Renders the project's editor-composed `layout` blocks, filtered to those
+ * visible in the current view (`both` always shows). Blocks render in the order
+ * set in the CMS.
+ */
+const CaseStudyElements: React.FC<{
+    project: CmsProject;
+    view: 'technical' | 'impact';
+}> = ({ project, view }) => {
+    const { t } = useLanguage();
+    const blocks = (project.layout ?? []).filter((b) => {
+        const vis = b.visibility ?? 'both';
+        return vis === 'both' || vis === view;
+    });
+    if (blocks.length === 0) return null;
+    return (
+        <>
+            {blocks.map((b, i) => {
+                if (b.blockType === 'timeline')
+                    return <TimelineBlock key={b.id ?? `tl-${i}`} block={b} />;
+                if (b.blockType === 'team')
+                    return (
+                        <TeamBlock
+                            key={b.id ?? `tm-${i}`}
+                            block={b}
+                            fallbackHeading={t.projectDetail.team}
+                        />
+                    );
+                return null;
+            })}
+        </>
+    );
+};
+
 /* ---- Technical deep-dive (for prospective members) ---- */
 const TechnicalView: React.FC<{ project: CmsProject }> = ({ project }) => {
     const { t } = useLanguage();
@@ -257,6 +356,8 @@ const TechnicalView: React.FC<{ project: CmsProject }> = ({ project }) => {
 
             <Quote project={project} />
             <Gallery project={project} />
+
+            <CaseStudyElements project={project} view="technical" />
 
             <div className="lp-cs__meta">
                 {(project.technologies ?? []).length > 0 && (
@@ -365,6 +466,8 @@ const ImpactView: React.FC<{ project: CmsProject }> = ({ project }) => {
             )}
 
             <Quote project={project} />
+
+            <CaseStudyElements project={project} view="impact" />
 
             {/* Reassurance: how partnering works. Full pitch lives at /partner. */}
             <div className="lp-cs-working">
