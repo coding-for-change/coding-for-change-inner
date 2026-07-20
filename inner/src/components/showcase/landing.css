@@ -444,6 +444,15 @@
     overflow: hidden;
     background: #05060a;
 }
+/* The desktop shell scrolls `.site-scroll`, which carries padding-top:64px to
+   clear the fixed nav — and sticky offsets are measured from that padding edge,
+   so `top:0` would pin the stage 64px down, leaving a nav-height strip of the
+   section's dark background above it (behind the transparent nav). Offset by the
+   nav height so the fresco fills the viewport *under* the nav. Mobile has no
+   `.site-scroll` (window scroll, no such padding), so it keeps top:0. */
+.site-scroll .lp-zhero__stage {
+    top: -64px;
+}
 .lp-zhero__frame {
     display: block;
     position: absolute;
