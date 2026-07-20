@@ -72,12 +72,12 @@
     --ink: #13273f; /* headings — deep navy (the dark anchor) */
     --body: #3a4a5c; /* body copy — dark slate */
     --muted: #647385;
-    --bg: #eaf6f2; /* page base — a light, sunny mint (one background hue) */
+    --bg: #eef7f4; /* page base — a light, barely-there mint (one hue) */
     --surface: #ffffff; /* cards — white, raised above the mint */
-    --surface-2: #d9ede8;
-    --alt: #ddefe9; /* alt band — a slightly deeper patch of mint */
-    --line: #cde7e1;
-    --line-2: #b8dbd3;
+    --surface-2: #e1efeb;
+    --alt: #e4f2ed; /* alt band — a slightly deeper patch of mint */
+    --line: #d6e9e4;
+    --line-2: #c4ddd7;
     --glow: rgba(22, 152, 154, 0.12);
     --card-shadow: 0 10px 30px rgba(19, 39, 63, 0.08);
     --on-accent: #ffffff;
@@ -91,10 +91,10 @@
        light mint→white gradient. One hue, light, nothing dark or scattered. */
     background: radial-gradient(
             1100px 800px at 72% -22%,
-            rgba(160, 238, 223, 0.55),
+            rgba(160, 238, 223, 0.4),
             transparent 62%
         ),
-        linear-gradient(180deg, #e1f4ed 0%, #edf8f3 52%, #fbfdfc 100%);
+        linear-gradient(180deg, #e9f6f1 0%, #f1f9f5 52%, #fcfdfd 100%);
 }
 /* Drop the night-sky starfield in light mode (kept on the dark 3D band). */
 [data-theme='light'] :is(.lp-hero, .lp-section, .lp-page)::before {
@@ -108,21 +108,21 @@
 [data-theme='light'] .lp-section {
     background: radial-gradient(
         90% 64% at 82% 34%,
-        rgba(160, 238, 223, 0.28),
+        rgba(160, 238, 223, 0.2),
         transparent 72%
     );
 }
 [data-theme='light'] .lp-page {
     background: radial-gradient(
         84% 58% at 88% 32%,
-        rgba(160, 238, 223, 0.24),
+        rgba(160, 238, 223, 0.16),
         transparent 70%
     );
 }
 [data-theme='light'] .lp-section--alt {
     background: radial-gradient(
             90% 64% at 18% 36%,
-            rgba(160, 238, 223, 0.32),
+            rgba(160, 238, 223, 0.24),
             transparent 72%
         ),
         var(--alt);

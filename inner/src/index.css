@@ -24,16 +24,16 @@ body {
     --cfc-footer-bg: #0a1830;
 }
 html[data-theme='light'] {
-    --cfc-bg: #eaf6f2; /* light sunny mint (matches the .lp base) */
+    --cfc-bg: #eef7f4; /* light, barely-there mint (matches the .lp base) */
     --cfc-surface: #ffffff;
     --cfc-heading: #13273f; /* deep-navy headings */
     --cfc-text: #647385;
     --cfc-accent: #158587; /* teal accent (footer email) */
-    --cfc-line: #cde7e1;
+    --cfc-line: #d6e9e4;
     --cfc-logo-filter: none;
     --cfc-cta-bg: #16989a; /* teal CTA */
     --cfc-cta-fg: #ffffff;
-    --cfc-footer-bg: #dceee8; /* a deeper patch of mint under the content */
+    --cfc-footer-bg: #e4f1ec; /* a slightly deeper patch of mint */
 }
 
 html, body {
