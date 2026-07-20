@@ -83,7 +83,7 @@ const styles: StyleSheetCSS = {
     divider: {
         width: '100%',
         border: 'none',
-        borderTop: '1px solid rgba(255, 255, 255, 0.15)',
+        borderTop: '1px solid var(--line)',
     },
 };
 

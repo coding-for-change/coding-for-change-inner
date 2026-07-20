@@ -7,10 +7,39 @@ body {
     /* -moz-osx-font-smoothing: grayscale; */
 }
 
+/* App-shell theme tokens (page background, footer, mobile nav). Dark is the
+   base; [data-theme="light"] overrides. Namespaced --cfc-* to avoid clashing
+   with the retro Win95 button vars defined in :root further down. The <html>
+   data-theme attribute is set server-side + by the no-flash script in layout. */
+:root {
+    --cfc-bg: #0b1a34;
+    --cfc-surface: #10213f;
+    --cfc-heading: #eef4fb;
+    --cfc-text: #9db0c7;
+    --cfc-accent: #7fe3e4;
+    --cfc-line: rgba(255, 255, 255, 0.12);
+    --cfc-logo-filter: brightness(0) invert(1);
+    --cfc-cta-bg: #7fe3e4;
+    --cfc-cta-fg: #06121f;
+    --cfc-footer-bg: #0a1830;
+}
+html[data-theme='light'] {
+    --cfc-bg: #ffffff;
+    --cfc-surface: #ffffff;
+    --cfc-heading: #0f2040;
+    --cfc-text: #6b7280;
+    --cfc-accent: #246b6c;
+    --cfc-line: #e9edf1;
+    --cfc-logo-filter: none;
+    --cfc-cta-bg: #2f8f90;
+    --cfc-cta-fg: #ffffff;
+    --cfc-footer-bg: #f7fafa;
+}
+
 html, body {
-    /* Dark-navy site base — prevents any white flash/gutter behind the
-       modern (.lp) content and footer, which are navy end-to-end. */
-    background-color: #0b1a34;
+    /* Site base colour — flips with the theme (see --cfc-bg). Prevents any
+       flash/gutter behind the modern (.lp) content and footer. */
+    background-color: var(--cfc-bg);
 }
 
 code {
@@ -271,7 +300,7 @@ input:active {
     bottom: 0px;
     top: 0px;
     overflow: hidden;
-    background: #0b1a34;
+    background: var(--cfc-bg);
     transform: translate3d(0, 0, 0);
 }
 

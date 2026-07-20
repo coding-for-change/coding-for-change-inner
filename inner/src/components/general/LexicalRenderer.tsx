@@ -69,7 +69,7 @@ function renderNode(node: LexicalNode, key: string): React.ReactNode {
                 </blockquote>
             );
         case 'horizontalrule':
-            return <hr key={key} style={{ border: 'none', borderTop: '1px solid rgba(255, 255, 255, 0.15)', margin: '16px 0', width: '100%' }} />;
+            return <hr key={key} style={{ border: 'none', borderTop: '1px solid var(--line)', margin: '16px 0', width: '100%' }} />;
         case 'upload': {
             const val = node.value;
             if (!val?.url) return null;

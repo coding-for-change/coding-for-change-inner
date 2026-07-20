@@ -1977,6 +1977,10 @@ export interface SiteConfig {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Controls the site colour theme. "Auto" shows each visitor light or dark based on their device/browser preference; the forced options apply one theme for everyone.
+   */
+  colorMode: 'auto' | 'dark' | 'light';
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2223,6 +2227,7 @@ export interface SiteConfigSelect<T extends boolean = true> {
         label?: T;
         id?: T;
       };
+  colorMode?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

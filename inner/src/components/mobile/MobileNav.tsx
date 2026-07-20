@@ -7,13 +7,14 @@ import { useCmsCollection } from '../../api';
 import type { CmsEvent, CmsSponsor, CmsBlogPost } from '../../api/types';
 import './mobile.css';
 
-// Dark-navy mobile-nav palette (matches the .lp site tokens).
-const BG = '#0b1a34';
-const SURFACE = '#10213f';
-const HEADING = '#eef4fb';
-const MUTED = '#9db0c7';
-const ACCENT = '#7fe3e4';
-const LINE = 'rgba(255, 255, 255, 0.12)';
+// Mobile-nav palette via the app-shell theme tokens (see index.css --cfc-*),
+// so the mobile chrome follows the light/dark theme set on <html data-theme>.
+const BG = 'var(--cfc-bg)';
+const SURFACE = 'var(--cfc-surface)';
+const HEADING = 'var(--cfc-heading)';
+const MUTED = 'var(--cfc-text)';
+const ACCENT = 'var(--cfc-cta-bg)';
+const LINE = 'var(--cfc-line)';
 // The nav uses the site's display face (Space Grotesk) via the CSS variable set
 // on <html> in layout.tsx, matching the desktop TopNav.
 const NAV_FONT = "var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif";
@@ -235,8 +236,8 @@ const styles: StyleSheetCSS = {
         height: 30,
         width: 'auto',
         objectFit: 'contain',
-        // Black wordmark SVG → white for the dark header.
-        filter: 'brightness(0) invert(1)',
+        // Black wordmark → white in dark theme, unchanged in light (see --cfc-logo-filter).
+        filter: 'var(--cfc-logo-filter)',
     },
     menuButton: {
         display: 'flex',
@@ -375,7 +376,7 @@ const styles: StyleSheetCSS = {
         textAlign: 'left',
     },
     langOptionActive: {
-        background: 'rgba(255, 255, 255, 0.08)',
+        background: 'var(--cfc-line)',
     },
 };
 

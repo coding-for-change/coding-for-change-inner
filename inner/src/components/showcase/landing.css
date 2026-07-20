@@ -39,6 +39,7 @@
     --line-2: rgba(255, 255, 255, 0.18); /* stronger border / hover */
     --glow: rgba(127, 227, 228, 0.14); /* cyan glow tint */
     --card-shadow: 0 16px 40px rgba(2, 8, 20, 0.55);
+    --on-accent: #06121f; /* text/icon on a solid teal/cyan fill */
 }
 
 /* Layout/paint for the content root only (NOT the nav, which paints its own
@@ -50,6 +51,89 @@
     background: var(--bg);
     font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, -apple-system,
         sans-serif;
+}
+
+/* ================================================================== */
+/* LIGHT THEME                                                          */
+/* The dark navy scheme above is the base. [data-theme="light"] recolours */
+/* it to a clean light variant of the same layout (original palette) and  */
+/* drops the night-sky decorations (starfield / heavy glows / card sheen).*/
+/* The always-dark bands (3D interlude + CTA) keep dark tokens (below) so  */
+/* their light text stays legible under either theme.                     */
+/* ================================================================== */
+[data-theme='light'] :is(.lp, .lp-nav) {
+    --cyan: #246b6c; /* on light, the "pop" accent is the deep teal */
+    --cyan-2: #2f8f90;
+    --teal: #2f8f90;
+    --teal-dark: #246b6c;
+    --ink: #1b1f1f;
+    --body: #3a4342;
+    --muted: #5d6868;
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-2: #eef4f4;
+    --alt: #f1f6f6;
+    --line: #e3eaea;
+    --line-2: #cfe0e0;
+    --glow: rgba(47, 143, 144, 0.1);
+    --card-shadow: 0 10px 30px rgba(36, 107, 108, 0.12);
+    --on-accent: #ffffff;
+}
+/* Light hero: a soft teal glow over a near-white gradient (no starfield). */
+[data-theme='light'] .lp-hero {
+    background: radial-gradient(
+            1100px 520px at 12% -8%,
+            rgba(47, 143, 144, 0.16),
+            transparent 60%
+        ),
+        linear-gradient(180deg, #eef6f6 0%, #ffffff 72%);
+}
+/* Drop the night-sky starfield in light mode (kept on the dark 3D band). */
+[data-theme='light'] :is(.lp-hero, .lp-section, .lp-page)::before {
+    display: none;
+}
+/* Plain bands are flat white; alt bands use the light --alt tint. */
+[data-theme='light'] .lp-section,
+[data-theme='light'] .lp-page {
+    background: none;
+}
+[data-theme='light'] .lp-section--alt {
+    background: var(--alt);
+}
+/* Drop the dark-mode glow accents / sheens. */
+[data-theme='light'] .lp-kicker {
+    text-shadow: none;
+}
+[data-theme='light'] .lp-nav__logo {
+    filter: none; /* black wordmark reads on the light bar */
+}
+[data-theme='light'] :is(.lp-card, .lp-step, .lp-member, .lp-post, .lp-credits__section, .lp-cs-choice, .lp-sponsor) {
+    background-image: none;
+}
+[data-theme='light'] :is(.lp-card:hover, .lp-member:hover, .lp-post:hover, .lp-sponsor:hover) {
+    border-color: var(--line-2);
+    box-shadow: var(--card-shadow);
+}
+[data-theme='light'] .lp-nav--scrolled {
+    background: rgba(255, 255, 255, 0.92);
+    border-bottom-color: var(--line);
+    box-shadow: 0 1px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Always-dark bands: force dark-theme tokens regardless of page theme so the
+   light text/cyan accents inside stay legible on their dark backgrounds. */
+.lp-3d,
+.lp-cta,
+.lp-cs-cta--join {
+    --cyan: #7fe3e4;
+    --cyan-2: #a6eeef;
+    --teal: #34a7a8;
+    --teal-dark: #2b8687;
+    --ink: #eef4fb;
+    --body: #c4d2e4;
+    --muted: #9db0c7;
+    --line: rgba(255, 255, 255, 0.14);
+    --on-accent: #06121f;
 }
 
 /* ---- Section scaffolding ---- */
@@ -240,7 +324,7 @@
 }
 .lp-btn--primary {
     background: var(--teal);
-    color: #ffffff;
+    color: var(--on-accent);
 }
 .lp-btn--primary:hover {
     background: var(--teal-dark);
@@ -806,7 +890,7 @@
     align-items: center;
     padding: 10px 20px;
     background: var(--teal);
-    color: #06121f;
+    color: var(--on-accent);
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 15px;
     font-weight: 600;

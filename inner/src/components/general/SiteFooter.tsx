@@ -3,12 +3,13 @@ import React from 'react';
 import RouterLink from 'next/link';
 import { useSiteConfig, useLanguage } from '../../api';
 
-// Dark-navy footer palette (matches the .lp site tokens).
-const BG = '#0a1830';
-const HEADING = '#eef4fb';
-const MUTED = '#9db0c7';
-const ACCENT = '#7fe3e4';
-const LINE = 'rgba(255, 255, 255, 0.1)';
+// Footer palette via the app-shell theme tokens (see index.css --cfc-*),
+// so the footer follows the light/dark theme set on <html data-theme>.
+const BG = 'var(--cfc-footer-bg)';
+const HEADING = 'var(--cfc-heading)';
+const MUTED = 'var(--cfc-text)';
+const ACCENT = 'var(--cfc-accent)';
+const LINE = 'var(--cfc-line)';
 const FONT = '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif';
 
 /**
@@ -126,8 +127,8 @@ const styles: StyleSheetCSS = {
         width: 'auto',
         objectFit: 'contain',
         alignSelf: 'flex-start',
-        // Black wordmark SVG → white for the dark footer.
-        filter: 'brightness(0) invert(1)',
+        // Black wordmark → white in dark theme, unchanged in light (see --cfc-logo-filter).
+        filter: 'var(--cfc-logo-filter)',
     },
     tagline: {
         fontFamily: FONT,

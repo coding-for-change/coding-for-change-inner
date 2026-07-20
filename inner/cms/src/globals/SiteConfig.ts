@@ -53,5 +53,23 @@ export const SiteConfig: GlobalConfig = {
         { name: 'label', type: 'text', required: true, localized: true },
       ],
     },
+    {
+      // Site-wide colour theme. "Auto" lets each visitor see light or dark based
+      // on their own device setting; the forced options apply one theme to all.
+      name: 'colorMode',
+      type: 'select',
+      label: 'Color mode',
+      required: true,
+      defaultValue: 'auto',
+      options: [
+        { label: "Auto — follow each visitor's device setting", value: 'auto' },
+        { label: 'Always dark', value: 'dark' },
+        { label: 'Always light', value: 'light' },
+      ],
+      admin: {
+        description:
+          'Controls the site colour theme. "Auto" shows each visitor light or dark based on their device/browser preference; the forced options apply one theme for everyone.',
+      },
+    },
   ],
 };
