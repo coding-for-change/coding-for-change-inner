@@ -603,7 +603,7 @@
     flex-shrink: 0;
 }
 .lp-nav__logo {
-    height: 28px;
+    height: 36px;
     width: auto;
     object-fit: contain;
     display: block;
@@ -643,7 +643,7 @@
    full link row still fits on one line without clipping the edge items. */
 @media (max-width: 1219px) {
     .lp-nav__logo {
-        height: 24px;
+        height: 30px;
     }
 }
 .lp-nav__link:hover {
