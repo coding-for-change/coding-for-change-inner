@@ -85,29 +85,35 @@
 /* Light hero: a soft navy-blue wash (with a whisper of teal) over a cool
    near-white gradient (no starfield). */
 [data-theme='light'] .lp-hero {
-    /* Cosmic aurora wash: navy (top-left), mint (top-right), and a whisper of
-       pink + violet bleeding up from the bottom, over a cool near-white. */
+    /* Cosmic aurora wash: overlapping navy, mint, pink and violet glows over a
+       cool near-white. Kept clearly visible (colours are washed out fast on
+       white, so these run at higher opacity than the dark-theme glows). */
     background: radial-gradient(
-            900px 520px at 6% -12%,
-            rgba(30, 69, 133, 0.18),
-            transparent 58%
+            1050px 640px at 0% -6%,
+            rgba(30, 69, 133, 0.34),
+            transparent 62%
         ),
         radial-gradient(
-            720px 460px at 96% 4%,
-            rgba(47, 143, 144, 0.13),
-            transparent 60%
+            860px 560px at 100% 2%,
+            rgba(38, 166, 154, 0.28),
+            transparent 64%
         ),
         radial-gradient(
-            660px 520px at 80% 114%,
-            rgba(232, 121, 198, 0.12),
-            transparent 58%
+            820px 640px at 86% 94%,
+            rgba(232, 92, 186, 0.28),
+            transparent 62%
         ),
         radial-gradient(
-            600px 480px at 22% 116%,
-            rgba(124, 108, 232, 0.1),
-            transparent 60%
+            760px 600px at 12% 102%,
+            rgba(122, 96, 240, 0.26),
+            transparent 64%
         ),
-        linear-gradient(180deg, #edf0fb 0%, #ffffff 68%);
+        radial-gradient(
+            700px 520px at 52% 46%,
+            rgba(120, 170, 224, 0.12),
+            transparent 70%
+        ),
+        linear-gradient(180deg, #e7ecfb 0%, #fbfcff 74%);
 }
 /* Drop the night-sky starfield in light mode (kept on the dark 3D band). */
 [data-theme='light'] :is(.lp-hero, .lp-section, .lp-page)::before {
@@ -117,25 +123,25 @@
    dark theme, so no hard boundary lines) instead of flat white. */
 [data-theme='light'] .lp-section {
     background: radial-gradient(
-        80% 56% at 88% 42%,
-        rgba(47, 143, 144, 0.08),
-        transparent 68%
+        82% 58% at 88% 40%,
+        rgba(38, 166, 154, 0.14),
+        transparent 70%
     );
 }
 [data-theme='light'] .lp-page {
     background: radial-gradient(
-        75% 50% at 90% 38%,
-        rgba(30, 69, 133, 0.07),
-        transparent 66%
+        78% 52% at 90% 36%,
+        rgba(30, 69, 133, 0.12),
+        transparent 68%
     );
 }
 [data-theme='light'] .lp-section--alt {
     background: radial-gradient(
-            80% 56% at 12% 44%,
-            rgba(124, 108, 232, 0.1),
-            transparent 68%
+            82% 58% at 10% 42%,
+            rgba(122, 96, 240, 0.16),
+            transparent 70%
         ),
-        radial-gradient(66% 48% at 92% 82%, rgba(232, 121, 198, 0.08), transparent 66%),
+        radial-gradient(70% 52% at 94% 84%, rgba(232, 92, 186, 0.14), transparent 68%),
         var(--alt);
 }
 /* Drop the dark-mode glow accents / sheens. */
