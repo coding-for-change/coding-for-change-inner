@@ -226,7 +226,7 @@ const styles: StyleSheetCSS = {
         flexShrink: 0,
     },
     logo: {
-        height: 26,
+        height: 30,
         width: 'auto',
         objectFit: 'contain',
     },
