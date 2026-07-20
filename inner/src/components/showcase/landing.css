@@ -62,58 +62,45 @@
 /* their light text stays legible under either theme.                     */
 /* ================================================================== */
 [data-theme='light'] :is(.lp, .lp-nav) {
-    /* Navy-forward light palette: the deep blue from the dark theme carries
-       through as the primary accent (headings, buttons, links), with just a
-       hint of teal kept for hover life. */
-    --cyan: #234c8c; /* accent text: kickers, links — navy blue */
-    --cyan-2: #2f8f90; /* a touch of teal kept for hovers */
-    --teal: #1e4585; /* solid fills: buttons, badges, ticks — navy */
-    --teal-dark: #16305c; /* deep navy: fill hover / gradient end */
-    --ink: #16305c; /* headings — deep navy */
-    --body: #3a4550; /* body copy (cool dark slate) */
-    --muted: #5b6672;
-    --bg: #ffffff;
-    --surface: #ffffff;
-    --surface-2: #eef2f9; /* cool navy-tinted panel */
-    --alt: #eef2f9; /* navy-tinted alt band */
-    --line: #e0e6f0;
-    --line-2: #ccd6e8;
-    --glow: rgba(30, 69, 133, 0.1);
-    --card-shadow: 0 10px 30px rgba(22, 48, 92, 0.1);
+    /* A lighter mirror of the dark theme: the navy background inverts to a cool
+       light blue, white text inverts to deep navy, and the SAME teal/cyan
+       accents carry over (just deepened so they read on a light background). */
+    --cyan: #178a8c; /* accent text: kickers, links (deep cyan-teal) */
+    --cyan-2: #109799; /* brighter teal for hovers */
+    --teal: #1b9899; /* solid fills: buttons, badges, ticks */
+    --teal-dark: #14797a; /* deeper teal: fill hover / gradient end */
+    --ink: #13273f; /* headings — deep navy (inverted white text) */
+    --body: #3a4a5c; /* body copy — dark slate */
+    --muted: #647385;
+    --bg: #eef2f8; /* page base — light cool blue (inverted navy) */
+    --surface: #ffffff; /* cards — white, raised above the base */
+    --surface-2: #e3eaf3;
+    --alt: #e5ecf4; /* alt band — slightly deeper cool blue */
+    --line: #d6dfea;
+    --line-2: #c2cee0;
+    --glow: rgba(27, 152, 153, 0.12);
+    --card-shadow: 0 10px 30px rgba(19, 39, 63, 0.1);
     --on-accent: #ffffff;
 }
-/* Light hero: a soft navy-blue wash (with a whisper of teal) over a cool
-   near-white gradient (no starfield). */
+/* Light hero: a lighter mirror of the dark hero — teal + navy-blue glows
+   (the same accent family) over a cool near-white. No other hues. */
 [data-theme='light'] .lp-hero {
-    /* Cosmic aurora wash: overlapping navy, mint, pink and violet glows over a
-       cool near-white. Kept clearly visible (colours are washed out fast on
-       white, so these run at higher opacity than the dark-theme glows). */
     background: radial-gradient(
-            1050px 640px at 0% -6%,
-            rgba(30, 69, 133, 0.34),
+            1000px 620px at 2% -8%,
+            rgba(27, 152, 153, 0.2),
+            transparent 60%
+        ),
+        radial-gradient(
+            880px 560px at 100% 2%,
+            rgba(37, 92, 168, 0.16),
             transparent 62%
         ),
         radial-gradient(
-            860px 560px at 100% 2%,
-            rgba(38, 166, 154, 0.28),
-            transparent 64%
+            760px 580px at 84% 110%,
+            rgba(27, 152, 153, 0.14),
+            transparent 60%
         ),
-        radial-gradient(
-            820px 640px at 86% 94%,
-            rgba(232, 92, 186, 0.28),
-            transparent 62%
-        ),
-        radial-gradient(
-            760px 600px at 12% 102%,
-            rgba(122, 96, 240, 0.26),
-            transparent 64%
-        ),
-        radial-gradient(
-            700px 520px at 52% 46%,
-            rgba(120, 170, 224, 0.12),
-            transparent 70%
-        ),
-        linear-gradient(180deg, #e7ecfb 0%, #fbfcff 74%);
+        linear-gradient(180deg, #e3eaf5 0%, #f5f8fc 74%);
 }
 /* Drop the night-sky starfield in light mode (kept on the dark 3D band). */
 [data-theme='light'] :is(.lp-hero, .lp-section, .lp-page)::before {
@@ -124,24 +111,24 @@
 [data-theme='light'] .lp-section {
     background: radial-gradient(
         82% 58% at 88% 40%,
-        rgba(38, 166, 154, 0.14),
+        rgba(27, 152, 153, 0.12),
         transparent 70%
     );
 }
 [data-theme='light'] .lp-page {
     background: radial-gradient(
         78% 52% at 90% 36%,
-        rgba(30, 69, 133, 0.12),
+        rgba(37, 92, 168, 0.1),
         transparent 68%
     );
 }
 [data-theme='light'] .lp-section--alt {
     background: radial-gradient(
             82% 58% at 10% 42%,
-            rgba(122, 96, 240, 0.16),
+            rgba(27, 152, 153, 0.13),
             transparent 70%
         ),
-        radial-gradient(70% 52% at 94% 84%, rgba(232, 92, 186, 0.14), transparent 68%),
+        radial-gradient(70% 52% at 94% 84%, rgba(37, 92, 168, 0.1), transparent 68%),
         var(--alt);
 }
 /* Drop the dark-mode glow accents / sheens. */
