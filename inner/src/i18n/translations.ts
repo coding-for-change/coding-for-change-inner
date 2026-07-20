@@ -13,6 +13,7 @@ export interface Translations {
     home: {
         about: string; events: string; projects: string; team: string; join: string;
         kicker: string; ctaPrimary: string; ctaSecondary: string; scrollHint: string;
+        heroLineOne: string; heroLineTwo: string;
     };
     about: {
         title: string;
@@ -142,6 +143,8 @@ const en: Translations = {
         ctaPrimary: 'Join the club',
         ctaSecondary: 'See our work',
         scrollHint: '↓ scroll to explore',
+        heroLineOne: 'Tech meets Social Impact',
+        heroLineTwo: 'A match made in heaven',
     },
     about: {
         title: 'About Us',
@@ -402,6 +405,8 @@ const de: Translations = {
         ctaPrimary: 'Mitglied werden',
         ctaSecondary: 'Unsere Arbeit ansehen',
         scrollHint: '↓ zum Entdecken scrollen',
+        heroLineOne: 'Tech trifft soziale Wirkung',
+        heroLineTwo: 'Ein Match wie im Himmel',
     },
     about: {
         title: 'Über Uns',

@@ -2,8 +2,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useCmsCollection, useCmsGlobal, useSiteConfig, mediaUrl } from '../../api';
+import {
+    motion,
+    AnimatePresence,
+    useMotionValue,
+    useTransform,
+    useReducedMotion,
+    type MotionValue,
+} from 'framer-motion';
+import { useCmsCollection, useCmsGlobal, useSiteConfig } from '../../api';
 import {
     CmsEvent,
     CmsProject,
@@ -25,6 +32,57 @@ const reveal = {
     whileInView: { opacity: 1, y: 0 },
     viewport: { once: true, amount: 0.15 },
 } as const;
+
+/**
+ * Progress (0→1) of a tall section scrolling past the viewport, for a sticky
+ * "scrollytelling" stage. framer's `useScroll` only watches the window, but the
+ * desktop shell scrolls inside `.site-scroll` (an `overflow-y:auto` div) while
+ * the mobile shell scrolls the window — so we resolve the real scroller from the
+ * element itself and measure against it. rAF-throttled; passive listeners.
+ */
+function useSectionScrollProgress(
+    ref: React.RefObject<HTMLElement | null>
+): MotionValue<number> {
+    const progress = useMotionValue(0);
+    useEffect(() => {
+        const el = ref.current;
+        if (!el) return;
+        const scroller: HTMLElement | Window =
+            el.closest<HTMLElement>('.site-scroll') ?? window;
+        const viewportH = () =>
+            scroller === window
+                ? window.innerHeight
+                : (scroller as HTMLElement).clientHeight;
+
+        let raf = 0;
+        const measure = () => {
+            raf = 0;
+            const rect = el.getBoundingClientRect();
+            const scrollerTop =
+                scroller === window
+                    ? 0
+                    : (scroller as HTMLElement).getBoundingClientRect().top;
+            const travel = rect.height - viewportH();
+            const p =
+                travel <= 0
+                    ? 0
+                    : Math.min(1, Math.max(0, (scrollerTop - rect.top) / travel));
+            progress.set(p);
+        };
+        const onScroll = () => {
+            if (!raf) raf = requestAnimationFrame(measure);
+        };
+        measure();
+        scroller.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll);
+        return () => {
+            scroller.removeEventListener('scroll', onScroll);
+            window.removeEventListener('resize', onScroll);
+            if (raf) cancelAnimationFrame(raf);
+        };
+    }, [ref, progress]);
+    return progress;
+}
 
 export interface LandingProps {
     events?: CmsEvent[] | null;
@@ -80,7 +138,27 @@ const Landing: React.FC<LandingProps> = (props) => {
     const { data: faq, loading: faqLoading } =
         useCmsCollection<CmsFaqItem>('faq', undefined, props.faq);
     const { data: hp } = useCmsGlobal<CmsHomepage>('homepage', props.homepage);
-    const heroImage = mediaUrl(hp?.heroImage);
+
+    // --- Scroll-driven hero (Michelangelo, "The Creation of Adam") ---------
+    // The hero <section> is intentionally tall; a stage inside it is `sticky`
+    // so it stays pinned to the viewport while the section scrolls past. As
+    // scroll progress runs 0 → 1 the fresco pulls back from the two almost-
+    // touching fingers (the "spark") to the whole painting, and the headline
+    // crossfades from "Tech meets Social Impact" to "A match made in heaven".
+    const heroRef = useRef<HTMLDivElement>(null);
+    const reduceMotion = useReducedMotion();
+    const heroProgress = useSectionScrollProgress(heroRef);
+    // Zoom locked on the fingertips (see --hero-focus in landing.css). Held at
+    // 1× for the last stretch so the full fresco gets a beat before releasing.
+    const zoom = useTransform(heroProgress, [0, 0.82], [2.6, 1]);
+    const heroScale = reduceMotion ? 1 : zoom;
+    const line1Opacity = useTransform(heroProgress, [0, 0.16, 0.32], [1, 1, 0]);
+    const line2Opacity = useTransform(heroProgress, [0.44, 0.64], [0, 1]);
+    // Keep the (invisible) resting-state CTAs unclickable until they've faded in.
+    const line2Pointer = useTransform(line2Opacity, (o) =>
+        o > 0.5 ? 'auto' : 'none'
+    );
+    const hintOpacity = useTransform(heroProgress, [0, 0.12], [1, 0]);
 
     // Homepage copy: CMS value if set, else the built-in i18n string.
     const c = {
@@ -187,26 +265,47 @@ const Landing: React.FC<LandingProps> = (props) => {
 
     return (
         <div className="lp lp--landing">
-            {/* ---- Hero ---- */}
-            <section
-                id="home"
-                className={'lp-hero' + (heroImage ? ' lp-hero--media' : '')}
-            >
-                <div className="lp-inner">
+            {/* ---- Hero: scroll-zoom over "The Creation of Adam" ---- */}
+            <section id="home" ref={heroRef} className="lp-zhero">
+                <div className="lp-zhero__stage">
                     <motion.div
-                        style={{ display: 'block' }}
-                        initial={{ opacity: 0, y: 24 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.55, ease: 'easeOut' }}
+                        className="lp-zhero__frame"
+                        style={{ scale: heroScale }}
                     >
-                        <p className="lp-kicker">{c.heroKicker}</p>
-                        <h1 className="lp-hero__title">
+                        <img
+                            className="lp-zhero__img"
+                            src="/images/creation-of-adam.jpg"
+                            alt={
+                                'Michelangelo’s “The Creation of Adam” — two ' +
+                                'hands reaching toward one another'
+                            }
+                            draggable={false}
+                        />
+                    </motion.div>
+                    <div className="lp-zhero__scrim" />
+
+                    {/* Zoomed-in headline: the spark between the fingertips. */}
+                    <motion.div
+                        className="lp-zhero__copy lp-zhero__copy--one"
+                        style={{ opacity: line1Opacity }}
+                    >
+                        <p className="lp-zhero__kicker">{c.heroKicker}</p>
+                        <h1 className="lp-zhero__title">{t.home.heroLineOne}</h1>
+                    </motion.div>
+
+                    {/* Zoomed-out headline: the whole fresco + the club's CTAs. */}
+                    <motion.div
+                        className="lp-zhero__copy lp-zhero__copy--two"
+                        style={{ opacity: line2Opacity, pointerEvents: line2Pointer }}
+                    >
+                        <p className="lp-zhero__eyebrow">
                             {siteConfig.clubName || 'Coding for Change'}
-                        </h1>
-                        <p className="lp-hero__lead">
+                        </p>
+                        <h2 className="lp-zhero__title">{t.home.heroLineTwo}</h2>
+                        <p className="lp-zhero__lead">
                             {siteConfig.tagline || t.about.oneLiner}
                         </p>
-                        <div className="lp-hero__ctas">
+                        <div className="lp-zhero__ctas">
                             <Link className="lp-btn lp-btn--primary" href="/join">
                                 {c.heroCtaPrimary}
                             </Link>
@@ -221,21 +320,14 @@ const Landing: React.FC<LandingProps> = (props) => {
                                 {c.heroCtaSecondary}
                             </a>
                         </div>
-                        <span className="lp-scrollhint">{c.heroScrollHint}</span>
                     </motion.div>
-                    {heroImage && (
-                        <motion.div
-                            className="lp-hero__media"
-                            initial={{ opacity: 0, scale: 0.98 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.6, ease: 'easeOut', delay: 0.1 }}
-                        >
-                            <img
-                                src={heroImage}
-                                alt={siteConfig.clubName || 'Coding for Change'}
-                            />
-                        </motion.div>
-                    )}
+
+                    <motion.span
+                        className="lp-zhero__hint"
+                        style={{ opacity: reduceMotion ? 0 : hintOpacity }}
+                    >
+                        {c.heroScrollHint}
+                    </motion.span>
                 </div>
             </section>
 
