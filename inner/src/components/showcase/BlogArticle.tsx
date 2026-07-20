@@ -89,7 +89,7 @@ const BlogArticle: React.FC<{ post: CmsBlogPost }> = ({ post }) => {
                         {project && (
                             <span
                                 className="lp-article__date"
-                                style={{ color: '#246b6c' }}
+                                style={{ color: 'var(--cyan)' }}
                             >
                                 Re: {project.title}
                             </span>

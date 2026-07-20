@@ -3,8 +3,13 @@ import React from 'react';
 import RouterLink from 'next/link';
 import { useSiteConfig, useLanguage } from '../../api';
 
-const NAVY = '#0f2040';
-const GRAY = '#6b7280';
+// Footer palette via the app-shell theme tokens (see index.css --cfc-*),
+// so the footer follows the light/dark theme set on <html data-theme>.
+const BG = 'var(--cfc-footer-bg)';
+const HEADING = 'var(--cfc-heading)';
+const MUTED = 'var(--cfc-text)';
+const ACCENT = 'var(--cfc-accent)';
+const LINE = 'var(--cfc-line)';
 const FONT = '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif';
 
 /**
@@ -93,8 +98,8 @@ const styles: StyleSheetCSS = {
     footer: {
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: '#ffffff',
-        borderTop: '1px solid #f0f0f0',
+        backgroundColor: BG,
+        borderTop: `1px solid ${LINE}`,
         padding: '48px 24px 32px',
         width: '100%',
         boxSizing: 'border-box',
@@ -122,11 +127,13 @@ const styles: StyleSheetCSS = {
         width: 'auto',
         objectFit: 'contain',
         alignSelf: 'flex-start',
+        // Black wordmark → white in dark theme, unchanged in light (see --cfc-logo-filter).
+        filter: 'var(--cfc-logo-filter)',
     },
     tagline: {
         fontFamily: FONT,
         fontSize: 14,
-        color: GRAY,
+        color: MUTED,
         lineHeight: 1.6,
         margin: 0,
         maxWidth: 280,
@@ -134,7 +141,7 @@ const styles: StyleSheetCSS = {
     email: {
         fontFamily: FONT,
         fontSize: 14,
-        color: NAVY,
+        color: ACCENT,
         textDecoration: 'none',
     },
     columns: {
@@ -152,7 +159,7 @@ const styles: StyleSheetCSS = {
         fontFamily: FONT,
         fontSize: 12,
         fontWeight: 700,
-        color: NAVY,
+        color: HEADING,
         letterSpacing: 1,
         margin: '0 0 16px 0',
     },
@@ -160,7 +167,7 @@ const styles: StyleSheetCSS = {
         display: 'flex',
         fontFamily: FONT,
         fontSize: 14,
-        color: GRAY,
+        color: MUTED,
         textDecoration: 'none',
         padding: '6px 0',
     },
@@ -174,14 +181,14 @@ const styles: StyleSheetCSS = {
     },
     divider: {
         height: 1,
-        backgroundColor: '#f0f0f0',
+        backgroundColor: LINE,
         margin: '32px 0 20px',
         width: '100%',
     },
     copyright: {
         fontFamily: FONT,
         fontSize: 12,
-        color: '#9ca3af',
+        color: MUTED,
         margin: 0,
     },
 };

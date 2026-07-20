@@ -73,7 +73,12 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-    themeColor: '#000000',
+    // Match the browser chrome to the theme. For a forced mode the inline
+    // theme script in <head> overrides this after load.
+    themeColor: [
+        { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+        { media: '(prefers-color-scheme: dark)', color: '#0b1a34' },
+    ],
     width: 'device-width',
     initialScale: 1,
 };
@@ -104,12 +109,36 @@ export default async function RootLayout({
     const locale = await getServerLocale();
     const siteConfig = await fetchGlobal<CmsSiteConfig>('site-config', locale);
 
+    // Colour theme is CMS-controlled (SiteConfig.colorMode): 'auto' follows the
+    // visitor's device, 'dark'/'light' force one theme. The server sets a
+    // pre-paint default on <html>; the inline script below refines 'auto' from
+    // prefers-color-scheme before first paint (no flash). suppressHydrationWarning
+    // is required because that script mutates the data-theme attribute.
+    const colorMode = siteConfig?.colorMode ?? 'auto';
+    const initialTheme = colorMode === 'light' ? 'light' : 'dark';
+    const themeScript =
+        "(function(){try{var e=document.documentElement;" +
+        "var m=e.getAttribute('data-color-mode')||'auto';" +
+        "var q=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)');" +
+        "var d=m==='dark'||(m==='auto'&&q&&q.matches);" +
+        "e.setAttribute('data-theme',d?'dark':'light');" +
+        "var t=document.querySelector('meta[name=\"theme-color\"]');" +
+        "if(t)t.setAttribute('content',d?'#0b1a34':'#ffffff');" +
+        "if(m==='auto'&&q&&q.addEventListener){q.addEventListener('change',function(v){" +
+        "e.setAttribute('data-theme',v.matches?'dark':'light');" +
+        "if(t)t.setAttribute('content',v.matches?'#0b1a34':'#ffffff');});}}catch(_){}})();";
+
     return (
         <html
             lang={locale}
+            data-color-mode={colorMode}
+            data-theme={initialTheme}
+            suppressHydrationWarning
             className={`${robotoMono.variable} ${plexSans.variable} ${spaceGrotesk.variable}`}
         >
             <head>
+                {/* Resolve + apply the colour theme before first paint (no flash). */}
+                <script dangerouslySetInnerHTML={{ __html: themeScript }} />
                 {/* `_parent` keeps links working when the OS is embedded in the
                     3D scene's monitor iframe. */}
                 <base target="_parent" />

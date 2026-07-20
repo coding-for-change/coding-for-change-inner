@@ -7,7 +7,14 @@ import { useCmsCollection } from '../../api';
 import type { CmsEvent, CmsSponsor, CmsBlogPost } from '../../api/types';
 import './mobile.css';
 
-const NAVY = '#0f2040';
+// Mobile-nav palette via the app-shell theme tokens (see index.css --cfc-*),
+// so the mobile chrome follows the light/dark theme set on <html data-theme>.
+const BG = 'var(--cfc-bg)';
+const SURFACE = 'var(--cfc-surface)';
+const HEADING = 'var(--cfc-heading)';
+const MUTED = 'var(--cfc-text)';
+const ACCENT = 'var(--cfc-cta-bg)';
+const LINE = 'var(--cfc-line)';
 // The nav uses the site's display face (Space Grotesk) via the CSS variable set
 // on <html> in layout.tsx, matching the desktop TopNav.
 const NAV_FONT = "var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif";
@@ -206,8 +213,8 @@ const styles: StyleSheetCSS = {
         top: 0,
         flexShrink: 0,
         zIndex: 100,
-        background: '#ffffff',
-        borderBottom: '1px solid #f0f0f0',
+        background: BG,
+        borderBottom: `1px solid ${LINE}`,
         padding: '0 20px',
         height: 60,
         alignItems: 'center',
@@ -229,6 +236,8 @@ const styles: StyleSheetCSS = {
         height: 30,
         width: 'auto',
         objectFit: 'contain',
+        // Black wordmark → white in dark theme, unchanged in light (see --cfc-logo-filter).
+        filter: 'var(--cfc-logo-filter)',
     },
     menuButton: {
         display: 'flex',
@@ -248,7 +257,7 @@ const styles: StyleSheetCSS = {
         display: 'block',
         width: 24,
         height: 2,
-        background: '#000',
+        background: HEADING,
         borderRadius: 2,
         flexShrink: 0,
     },
@@ -259,7 +268,7 @@ const styles: StyleSheetCSS = {
         right: 0,
         bottom: 0,
         zIndex: 500,
-        background: '#ffffff',
+        background: BG,
         overflowY: 'auto',
         display: 'flex',
         flexDirection: 'column',
@@ -277,11 +286,11 @@ const styles: StyleSheetCSS = {
         display: 'flex',
         width: 44,
         height: 44,
-        border: `2px solid ${NAVY}`,
+        border: `2px solid ${LINE}`,
         borderRadius: 8,
-        background: 'white',
+        background: 'transparent',
         fontSize: 16,
-        color: NAVY,
+        color: HEADING,
         cursor: 'pointer',
         alignItems: 'center',
         justifyContent: 'center',
@@ -297,16 +306,16 @@ const styles: StyleSheetCSS = {
         alignItems: 'center',
         padding: '16px 0',
         fontSize: 24,
-        color: '#000',
+        color: HEADING,
         fontFamily: NAV_FONT,
         textDecoration: 'none',
-        borderBottom: '1px solid #f0f0f0',
+        borderBottom: `1px solid ${LINE}`,
     },
     ctaButton: {
         display: 'flex',
         marginTop: 28,
-        background: '#000000',
-        color: '#ffffff',
+        background: ACCENT,
+        color: BG,
         borderRadius: 32,
         padding: '18px 0',
         fontSize: 20,
@@ -327,16 +336,16 @@ const styles: StyleSheetCSS = {
         gap: 10,
         padding: '10px 16px',
         borderRadius: 10,
-        border: '1px solid #e5e7eb',
-        background: '#ffffff',
+        border: `1px solid ${LINE}`,
+        background: 'transparent',
         cursor: 'pointer',
         fontSize: 15,
-        color: '#000',
+        color: HEADING,
         fontFamily: NAV_FONT,
     },
     caret: {
         fontSize: 12,
-        color: '#6b7280',
+        color: MUTED,
     },
     langMenu: {
         display: 'flex',
@@ -345,10 +354,10 @@ const styles: StyleSheetCSS = {
         left: 0,
         flexDirection: 'column',
         minWidth: '100%',
-        background: '#ffffff',
-        border: '1px solid #e5e7eb',
+        background: SURFACE,
+        border: `1px solid ${LINE}`,
         borderRadius: 10,
-        boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
         overflow: 'hidden',
         zIndex: 10,
     },
@@ -361,13 +370,13 @@ const styles: StyleSheetCSS = {
         background: 'transparent',
         cursor: 'pointer',
         fontSize: 15,
-        color: '#000',
+        color: HEADING,
         fontFamily: NAV_FONT,
         whiteSpace: 'nowrap',
         textAlign: 'left',
     },
     langOptionActive: {
-        background: '#f3f4f6',
+        background: 'var(--cfc-line)',
     },
 };
 

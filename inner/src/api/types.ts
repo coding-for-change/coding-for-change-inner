@@ -193,6 +193,8 @@ export interface CmsSiteConfig {
     bookingUrl?: string;
     teamHeroImage?: CmsMedia | null;
     stats?: { value: string; label: string; id?: string }[];
+    /** Site colour theme. 'auto' follows each visitor's device preference. */
+    colorMode?: 'auto' | 'dark' | 'light';
 }
 
 /** A node in a Payload lexical rich-text tree. */
