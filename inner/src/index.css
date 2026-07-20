@@ -26,14 +26,14 @@ body {
 html[data-theme='light'] {
     --cfc-bg: #ffffff;
     --cfc-surface: #ffffff;
-    --cfc-heading: #0f2040;
-    --cfc-text: #6b7280;
-    --cfc-accent: #246b6c;
-    --cfc-line: #e9edf1;
+    --cfc-heading: #16305c; /* navy headings */
+    --cfc-text: #5b6672;
+    --cfc-accent: #234c8c; /* navy accent (footer email) */
+    --cfc-line: #e2e7f0;
     --cfc-logo-filter: none;
-    --cfc-cta-bg: #2f8f90;
+    --cfc-cta-bg: #1e4585; /* navy CTA */
     --cfc-cta-fg: #ffffff;
-    --cfc-footer-bg: #f7fafa;
+    --cfc-footer-bg: #f1f4fa; /* cool navy-tinted footer */
 }
 
 html, body {

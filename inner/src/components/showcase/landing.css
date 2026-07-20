@@ -62,31 +62,40 @@
 /* their light text stays legible under either theme.                     */
 /* ================================================================== */
 [data-theme='light'] :is(.lp, .lp-nav) {
-    --cyan: #246b6c; /* on light, the "pop" accent is the deep teal */
-    --cyan-2: #2f8f90;
-    --teal: #2f8f90;
-    --teal-dark: #246b6c;
-    --ink: #1b1f1f;
-    --body: #3a4342;
-    --muted: #5d6868;
+    /* Navy-forward light palette: the deep blue from the dark theme carries
+       through as the primary accent (headings, buttons, links), with just a
+       hint of teal kept for hover life. */
+    --cyan: #234c8c; /* accent text: kickers, links — navy blue */
+    --cyan-2: #2f8f90; /* a touch of teal kept for hovers */
+    --teal: #1e4585; /* solid fills: buttons, badges, ticks — navy */
+    --teal-dark: #16305c; /* deep navy: fill hover / gradient end */
+    --ink: #16305c; /* headings — deep navy */
+    --body: #3a4550; /* body copy (cool dark slate) */
+    --muted: #5b6672;
     --bg: #ffffff;
     --surface: #ffffff;
-    --surface-2: #eef4f4;
-    --alt: #f1f6f6;
-    --line: #e3eaea;
-    --line-2: #cfe0e0;
-    --glow: rgba(47, 143, 144, 0.1);
-    --card-shadow: 0 10px 30px rgba(36, 107, 108, 0.12);
+    --surface-2: #eef2f9; /* cool navy-tinted panel */
+    --alt: #eef2f9; /* navy-tinted alt band */
+    --line: #e0e6f0;
+    --line-2: #ccd6e8;
+    --glow: rgba(30, 69, 133, 0.1);
+    --card-shadow: 0 10px 30px rgba(22, 48, 92, 0.1);
     --on-accent: #ffffff;
 }
-/* Light hero: a soft teal glow over a near-white gradient (no starfield). */
+/* Light hero: a soft navy-blue wash (with a whisper of teal) over a cool
+   near-white gradient (no starfield). */
 [data-theme='light'] .lp-hero {
     background: radial-gradient(
-            1100px 520px at 12% -8%,
-            rgba(47, 143, 144, 0.16),
+            1100px 520px at 10% -8%,
+            rgba(30, 69, 133, 0.16),
             transparent 60%
         ),
-        linear-gradient(180deg, #eef6f6 0%, #ffffff 72%);
+        radial-gradient(
+            860px 440px at 92% 2%,
+            rgba(47, 143, 144, 0.08),
+            transparent 62%
+        ),
+        linear-gradient(180deg, #e9eef8 0%, #ffffff 72%);
 }
 /* Drop the night-sky starfield in light mode (kept on the dark 3D band). */
 [data-theme='light'] :is(.lp-hero, .lp-section, .lp-page)::before {
