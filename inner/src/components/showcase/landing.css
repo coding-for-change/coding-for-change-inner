@@ -188,19 +188,20 @@
     background: linear-gradient(135deg, #0d3540 0%, #14727a 52%, #c2683c 100%);
 }
 [data-theme='light'] .lp-3d {
-    /* Deep teal dusk, lit by a warm ember (setting sun) top-right and a teal
-       glow bottom-left. The starfield (::before) stays — dusk has stars too. */
+    /* Deep teal dusk SKY up top (with the stars), and a strong warm sunset
+       afterglow rising from the horizon at the bottom — teal and orange are
+       separated top/bottom so they read cleanly instead of muddying. */
     background: radial-gradient(
-            900px 460px at 86% -20%,
-            rgba(255, 150, 90, 0.26),
-            transparent 60%
+            1400px 600px at 64% 132%,
+            rgba(255, 138, 60, 0.62),
+            transparent 58%
         ),
         radial-gradient(
-            760px 440px at 6% 122%,
-            rgba(24, 150, 158, 0.34),
-            transparent 62%
+            1000px 460px at 4% 120%,
+            rgba(22, 160, 168, 0.42),
+            transparent 60%
         ),
-        #0e2b33;
+        linear-gradient(180deg, #06262e 0%, #0a2f39 60%, #123239 100%);
 }
 /* Warm dusk accent inside those bands (e.g. the 3D "just for fun" kicker),
    instead of the dark-theme cyan. */
