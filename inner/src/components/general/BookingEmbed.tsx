@@ -93,9 +93,8 @@ const BookingEmbed: React.FC<BookingEmbedProps> = ({ height = 700 }) => {
 
     return (
         <div className="lp-booking" ref={containerRef}>
-            {/* `height` sizes the visible box; the iframe inside is rendered larger
-                and scaled down (see .lp-booking__frame) so the widget appears
-                smaller while keeping Cal.com's desktop layout. */}
+            {/* `height` sizes the visible box; the iframe fills it 1:1 (see
+                .lp-booking__frame) so the Cal.com widget spans the full width. */}
             <div className="lp-booking__scale" style={{ height }}>
                 {visible ? (
                     <iframe
