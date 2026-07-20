@@ -65,21 +65,21 @@
     /* A lighter mirror of the dark theme: the navy background inverts to a cool
        light blue, white text inverts to deep navy, and the SAME teal/cyan
        accents carry over (just deepened so they read on a light background). */
-    --cyan: #158587; /* accent text: kickers, links (deep cyan-teal) */
+    --cyan: #158587; /* accent text: kickers, links (deep teal) */
     --cyan-2: #0f9799; /* brighter teal for hovers */
     --teal: #16989a; /* solid fills: buttons, badges, ticks */
     --teal-dark: #127a7c; /* deeper teal: fill hover / gradient end */
-    --ink: #13273f; /* headings — deep navy (inverted white text) */
+    --ink: #13273f; /* headings — deep navy (the dark anchor) */
     --body: #3a4a5c; /* body copy — dark slate */
     --muted: #647385;
-    --bg: #e6edf7; /* page base — light sky blue (day sky, not near-white) */
-    --surface: #ffffff; /* cards — white, raised above the sky */
-    --surface-2: #dbe6f4;
-    --alt: #d9e3f2; /* alt band — a deeper patch of sky */
-    --line: #cfdbec;
-    --line-2: #bbcbe1;
+    --bg: #eaf6f2; /* page base — a light, sunny mint (one background hue) */
+    --surface: #ffffff; /* cards — white, raised above the mint */
+    --surface-2: #d9ede8;
+    --alt: #ddefe9; /* alt band — a slightly deeper patch of mint */
+    --line: #cde7e1;
+    --line-2: #b8dbd3;
     --glow: rgba(22, 152, 154, 0.12);
-    --card-shadow: 0 10px 30px rgba(19, 39, 63, 0.1);
+    --card-shadow: 0 10px 30px rgba(19, 39, 63, 0.08);
     --on-accent: #ffffff;
 }
 /* Light hero: a coherent daytime sky — a cool-blue vertical gradient (deeper
@@ -87,17 +87,14 @@
    overhead, with a cooler blue depth to the other side. All light comes from
    above (one consistent direction), so it reads as sky, not random blobs. */
 [data-theme='light'] .lp-hero {
+    /* A bright, sunny mint sky: a single soft mint bloom high overhead over a
+       light mint→white gradient. One hue, light, nothing dark or scattered. */
     background: radial-gradient(
-            860px 660px at 76% -16%,
-            rgba(122, 216, 210, 0.45),
-            transparent 58%
+            1100px 800px at 72% -22%,
+            rgba(160, 238, 223, 0.55),
+            transparent 62%
         ),
-        radial-gradient(
-            1200px 860px at 14% -26%,
-            rgba(92, 152, 212, 0.34),
-            transparent 60%
-        ),
-        linear-gradient(180deg, #c7d9ef 0%, #e0ebf7 48%, #f3f7fc 100%);
+        linear-gradient(180deg, #e1f4ed 0%, #edf8f3 52%, #fbfdfc 100%);
 }
 /* Drop the night-sky starfield in light mode (kept on the dark 3D band). */
 [data-theme='light'] :is(.lp-hero, .lp-section, .lp-page)::before {
@@ -110,22 +107,22 @@
    Interior-faded so the section seams stay clean. */
 [data-theme='light'] .lp-section {
     background: radial-gradient(
-        88% 62% at 84% 36%,
-        rgba(104, 196, 204, 0.18),
+        90% 64% at 82% 34%,
+        rgba(160, 238, 223, 0.28),
         transparent 72%
     );
 }
 [data-theme='light'] .lp-page {
     background: radial-gradient(
-        82% 56% at 88% 32%,
-        rgba(104, 196, 204, 0.16),
+        84% 58% at 88% 32%,
+        rgba(160, 238, 223, 0.24),
         transparent 70%
     );
 }
 [data-theme='light'] .lp-section--alt {
     background: radial-gradient(
-            88% 62% at 16% 38%,
-            rgba(104, 196, 204, 0.2),
+            90% 64% at 18% 36%,
+            rgba(160, 238, 223, 0.32),
             transparent 72%
         ),
         var(--alt);
