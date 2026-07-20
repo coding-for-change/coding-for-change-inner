@@ -89,34 +89,43 @@
    at the zenith, paling toward the horizon) lit by a soft cyan bloom high
    overhead, with a cooler blue depth to the other side. All light comes from
    above (one consistent direction), so it reads as sky, not random blobs. */
-[data-theme='light'] .lp-hero {
-    /* A dawn sky: a coherent vertical sunrise (light-blue zenith → lavender →
-       rose → warm peach horizon), with a soft sun rising from the bottom-right
-       and violet depth from the upper-left. Faint morning stars sit up high
-       via ::before. */
+/* One continuous dawn sky painted on the whole page (.lp): a light-blue zenith
+   easing down through lavender and rose to a warm peach horizon high in the
+   hero, then settling to a calm pale lavender for the content below. The sun,
+   pink and violet blooms are positioned in px from the top so they sit in the
+   hero and bloom *across* the hero/content boundary — no seam. The hero and all
+   light content bands are transparent windows onto this one gradient, so there
+   are no per-section colour breaks. */
+[data-theme='light'] .lp {
     background: radial-gradient(
-            900px 620px at 82% 118%,
-            rgba(255, 173, 108, 0.5),
+            1100px 640px at 82% 700px,
+            rgba(255, 166, 108, 0.44),
             transparent 60%
         ),
         radial-gradient(
-            1100px 780px at 60% 104%,
-            rgba(246, 132, 168, 0.34),
+            1000px 620px at 52% 560px,
+            rgba(246, 130, 170, 0.28),
             transparent 62%
         ),
         radial-gradient(
-            1000px 760px at 10% 2%,
-            rgba(150, 128, 224, 0.28),
+            980px 720px at 6% 90px,
+            rgba(150, 126, 226, 0.3),
             transparent 60%
         ),
         linear-gradient(
             180deg,
-            #d7e4f6 0%,
-            #e4ddf3 28%,
-            #f1dcec 56%,
-            #fbdee0 80%,
-            #ffe7d3 100%
+            #d9e5f6 0,
+            #e7dff3 180px,
+            #f2ddec 380px,
+            #fbe0df 600px,
+            #f8e6ea 820px,
+            #f4ecf6 1200px,
+            #f3edf7 2200px
         );
+    background-attachment: scroll;
+}
+[data-theme='light'] .lp-hero {
+    background: transparent;
 }
 /* Drop the tiled night-field on light content bands (kept on the dark 3D band). */
 [data-theme='light'] :is(.lp-section, .lp-page)::before {
@@ -150,45 +159,12 @@
 /* One consistent soft cyan-sky glow across every band (matching the hero's
    bloom), so scrolling reads as a continuous sky rather than shifting hues.
    Interior-faded so the section seams stay clean. */
-/* Below the hero the sunrise gets a touch stronger: each band carries the
-   orange + purple combo (peach glow one side, violet the other), alternating
-   sides, interior-faded so seams stay clean. */
-[data-theme='light'] .lp-section {
-    background: radial-gradient(
-            82% 60% at 88% 28%,
-            rgba(255, 168, 118, 0.22),
-            transparent 70%
-        ),
-        radial-gradient(78% 58% at 6% 82%, rgba(150, 120, 226, 0.2), transparent 70%);
-}
-[data-theme='light'] .lp-page {
-    background: radial-gradient(
-            80% 56% at 90% 28%,
-            rgba(255, 168, 118, 0.18),
-            transparent 70%
-        ),
-        radial-gradient(74% 54% at 8% 82%, rgba(150, 120, 226, 0.18), transparent 70%);
-}
-[data-theme='light'] .lp-section--alt {
-    background: radial-gradient(
-            82% 60% at 10% 30%,
-            rgba(150, 120, 226, 0.24),
-            transparent 70%
-        ),
-        radial-gradient(78% 58% at 92% 82%, rgba(255, 168, 118, 0.2), transparent 70%),
-        var(--alt);
-}
-/* The first section flows straight out of the hero: it starts at the hero's
-   warm horizon colour and eases down into the page, so there's no hard gap
-   between the sunrise and the content below. */
+/* Light content bands are transparent — the sunrise lives on the single .lp
+   gradient above, so there are no per-section colour breaks and the hero flows
+   straight into the content. */
+[data-theme='light'] :is(.lp-section, .lp-section--alt, .lp-page),
 [data-theme='light'] .lp-hero + .lp-section {
-    background: linear-gradient(
-        180deg,
-        #ffe7d3 0%,
-        #fbdde4 24%,
-        #f2dcf0 52%,
-        transparent 84%
-    );
+    background: transparent;
 }
 /* Drop the dark-mode glow accents / sheens. */
 [data-theme='light'] .lp-kicker {
