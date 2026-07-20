@@ -113,14 +113,36 @@
             #d6efe9 190px,
             #edf5ef 400px,
             #fde4cf 600px,
-            #fdead9 820px,
-            #f4f1ea 1200px,
-            #eef3f1 2200px
+            #fce7d6 820px,
+            #f2f0e4 1080px,
+            #dcefe8 1600px,
+            #e7f2ec 2500px,
+            #d6ece5 3400px,
+            #e2f0ea 4400px
         );
     background-attachment: scroll;
 }
 [data-theme='light'] .lp-hero {
     background: transparent;
+}
+/* Keep the lower bands from going flat: a gentle turquoise (upper) + warm
+   (lower) wash per section, semi-transparent and interior-faded so the
+   continuous sky shows through and there are no hard section breaks. */
+[data-theme='light'] :is(.lp-section, .lp-page) {
+    background: radial-gradient(
+            94% 66% at 84% 24%,
+            rgba(26, 190, 194, 0.17),
+            transparent 72%
+        ),
+        radial-gradient(84% 60% at 8% 90%, rgba(255, 154, 82, 0.14), transparent 72%);
+}
+[data-theme='light'] .lp-section--alt {
+    background: radial-gradient(
+            94% 66% at 14% 26%,
+            rgba(26, 190, 194, 0.2),
+            transparent 72%
+        ),
+        radial-gradient(84% 60% at 90% 90%, rgba(255, 154, 82, 0.14), transparent 72%);
 }
 /* Drop the tiled night-field on light content bands (kept on the dark 3D band). */
 [data-theme='light'] :is(.lp-section, .lp-page)::before {
