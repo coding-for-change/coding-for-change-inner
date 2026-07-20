@@ -24,16 +24,16 @@ body {
     --cfc-footer-bg: #0a1830;
 }
 html[data-theme='light'] {
-    --cfc-bg: #eef2f8; /* light cool blue (matches the .lp base) */
+    --cfc-bg: #e6edf7; /* light sky blue (matches the .lp base) */
     --cfc-surface: #ffffff;
     --cfc-heading: #13273f; /* deep-navy headings */
     --cfc-text: #647385;
-    --cfc-accent: #178a8c; /* teal accent (footer email) */
-    --cfc-line: #d6dfea;
+    --cfc-accent: #158587; /* teal accent (footer email) */
+    --cfc-line: #cfdbec;
     --cfc-logo-filter: none;
-    --cfc-cta-bg: #1b9899; /* teal CTA */
+    --cfc-cta-bg: #16989a; /* teal CTA */
     --cfc-cta-fg: #ffffff;
-    --cfc-footer-bg: #e6ecf4; /* cool footer, a touch deeper than the base */
+    --cfc-footer-bg: #dce5f2; /* a deeper patch of sky under the content */
 }
 
 html, body {

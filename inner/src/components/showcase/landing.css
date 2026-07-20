@@ -65,42 +65,39 @@
     /* A lighter mirror of the dark theme: the navy background inverts to a cool
        light blue, white text inverts to deep navy, and the SAME teal/cyan
        accents carry over (just deepened so they read on a light background). */
-    --cyan: #178a8c; /* accent text: kickers, links (deep cyan-teal) */
-    --cyan-2: #109799; /* brighter teal for hovers */
-    --teal: #1b9899; /* solid fills: buttons, badges, ticks */
-    --teal-dark: #14797a; /* deeper teal: fill hover / gradient end */
+    --cyan: #158587; /* accent text: kickers, links (deep cyan-teal) */
+    --cyan-2: #0f9799; /* brighter teal for hovers */
+    --teal: #16989a; /* solid fills: buttons, badges, ticks */
+    --teal-dark: #127a7c; /* deeper teal: fill hover / gradient end */
     --ink: #13273f; /* headings — deep navy (inverted white text) */
     --body: #3a4a5c; /* body copy — dark slate */
     --muted: #647385;
-    --bg: #eef2f8; /* page base — light cool blue (inverted navy) */
-    --surface: #ffffff; /* cards — white, raised above the base */
-    --surface-2: #e3eaf3;
-    --alt: #e5ecf4; /* alt band — slightly deeper cool blue */
-    --line: #d6dfea;
-    --line-2: #c2cee0;
-    --glow: rgba(27, 152, 153, 0.12);
+    --bg: #e6edf7; /* page base — light sky blue (day sky, not near-white) */
+    --surface: #ffffff; /* cards — white, raised above the sky */
+    --surface-2: #dbe6f4;
+    --alt: #d9e3f2; /* alt band — a deeper patch of sky */
+    --line: #cfdbec;
+    --line-2: #bbcbe1;
+    --glow: rgba(22, 152, 154, 0.12);
     --card-shadow: 0 10px 30px rgba(19, 39, 63, 0.1);
     --on-accent: #ffffff;
 }
-/* Light hero: a lighter mirror of the dark hero — teal + navy-blue glows
-   (the same accent family) over a cool near-white. No other hues. */
+/* Light hero: a coherent daytime sky — a cool-blue vertical gradient (deeper
+   at the zenith, paling toward the horizon) lit by a soft cyan bloom high
+   overhead, with a cooler blue depth to the other side. All light comes from
+   above (one consistent direction), so it reads as sky, not random blobs. */
 [data-theme='light'] .lp-hero {
     background: radial-gradient(
-            1000px 620px at 2% -8%,
-            rgba(27, 152, 153, 0.2),
-            transparent 60%
+            860px 660px at 76% -16%,
+            rgba(122, 216, 210, 0.45),
+            transparent 58%
         ),
         radial-gradient(
-            880px 560px at 100% 2%,
-            rgba(37, 92, 168, 0.16),
-            transparent 62%
-        ),
-        radial-gradient(
-            760px 580px at 84% 110%,
-            rgba(27, 152, 153, 0.14),
+            1200px 860px at 14% -26%,
+            rgba(92, 152, 212, 0.34),
             transparent 60%
         ),
-        linear-gradient(180deg, #e3eaf5 0%, #f5f8fc 74%);
+        linear-gradient(180deg, #c7d9ef 0%, #e0ebf7 48%, #f3f7fc 100%);
 }
 /* Drop the night-sky starfield in light mode (kept on the dark 3D band). */
 [data-theme='light'] :is(.lp-hero, .lp-section, .lp-page)::before {
@@ -108,27 +105,29 @@
 }
 /* Plain/alt bands get soft, seamless cosmic glows (interior-faded like the
    dark theme, so no hard boundary lines) instead of flat white. */
+/* One consistent soft cyan-sky glow across every band (matching the hero's
+   bloom), so scrolling reads as a continuous sky rather than shifting hues.
+   Interior-faded so the section seams stay clean. */
 [data-theme='light'] .lp-section {
     background: radial-gradient(
-        82% 58% at 88% 40%,
-        rgba(27, 152, 153, 0.12),
-        transparent 70%
+        88% 62% at 84% 36%,
+        rgba(104, 196, 204, 0.18),
+        transparent 72%
     );
 }
 [data-theme='light'] .lp-page {
     background: radial-gradient(
-        78% 52% at 90% 36%,
-        rgba(37, 92, 168, 0.1),
-        transparent 68%
+        82% 56% at 88% 32%,
+        rgba(104, 196, 204, 0.16),
+        transparent 70%
     );
 }
 [data-theme='light'] .lp-section--alt {
     background: radial-gradient(
-            82% 58% at 10% 42%,
-            rgba(27, 152, 153, 0.13),
-            transparent 70%
+            88% 62% at 16% 38%,
+            rgba(104, 196, 204, 0.2),
+            transparent 72%
         ),
-        radial-gradient(70% 52% at 94% 84%, rgba(37, 92, 168, 0.1), transparent 68%),
         var(--alt);
 }
 /* Drop the dark-mode glow accents / sheens. */
