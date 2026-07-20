@@ -15,7 +15,7 @@ function renderText(node: LexicalNode, key: string): React.ReactNode {
     let el: React.ReactNode = text;
     if (fmt & FORMAT_CODE) {
         el = (
-            <code key={key} style={{ fontFamily: 'monospace', backgroundColor: '#e8e8e8', padding: '1px 4px', border: '1px solid #c0c0c0', fontSize: '0.9em' }}>
+            <code key={key} style={{ fontFamily: 'monospace', backgroundColor: 'rgba(127, 227, 228, 0.12)', color: 'var(--cyan)', padding: '1px 4px', border: '1px solid rgba(127, 227, 228, 0.25)', fontSize: '0.9em' }}>
                 {text}
             </code>
         );
@@ -51,7 +51,7 @@ function renderNode(node: LexicalNode, key: string): React.ReactNode {
         case 'link': {
             const href = node.fields?.url ?? (node as any).url ?? '#';
             return (
-                <a key={key} href={href} target={node.fields?.newTab ? '_blank' : undefined} rel="noreferrer" style={{ color: '#0000a3' }}>
+                <a key={key} href={href} target={node.fields?.newTab ? '_blank' : undefined} rel="noreferrer" style={{ color: 'var(--cyan)' }}>
                     {children}
                 </a>
             );
@@ -64,12 +64,12 @@ function renderNode(node: LexicalNode, key: string): React.ReactNode {
             return <li key={key} style={{ marginBottom: 4 }}>{children}</li>;
         case 'quote':
             return (
-                <blockquote key={key} style={{ borderLeft: '3px solid #808080', paddingLeft: 16, marginLeft: 0, fontStyle: 'italic', color: '#555', marginBottom: 16 }}>
+                <blockquote key={key} style={{ borderLeft: '3px solid var(--teal)', paddingLeft: 16, marginLeft: 0, fontStyle: 'italic', color: 'var(--body)', marginBottom: 16 }}>
                     {children}
                 </blockquote>
             );
         case 'horizontalrule':
-            return <hr key={key} style={{ border: 'none', borderTop: '1px solid #888', margin: '16px 0', width: '100%' }} />;
+            return <hr key={key} style={{ border: 'none', borderTop: '1px solid rgba(255, 255, 255, 0.15)', margin: '16px 0', width: '100%' }} />;
         case 'upload': {
             const val = node.value;
             if (!val?.url) return null;

@@ -3,8 +3,12 @@ import React from 'react';
 import RouterLink from 'next/link';
 import { useSiteConfig, useLanguage } from '../../api';
 
-const NAVY = '#0f2040';
-const GRAY = '#6b7280';
+// Dark-navy footer palette (matches the .lp site tokens).
+const BG = '#0a1830';
+const HEADING = '#eef4fb';
+const MUTED = '#9db0c7';
+const ACCENT = '#7fe3e4';
+const LINE = 'rgba(255, 255, 255, 0.1)';
 const FONT = '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif';
 
 /**
@@ -93,8 +97,8 @@ const styles: StyleSheetCSS = {
     footer: {
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: '#ffffff',
-        borderTop: '1px solid #f0f0f0',
+        backgroundColor: BG,
+        borderTop: `1px solid ${LINE}`,
         padding: '48px 24px 32px',
         width: '100%',
         boxSizing: 'border-box',
@@ -122,11 +126,13 @@ const styles: StyleSheetCSS = {
         width: 'auto',
         objectFit: 'contain',
         alignSelf: 'flex-start',
+        // Black wordmark SVG → white for the dark footer.
+        filter: 'brightness(0) invert(1)',
     },
     tagline: {
         fontFamily: FONT,
         fontSize: 14,
-        color: GRAY,
+        color: MUTED,
         lineHeight: 1.6,
         margin: 0,
         maxWidth: 280,
@@ -134,7 +140,7 @@ const styles: StyleSheetCSS = {
     email: {
         fontFamily: FONT,
         fontSize: 14,
-        color: NAVY,
+        color: ACCENT,
         textDecoration: 'none',
     },
     columns: {
@@ -152,7 +158,7 @@ const styles: StyleSheetCSS = {
         fontFamily: FONT,
         fontSize: 12,
         fontWeight: 700,
-        color: NAVY,
+        color: HEADING,
         letterSpacing: 1,
         margin: '0 0 16px 0',
     },
@@ -160,7 +166,7 @@ const styles: StyleSheetCSS = {
         display: 'flex',
         fontFamily: FONT,
         fontSize: 14,
-        color: GRAY,
+        color: MUTED,
         textDecoration: 'none',
         padding: '6px 0',
     },
@@ -174,14 +180,14 @@ const styles: StyleSheetCSS = {
     },
     divider: {
         height: 1,
-        backgroundColor: '#f0f0f0',
+        backgroundColor: LINE,
         margin: '32px 0 20px',
         width: '100%',
     },
     copyright: {
         fontFamily: FONT,
         fontSize: 12,
-        color: '#9ca3af',
+        color: MUTED,
         margin: 0,
     },
 };

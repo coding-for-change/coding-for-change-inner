@@ -8,7 +8,9 @@ body {
 }
 
 html, body {
-    background-color: #fff;
+    /* Dark-navy site base — prevents any white flash/gutter behind the
+       modern (.lp) content and footer, which are navy end-to-end. */
+    background-color: #0b1a34;
 }
 
 code {
@@ -269,6 +271,7 @@ input:active {
     bottom: 0px;
     top: 0px;
     overflow: hidden;
+    background: #0b1a34;
     transform: translate3d(0, 0, 0);
 }
 
