@@ -65,24 +65,24 @@
     /* A lighter mirror of the dark theme: the navy background inverts to a cool
        light blue, white text inverts to deep navy, and the SAME teal/cyan
        accents carry over (just deepened so they read on a light background). */
-    /* Sunrise palette: a dawn sky (blue → lavender → rose → peach) with violet
-       as the accent so interactive elements belong to the sunrise, and a deep
-       plum ink as the dark anchor. */
-    --cyan: #5e37b3; /* accent text: kickers, links (violet) */
-    --cyan-2: #744fce; /* brighter violet for hovers */
-    --teal: #6a40c0; /* solid fills: buttons, badges, ticks (violet) */
-    --teal-dark: #543099; /* deeper violet: fill hover / gradient end */
-    --ink: #2a2340; /* headings — deep plum-navy */
-    --body: #514a60; /* body copy — plum slate */
-    --muted: #7b7489;
-    --bg: #f4eff8; /* page base — pale dawn lavender */
+    /* Turquoise/orange sky: a turquoise zenith warming to an orange horizon,
+       with turquoise as the accent (ties back to the dark theme's teal) and a
+       deep teal-navy ink as the dark anchor. */
+    --cyan: #0d9499; /* accent text: kickers, links (turquoise) */
+    --cyan-2: #11b0b4; /* brighter turquoise for hovers */
+    --teal: #12a5a9; /* solid fills: buttons, badges, ticks (turquoise) */
+    --teal-dark: #0d8387; /* deeper turquoise: fill hover / gradient end */
+    --ink: #14313a; /* headings — deep teal-navy */
+    --body: #3d4c53; /* body copy — teal slate */
+    --muted: #6b7b82;
+    --bg: #eaf4f3; /* page base — pale aqua */
     --surface: #ffffff; /* cards — white, raised above the sky */
-    --surface-2: #ece2f3;
-    --alt: #f6e9ef; /* alt band — a soft rose patch of sky */
-    --line: #e7dcf0;
-    --line-2: #d7c7e5;
-    --glow: rgba(230, 140, 175, 0.14);
-    --card-shadow: 0 12px 34px rgba(70, 45, 90, 0.1);
+    --surface-2: #dcecea;
+    --alt: #def0ec; /* alt band — a soft aqua patch of sky */
+    --line: #d2e6e4;
+    --line-2: #bcdad7;
+    --glow: rgba(20, 165, 169, 0.14);
+    --card-shadow: 0 12px 34px rgba(20, 55, 60, 0.1);
     --on-accent: #ffffff;
 }
 /* Light hero: a coherent daytime sky — a cool-blue vertical gradient (deeper
@@ -98,29 +98,24 @@
    are no per-section colour breaks. */
 [data-theme='light'] .lp {
     background: radial-gradient(
-            1100px 640px at 82% 700px,
-            rgba(255, 166, 108, 0.44),
+            1150px 640px at 82% 700px,
+            rgba(255, 150, 78, 0.5),
             transparent 60%
         ),
         radial-gradient(
-            1000px 620px at 52% 560px,
-            rgba(246, 130, 170, 0.28),
-            transparent 62%
-        ),
-        radial-gradient(
-            980px 720px at 6% 90px,
-            rgba(150, 126, 226, 0.3),
+            1000px 720px at 8% 70px,
+            rgba(26, 196, 198, 0.42),
             transparent 60%
         ),
         linear-gradient(
             180deg,
-            #d9e5f6 0,
-            #e7dff3 180px,
-            #f2ddec 380px,
-            #fbe0df 600px,
-            #f8e6ea 820px,
-            #f4ecf6 1200px,
-            #f3edf7 2200px
+            #c3ece9 0,
+            #d6efe9 190px,
+            #edf5ef 400px,
+            #fde4cf 600px,
+            #fdead9 820px,
+            #f4f1ea 1200px,
+            #eef3f1 2200px
         );
     background-attachment: scroll;
 }
@@ -134,20 +129,20 @@
 /* Faint "morning stars" high in the hero sky, fading out toward the sunlit
    horizon via a mask — a hand-placed constellation, not the tiled field. */
 [data-theme='light'] .lp-hero::before {
-    background-image: radial-gradient(1.5px 1.5px at 10% 12%, rgba(74, 58, 128, 0.55), transparent 100%),
-        radial-gradient(1.2px 1.2px at 22% 22%, rgba(74, 58, 128, 0.4), transparent 100%),
-        radial-gradient(1px 1px at 33% 9%, rgba(74, 58, 128, 0.35), transparent 100%),
-        radial-gradient(1.6px 1.6px at 44% 18%, rgba(74, 58, 128, 0.5), transparent 100%),
-        radial-gradient(1px 1px at 56% 7%, rgba(74, 58, 128, 0.3), transparent 100%),
-        radial-gradient(1.3px 1.3px at 66% 20%, rgba(74, 58, 128, 0.45), transparent 100%),
-        radial-gradient(1px 1px at 77% 11%, rgba(74, 58, 128, 0.3), transparent 100%),
-        radial-gradient(1.5px 1.5px at 88% 22%, rgba(74, 58, 128, 0.5), transparent 100%),
-        radial-gradient(1px 1px at 16% 32%, rgba(74, 58, 128, 0.28), transparent 100%),
-        radial-gradient(1.2px 1.2px at 38% 34%, rgba(74, 58, 128, 0.34), transparent 100%),
-        radial-gradient(1px 1px at 61% 33%, rgba(74, 58, 128, 0.28), transparent 100%),
-        radial-gradient(1.3px 1.3px at 82% 34%, rgba(74, 58, 128, 0.36), transparent 100%),
-        radial-gradient(1px 1px at 94% 14%, rgba(74, 58, 128, 0.3), transparent 100%),
-        radial-gradient(1.2px 1.2px at 5% 26%, rgba(74, 58, 128, 0.34), transparent 100%);
+    background-image: radial-gradient(1.5px 1.5px at 10% 12%, rgba(16, 120, 126, 0.55), transparent 100%),
+        radial-gradient(1.2px 1.2px at 22% 22%, rgba(16, 120, 126, 0.4), transparent 100%),
+        radial-gradient(1px 1px at 33% 9%, rgba(16, 120, 126, 0.35), transparent 100%),
+        radial-gradient(1.6px 1.6px at 44% 18%, rgba(16, 120, 126, 0.5), transparent 100%),
+        radial-gradient(1px 1px at 56% 7%, rgba(16, 120, 126, 0.3), transparent 100%),
+        radial-gradient(1.3px 1.3px at 66% 20%, rgba(16, 120, 126, 0.45), transparent 100%),
+        radial-gradient(1px 1px at 77% 11%, rgba(16, 120, 126, 0.3), transparent 100%),
+        radial-gradient(1.5px 1.5px at 88% 22%, rgba(16, 120, 126, 0.5), transparent 100%),
+        radial-gradient(1px 1px at 16% 32%, rgba(16, 120, 126, 0.28), transparent 100%),
+        radial-gradient(1.2px 1.2px at 38% 34%, rgba(16, 120, 126, 0.34), transparent 100%),
+        radial-gradient(1px 1px at 61% 33%, rgba(16, 120, 126, 0.28), transparent 100%),
+        radial-gradient(1.3px 1.3px at 82% 34%, rgba(16, 120, 126, 0.36), transparent 100%),
+        radial-gradient(1px 1px at 94% 14%, rgba(16, 120, 126, 0.3), transparent 100%),
+        radial-gradient(1.2px 1.2px at 5% 26%, rgba(16, 120, 126, 0.34), transparent 100%);
     background-repeat: no-repeat;
     background-size: 100% 100%;
     -webkit-mask: linear-gradient(180deg, #000 0%, #000 26%, transparent 58%);
@@ -190,28 +185,27 @@
    the dawn hero — instead of the dark-theme teal/navy. */
 [data-theme='light'] .lp-cta,
 [data-theme='light'] .lp-cs-cta--join {
-    background: linear-gradient(135deg, #2a1e52 0%, #5c2e6a 52%, #9c4a5e 100%);
+    background: linear-gradient(135deg, #0d3540 0%, #14727a 52%, #c2683c 100%);
 }
 [data-theme='light'] .lp-3d {
-    /* Deep twilight purple, lit by a warm ember (setting sun) top-right and a
-       purple glow bottom-left. The starfield (::before) stays — dusk has stars
-       too. */
+    /* Deep teal dusk, lit by a warm ember (setting sun) top-right and a teal
+       glow bottom-left. The starfield (::before) stays — dusk has stars too. */
     background: radial-gradient(
             900px 460px at 86% -20%,
-            rgba(255, 150, 110, 0.24),
+            rgba(255, 150, 90, 0.26),
             transparent 60%
         ),
         radial-gradient(
             760px 440px at 6% 122%,
-            rgba(150, 100, 220, 0.32),
+            rgba(24, 150, 158, 0.34),
             transparent 62%
         ),
-        #211a44;
+        #0e2b33;
 }
 /* Warm dusk accent inside those bands (e.g. the 3D "just for fun" kicker),
    instead of the dark-theme cyan. */
 [data-theme='light'] :is(.lp-3d, .lp-cta, .lp-cs-cta--join) {
-    --cyan: #ff9ec4;
+    --cyan: #ffb27a;
 }
 
 /* Always-dark bands: force dark-theme tokens regardless of page theme so the
