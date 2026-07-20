@@ -24,16 +24,16 @@ body {
     --cfc-footer-bg: #0a1830;
 }
 html[data-theme='light'] {
-    --cfc-bg: #eef7f4; /* light, barely-there mint (matches the .lp base) */
+    --cfc-bg: #f4eff8; /* pale dawn lavender (matches the .lp base) */
     --cfc-surface: #ffffff;
-    --cfc-heading: #13273f; /* deep-navy headings */
-    --cfc-text: #647385;
-    --cfc-accent: #158587; /* teal accent (footer email) */
-    --cfc-line: #d6e9e4;
+    --cfc-heading: #2a2340; /* deep plum-navy headings */
+    --cfc-text: #7b7489;
+    --cfc-accent: #5e37b3; /* violet accent (footer email) */
+    --cfc-line: #e7dcf0;
     --cfc-logo-filter: none;
-    --cfc-cta-bg: #16989a; /* teal CTA */
+    --cfc-cta-bg: #6a40c0; /* violet CTA */
     --cfc-cta-fg: #ffffff;
-    --cfc-footer-bg: #e4f1ec; /* a slightly deeper patch of mint */
+    --cfc-footer-bg: #efe4f4; /* a slightly deeper patch of dawn sky */
 }
 
 html, body {
