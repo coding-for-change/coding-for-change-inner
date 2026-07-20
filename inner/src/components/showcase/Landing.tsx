@@ -51,14 +51,18 @@ const HERO_START_SCALE = 3.3;
  * The frame transform is computed in JS rather than via CSS object-position,
  * because object-position can't hold an off-centre point (the fingertips sit at
  * ~40% — God's group fills the right half) dead-centre at scale 1. So we pan
- * *and* zoom: the touch is centred while zoomed in, then the frame pulls back
- * and pans to the balanced full fresco (object-position:50%) as progress → 1.
+ * *and* zoom: the touch is centred while zoomed in, then the frame pans back to
+ * the balanced full fresco as progress → 1.
  *
- * Scroller differs by layout: desktop scrolls `.site-scroll` (an overflow:auto
- * div), mobile scrolls the window — resolved from the element. Once fully zoomed
- * out the zoom *latches*: scrolling back up keeps the full fresco instead of
- * replaying the zoom-in. rAF-throttled, passive listeners. Reduced motion drops
- * the zoom/pan entirely (headline still crossfades on scroll).
+ * It runs on a requestAnimationFrame loop that polls the scroll position rather
+ * than listening for `scroll` events — the scroller differs by layout (desktop
+ * scrolls the `.site-scroll` overflow:auto div; mobile scrolls the window) and
+ * the shell can swap after mount, so we re-resolve it each frame; polling also
+ * sidesteps `scroll` not bubbling from a nested scroller. Once fully zoomed out
+ * the zoom *latches*: the tall runway collapses to a normal-height hero (scroll
+ * compensated so nothing jumps — the stage is pinned) so scrolling back over it
+ * is smooth instead of hitting a long pinned dead-zone, and the loop stops.
+ * Reduced motion is a plain static full-fresco hero (no runway/zoom/pan/loop).
  */
 function useHeroZoom(
     sectionRef: React.RefObject<HTMLElement | null>,
@@ -70,18 +74,30 @@ function useHeroZoom(
         const section = sectionRef.current;
         const frame = frameRef.current;
         if (!section || !frame) return;
-        const scroller: HTMLElement | Window =
-            section.closest<HTMLElement>('.site-scroll') ?? window;
-        const viewportH = () =>
-            scroller === window
-                ? window.innerHeight
-                : (scroller as HTMLElement).clientHeight;
+
+        // Desktop scrolls `.site-scroll`; mobile scrolls the window. The shell can
+        // swap after mount, so resolve fresh on every read (never cache).
+        const resolveScroller = (): HTMLElement | null =>
+            section.closest<HTMLElement>('.site-scroll');
+        const viewportH = (el: HTMLElement | null) =>
+            el ? el.clientHeight : window.innerHeight;
+        const scrollTopOf = (el: HTMLElement | null) =>
+            el ? el.scrollTop : window.scrollY;
+
+        // Reduced motion: a plain full-fresco hero — no tall runway, no zoom/pan,
+        // no loop. Show the resting headline + CTAs (progress pinned at 1).
+        if (reduced) {
+            const applyStatic = () => {
+                section.style.height = `${viewportH(resolveScroller())}px`;
+                frame.style.transform = '';
+                progress.set(1);
+            };
+            applyStatic();
+            window.addEventListener('resize', applyStatic);
+            return () => window.removeEventListener('resize', applyStatic);
+        }
 
         const paintFrame = (p: number) => {
-            if (reduced) {
-                frame.style.transform = '';
-                return;
-            }
             const Wf = frame.clientWidth;
             const Hf = frame.clientHeight;
             if (!Wf || !Hf) return;
@@ -96,40 +112,65 @@ function useHeroZoom(
         };
 
         let latched = false;
-        let raf = 0;
-        const measure = () => {
-            raf = 0;
+        const measureAndPaint = () => {
+            const el = resolveScroller();
+            const vh = viewportH(el);
             const rect = section.getBoundingClientRect();
-            const scrollerTop =
-                scroller === window
-                    ? 0
-                    : (scroller as HTMLElement).getBoundingClientRect().top;
-            const travel = rect.height - viewportH();
+            const scrollerTop = el ? el.getBoundingClientRect().top : 0;
+            const travel = rect.height - vh;
             let p =
                 travel <= 0
                     ? 0
                     : Math.min(1, Math.max(0, (scrollerTop - rect.top) / travel));
-            // Play the zoom once: after it fully opens out, keep it open.
-            if (!reduced) {
-                if (latched) p = 1;
-                else if (p >= 0.995) {
-                    latched = true;
-                    p = 1;
-                }
+            // The first time it fully opens out, collapse the tall runway to a
+            // normal-height hero and pull the scroll back by that distance — the
+            // stage is pinned (full fresco fills the viewport either way), so
+            // nothing on screen moves, but scrolling back over the hero is smooth
+            // rather than a long pinned dead-zone.
+            if (!latched && p >= 0.995) {
+                latched = true;
+                section.style.height = `${vh}px`;
+                const scrollEl: HTMLElement =
+                    el ??
+                    (document.scrollingElement as HTMLElement | null) ??
+                    document.documentElement;
+                const prev = scrollEl.style.scrollBehavior;
+                scrollEl.style.scrollBehavior = 'auto';
+                scrollEl.scrollTop -= travel;
+                scrollEl.style.scrollBehavior = prev;
+            }
+            if (latched) {
+                p = 1;
+                section.style.height = `${vh}px`; // stay synced on resize
             }
             progress.set(p);
             paintFrame(p);
         };
-        const onScroll = () => {
-            if (!raf) raf = requestAnimationFrame(measure);
+
+        // rAF loop: poll scroll directly (skip frames where it hasn't moved) and
+        // self-stop once latched. Robust to `scroll` events not firing on a nested
+        // scroller / programmatic scrolls.
+        let rafId = 0;
+        let lastScroll = NaN;
+        const loop = () => {
+            const s = scrollTopOf(resolveScroller());
+            if (s !== lastScroll) {
+                lastScroll = s;
+                measureAndPaint();
+            }
+            rafId = latched ? 0 : requestAnimationFrame(loop);
         };
-        measure();
-        scroller.addEventListener('scroll', onScroll, { passive: true });
-        window.addEventListener('resize', onScroll);
+        const onResize = () => {
+            lastScroll = NaN; // force a recompute at the new size
+            if (latched) measureAndPaint();
+            else if (!rafId) rafId = requestAnimationFrame(loop);
+        };
+        measureAndPaint();
+        rafId = requestAnimationFrame(loop);
+        window.addEventListener('resize', onResize);
         return () => {
-            scroller.removeEventListener('scroll', onScroll);
-            window.removeEventListener('resize', onScroll);
-            if (raf) cancelAnimationFrame(raf);
+            if (rafId) cancelAnimationFrame(rafId);
+            window.removeEventListener('resize', onResize);
         };
     }, [sectionRef, frameRef, reduced, progress]);
     return progress;
