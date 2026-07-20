@@ -2,7 +2,6 @@
 import React from 'react';
 import RouterLink from 'next/link';
 import { useSiteConfig, useLanguage } from '../../api';
-import Logo from '../../assets/Logo.webp';
 
 const NAVY = '#0f2040';
 const GRAY = '#6b7280';
@@ -44,10 +43,10 @@ const SiteFooter: React.FC = () => {
             <div style={styles.inner}>
                 <div style={styles.top}>
                     <img
-                        src={Logo.src}
+                        src="/images/logo.svg"
                         alt="Coding for Change"
-                        width={Logo.width}
-                        height={Logo.height}
+                        width={220}
+                        height={30}
                         style={styles.logo}
                     />
                     {siteConfig.tagline && (
@@ -119,7 +118,7 @@ const styles: StyleSheetCSS = {
         minWidth: 240,
     },
     logo: {
-        height: 40,
+        height: 30,
         width: 'auto',
         objectFit: 'contain',
         alignSelf: 'flex-start',

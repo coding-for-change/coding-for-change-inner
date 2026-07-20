@@ -603,18 +603,10 @@
     flex-shrink: 0;
 }
 .lp-nav__logo {
-    height: 30px;
+    height: 28px;
     width: auto;
     object-fit: contain;
-}
-.lp-nav__name {
-    font-family: var(--font-roboto-mono), 'Roboto Mono', monospace;
-    font-weight: 700;
-    /* Sized so the cap height matches the 30px logo mark beside it. */
-    font-size: 27px;
-    line-height: 30px;
-    color: #1b1f1f;
-    white-space: nowrap;
+    display: block;
 }
 .lp-nav__links {
     display: flex;
@@ -647,19 +639,11 @@
     border-bottom: 2px solid transparent;
     transition: color 0.14s ease, border-color 0.14s ease;
 }
-/* Below 1220px (incl. the 3D monitor iframe) hide the wordmark text and keep
-   just the logo mark, so the full link row fits on one line without clipping
-   the edge items. The full logo+wordmark only shows at >= 1220px. */
+/* Below 1220px (incl. the 3D monitor iframe) shrink the wordmark a little so the
+   full link row still fits on one line without clipping the edge items. */
 @media (max-width: 1219px) {
-    .lp-nav__name {
-        display: none;
-    }
-}
-/* German nav labels are longer, so the wordmark needs more clearance before it
-   fits alongside them without clipping the edge links. */
-@media (max-width: 1499px) {
-    html[lang='de'] .lp-nav__name {
-        display: none;
+    .lp-nav__logo {
+        height: 24px;
     }
 }
 .lp-nav__link:hover {
@@ -1679,23 +1663,27 @@
     color: var(--muted);
 }
 .lp-cs__gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
     gap: 18px;
     margin: 40px 0 8px;
 }
 .lp-cs__shot {
     display: block;
+    width: fit-content;
+    max-width: 100%;
     margin: 0;
     overflow: hidden;
 }
-/* Fixed height + cover keeps every gallery thumbnail the same size regardless of
-   the source image's aspect ratio; widths still flex with the grid columns. */
+/* Every thumbnail shares the same height; its width follows the image's own
+   aspect ratio (portrait shots stay narrow, landscape wide) so the whole image
+   shows instead of being cropped to a fixed-width box. */
 .lp-cs__shot img {
-    width: 100%;
-    height: 200px;
+    height: 240px;
+    width: auto;
+    max-width: 100%;
     display: block;
-    object-fit: cover;
 }
 .lp-cs__caption {
     display: block;
@@ -1706,13 +1694,13 @@
 /* Gallery thumbnails are buttons that open the full-screen viewer. */
 .lp-cs__shot-btn {
     display: block;
-    width: 100%;
     margin: 0;
     padding: 0;
     border: none;
     background: none;
     cursor: zoom-in;
     overflow: hidden;
+    line-height: 0;
 }
 .lp-cs__shot-btn:focus-visible {
     outline: 2px solid var(--teal);
