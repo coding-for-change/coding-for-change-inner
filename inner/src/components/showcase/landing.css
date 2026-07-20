@@ -59,9 +59,26 @@
     box-sizing: border-box;
     padding: 88px 0;
     scroll-margin-top: 72px;
+    position: relative;
+    /* Soft cyan glow anchored to the upper-right, but sized/centred so it
+       fades to zero BEFORE the top and bottom edges — otherwise the glow would
+       be clipped at the section boundary and show as a hard horizontal line. */
+    background: radial-gradient(
+        80% 56% at 88% 44%,
+        rgba(127, 227, 228, 0.08),
+        transparent 68%
+    );
 }
 .lp-section--alt {
-    background: var(--alt);
+    /* Alt bands: a teal glow anchored to the left over the alt navy, sized to
+       fade before the top/bottom edges so the only thing marking the band
+       boundary is the clean --alt colour change (no clipped glow line). */
+    background: radial-gradient(
+            80% 56% at 10% 46%,
+            rgba(52, 167, 168, 0.13),
+            transparent 68%
+        ),
+        var(--alt);
 }
 .lp-inner {
     display: block;
@@ -111,13 +128,18 @@
        corners — cyan (left) and teal (right) — over a starfield (::before). */
     background: radial-gradient(
             1150px 560px at 6% -12%,
-            rgba(127, 227, 228, 0.18),
+            rgba(127, 227, 228, 0.2),
             transparent 58%
         ),
         radial-gradient(
             920px 520px at 94% -4%,
-            rgba(47, 143, 144, 0.22),
+            rgba(47, 143, 144, 0.24),
             transparent 60%
+        ),
+        radial-gradient(
+            58% 40% at 80% 62%,
+            rgba(52, 167, 168, 0.16),
+            transparent 68%
         ),
         linear-gradient(180deg, #0e2346 0%, var(--bg) 66%);
     scroll-margin-top: 72px;
@@ -126,37 +148,50 @@
 /* Elevate real content above the ::before star layer (positioned pseudo-
    elements paint above non-positioned block content, so this is required). */
 .lp-hero > *,
-.lp-3d > * {
+.lp-3d > *,
+.lp-section > *,
+.lp-page > * {
     position: relative;
     z-index: 1;
 }
+/* A denser scatter of tiny dots tiled across every navy band (hero, 3D band,
+   content sections and standalone pages) so the large areas aren't empty. */
 .lp-hero::before,
-.lp-3d::before {
+.lp-3d::before,
+.lp-section::before,
+.lp-page::before {
     content: '';
     position: absolute;
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    /* A scatter of tiny dots tiled across the band — pure CSS, no image. */
-    background-image: radial-gradient(1.5px 1.5px at 30px 40px, rgba(255, 255, 255, 0.9), transparent 100%),
-        radial-gradient(1px 1px at 90px 120px, rgba(255, 255, 255, 0.5), transparent 100%),
-        radial-gradient(1.2px 1.2px at 160px 60px, rgba(190, 240, 255, 0.7), transparent 100%),
-        radial-gradient(1px 1px at 220px 160px, rgba(255, 255, 255, 0.45), transparent 100%),
-        radial-gradient(1.6px 1.6px at 300px 90px, rgba(255, 255, 255, 0.85), transparent 100%),
-        radial-gradient(1px 1px at 370px 40px, rgba(190, 240, 255, 0.55), transparent 100%),
-        radial-gradient(1.1px 1.1px at 400px 200px, rgba(255, 255, 255, 0.5), transparent 100%),
-        radial-gradient(1px 1px at 50px 220px, rgba(255, 255, 255, 0.55), transparent 100%),
-        radial-gradient(1.4px 1.4px at 130px 260px, rgba(255, 255, 255, 0.75), transparent 100%),
-        radial-gradient(1px 1px at 210px 300px, rgba(190, 240, 255, 0.5), transparent 100%),
-        radial-gradient(1.2px 1.2px at 280px 250px, rgba(255, 255, 255, 0.6), transparent 100%),
-        radial-gradient(1px 1px at 350px 290px, rgba(255, 255, 255, 0.45), transparent 100%),
-        radial-gradient(1.5px 1.5px at 20px 140px, rgba(255, 255, 255, 0.7), transparent 100%),
-        radial-gradient(1px 1px at 250px 30px, rgba(255, 255, 255, 0.5), transparent 100%),
-        radial-gradient(1.1px 1.1px at 320px 170px, rgba(190, 240, 255, 0.6), transparent 100%),
-        radial-gradient(1px 1px at 170px 210px, rgba(255, 255, 255, 0.4), transparent 100%);
+    background-image: radial-gradient(1.4px 1.4px at 20px 30px, rgba(255, 255, 255, 0.85), transparent 100%),
+        radial-gradient(1px 1px at 55px 95px, rgba(255, 255, 255, 0.5), transparent 100%),
+        radial-gradient(1.2px 1.2px at 100px 45px, rgba(150, 235, 240, 0.7), transparent 100%),
+        radial-gradient(1px 1px at 140px 140px, rgba(255, 255, 255, 0.5), transparent 100%),
+        radial-gradient(1.5px 1.5px at 180px 75px, rgba(255, 255, 255, 0.8), transparent 100%),
+        radial-gradient(1px 1px at 215px 190px, rgba(150, 235, 240, 0.55), transparent 100%),
+        radial-gradient(1.2px 1.2px at 255px 35px, rgba(255, 255, 255, 0.6), transparent 100%),
+        radial-gradient(1px 1px at 300px 120px, rgba(255, 255, 255, 0.5), transparent 100%),
+        radial-gradient(1.4px 1.4px at 330px 80px, rgba(150, 235, 240, 0.7), transparent 100%),
+        radial-gradient(1px 1px at 38px 165px, rgba(255, 255, 255, 0.55), transparent 100%),
+        radial-gradient(1.3px 1.3px at 85px 225px, rgba(255, 255, 255, 0.7), transparent 100%),
+        radial-gradient(1px 1px at 130px 250px, rgba(150, 235, 240, 0.5), transparent 100%),
+        radial-gradient(1.1px 1.1px at 170px 205px, rgba(255, 255, 255, 0.6), transparent 100%),
+        radial-gradient(1px 1px at 210px 245px, rgba(255, 255, 255, 0.45), transparent 100%),
+        radial-gradient(1.5px 1.5px at 250px 155px, rgba(255, 255, 255, 0.75), transparent 100%),
+        radial-gradient(1px 1px at 290px 225px, rgba(150, 235, 240, 0.55), transparent 100%),
+        radial-gradient(1.1px 1.1px at 325px 250px, rgba(255, 255, 255, 0.5), transparent 100%),
+        radial-gradient(1px 1px at 15px 110px, rgba(255, 255, 255, 0.5), transparent 100%),
+        radial-gradient(1.2px 1.2px at 115px 110px, rgba(150, 235, 240, 0.6), transparent 100%),
+        radial-gradient(1px 1px at 195px 25px, rgba(255, 255, 255, 0.55), transparent 100%),
+        radial-gradient(1.4px 1.4px at 240px 105px, rgba(255, 255, 255, 0.7), transparent 100%),
+        radial-gradient(1px 1px at 315px 40px, rgba(255, 255, 255, 0.5), transparent 100%),
+        radial-gradient(1px 1px at 75px 140px, rgba(255, 255, 255, 0.45), transparent 100%),
+        radial-gradient(1.1px 1.1px at 155px 95px, rgba(255, 255, 255, 0.6), transparent 100%);
     background-repeat: repeat;
-    background-size: 420px 320px;
-    opacity: 0.55;
+    background-size: 340px 260px;
+    opacity: 0.6;
 }
 .lp-hero__title {
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
@@ -242,7 +277,10 @@
     flex-direction: column;
     align-items: flex-start;
     padding: 24px 8px;
-    border-top: 3px solid var(--teal);
+    /* A short, bright cyan→teal accent tick per stat — a deliberate marker
+       rather than a flat full-width rule that read as a broken line. */
+    background: linear-gradient(90deg, var(--cyan), var(--teal)) left top / 52px 3px
+        no-repeat;
 }
 .lp-stat__value {
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
@@ -303,8 +341,8 @@
     right: -24px;
     width: 24px;
     height: 2px;
-    background: var(--teal);
-    opacity: 0.5;
+    background: var(--cyan);
+    opacity: 0.65;
     z-index: 1;
 }
 
@@ -788,6 +826,13 @@
     display: block;
     width: 100%;
     padding: 56px 0 88px;
+    position: relative;
+    /* Interior cyan glow that fades before the edges (see .lp-section). */
+    background: radial-gradient(
+        75% 50% at 90% 40%,
+        rgba(127, 227, 228, 0.07),
+        transparent 66%
+    );
 }
 .lp-page__head {
     display: block;
@@ -2266,4 +2311,31 @@
    many across as the width allows and wrap cleanly, without connectors. */
 .lp-steps--wrap {
     grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+
+/* ================================================================== */
+/* Card accents — a faint cyan top-sheen (over the surface colour) plus a  */
+/* mint hover glow, so cards read as lit panels on the navy, not flat      */
+/* boxes. Layered as background-image so each card keeps its surface fill.  */
+/* ================================================================== */
+.lp-card,
+.lp-step,
+.lp-member,
+.lp-post,
+.lp-credits__section,
+.lp-cs-choice,
+.lp-sponsor {
+    background-image: linear-gradient(
+        180deg,
+        rgba(127, 227, 228, 0.055),
+        transparent 44%
+    );
+}
+.lp-card:hover,
+.lp-member:hover,
+.lp-post:hover,
+.lp-sponsor:hover {
+    border-color: rgba(127, 227, 228, 0.4);
+    box-shadow: 0 16px 40px rgba(2, 8, 20, 0.55),
+        0 6px 26px rgba(127, 227, 228, 0.12);
 }
