@@ -98,48 +98,33 @@ const ProjectShowcase: React.FC<{ projects: CmsProject[] }> = ({ projects }) => 
 
             {rest.length > 0 && (
                 <div className="lp-grid lp-grid--projects">
-                    {rest.map((project, i) => (
-                        <motion.div
-                            key={project.id}
-                            className="lp-card"
-                            {...reveal}
-                            transition={{ duration: 0.45, delay: Math.min(i * 0.05, 0.3) }}
-                        >
-                            {mediaUrl(project.image) && (
-                                <div className="lp-card__media">
-                                    <img
-                                        src={mediaUrl(project.image) || ''}
-                                        alt={project.title}
-                                    />
-                                </div>
-                            )}
-                            <div className="lp-card__row">
-                                <h3 className="lp-card__title">{project.title}</h3>
-                                <span
-                                    className="lp-status"
-                                    style={{
-                                        backgroundColor:
-                                            statusColors[project.status] || '#808080',
-                                    }}
-                                >
-                                    {statusLabel(project.status)}
-                                </span>
-                            </div>
-                            <span className="lp-card__sub">
-                                {t.common.partner} {project.ngoPartner}
-                            </span>
-                            <p className="lp-card__text">{project.description}</p>
-                            <TechPills project={project} />
-                            {hasCaseStudy(project) && (
-                                <Link
-                                    className="lp-card__link"
-                                    href={`/projects/${project.slug}`}
-                                >
-                                    {caseStudyLabel} →
-                                </Link>
-                            )}
-                        </motion.div>
-                    ))}
+                    {rest.map((project, i) => {
+                        // Non-featured projects show only their image (a clean logo
+                        // wall); the featured project above carries the full detail.
+                        const img = mediaUrl(project.image);
+                        return (
+                            <motion.div
+                                key={project.id}
+                                className={
+                                    'lp-card lp-card--logo' +
+                                    (img ? '' : ' lp-card--logo-empty')
+                                }
+                                {...reveal}
+                                transition={{
+                                    duration: 0.45,
+                                    delay: Math.min(i * 0.05, 0.3),
+                                }}
+                            >
+                                {img ? (
+                                    <div className="lp-card__media">
+                                        <img src={img} alt={project.title} />
+                                    </div>
+                                ) : (
+                                    <h3 className="lp-card__title">{project.title}</h3>
+                                )}
+                            </motion.div>
+                        );
+                    })}
                 </div>
             )}
         </>

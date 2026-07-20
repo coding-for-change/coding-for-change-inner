@@ -32,7 +32,6 @@ const About: React.FC<AboutProps> = (props) => {
     const kicker = a?.kicker || t.aboutPage.kicker;
     const title = a?.title || t.aboutPage.title;
     const lead = a?.lead || t.aboutPage.lead;
-    const story = a?.story?.length ? a.story.map((s) => s.text) : t.aboutPage.story;
     const valuesTitle = a?.valuesTitle || t.aboutPage.valuesTitle;
     const values = a?.values?.length ? a.values : t.aboutPage.values;
     const teamTeaser = a?.teamTeaser || t.aboutPage.teamTeaser;
@@ -58,15 +57,6 @@ const About: React.FC<AboutProps> = (props) => {
                         <p className="lp-kicker">{kicker}</p>
                         <h1 className="lp-page__title">{title}</h1>
                         <p className="lp-lead">{lead}</p>
-                    </motion.div>
-
-                    {/* ---- Story ---- */}
-                    <motion.div className="lp-prose" {...reveal} transition={{ duration: 0.5 }}>
-                        {story.map((para, i) => (
-                            <p key={i} className="lp-prose__p">
-                                {para}
-                            </p>
-                        ))}
                     </motion.div>
 
                     {/* ---- Impact stats ---- */}
@@ -110,7 +100,7 @@ const About: React.FC<AboutProps> = (props) => {
                     <motion.div {...reveal} transition={{ duration: 0.5 }} className="lp-about-block">
                         <h2 className="lp-h2">{valuesTitle}</h2>
                     </motion.div>
-                    <div className="lp-grid">
+                    <div className="lp-grid lp-grid--values">
                         {values.map((v, i) => (
                             <motion.div
                                 key={v.title}
