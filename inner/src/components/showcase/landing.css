@@ -423,6 +423,163 @@
     text-transform: uppercase;
 }
 
+/* ---- Scroll-zoom hero: Michelangelo, "The Creation of Adam" ---- */
+/* The section is tall to give the scroll runway; the stage inside is `sticky`
+   so it stays pinned to the viewport while the section scrolls past. The frame's
+   pan + zoom transform is computed in JS (useHeroZoom in Landing.tsx) so the
+   fingertips stay dead-centre while zoomed in, then pan out to the balanced full
+   fresco. Runs full-bleed under the fixed nav via the .lp--landing margin. */
+.lp-zhero {
+    position: relative;
+    height: 260vh;
+    background: #05060a;
+}
+/* NB: App.css sets a global `div { display: flex }`, so every wrapper div here
+   must opt back into `display: block` (see the note at the top of this file). */
+.lp-zhero__stage {
+    display: block;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    background: #05060a;
+}
+/* The desktop shell scrolls `.site-scroll`, which carries padding-top:64px to
+   clear the fixed nav — and sticky offsets are measured from that padding edge,
+   so `top:0` would pin the stage 64px down, leaving a nav-height strip of the
+   section's dark background above it (behind the transparent nav). Offset by the
+   nav height so the fresco fills the viewport *under* the nav. Mobile has no
+   `.site-scroll` (window scroll, no such padding), so it keeps top:0. */
+.site-scroll .lp-zhero__stage {
+    top: -64px;
+}
+.lp-zhero__frame {
+    display: block;
+    position: absolute;
+    inset: 0;
+    will-change: transform;
+    /* Pivot on the fingertips; keep in sync with HERO_FOCUS_* in Landing.tsx.
+       The transform is the zoomed-in start state (translate 10%/3% pans the
+       focal point to centre = the p=0 value JS computes) so the first paint
+       matches before the hook takes over — no flash. */
+    transform-origin: 40% 47%;
+    transform: translate(10%, 3%) scale(3.3);
+}
+.lp-zhero__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 40% 47%;
+    -webkit-user-drag: none;
+    user-select: none;
+}
+/* Legibility scrim: darkened top (under the nav) and bottom (behind the
+   headline) edges, luminous fresco centre left clear. */
+.lp-zhero__scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+        180deg,
+        rgba(5, 6, 10, 0.58) 0%,
+        rgba(5, 6, 10, 0) 20%,
+        rgba(5, 6, 10, 0) 50%,
+        rgba(5, 6, 10, 0.66) 100%
+    );
+}
+.lp-zhero__copy {
+    display: block; /* opt out of the global div{display:flex} (see note above) */
+    position: absolute;
+    left: 50%;
+    bottom: clamp(72px, 13vh, 150px);
+    transform: translateX(-50%);
+    width: min(1060px, 92vw);
+    padding: 0 32px;
+    box-sizing: border-box;
+    text-align: center;
+    color: #fff;
+    z-index: 2;
+}
+/* Plain-text layer never needs to catch clicks; the CTA layer re-enables its
+   own buttons (and their pointer-events are gated on fade-in from Landing.tsx). */
+.lp-zhero__copy--one {
+    pointer-events: none;
+}
+.lp-zhero__kicker,
+.lp-zhero__eyebrow {
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin: 0 0 16px;
+    color: var(--cyan-2);
+    text-shadow: 0 1px 14px rgba(0, 0, 0, 0.55);
+}
+.lp-zhero__title {
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: clamp(38px, 7.6vw, 94px);
+    line-height: 1.02;
+    letter-spacing: -1.5px;
+    margin: 0;
+    text-shadow: 0 2px 34px rgba(0, 0, 0, 0.6);
+}
+.lp-zhero__lead {
+    font-size: clamp(16px, 2.1vw, 22px);
+    line-height: 1.5;
+    max-width: 620px;
+    margin: 22px auto 0;
+    color: rgba(255, 255, 255, 0.92);
+    text-shadow: 0 1px 20px rgba(0, 0, 0, 0.65);
+}
+.lp-zhero__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: center;
+    margin-top: 32px;
+    pointer-events: auto;
+}
+/* On the image, the ghost button needs a light outline to read against the
+   fresco rather than the theme's teal-on-navy tokens. */
+.lp-zhero__ctas .lp-btn--ghost {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(2px);
+}
+.lp-zhero__ctas .lp-btn--ghost:hover {
+    color: #fff;
+    border-color: #fff;
+    background: rgba(255, 255, 255, 0.16);
+}
+.lp-zhero__hint {
+    position: absolute;
+    left: 50%;
+    bottom: 26px;
+    transform: translateX(-50%);
+    z-index: 2;
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.85);
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6);
+    pointer-events: none;
+}
+@media (max-width: 720px) {
+    /* Shorter runway on phones so the pinned zoom doesn't overstay. */
+    .lp-zhero {
+        height: 220vh;
+    }
+    .lp-zhero__copy {
+        bottom: clamp(56px, 10vh, 96px);
+    }
+}
+
 /* ---- Buttons ---- */
 .lp-btn {
     display: inline-flex;

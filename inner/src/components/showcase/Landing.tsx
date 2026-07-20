@@ -2,8 +2,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useCmsCollection, useCmsGlobal, useSiteConfig, mediaUrl } from '../../api';
+import {
+    motion,
+    AnimatePresence,
+    useMotionValue,
+    useTransform,
+    useReducedMotion,
+    type MotionValue,
+} from 'framer-motion';
+import { useCmsCollection, useCmsGlobal, useSiteConfig } from '../../api';
 import {
     CmsEvent,
     CmsProject,
@@ -25,6 +32,149 @@ const reveal = {
     whileInView: { opacity: 1, y: 0 },
     viewport: { once: true, amount: 0.15 },
 } as const;
+
+// The fresco point the hero zoom centres on — the near-touching fingertips,
+// as a fraction of the frame. The image's CSS object-position is set to this
+// same point, so at scale 1 the fingertips sit at (FOCUS_X, FOCUS_Y) of the
+// frame on every viewport; the zoom then only has to pan a small 10% to bring
+// them to dead-centre, which never drags the frame off the stage. Keep these in
+// sync with object-position / transform-origin in landing.css.
+const HERO_FOCUS_X = 0.4;
+const HERO_FOCUS_Y = 0.47;
+const HERO_START_SCALE = 3.3;
+
+/**
+ * Drives the scroll-zoom hero and returns a 0→1 progress MotionValue (for the
+ * headline crossfade). The section is tall; a sticky stage inside it stays
+ * pinned while the section scrolls past.
+ *
+ * The frame transform is computed in JS rather than via CSS object-position,
+ * because object-position can't hold an off-centre point (the fingertips sit at
+ * ~40% — God's group fills the right half) dead-centre at scale 1. So we pan
+ * *and* zoom: the touch is centred while zoomed in, then the frame pans back to
+ * the balanced full fresco as progress → 1.
+ *
+ * It runs on a requestAnimationFrame loop that polls the scroll position rather
+ * than listening for `scroll` events — the scroller differs by layout (desktop
+ * scrolls the `.site-scroll` overflow:auto div; mobile scrolls the window) and
+ * the shell can swap after mount, so we re-resolve it each frame; polling also
+ * sidesteps `scroll` not bubbling from a nested scroller. Once fully zoomed out
+ * the zoom *latches*: the tall runway collapses to a normal-height hero (scroll
+ * compensated so nothing jumps — the stage is pinned) so scrolling back over it
+ * is smooth instead of hitting a long pinned dead-zone, and the loop stops.
+ * Reduced motion is a plain static full-fresco hero (no runway/zoom/pan/loop).
+ */
+function useHeroZoom(
+    sectionRef: React.RefObject<HTMLElement | null>,
+    frameRef: React.RefObject<HTMLElement | null>,
+    reduced: boolean | null
+): MotionValue<number> {
+    const progress = useMotionValue(0);
+    useEffect(() => {
+        const section = sectionRef.current;
+        const frame = frameRef.current;
+        if (!section || !frame) return;
+
+        // Desktop scrolls `.site-scroll`; mobile scrolls the window. The shell can
+        // swap after mount, so resolve fresh on every read (never cache).
+        const resolveScroller = (): HTMLElement | null =>
+            section.closest<HTMLElement>('.site-scroll');
+        const viewportH = (el: HTMLElement | null) =>
+            el ? el.clientHeight : window.innerHeight;
+        const scrollTopOf = (el: HTMLElement | null) =>
+            el ? el.scrollTop : window.scrollY;
+
+        // Reduced motion: a plain full-fresco hero — no tall runway, no zoom/pan,
+        // no loop. Show the resting headline + CTAs (progress pinned at 1).
+        if (reduced) {
+            const applyStatic = () => {
+                section.style.height = `${viewportH(resolveScroller())}px`;
+                frame.style.transform = '';
+                progress.set(1);
+            };
+            applyStatic();
+            window.addEventListener('resize', applyStatic);
+            return () => window.removeEventListener('resize', applyStatic);
+        }
+
+        const paintFrame = (p: number) => {
+            const Wf = frame.clientWidth;
+            const Hf = frame.clientHeight;
+            if (!Wf || !Hf) return;
+            // object-position (= transform-origin, in CSS) already puts the
+            // fingertips at (FOCUS_X, FOCUS_Y) of the frame, so we only scale and
+            // pan the small remaining distance to centre. k: 1 in → 0 out.
+            const k = 1 - p;
+            const s = 1 + (HERO_START_SCALE - 1) * k;
+            const tx = (0.5 - HERO_FOCUS_X) * Wf * k;
+            const ty = (0.5 - HERO_FOCUS_Y) * Hf * k;
+            frame.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`;
+        };
+
+        let latched = false;
+        const measureAndPaint = () => {
+            const el = resolveScroller();
+            const vh = viewportH(el);
+            const rect = section.getBoundingClientRect();
+            const scrollerTop = el ? el.getBoundingClientRect().top : 0;
+            const travel = rect.height - vh;
+            let p =
+                travel <= 0
+                    ? 0
+                    : Math.min(1, Math.max(0, (scrollerTop - rect.top) / travel));
+            // The first time it fully opens out, collapse the tall runway to a
+            // normal-height hero and pull the scroll back by that distance — the
+            // stage is pinned (full fresco fills the viewport either way), so
+            // nothing on screen moves, but scrolling back over the hero is smooth
+            // rather than a long pinned dead-zone.
+            if (!latched && p >= 0.995) {
+                latched = true;
+                section.style.height = `${vh}px`;
+                const scrollEl: HTMLElement =
+                    el ??
+                    (document.scrollingElement as HTMLElement | null) ??
+                    document.documentElement;
+                const prev = scrollEl.style.scrollBehavior;
+                scrollEl.style.scrollBehavior = 'auto';
+                scrollEl.scrollTop -= travel;
+                scrollEl.style.scrollBehavior = prev;
+            }
+            if (latched) {
+                p = 1;
+                section.style.height = `${vh}px`; // stay synced on resize
+            }
+            progress.set(p);
+            paintFrame(p);
+        };
+
+        // rAF loop: poll scroll directly (skip frames where it hasn't moved) and
+        // self-stop once latched. Robust to `scroll` events not firing on a nested
+        // scroller / programmatic scrolls.
+        let rafId = 0;
+        let lastScroll = NaN;
+        const loop = () => {
+            const s = scrollTopOf(resolveScroller());
+            if (s !== lastScroll) {
+                lastScroll = s;
+                measureAndPaint();
+            }
+            rafId = latched ? 0 : requestAnimationFrame(loop);
+        };
+        const onResize = () => {
+            lastScroll = NaN; // force a recompute at the new size
+            if (latched) measureAndPaint();
+            else if (!rafId) rafId = requestAnimationFrame(loop);
+        };
+        measureAndPaint();
+        rafId = requestAnimationFrame(loop);
+        window.addEventListener('resize', onResize);
+        return () => {
+            if (rafId) cancelAnimationFrame(rafId);
+            window.removeEventListener('resize', onResize);
+        };
+    }, [sectionRef, frameRef, reduced, progress]);
+    return progress;
+}
 
 export interface LandingProps {
     events?: CmsEvent[] | null;
@@ -80,7 +230,24 @@ const Landing: React.FC<LandingProps> = (props) => {
     const { data: faq, loading: faqLoading } =
         useCmsCollection<CmsFaqItem>('faq', undefined, props.faq);
     const { data: hp } = useCmsGlobal<CmsHomepage>('homepage', props.homepage);
-    const heroImage = mediaUrl(hp?.heroImage);
+
+    // --- Scroll-driven hero (Michelangelo, "The Creation of Adam") ---------
+    // The hero <section> is intentionally tall; the stage inside it is `sticky`
+    // so it stays pinned while the section scrolls past. useHeroZoom pans + zooms
+    // the frame directly (see the hook) — opening on the centred fingertips under
+    // "Tech meets Social Impact" and pulling back to the full fresco under
+    // "A match made in heaven"; the headline crossfades on this progress value.
+    const heroRef = useRef<HTMLDivElement>(null);
+    const heroFrameRef = useRef<HTMLDivElement>(null);
+    const reduceMotion = useReducedMotion();
+    const heroProgress = useHeroZoom(heroRef, heroFrameRef, reduceMotion);
+    const line1Opacity = useTransform(heroProgress, [0, 0.16, 0.32], [1, 1, 0]);
+    const line2Opacity = useTransform(heroProgress, [0.44, 0.64], [0, 1]);
+    // Keep the (invisible) resting-state CTAs unclickable until they've faded in.
+    const line2Pointer = useTransform(line2Opacity, (o) =>
+        o > 0.5 ? 'auto' : 'none'
+    );
+    const hintOpacity = useTransform(heroProgress, [0, 0.12], [1, 0]);
 
     // Homepage copy: CMS value if set, else the built-in i18n string.
     const c = {
@@ -187,26 +354,44 @@ const Landing: React.FC<LandingProps> = (props) => {
 
     return (
         <div className="lp lp--landing">
-            {/* ---- Hero ---- */}
-            <section
-                id="home"
-                className={'lp-hero' + (heroImage ? ' lp-hero--media' : '')}
-            >
-                <div className="lp-inner">
+            {/* ---- Hero: scroll-zoom over "The Creation of Adam" ---- */}
+            <section id="home" ref={heroRef} className="lp-zhero">
+                <div className="lp-zhero__stage">
+                    <div className="lp-zhero__frame" ref={heroFrameRef}>
+                        <img
+                            className="lp-zhero__img"
+                            src="/images/creation-of-adam.jpg"
+                            alt={
+                                'Michelangelo’s “The Creation of Adam” — two ' +
+                                'hands reaching toward one another'
+                            }
+                            draggable={false}
+                        />
+                    </div>
+                    <div className="lp-zhero__scrim" />
+
+                    {/* Zoomed-in headline: the spark between the fingertips. */}
                     <motion.div
-                        style={{ display: 'block' }}
-                        initial={{ opacity: 0, y: 24 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.55, ease: 'easeOut' }}
+                        className="lp-zhero__copy lp-zhero__copy--one"
+                        style={{ opacity: line1Opacity }}
                     >
-                        <p className="lp-kicker">{c.heroKicker}</p>
-                        <h1 className="lp-hero__title">
+                        <p className="lp-zhero__kicker">{c.heroKicker}</p>
+                        <h1 className="lp-zhero__title">{t.home.heroLineOne}</h1>
+                    </motion.div>
+
+                    {/* Zoomed-out headline: the whole fresco + the club's CTAs. */}
+                    <motion.div
+                        className="lp-zhero__copy lp-zhero__copy--two"
+                        style={{ opacity: line2Opacity, pointerEvents: line2Pointer }}
+                    >
+                        <p className="lp-zhero__eyebrow">
                             {siteConfig.clubName || 'Coding for Change'}
-                        </h1>
-                        <p className="lp-hero__lead">
+                        </p>
+                        <h2 className="lp-zhero__title">{t.home.heroLineTwo}</h2>
+                        <p className="lp-zhero__lead">
                             {siteConfig.tagline || t.about.oneLiner}
                         </p>
-                        <div className="lp-hero__ctas">
+                        <div className="lp-zhero__ctas">
                             <Link className="lp-btn lp-btn--primary" href="/join">
                                 {c.heroCtaPrimary}
                             </Link>
@@ -221,21 +406,14 @@ const Landing: React.FC<LandingProps> = (props) => {
                                 {c.heroCtaSecondary}
                             </a>
                         </div>
-                        <span className="lp-scrollhint">{c.heroScrollHint}</span>
                     </motion.div>
-                    {heroImage && (
-                        <motion.div
-                            className="lp-hero__media"
-                            initial={{ opacity: 0, scale: 0.98 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.6, ease: 'easeOut', delay: 0.1 }}
-                        >
-                            <img
-                                src={heroImage}
-                                alt={siteConfig.clubName || 'Coding for Change'}
-                            />
-                        </motion.div>
-                    )}
+
+                    <motion.span
+                        className="lp-zhero__hint"
+                        style={{ opacity: reduceMotion ? 0 : hintOpacity }}
+                    >
+                        {c.heroScrollHint}
+                    </motion.span>
                 </div>
             </section>
 
