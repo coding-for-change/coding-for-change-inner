@@ -150,27 +150,45 @@
 /* One consistent soft cyan-sky glow across every band (matching the hero's
    bloom), so scrolling reads as a continuous sky rather than shifting hues.
    Interior-faded so the section seams stay clean. */
+/* Below the hero the sunrise gets a touch stronger: each band carries the
+   orange + purple combo (peach glow one side, violet the other), alternating
+   sides, interior-faded so seams stay clean. */
 [data-theme='light'] .lp-section {
     background: radial-gradient(
-        90% 64% at 84% 34%,
-        rgba(244, 156, 190, 0.16),
-        transparent 72%
-    );
+            82% 60% at 88% 28%,
+            rgba(255, 168, 118, 0.22),
+            transparent 70%
+        ),
+        radial-gradient(78% 58% at 6% 82%, rgba(150, 120, 226, 0.2), transparent 70%);
 }
 [data-theme='light'] .lp-page {
     background: radial-gradient(
-        84% 58% at 88% 32%,
-        rgba(244, 156, 190, 0.13),
-        transparent 70%
-    );
+            80% 56% at 90% 28%,
+            rgba(255, 168, 118, 0.18),
+            transparent 70%
+        ),
+        radial-gradient(74% 54% at 8% 82%, rgba(150, 120, 226, 0.18), transparent 70%);
 }
 [data-theme='light'] .lp-section--alt {
     background: radial-gradient(
-            90% 64% at 16% 36%,
-            rgba(150, 128, 224, 0.16),
-            transparent 72%
+            82% 60% at 10% 30%,
+            rgba(150, 120, 226, 0.24),
+            transparent 70%
         ),
+        radial-gradient(78% 58% at 92% 82%, rgba(255, 168, 118, 0.2), transparent 70%),
         var(--alt);
+}
+/* The first section flows straight out of the hero: it starts at the hero's
+   warm horizon colour and eases down into the page, so there's no hard gap
+   between the sunrise and the content below. */
+[data-theme='light'] .lp-hero + .lp-section {
+    background: linear-gradient(
+        180deg,
+        #ffe7d3 0%,
+        #fbdde4 24%,
+        #f2dcf0 52%,
+        transparent 84%
+    );
 }
 /* Drop the dark-mode glow accents / sheens. */
 [data-theme='light'] .lp-kicker {
@@ -187,9 +205,37 @@
     box-shadow: var(--card-shadow);
 }
 [data-theme='light'] .lp-nav--scrolled {
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(247, 243, 252, 0.9);
     border-bottom-color: var(--line);
-    box-shadow: 0 1px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 12px rgba(60, 40, 90, 0.06);
+}
+
+/* In light mode the always-dark bands become "dusk" — the twilight bookend to
+   the dawn hero — instead of the dark-theme teal/navy. */
+[data-theme='light'] .lp-cta,
+[data-theme='light'] .lp-cs-cta--join {
+    background: linear-gradient(135deg, #2a1e52 0%, #5c2e6a 52%, #9c4a5e 100%);
+}
+[data-theme='light'] .lp-3d {
+    /* Deep twilight purple, lit by a warm ember (setting sun) top-right and a
+       purple glow bottom-left. The starfield (::before) stays — dusk has stars
+       too. */
+    background: radial-gradient(
+            900px 460px at 86% -20%,
+            rgba(255, 150, 110, 0.24),
+            transparent 60%
+        ),
+        radial-gradient(
+            760px 440px at 6% 122%,
+            rgba(150, 100, 220, 0.32),
+            transparent 62%
+        ),
+        #211a44;
+}
+/* Warm dusk accent inside those bands (e.g. the 3D "just for fun" kicker),
+   instead of the dark-theme cyan. */
+[data-theme='light'] :is(.lp-3d, .lp-cta, .lp-cs-cta--join) {
+    --cyan: #ff9ec4;
 }
 
 /* Always-dark bands: force dark-theme tokens regardless of page theme so the
