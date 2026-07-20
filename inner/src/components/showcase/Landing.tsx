@@ -33,41 +33,92 @@ const reveal = {
     viewport: { once: true, amount: 0.15 },
 } as const;
 
+// The fresco point the hero zoom centres on — the near-touching fingertips,
+// as a fraction of the frame. The image's CSS object-position is set to this
+// same point, so at scale 1 the fingertips sit at (FOCUS_X, FOCUS_Y) of the
+// frame on every viewport; the zoom then only has to pan a small 10% to bring
+// them to dead-centre, which never drags the frame off the stage. Keep these in
+// sync with object-position / transform-origin in landing.css.
+const HERO_FOCUS_X = 0.4;
+const HERO_FOCUS_Y = 0.47;
+const HERO_START_SCALE = 3.3;
+
 /**
- * Progress (0→1) of a tall section scrolling past the viewport, for a sticky
- * "scrollytelling" stage. framer's `useScroll` only watches the window, but the
- * desktop shell scrolls inside `.site-scroll` (an `overflow-y:auto` div) while
- * the mobile shell scrolls the window — so we resolve the real scroller from the
- * element itself and measure against it. rAF-throttled; passive listeners.
+ * Drives the scroll-zoom hero and returns a 0→1 progress MotionValue (for the
+ * headline crossfade). The section is tall; a sticky stage inside it stays
+ * pinned while the section scrolls past.
+ *
+ * The frame transform is computed in JS rather than via CSS object-position,
+ * because object-position can't hold an off-centre point (the fingertips sit at
+ * ~40% — God's group fills the right half) dead-centre at scale 1. So we pan
+ * *and* zoom: the touch is centred while zoomed in, then the frame pulls back
+ * and pans to the balanced full fresco (object-position:50%) as progress → 1.
+ *
+ * Scroller differs by layout: desktop scrolls `.site-scroll` (an overflow:auto
+ * div), mobile scrolls the window — resolved from the element. Once fully zoomed
+ * out the zoom *latches*: scrolling back up keeps the full fresco instead of
+ * replaying the zoom-in. rAF-throttled, passive listeners. Reduced motion drops
+ * the zoom/pan entirely (headline still crossfades on scroll).
  */
-function useSectionScrollProgress(
-    ref: React.RefObject<HTMLElement | null>
+function useHeroZoom(
+    sectionRef: React.RefObject<HTMLElement | null>,
+    frameRef: React.RefObject<HTMLElement | null>,
+    reduced: boolean | null
 ): MotionValue<number> {
     const progress = useMotionValue(0);
     useEffect(() => {
-        const el = ref.current;
-        if (!el) return;
+        const section = sectionRef.current;
+        const frame = frameRef.current;
+        if (!section || !frame) return;
         const scroller: HTMLElement | Window =
-            el.closest<HTMLElement>('.site-scroll') ?? window;
+            section.closest<HTMLElement>('.site-scroll') ?? window;
         const viewportH = () =>
             scroller === window
                 ? window.innerHeight
                 : (scroller as HTMLElement).clientHeight;
 
+        const paintFrame = (p: number) => {
+            if (reduced) {
+                frame.style.transform = '';
+                return;
+            }
+            const Wf = frame.clientWidth;
+            const Hf = frame.clientHeight;
+            if (!Wf || !Hf) return;
+            // object-position (= transform-origin, in CSS) already puts the
+            // fingertips at (FOCUS_X, FOCUS_Y) of the frame, so we only scale and
+            // pan the small remaining distance to centre. k: 1 in → 0 out.
+            const k = 1 - p;
+            const s = 1 + (HERO_START_SCALE - 1) * k;
+            const tx = (0.5 - HERO_FOCUS_X) * Wf * k;
+            const ty = (0.5 - HERO_FOCUS_Y) * Hf * k;
+            frame.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`;
+        };
+
+        let latched = false;
         let raf = 0;
         const measure = () => {
             raf = 0;
-            const rect = el.getBoundingClientRect();
+            const rect = section.getBoundingClientRect();
             const scrollerTop =
                 scroller === window
                     ? 0
                     : (scroller as HTMLElement).getBoundingClientRect().top;
             const travel = rect.height - viewportH();
-            const p =
+            let p =
                 travel <= 0
                     ? 0
                     : Math.min(1, Math.max(0, (scrollerTop - rect.top) / travel));
+            // Play the zoom once: after it fully opens out, keep it open.
+            if (!reduced) {
+                if (latched) p = 1;
+                else if (p >= 0.995) {
+                    latched = true;
+                    p = 1;
+                }
+            }
             progress.set(p);
+            paintFrame(p);
         };
         const onScroll = () => {
             if (!raf) raf = requestAnimationFrame(measure);
@@ -80,7 +131,7 @@ function useSectionScrollProgress(
             window.removeEventListener('resize', onScroll);
             if (raf) cancelAnimationFrame(raf);
         };
-    }, [ref, progress]);
+    }, [sectionRef, frameRef, reduced, progress]);
     return progress;
 }
 
@@ -140,18 +191,15 @@ const Landing: React.FC<LandingProps> = (props) => {
     const { data: hp } = useCmsGlobal<CmsHomepage>('homepage', props.homepage);
 
     // --- Scroll-driven hero (Michelangelo, "The Creation of Adam") ---------
-    // The hero <section> is intentionally tall; a stage inside it is `sticky`
-    // so it stays pinned to the viewport while the section scrolls past. As
-    // scroll progress runs 0 → 1 the fresco pulls back from the two almost-
-    // touching fingers (the "spark") to the whole painting, and the headline
-    // crossfades from "Tech meets Social Impact" to "A match made in heaven".
+    // The hero <section> is intentionally tall; the stage inside it is `sticky`
+    // so it stays pinned while the section scrolls past. useHeroZoom pans + zooms
+    // the frame directly (see the hook) — opening on the centred fingertips under
+    // "Tech meets Social Impact" and pulling back to the full fresco under
+    // "A match made in heaven"; the headline crossfades on this progress value.
     const heroRef = useRef<HTMLDivElement>(null);
+    const heroFrameRef = useRef<HTMLDivElement>(null);
     const reduceMotion = useReducedMotion();
-    const heroProgress = useSectionScrollProgress(heroRef);
-    // Zoom locked on the fingertips (see --hero-focus in landing.css). Held at
-    // 1× for the last stretch so the full fresco gets a beat before releasing.
-    const zoom = useTransform(heroProgress, [0, 0.82], [2.6, 1]);
-    const heroScale = reduceMotion ? 1 : zoom;
+    const heroProgress = useHeroZoom(heroRef, heroFrameRef, reduceMotion);
     const line1Opacity = useTransform(heroProgress, [0, 0.16, 0.32], [1, 1, 0]);
     const line2Opacity = useTransform(heroProgress, [0.44, 0.64], [0, 1]);
     // Keep the (invisible) resting-state CTAs unclickable until they've faded in.
@@ -268,10 +316,7 @@ const Landing: React.FC<LandingProps> = (props) => {
             {/* ---- Hero: scroll-zoom over "The Creation of Adam" ---- */}
             <section id="home" ref={heroRef} className="lp-zhero">
                 <div className="lp-zhero__stage">
-                    <motion.div
-                        className="lp-zhero__frame"
-                        style={{ scale: heroScale }}
-                    >
+                    <div className="lp-zhero__frame" ref={heroFrameRef}>
                         <img
                             className="lp-zhero__img"
                             src="/images/creation-of-adam.jpg"
@@ -281,7 +326,7 @@ const Landing: React.FC<LandingProps> = (props) => {
                             }
                             draggable={false}
                         />
-                    </motion.div>
+                    </div>
                     <div className="lp-zhero__scrim" />
 
                     {/* Zoomed-in headline: the spark between the fingertips. */}

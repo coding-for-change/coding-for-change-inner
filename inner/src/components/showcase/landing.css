@@ -425,14 +425,11 @@
 
 /* ---- Scroll-zoom hero: Michelangelo, "The Creation of Adam" ---- */
 /* The section is tall to give the scroll runway; the stage inside is `sticky`
-   so it stays pinned to the viewport while the section scrolls past (progress
-   is driven in Landing.tsx). Both the crop (object-position) and the zoom
-   (transform-origin) pivot on --hero-focus — the near-touching fingertips — so
-   the "spark" holds dead-centre as the fresco pulls back to full frame.
-   Runs full-bleed under the fixed nav via the .lp--landing margin trick. */
+   so it stays pinned to the viewport while the section scrolls past. The frame's
+   pan + zoom transform is computed in JS (useHeroZoom in Landing.tsx) so the
+   fingertips stay dead-centre while zoomed in, then pan out to the balanced full
+   fresco. Runs full-bleed under the fixed nav via the .lp--landing margin. */
 .lp-zhero {
-    --hero-focus-x: 38.5%;
-    --hero-focus-y: 48.5%;
     position: relative;
     height: 260vh;
     background: #05060a;
@@ -451,15 +448,20 @@
     display: block;
     position: absolute;
     inset: 0;
-    transform-origin: var(--hero-focus-x) var(--hero-focus-y);
     will-change: transform;
+    /* Pivot on the fingertips; keep in sync with HERO_FOCUS_* in Landing.tsx.
+       The transform is the zoomed-in start state (translate 10%/3% pans the
+       focal point to centre = the p=0 value JS computes) so the first paint
+       matches before the hook takes over — no flash. */
+    transform-origin: 40% 47%;
+    transform: translate(10%, 3%) scale(3.3);
 }
 .lp-zhero__img {
     display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: var(--hero-focus-x) var(--hero-focus-y);
+    object-position: 40% 47%;
     -webkit-user-drag: none;
     user-select: none;
 }
@@ -563,7 +565,6 @@
     /* Shorter runway on phones so the pinned zoom doesn't overstay. */
     .lp-zhero {
         height: 220vh;
-        --hero-focus-y: 45%;
     }
     .lp-zhero__copy {
         bottom: clamp(56px, 10vh, 96px);
