@@ -151,20 +151,15 @@ const isoDate = (value) => {
     return isNaN(d.getTime()) ? null : d.toISOString().slice(0, 10);
 };
 
-// SEO: the inner site is the canonical site at /. Static pages are always
-// listed; the content list pages (projects, blog, events, sponsors) only once
-// their collection has entries; and every individual project case study and
-// blog article is enumerated from the CMS, so new content is added to the
-// sitemap automatically. (/3d is intentionally excluded — it's noindex.)
+
 app.get('/sitemap.xml', async (req, res) => {
     const ORIGIN = 'https://codingforchange.com';
     const today = new Date().toISOString().slice(0, 10);
 
-    // Projects + blog posts drive both a list page and per-item detail pages;
+    // Projects drive both a list page and per-item detail pages;
     // events + sponsors only gate their own list page (no detail routes).
-    const [projects, posts, events, sponsors] = await Promise.all([
+    const [projects, events, sponsors] = await Promise.all([
         cmsDocs('projects'),
-        cmsDocs('blog-posts'),
         cmsDocs('events'),
         cmsDocs('sponsors'),
     ]);
@@ -177,9 +172,7 @@ app.get('/sitemap.xml', async (req, res) => {
 
     // Static pages + content list pages.
     add('/', '1.0');
-    add('/about', '0.8');
     if (has(projects)) add('/projects', '0.8');
-    if (has(posts)) add('/blog', '0.8');
     if (has(events)) add('/events', '0.8');
     if (has(sponsors)) add('/sponsors', '0.8');
     add('/partner', '0.8');
@@ -189,20 +182,14 @@ app.get('/sitemap.xml', async (req, res) => {
     add('/contact', '0.7');
     add('/imprint', '0.3');
     add('/privacy', '0.3');
-    add('/credits', '0.2');
 
     // Detail pages. A project needs a slug to have a detail route (see
-    // projects/[slug]); blog articles are keyed by slug too. Both 404 if the
-    // doc is missing, so we only ever list slugs the CMS actually has.
+    // projects/[slug]); it 404s if the doc is missing, so we only ever list
+    // slugs the CMS actually has.
     (projects || [])
         .filter((p) => p.slug)
         .forEach((p) =>
             add(`/projects/${encodeURIComponent(p.slug)}`, '0.7', isoDate(p.updatedAt))
-        );
-    (posts || [])
-        .filter((p) => p.slug)
-        .forEach((p) =>
-            add(`/blog/${encodeURIComponent(p.slug)}`, '0.6', isoDate(p.updatedAt))
         );
 
     const urls = entries

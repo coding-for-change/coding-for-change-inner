@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
+import Cal from '@calcom/embed-react';
 import { useSiteConfig } from '../../api';
 import { trackEvent } from '../../lib/analytics';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -8,19 +9,19 @@ export interface BookingEmbedProps {
     height?: number;
 }
 
-// Build-time fallback so the booking page works without the CMS running.
-// Set NEXT_PUBLIC_BOOKING_URL in the inner app's environment; the CMS
-// Site Configuration → "Booking page URL" field overrides it when present.
 const ENV_BOOKING_URL = process.env.NEXT_PUBLIC_BOOKING_URL?.trim() || '';
 
-// Cal.com booking links (cal.com/<user>/<event>) are iframeable as-is, so the
-// URL is used unchanged. The legacy Google Appointment Schedule URL needs
-// `?gv=true` to be iframeable, so add it defensively if such a URL is still
-// configured (e.g. an old value lingering in the CMS).
+
 const toEmbeddable = (raw: string): string => {
     if (!/calendar\.google\.com\/.*appointments\/schedules\//.test(raw)) return raw;
     if (/[?&]gv=true\b/.test(raw)) return raw;
     return raw + (raw.includes('?') ? '&' : '?') + 'gv=true';
+};
+
+
+const toCalLink = (url: string): string | null => {
+    const m = url.match(/^https?:\/\/(?:www\.)?cal\.com\/([^?#]+)/);
+    return m ? m[1].replace(/\/$/, '') : null;
 };
 
 /**
@@ -38,6 +39,7 @@ const BookingEmbed: React.FC<BookingEmbedProps> = ({ height = 700 }) => {
     const { t } = useLanguage();
     const rawUrl = (siteConfig.bookingUrl?.trim() || ENV_BOOKING_URL) || '';
     const url = rawUrl ? toEmbeddable(rawUrl) : '';
+    const calLink = url ? toCalLink(url) : null;
 
     const containerRef = useRef<HTMLDivElement>(null);
     const [visible, setVisible] = useState(false);
@@ -93,21 +95,31 @@ const BookingEmbed: React.FC<BookingEmbedProps> = ({ height = 700 }) => {
 
     return (
         <div className="lp-booking" ref={containerRef}>
-            {/* `height` sizes the visible box; the iframe fills it 1:1 (see
-                .lp-booking__frame) so the Cal.com widget spans the full width. */}
-            <div className="lp-booking__scale" style={{ height }}>
-                {visible ? (
-                    <iframe
-                        className="lp-booking__frame"
-                        src={url}
-                        title={t.book.title}
-                        frameBorder={0}
-                        loading="lazy"
+            {calLink ? (
+                visible ? (
+                    <Cal
+                        calLink={calLink}
+                        config={{ theme: 'light' }}
+                        style={{ width: '100%' }}
                     />
                 ) : (
-                    <div className="lp-booking__frame" aria-hidden />
-                )}
-            </div>
+                    <div className="lp-booking__scale" style={{ height }} aria-hidden />
+                )
+            ) : (   
+                <div className="lp-booking__scale" style={{ height }}>
+                    {visible ? (
+                        <iframe
+                            className="lp-booking__frame"
+                            src={url}
+                            title={t.book.title}
+                            frameBorder={0}
+                            loading="lazy"
+                        />
+                    ) : (
+                        <div className="lp-booking__frame" aria-hidden />
+                    )}
+                </div>
+            )}
             <a
                 className="lp-booking__link"
                 href={url}

@@ -4,8 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import Enter3DButton from '../general/Enter3DButton';
 import { useLanguage } from '../../contexts/LanguageContext';
-import { useSiteConfig, useCmsCollection } from '../../api';
-import type { CmsEvent, CmsSponsor, CmsBlogPost } from '../../api/types';
+import { useSiteConfig } from '../../api';
 import './landing.css';
 
 // Sections that live on the single-scroll landing page (`/`). Clicking one
@@ -71,23 +70,11 @@ const TopNav: React.FC = () => {
     // it keeps the row from overflowing as conditional items are added.
     const sectionLinks: { id: string; label: string }[] = [];
 
-    // Events, Blog and Sponsors are only advertised in the nav when they have
-    // content (their pages exist regardless). Fetched client-side; the nav is a
-    // persistent layout so this runs once per session, not per navigation.
-    const { data: events } = useCmsCollection<CmsEvent>('events');
-    const { data: posts } = useCmsCollection<CmsBlogPost>('blog-posts');
-    const { data: sponsors } = useCmsCollection<CmsSponsor>('sponsors');
-    const hasEvents = (events?.length ?? 0) > 0;
-    const hasBlog = (posts?.length ?? 0) > 0;
-    const hasSponsors = (sponsors?.length ?? 0) > 0;
-
     const pageLinks = [
-        { to: '/about', label: t.nav.about },
+        { to: '/partner', label: t.nav.partner },
         { to: '/projects', label: t.nav.projects },
-        ...(hasEvents ? [{ to: '/events', label: t.nav.events }] : []),
-        ...(hasBlog ? [{ to: '/blog', label: t.nav.blog }] : []),
         { to: '/team', label: t.nav.team },
-        ...(hasSponsors ? [{ to: '/sponsors', label: t.nav.sponsors }] : []),
+        { to: '/sponsors', label: t.nav.sponsors },
         // Join is intentionally omitted here — the top-right JOIN button covers it.
         { to: '/contact', label: t.nav.contact },
     ];

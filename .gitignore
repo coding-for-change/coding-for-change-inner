@@ -39,3 +39,4 @@ inner/cms/.pnpm-store
 *.swp
 *.swo
 *~
+.gstack/

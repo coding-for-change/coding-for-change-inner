@@ -1,6 +1,5 @@
 'use client';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Colors from '../../constants/colors';
 import ShowcaseExplorer from '../applications/ShowcaseExplorer';
 import ShutdownSequence from './ShutdownSequence';
@@ -27,10 +26,7 @@ const APPLICATIONS: {
         key: string;
         name: string;
         shortcutIcon: IconName;
-        // Windowed apps render a component. "Route" apps (e.g. the blog) instead
-        // navigate the showcase window to a path and have no component.
         component?: React.FC<ExtendedWindowAppProps<any>>;
-        route?: string;
     };
 } = {
     showcase: {
@@ -50,12 +46,6 @@ const APPLICATIONS: {
         shortcutIcon: 'myComputer',
         component: Imprint,
     },
-    blog: {
-        key: 'blog',
-        name: 'News',
-        shortcutIcon: 'windowExplorerIcon',
-        route: '/blog',
-    },
 };
 
 // Metadata-only window entry for the showcase. Its `component` is never read —
@@ -71,8 +61,6 @@ const showcaseEntry = (zIndex: number, minimized = false) => ({
 });
 
 const Desktop: React.FC<DesktopProps> = ({ children }) => {
-    const router = useRouter();
-
     // The showcase window is open on load (like the old auto-open behavior).
     const [windows, setWindows] = useState<DesktopWindows>(() => ({
         [SHOWCASE_KEY]: showcaseEntry(1),
@@ -194,17 +182,6 @@ const Desktop: React.FC<DesktopProps> = ({ children }) => {
         });
     }, []);
 
-    // Navigate the showcase window to a path (used by "route" desktop apps such
-    // as the blog) and bring it to the front. Next's router handles the URL;
-    // the matched page renders into the layout's `children`.
-    const openShowcaseAt = useCallback(
-        (path: string) => {
-            router.push(path);
-            focusShowcase();
-        },
-        [router, focusShowcase]
-    );
-
     useEffect(() => {
         const newShortcuts: DesktopShortcutProps[] = [];
         Object.keys(APPLICATIONS).forEach((key) => {
@@ -216,11 +193,6 @@ const Desktop: React.FC<DesktopProps> = ({ children }) => {
                     // The showcase is always present — its shortcut just focuses it.
                     if (app.key === SHOWCASE_KEY) {
                         focusShowcase();
-                        return;
-                    }
-                    // Route apps navigate the showcase window to a path.
-                    if (app.route) {
-                        openShowcaseAt(app.route);
                         return;
                     }
                     const Component = app.component;

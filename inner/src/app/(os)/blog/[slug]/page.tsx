@@ -25,10 +25,16 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     };
 }
 
+// ponytail: blog is unlisted for now — flip to true to bring it back.
+const BLOG_PUBLIC: boolean = false;
+
 export default async function BlogArticlePage({ params }: Params) {
+    if (!BLOG_PUBLIC) notFound();
     const { slug } = await params;
     const locale = await getServerLocale();
     const post = await fetchPostBySlug(slug, locale);
     if (!post) notFound();
-    return <BlogArticle post={post} />;
+    // `!`: the unconditional notFound() above makes this unreachable, which
+    // stops TS narrowing `post` via the guard; harmless once it's reachable.
+    return <BlogArticle post={post!} />;
 }

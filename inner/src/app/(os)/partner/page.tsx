@@ -1,7 +1,7 @@
 import Partner from '@/components/showcase/Partner';
-import { fetchGlobal, fetchCollection } from '@/lib/cms';
+import { fetchGlobal } from '@/lib/cms';
 import { getServerLocale } from '@/lib/locale';
-import type { CmsPartner, CmsProject } from '@/api/types';
+import type { CmsPartner, CmsAbout, CmsHomepage } from '@/api/types';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,9 +13,10 @@ export const metadata = {
 
 export default async function PartnerPage() {
     const locale = await getServerLocale();
-    const [partner, projects] = await Promise.all([
+    const [partner, about, homepage] = await Promise.all([
         fetchGlobal<CmsPartner>('partner', locale),
-        fetchCollection<CmsProject>('projects', locale, { depth: '2' }),
+        fetchGlobal<CmsAbout>('about', locale),
+        fetchGlobal<CmsHomepage>('homepage', locale),
     ]);
-    return <Partner partner={partner} projects={projects} />;
+    return <Partner partner={partner} about={about} homepage={homepage} />;
 }

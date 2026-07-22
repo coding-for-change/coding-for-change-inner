@@ -158,7 +158,7 @@ const styles: StyleSheetCSS = {
         top: '50%',
         right: 'calc(100% + 12px)',
         whiteSpace: 'nowrap',
-        backgroundColor: '#1c3358',
+        backgroundColor: '#0f2040',
         color: '#fff',
         fontFamily: "var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif",
         fontSize: 13,
@@ -176,7 +176,7 @@ const styles: StyleSheetCSS = {
         marginTop: -4,
         width: 8,
         height: 8,
-        backgroundColor: '#1c3358',
+        backgroundColor: '#0f2040',
         transform: 'rotate(45deg)',
     },
 };

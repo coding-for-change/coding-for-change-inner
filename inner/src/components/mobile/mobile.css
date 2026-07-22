@@ -1,3 +1,47 @@
+/* Mobile header. Base = solid white sticky bar (all standalone pages). On the
+   landing (.mobile-nav--overlay, set by route in MobileNav.tsx) it becomes a
+   fixed transparent overlay above the hero image with white ink, mirroring
+   the desktop .lp-nav. While the landing's background scrub is active it
+   stamps html[data-nav='light'|'dark'] (see Landing.tsx); the ink follows it
+   so the header stays readable as dark and light sections scroll past. */
+.mobile-nav {
+    position: sticky;
+    background: #ffffff;
+    border-bottom: 1px solid #f0f0f0;
+}
+.mobile-nav__logo,
+.mobile-nav__line {
+    transition: filter 0.25s ease, background 0.25s ease;
+}
+.mobile-nav__line {
+    background: #000;
+}
+.mobile-nav--overlay {
+    position: fixed;
+    left: 0;
+    right: 0;
+    background: transparent;
+    border-bottom-color: transparent;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+/* ponytail: white ink is the overlay default (correct over the dark hero on
+   first paint, before the scrub stamps data-nav); with reduced motion the
+   scrub never runs, so light sections keep white ink — same debt the desktop
+   nav carries. */
+.mobile-nav--overlay .mobile-nav__logo {
+    filter: brightness(0) invert(1);
+}
+.mobile-nav--overlay .mobile-nav__line {
+    background: #fff;
+}
+html[data-nav='light'] .mobile-nav--overlay .mobile-nav__logo {
+    filter: none;
+}
+html[data-nav='light'] .mobile-nav--overlay .mobile-nav__line {
+    background: #000;
+}
+
 /* Entrance animations for the mobile menu overlay. */
 
 @keyframes mobileOverlayIn {
