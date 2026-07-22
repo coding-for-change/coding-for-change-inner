@@ -3,19 +3,14 @@ import React from 'react';
 import RouterLink from 'next/link';
 import { useSiteConfig, useLanguage } from '../../api';
 
-// Footer palette via the app-shell theme tokens (see index.css --cfc-*),
-// so the footer follows the light/dark theme set on <html data-theme>.
-const BG = 'var(--cfc-footer-bg)';
-const HEADING = 'var(--cfc-heading)';
-const MUTED = 'var(--cfc-text)';
-const ACCENT = 'var(--cfc-accent)';
-const LINE = 'var(--cfc-line)';
+const NAVY = '#0f2040';
+const GRAY = '#6b7280';
 const FONT = '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif';
 
 /**
  * Site-wide footer. Shared by the desktop site shell and the mobile layout —
  * with the Windows-95 desktop chrome (and its shortcuts) gone, this is now the
- * canonical way to reach the Imprint, Privacy and Credits pages. Labels are
+ * canonical way to reach the Imprint and Privacy pages. Labels are
  * localized (EN/DE) via the translation table. A centered max-width inner block
  * keeps it readable full-width on desktop and stacked on mobile.
  */
@@ -26,10 +21,8 @@ const SiteFooter: React.FC = () => {
     const f = t.footer;
     const PAGE_LINKS = [
         { to: '/', label: f.home },
-        { to: '/about', label: f.about },
         { to: '/projects', label: f.projects },
         { to: '/team', label: f.team },
-        { to: '/blog', label: f.blog },
         { to: '/#sponsors', label: f.sponsors },
         { to: '/partner', label: f.partner },
         { to: '/join', label: f.join },
@@ -40,7 +33,6 @@ const SiteFooter: React.FC = () => {
         { to: '/qa', label: f.qa },
         { to: '/privacy', label: f.privacy },
         { to: '/imprint', label: f.imprint },
-        { to: '/credits', label: f.credits },
     ];
 
     return (
@@ -98,8 +90,8 @@ const styles: StyleSheetCSS = {
     footer: {
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: BG,
-        borderTop: `1px solid ${LINE}`,
+        backgroundColor: '#ffffff',
+        borderTop: '1px solid #f0f0f0',
         padding: '48px 24px 32px',
         width: '100%',
         boxSizing: 'border-box',
@@ -127,13 +119,11 @@ const styles: StyleSheetCSS = {
         width: 'auto',
         objectFit: 'contain',
         alignSelf: 'flex-start',
-        // Black wordmark → white in dark theme, unchanged in light (see --cfc-logo-filter).
-        filter: 'var(--cfc-logo-filter)',
     },
     tagline: {
         fontFamily: FONT,
         fontSize: 14,
-        color: MUTED,
+        color: GRAY,
         lineHeight: 1.6,
         margin: 0,
         maxWidth: 280,
@@ -141,7 +131,7 @@ const styles: StyleSheetCSS = {
     email: {
         fontFamily: FONT,
         fontSize: 14,
-        color: ACCENT,
+        color: NAVY,
         textDecoration: 'none',
     },
     columns: {
@@ -159,7 +149,7 @@ const styles: StyleSheetCSS = {
         fontFamily: FONT,
         fontSize: 12,
         fontWeight: 700,
-        color: HEADING,
+        color: NAVY,
         letterSpacing: 1,
         margin: '0 0 16px 0',
     },
@@ -167,7 +157,7 @@ const styles: StyleSheetCSS = {
         display: 'flex',
         fontFamily: FONT,
         fontSize: 14,
-        color: MUTED,
+        color: GRAY,
         textDecoration: 'none',
         padding: '6px 0',
     },
@@ -181,14 +171,14 @@ const styles: StyleSheetCSS = {
     },
     divider: {
         height: 1,
-        backgroundColor: LINE,
+        backgroundColor: '#f0f0f0',
         margin: '32px 0 20px',
         width: '100%',
     },
     copyright: {
         fontFamily: FONT,
         fontSize: 12,
-        color: MUTED,
+        color: '#9ca3af',
         margin: 0,
     },
 };

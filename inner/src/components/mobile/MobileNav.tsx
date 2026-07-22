@@ -3,18 +3,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import RouterLink from 'next/link';
 import { useLanguage } from '../../contexts/LanguageContext';
-import { useCmsCollection } from '../../api';
-import type { CmsEvent, CmsSponsor, CmsBlogPost } from '../../api/types';
 import './mobile.css';
 
-// Mobile-nav palette via the app-shell theme tokens (see index.css --cfc-*),
-// so the mobile chrome follows the light/dark theme set on <html data-theme>.
-const BG = 'var(--cfc-bg)';
-const SURFACE = 'var(--cfc-surface)';
-const HEADING = 'var(--cfc-heading)';
-const MUTED = 'var(--cfc-text)';
-const ACCENT = 'var(--cfc-cta-bg)';
-const LINE = 'var(--cfc-line)';
+const NAVY = '#0f2040';
 // The nav uses the site's display face (Space Grotesk) via the CSS variable set
 // on <html> in layout.tsx, matching the desktop TopNav.
 const NAV_FONT = "var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif";
@@ -59,35 +50,36 @@ const MobileNav: React.FC = () => {
         return () => document.removeEventListener('mousedown', onDown);
     }, [langOpen]);
 
-    // Events, Blog & Sponsors only appear when they have content (pages exist either way).
-    const { data: events } = useCmsCollection<CmsEvent>('events');
-    const { data: posts } = useCmsCollection<CmsBlogPost>('blog-posts');
-    const { data: sponsors } = useCmsCollection<CmsSponsor>('sponsors');
-    const hasEvents = (events?.length ?? 0) > 0;
-    const hasBlog = (posts?.length ?? 0) > 0;
-    const hasSponsors = (sponsors?.length ?? 0) > 0;
-
     const navLinks = [
-        { to: '/about', label: t.nav.about },
+        { to: '/partner', label: t.nav.partner },
         { to: '/projects', label: t.nav.projects },
-        ...(hasEvents ? [{ to: '/events', label: t.nav.events }] : []),
-        ...(hasBlog ? [{ to: '/blog', label: t.nav.blog }] : []),
         { to: '/team', label: t.nav.team },
-        ...(hasSponsors ? [{ to: '/sponsors', label: t.nav.sponsors }] : []),
+        { to: '/sponsors', label: t.nav.sponsors },
         { to: '/#qa', label: t.nav.qa }, // FAQ stays a homepage section
         { to: '/contact', label: t.nav.contact },
     ];
 
     const current = LANGUAGES.find((l) => l.code === locale) ?? LANGUAGES[0];
 
+    // On the landing the header overlays the hero image (transparent, white
+    // ink) and flips its ink with the same html[data-nav] attribute the
+    // landing's background scrub stamps — see mobile.css.
+    const isLanding = pathname === '/';
+
     return (
         <>
-            <header style={styles.header}>
+            <header
+                className={
+                    'mobile-nav' + (isLanding ? ' mobile-nav--overlay' : '')
+                }
+                style={styles.header}
+            >
                 <div style={styles.brand}>
                     <RouterLink href="/" style={styles.logoLink} aria-label="Coding for Change">
                         <img
                             src="/images/logo.svg"
                             alt="Coding for Change"
+                            className="mobile-nav__logo"
                             width={190}
                             height={26}
                             style={styles.logo}
@@ -99,9 +91,9 @@ const MobileNav: React.FC = () => {
                     style={styles.menuButton}
                     aria-label="Open menu"
                 >
-                    <span style={styles.line} />
-                    <span style={styles.line} />
-                    <span style={styles.line} />
+                    <span className="mobile-nav__line" style={styles.line} />
+                    <span className="mobile-nav__line" style={styles.line} />
+                    <span className="mobile-nav__line" style={styles.line} />
                 </button>
             </header>
 
@@ -208,13 +200,12 @@ const MobileNav: React.FC = () => {
 
 const styles: StyleSheetCSS = {
     header: {
+        // position / background / border live in mobile.css (.mobile-nav) so
+        // the landing's overlay + ink-flip variants can override them.
         display: 'flex',
-        position: 'sticky',
         top: 0,
         flexShrink: 0,
         zIndex: 100,
-        background: BG,
-        borderBottom: `1px solid ${LINE}`,
         padding: '0 20px',
         height: 60,
         alignItems: 'center',
@@ -236,8 +227,6 @@ const styles: StyleSheetCSS = {
         height: 30,
         width: 'auto',
         objectFit: 'contain',
-        // Black wordmark → white in dark theme, unchanged in light (see --cfc-logo-filter).
-        filter: 'var(--cfc-logo-filter)',
     },
     menuButton: {
         display: 'flex',
@@ -254,10 +243,10 @@ const styles: StyleSheetCSS = {
         flexShrink: 0,
     },
     line: {
+        // background lives in mobile.css (.mobile-nav__line) for the ink flip.
         display: 'block',
         width: 24,
         height: 2,
-        background: HEADING,
         borderRadius: 2,
         flexShrink: 0,
     },
@@ -268,7 +257,7 @@ const styles: StyleSheetCSS = {
         right: 0,
         bottom: 0,
         zIndex: 500,
-        background: BG,
+        background: '#ffffff',
         overflowY: 'auto',
         display: 'flex',
         flexDirection: 'column',
@@ -286,11 +275,11 @@ const styles: StyleSheetCSS = {
         display: 'flex',
         width: 44,
         height: 44,
-        border: `2px solid ${LINE}`,
+        border: `2px solid ${NAVY}`,
         borderRadius: 8,
-        background: 'transparent',
+        background: 'white',
         fontSize: 16,
-        color: HEADING,
+        color: NAVY,
         cursor: 'pointer',
         alignItems: 'center',
         justifyContent: 'center',
@@ -306,16 +295,16 @@ const styles: StyleSheetCSS = {
         alignItems: 'center',
         padding: '16px 0',
         fontSize: 24,
-        color: HEADING,
+        color: '#000',
         fontFamily: NAV_FONT,
         textDecoration: 'none',
-        borderBottom: `1px solid ${LINE}`,
+        borderBottom: '1px solid #f0f0f0',
     },
     ctaButton: {
         display: 'flex',
         marginTop: 28,
-        background: ACCENT,
-        color: BG,
+        background: '#000000',
+        color: '#ffffff',
         borderRadius: 32,
         padding: '18px 0',
         fontSize: 20,
@@ -336,16 +325,16 @@ const styles: StyleSheetCSS = {
         gap: 10,
         padding: '10px 16px',
         borderRadius: 10,
-        border: `1px solid ${LINE}`,
-        background: 'transparent',
+        border: '1px solid #e5e7eb',
+        background: '#ffffff',
         cursor: 'pointer',
         fontSize: 15,
-        color: HEADING,
+        color: '#000',
         fontFamily: NAV_FONT,
     },
     caret: {
         fontSize: 12,
-        color: MUTED,
+        color: '#6b7280',
     },
     langMenu: {
         display: 'flex',
@@ -354,10 +343,10 @@ const styles: StyleSheetCSS = {
         left: 0,
         flexDirection: 'column',
         minWidth: '100%',
-        background: SURFACE,
-        border: `1px solid ${LINE}`,
+        background: '#ffffff',
+        border: '1px solid #e5e7eb',
         borderRadius: 10,
-        boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
         overflow: 'hidden',
         zIndex: 10,
     },
@@ -370,13 +359,13 @@ const styles: StyleSheetCSS = {
         background: 'transparent',
         cursor: 'pointer',
         fontSize: 15,
-        color: HEADING,
+        color: '#000',
         fontFamily: NAV_FONT,
         whiteSpace: 'nowrap',
         textAlign: 'left',
     },
     langOptionActive: {
-        background: 'var(--cfc-line)',
+        background: '#f3f4f6',
     },
 };
 

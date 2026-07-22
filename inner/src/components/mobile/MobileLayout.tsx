@@ -25,7 +25,7 @@ const styles: StyleSheetCSS = {
         width: '100%',
         minHeight: '100vh',
         flexDirection: 'column',
-        backgroundColor: 'var(--cfc-bg)',
+        backgroundColor: '#ffffff',
     },
     // Positioned wrapper so that position:absolute pages fill the visible
     // screen below the nav, while normal-flow pages push this container

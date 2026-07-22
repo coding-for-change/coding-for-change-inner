@@ -7,250 +7,56 @@
 /* container below sets its own `display` explicitly.                   */
 /* ------------------------------------------------------------------ */
 
-/* Tokens are defined on BOTH the content root (.lp) and the nav (.lp-nav).
-   The nav is a *sibling* of .lp in the page shell, not a descendant, so
-   without this its var(--…) colours would resolve to nothing and go dark. */
-.lp,
-.lp-nav {
-    /* --------------------------------------------------------------- */
-    /* Dark-navy scheme. The whole modern site is navy-dominant with    */
-    /* white text and cyan/teal accents (the look of the old 3D band,   */
-    /* now applied site-wide). Every rule below reads these tokens, so   */
-    /* the palette is tuned here in one place.                          */
-    /* --------------------------------------------------------------- */
-
-    /* Brand accents — bright, for pop on navy */
-    --cyan: #7fe3e4; /* eyebrows, links, small accents (the "pop") */
-    --cyan-2: #a6eeef; /* lighter cyan for hovers */
-    --teal: #34a7a8; /* solid accent fills: buttons, badges, markers */
-    --teal-dark: #2b8687; /* deep accent: gradient ends, fill hovers */
-
-    /* Text on navy */
-    --ink: #eef4fb; /* headings / primary text (near-white) */
-    --body: #c4d2e4; /* long-form body copy (soft light) */
-    --muted: #93a6bd; /* secondary text / captions */
-
-    /* Navy surface stack (base → elevated) */
-    --bg: #0b1a34; /* page base */
-    --surface: #10213f; /* cards / panels */
-    --surface-2: #17294c; /* elevated / tinted panels */
-    --alt: #0e1f3d; /* alternating section band */
-    --line: rgba(255, 255, 255, 0.1); /* hairline borders */
-    --line-2: rgba(255, 255, 255, 0.18); /* stronger border / hover */
-    --glow: rgba(127, 227, 228, 0.14); /* cyan glow tint */
-    --card-shadow: 0 16px 40px rgba(2, 8, 20, 0.55);
-    --on-accent: #06121f; /* text/icon on a solid teal/cyan fill */
-}
-
-/* Layout/paint for the content root only (NOT the nav, which paints its own
-   transparent/overlay background). */
 .lp {
+    --teal: #2f8f90;
+    --teal-dark: #246b6c;
+    --ink: #1b1f1f;
+    --muted: #5d6868;
+    --line: #e3eaea;
+    --alt: #f1f6f6;
     display: block;
     width: 100%;
     color: var(--ink);
-    background: var(--bg);
+    background: #ffffff;
     font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, -apple-system,
         sans-serif;
 }
 
-/* ================================================================== */
-/* LIGHT THEME                                                          */
-/* The dark navy scheme above is the base. [data-theme="light"] recolours */
-/* it to a clean light variant of the same layout (original palette) and  */
-/* drops the night-sky decorations (starfield / heavy glows / card sheen).*/
-/* The always-dark bands (3D interlude + CTA) keep dark tokens (below) so  */
-/* their light text stays legible under either theme.                     */
-/* ================================================================== */
-[data-theme='light'] :is(.lp, .lp-nav) {
-    /* A lighter mirror of the dark theme: the navy background inverts to a cool
-       light blue, white text inverts to deep navy, and the SAME teal/cyan
-       accents carry over (just deepened so they read on a light background). */
-    /* Turquoise/orange sky: a turquoise zenith warming to an orange horizon,
-       with turquoise as the accent (ties back to the dark theme's teal) and a
-       deep teal-navy ink as the dark anchor. */
-    --cyan: #0d9499; /* accent text: kickers, links (turquoise) */
-    --cyan-2: #11b0b4; /* brighter turquoise for hovers */
-    --teal: #12a5a9; /* solid fills: buttons, badges, ticks (turquoise) */
-    --teal-dark: #0d8387; /* deeper turquoise: fill hover / gradient end */
-    --ink: #14313a; /* headings — deep teal-navy */
-    --body: #3d4c53; /* body copy — teal slate */
-    --muted: #6b7b82;
-    --bg: #eaf4f3; /* page base — pale aqua */
-    --surface: #ffffff; /* cards — white, raised above the sky */
-    --surface-2: #dcecea;
-    --alt: #def0ec; /* alt band — a soft aqua patch of sky */
-    --line: #d2e6e4;
-    --line-2: #bcdad7;
-    --glow: rgba(20, 165, 169, 0.14);
-    --card-shadow: 0 12px 34px rgba(20, 55, 60, 0.1);
-    --on-accent: #ffffff;
+
+.lp--landing {
+    background: #ffffff;
 }
-/* Light hero: a coherent daytime sky — a cool-blue vertical gradient (deeper
-   at the zenith, paling toward the horizon) lit by a soft cyan bloom high
-   overhead, with a cooler blue depth to the other side. All light comes from
-   above (one consistent direction), so it reads as sky, not random blobs. */
-/* One continuous dawn sky painted on the whole page (.lp): a light-blue zenith
-   easing down through lavender and rose to a warm peach horizon high in the
-   hero, then settling to a calm pale lavender for the content below. The sun,
-   pink and violet blooms are positioned in px from the top so they sit in the
-   hero and bloom *across* the hero/content boundary — no seam. The hero and all
-   light content bands are transparent windows onto this one gradient, so there
-   are no per-section colour breaks. */
-[data-theme='light'] .lp {
-    background: radial-gradient(
-            1150px 640px at 82% 700px,
-            rgba(255, 150, 78, 0.5),
-            transparent 60%
-        ),
-        radial-gradient(
-            1000px 720px at 8% 70px,
-            rgba(26, 196, 198, 0.42),
-            transparent 60%
-        ),
-        linear-gradient(
-            180deg,
-            #c3ece9 0,
-            #d6efe9 190px,
-            #edf5ef 400px,
-            #fde4cf 600px,
-            #fce7d6 820px,
-            #f2f0e4 1080px,
-            #dcefe8 1600px,
-            #e7f2ec 2500px,
-            #d6ece5 3400px,
-            #e2f0ea 4400px
-        );
-    background-attachment: scroll;
-}
-[data-theme='light'] .lp-hero {
+.lp--landing .lp-section--alt {
     background: transparent;
 }
-/* Keep the lower bands from going flat: a gentle turquoise (upper) + warm
-   (lower) wash per section, semi-transparent and interior-faded so the
-   continuous sky shows through and there are no hard section breaks. */
-[data-theme='light'] :is(.lp-section, .lp-page) {
-    background: radial-gradient(
-            94% 66% at 84% 24%,
-            rgba(26, 190, 194, 0.17),
-            transparent 72%
-        ),
-        radial-gradient(84% 60% at 8% 90%, rgba(255, 154, 82, 0.14), transparent 72%);
+
+.lp--landing .lp-section,
+.lp--landing .lp-3d {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: calc(100vh - 64px);
+    padding: 120px 0;
 }
-[data-theme='light'] .lp-section--alt {
-    background: radial-gradient(
-            94% 66% at 14% 26%,
-            rgba(26, 190, 194, 0.2),
-            transparent 72%
-        ),
-        radial-gradient(84% 60% at 90% 90%, rgba(255, 154, 82, 0.14), transparent 72%);
-}
-/* Drop the tiled night-field on light content bands (kept on the dark 3D band). */
-[data-theme='light'] :is(.lp-section, .lp-page)::before {
-    display: none;
-}
-/* Faint "morning stars" high in the hero sky, fading out toward the sunlit
-   horizon via a mask — a hand-placed constellation, not the tiled field. */
-[data-theme='light'] .lp-hero::before {
-    background-image: radial-gradient(1.5px 1.5px at 10% 12%, rgba(16, 120, 126, 0.55), transparent 100%),
-        radial-gradient(1.2px 1.2px at 22% 22%, rgba(16, 120, 126, 0.4), transparent 100%),
-        radial-gradient(1px 1px at 33% 9%, rgba(16, 120, 126, 0.35), transparent 100%),
-        radial-gradient(1.6px 1.6px at 44% 18%, rgba(16, 120, 126, 0.5), transparent 100%),
-        radial-gradient(1px 1px at 56% 7%, rgba(16, 120, 126, 0.3), transparent 100%),
-        radial-gradient(1.3px 1.3px at 66% 20%, rgba(16, 120, 126, 0.45), transparent 100%),
-        radial-gradient(1px 1px at 77% 11%, rgba(16, 120, 126, 0.3), transparent 100%),
-        radial-gradient(1.5px 1.5px at 88% 22%, rgba(16, 120, 126, 0.5), transparent 100%),
-        radial-gradient(1px 1px at 16% 32%, rgba(16, 120, 126, 0.28), transparent 100%),
-        radial-gradient(1.2px 1.2px at 38% 34%, rgba(16, 120, 126, 0.34), transparent 100%),
-        radial-gradient(1px 1px at 61% 33%, rgba(16, 120, 126, 0.28), transparent 100%),
-        radial-gradient(1.3px 1.3px at 82% 34%, rgba(16, 120, 126, 0.36), transparent 100%),
-        radial-gradient(1px 1px at 94% 14%, rgba(16, 120, 126, 0.3), transparent 100%),
-        radial-gradient(1.2px 1.2px at 5% 26%, rgba(16, 120, 126, 0.34), transparent 100%);
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    -webkit-mask: linear-gradient(180deg, #000 0%, #000 26%, transparent 58%);
-    mask: linear-gradient(180deg, #000 0%, #000 26%, transparent 58%);
-    opacity: 0.9;
-}
-/* Plain/alt bands get soft, seamless cosmic glows (interior-faded like the
-   dark theme, so no hard boundary lines) instead of flat white. */
-/* One consistent soft cyan-sky glow across every band (matching the hero's
-   bloom), so scrolling reads as a continuous sky rather than shifting hues.
-   Interior-faded so the section seams stay clean. */
-/* Light content bands are transparent — the sunrise lives on the single .lp
-   gradient above, so there are no per-section colour breaks and the hero flows
-   straight into the content. */
-[data-theme='light'] :is(.lp-section, .lp-section--alt, .lp-page),
-[data-theme='light'] .lp-hero + .lp-section {
-    background: transparent;
-}
-/* Drop the dark-mode glow accents / sheens. */
-[data-theme='light'] .lp-kicker {
-    text-shadow: none;
-}
-[data-theme='light'] .lp-nav__logo {
-    filter: none; /* black wordmark reads on the light bar */
-}
-[data-theme='light'] :is(.lp-card, .lp-step, .lp-member, .lp-post, .lp-credits__section, .lp-cs-choice, .lp-sponsor) {
-    background-image: none;
-}
-[data-theme='light'] :is(.lp-card:hover, .lp-member:hover, .lp-post:hover, .lp-sponsor:hover) {
-    border-color: var(--line-2);
-    box-shadow: var(--card-shadow);
-}
-[data-theme='light'] .lp-nav--scrolled {
-    background: rgba(247, 243, 252, 0.9);
-    border-bottom-color: var(--line);
-    box-shadow: 0 1px 12px rgba(60, 40, 90, 0.06);
+@media (prefers-reduced-motion: reduce) {
+    .lp--landing .lp-section--alt {
+        background: var(--alt);
+    }
 }
 
-/* In light mode the always-dark bands become "dusk" — the twilight bookend to
-   the dawn hero — instead of the dark-theme teal/navy. */
-[data-theme='light'] .lp-cta,
-[data-theme='light'] .lp-cs-cta--join {
-    background: linear-gradient(135deg, #0d3540 0%, #14727a 52%, #c2683c 100%);
+.lp--landing .lp-section--dark .lp-kicker {
+    color: #7fe3e4;
 }
-[data-theme='light'] .lp-3d {
-    /* Deep teal dusk SKY up top (with the stars), and a strong warm sunset
-       afterglow rising from the horizon at the bottom — teal and orange are
-       separated top/bottom so they read cleanly instead of muddying. */
-    background: radial-gradient(
-            1400px 600px at 64% 132%,
-            rgba(255, 138, 60, 0.62),
-            transparent 58%
-        ),
-        radial-gradient(
-            1000px 460px at 4% 120%,
-            rgba(22, 160, 168, 0.42),
-            transparent 60%
-        ),
-        linear-gradient(180deg, #06262e 0%, #0a2f39 60%, #123239 100%);
+.lp--landing .lp-section--dark .lp-h2 {
+    color: #fff;
 }
-/* Warm dusk accent inside those bands (e.g. the 3D "just for fun" kicker),
-   instead of the dark-theme cyan. */
-[data-theme='light'] :is(.lp-3d, .lp-cta, .lp-cs-cta--join) {
-    --cyan: #ffb27a;
+.lp--landing .lp-section--dark .lp-lead {
+    color: rgba(255, 255, 255, 0.85);
 }
-
-/* Always-dark bands: force dark-theme tokens regardless of page theme so the
-   light text/cyan accents inside stay legible on their dark backgrounds. */
-.lp-3d,
-.lp-cta,
-.lp-cs-cta--join {
-    --cyan: #7fe3e4;
-    --cyan-2: #a6eeef;
-    --teal: #34a7a8;
-    --teal-dark: #2b8687;
-    --ink: #eef4fb;
-    --body: #c4d2e4;
-    --muted: #9db0c7;
-    --line: rgba(255, 255, 255, 0.14);
-    --on-accent: #06121f;
-    /* Also force the dark surface/base tokens: the white .lp-btn--light uses
-       color: var(--bg), so without this it would be white-on-white in light
-       mode (the closing-CTA "Join the club"/"Partner with us" buttons). */
-    --bg: #0b1a34;
-    --surface: #10213f;
-    --surface-2: #17294c;
+@media (prefers-reduced-motion: reduce) {
+    .lp--landing .lp-section--dark {
+        background: #0f2040;
+    }
 }
 
 /* ---- Section scaffolding ---- */
@@ -260,26 +66,9 @@
     box-sizing: border-box;
     padding: 88px 0;
     scroll-margin-top: 72px;
-    position: relative;
-    /* Soft cyan glow anchored to the upper-right, but sized/centred so it
-       fades to zero BEFORE the top and bottom edges — otherwise the glow would
-       be clipped at the section boundary and show as a hard horizontal line. */
-    background: radial-gradient(
-        80% 56% at 88% 44%,
-        rgba(127, 227, 228, 0.08),
-        transparent 68%
-    );
 }
 .lp-section--alt {
-    /* Alt bands: a teal glow anchored to the left over the alt navy, sized to
-       fade before the top/bottom edges so the only thing marking the band
-       boundary is the clean --alt colour change (no clipped glow line). */
-    background: radial-gradient(
-            80% 56% at 10% 46%,
-            rgba(52, 167, 168, 0.13),
-            transparent 68%
-        ),
-        var(--alt);
+    background: var(--alt);
 }
 .lp-inner {
     display: block;
@@ -294,9 +83,7 @@
     font-size: 13px;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color: var(--cyan);
-    /* Faint glow so the eyebrow reads as a lit accent on navy. */
-    text-shadow: 0 0 18px rgba(127, 227, 228, 0.35);
+    color: var(--teal-dark);
     margin: 0 0 14px;
 }
 .lp-h2 {
@@ -312,115 +99,147 @@
     color: var(--muted);
 }
 
-/* ---- Hero ---- */
-.lp-hero {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    /* Fill the viewport on first load so the next section stays below the
-       fold. The .site-scroll container adds 64px top clearance for the nav,
-       so subtract it here to land exactly at the bottom edge. */
-    min-height: calc(100vh - 64px);
-    box-sizing: border-box;
-    padding: 64px 0;
+/* Word-reveal about statement — the section is text-only, so the statement
+   carries it: larger than a standard .lp-h2, with a generous measure. */
+.lp-about-statement {
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui,
+        sans-serif;
+    font-size: 52px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    max-width: 880px;
+    margin: 10px 0 32px;
+}
+.lp-about-statement__sub {
+    font-size: 22px;
+    color: var(--ink);
+}
+@media (max-width: 700px) {
+    .lp-about-statement {
+        font-size: 34px;
+    }
+}
+
+/* ---- Hero: Michelangelo, "The Creation of Adam", full-bleed ---- */
+/* Static full-viewport image hero. Runs full-bleed under the fixed nav via
+   the .site-scroll > .lp--landing negative margin (see below). */
+.lp-zhero {
     position: relative;
+    height: 100vh;
+    height: 100svh;
+    min-height: 540px;
     overflow: hidden;
-    /* Deep navy base with two soft brand-colour glows bleeding in from the top
-       corners — cyan (left) and teal (right) — over a starfield (::before). */
-    background: radial-gradient(
-            1150px 560px at 6% -12%,
-            rgba(127, 227, 228, 0.2),
-            transparent 58%
-        ),
-        radial-gradient(
-            920px 520px at 94% -4%,
-            rgba(47, 143, 144, 0.24),
-            transparent 60%
-        ),
-        radial-gradient(
-            58% 40% at 80% 62%,
-            rgba(52, 167, 168, 0.16),
-            transparent 68%
-        ),
-        linear-gradient(180deg, #0e2346 0%, var(--bg) 66%);
-    scroll-margin-top: 72px;
+    background: #05060a;
 }
-/* ---- Highlights: faint starfield behind the navy feature bands ---- */
-/* Elevate real content above the ::before star layer (positioned pseudo-
-   elements paint above non-positioned block content, so this is required). */
-.lp-hero > *,
-.lp-3d > *,
-.lp-section > *,
-.lp-page > * {
-    position: relative;
-    z-index: 1;
+.lp-zhero__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Keep the near-touching fingertips in the frame at every viewport. */
+    object-position: 40% 47%;
+    -webkit-user-drag: none;
+    user-select: none;
 }
-/* A denser scatter of tiny dots tiled across every navy band (hero, 3D band,
-   content sections and standalone pages) so the large areas aren't empty. */
-.lp-hero::before,
-.lp-3d::before,
-.lp-section::before,
-.lp-page::before {
-    content: '';
+/* Legibility scrim: darkened top (under the nav) and bottom (behind the
+   headline) edges, luminous fresco centre left clear. */
+.lp-zhero__scrim {
     position: absolute;
     inset: 0;
-    z-index: 0;
+    z-index: 1;
     pointer-events: none;
-    background-image: radial-gradient(1.4px 1.4px at 20px 30px, rgba(255, 255, 255, 0.85), transparent 100%),
-        radial-gradient(1px 1px at 55px 95px, rgba(255, 255, 255, 0.5), transparent 100%),
-        radial-gradient(1.2px 1.2px at 100px 45px, rgba(150, 235, 240, 0.7), transparent 100%),
-        radial-gradient(1px 1px at 140px 140px, rgba(255, 255, 255, 0.5), transparent 100%),
-        radial-gradient(1.5px 1.5px at 180px 75px, rgba(255, 255, 255, 0.8), transparent 100%),
-        radial-gradient(1px 1px at 215px 190px, rgba(150, 235, 240, 0.55), transparent 100%),
-        radial-gradient(1.2px 1.2px at 255px 35px, rgba(255, 255, 255, 0.6), transparent 100%),
-        radial-gradient(1px 1px at 300px 120px, rgba(255, 255, 255, 0.5), transparent 100%),
-        radial-gradient(1.4px 1.4px at 330px 80px, rgba(150, 235, 240, 0.7), transparent 100%),
-        radial-gradient(1px 1px at 38px 165px, rgba(255, 255, 255, 0.55), transparent 100%),
-        radial-gradient(1.3px 1.3px at 85px 225px, rgba(255, 255, 255, 0.7), transparent 100%),
-        radial-gradient(1px 1px at 130px 250px, rgba(150, 235, 240, 0.5), transparent 100%),
-        radial-gradient(1.1px 1.1px at 170px 205px, rgba(255, 255, 255, 0.6), transparent 100%),
-        radial-gradient(1px 1px at 210px 245px, rgba(255, 255, 255, 0.45), transparent 100%),
-        radial-gradient(1.5px 1.5px at 250px 155px, rgba(255, 255, 255, 0.75), transparent 100%),
-        radial-gradient(1px 1px at 290px 225px, rgba(150, 235, 240, 0.55), transparent 100%),
-        radial-gradient(1.1px 1.1px at 325px 250px, rgba(255, 255, 255, 0.5), transparent 100%),
-        radial-gradient(1px 1px at 15px 110px, rgba(255, 255, 255, 0.5), transparent 100%),
-        radial-gradient(1.2px 1.2px at 115px 110px, rgba(150, 235, 240, 0.6), transparent 100%),
-        radial-gradient(1px 1px at 195px 25px, rgba(255, 255, 255, 0.55), transparent 100%),
-        radial-gradient(1.4px 1.4px at 240px 105px, rgba(255, 255, 255, 0.7), transparent 100%),
-        radial-gradient(1px 1px at 315px 40px, rgba(255, 255, 255, 0.5), transparent 100%),
-        radial-gradient(1px 1px at 75px 140px, rgba(255, 255, 255, 0.45), transparent 100%),
-        radial-gradient(1.1px 1.1px at 155px 95px, rgba(255, 255, 255, 0.6), transparent 100%);
-    background-repeat: repeat;
-    background-size: 340px 260px;
-    opacity: 0.6;
+    background: linear-gradient(
+        180deg,
+        rgba(5, 6, 10, 0.58) 0%,
+        rgba(5, 6, 10, 0) 20%,
+        rgba(5, 6, 10, 0) 50%,
+        rgba(5, 6, 10, 0.66) 100%
+    );
 }
-.lp-hero__title {
+/* NB: App.css sets a global `div { display: flex }`, so wrapper divs here
+   must opt back into `display: block`. */
+.lp-zhero__copy {
+    display: block;
+    position: absolute;
+    /* Centered via auto margins, not translateX — framer-motion's entrance
+       animation owns this element's `transform`. */
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    bottom: clamp(72px, 13vh, 150px);
+    width: min(1060px, 92vw);
+    padding: 0 32px;
+    box-sizing: border-box;
+    text-align: center;
+    color: #fff;
+    z-index: 2;
+}
+.lp-zhero__kicker {
+    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin: 0 0 16px;
+    color: var(--cyan-2);
+    text-shadow: 0 1px 14px rgba(0, 0, 0, 0.55);
+}
+.lp-zhero__title {
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
-    font-size: 76px;
-    line-height: 0.96;
-    margin: 14px 0 20px;
-    letter-spacing: -1px;
+    font-weight: 700;
+    font-size: clamp(38px, 7.6vw, 94px);
+    line-height: 1.02;
+    letter-spacing: -1.5px;
+    margin: 0;
+    text-shadow: 0 2px 34px rgba(0, 0, 0, 0.6);
 }
-.lp-hero__lead {
-    font-size: 22px;
+.lp-zhero__lead {
+    font-size: clamp(16px, 2.1vw, 22px);
     line-height: 1.5;
-    max-width: 560px;
-    color: var(--muted);
-    margin-bottom: 36px;
+    max-width: 620px;
+    margin: 22px auto 0;
+    color: rgba(255, 255, 255, 0.92);
+    text-shadow: 0 1px 20px rgba(0, 0, 0, 0.65);
 }
-.lp-hero__ctas {
+.lp-zhero__ctas {
     display: flex;
     flex-wrap: wrap;
     gap: 14px;
+    justify-content: center;
+    margin-top: 32px;
 }
-.lp-scrollhint {
-    display: block;
-    margin-top: 56px;
+/* On the image, the ghost button needs a light outline to read against the
+   fresco rather than the theme's teal-on-navy tokens. */
+.lp-zhero__ctas .lp-btn--ghost {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(2px);
+}
+.lp-zhero__ctas .lp-btn--ghost:hover {
+    color: #fff;
+    border-color: #fff;
+    background: rgba(255, 255, 255, 0.16);
+}
+.lp-zhero__hint {
+    position: absolute;
+    left: 50%;
+    bottom: 26px;
+    transform: translateX(-50%);
+    z-index: 2;
     font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 12px;
     letter-spacing: 1px;
-    color: var(--cyan);
     text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.85);
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6);
+    pointer-events: none;
+}
+@media (max-width: 720px) {
+    .lp-zhero__copy {
+        bottom: clamp(56px, 10vh, 96px);
+    }
 }
 
 /* ---- Buttons ---- */
@@ -441,7 +260,7 @@
 }
 .lp-btn--primary {
     background: var(--teal);
-    color: var(--on-accent);
+    color: #ffffff;
 }
 .lp-btn--primary:hover {
     background: var(--teal-dark);
@@ -449,21 +268,18 @@
 }
 .lp-btn--ghost {
     background: transparent;
-    color: var(--cyan);
-    border-color: var(--teal);
+    color: var(--teal-dark);
 }
 .lp-btn--ghost:hover {
-    background: var(--glow);
-    color: var(--cyan-2);
+    background: rgba(47, 143, 144, 0.1);
 }
 .lp-btn--light {
     background: #ffffff;
-    color: var(--bg);
+    color: var(--teal-dark);
     border-color: #ffffff;
 }
 .lp-btn--light:hover {
-    background: var(--cyan);
-    border-color: var(--cyan);
+    background: #eef6f6;
 }
 
 /* ---- Stats ---- */
@@ -478,16 +294,13 @@
     flex-direction: column;
     align-items: flex-start;
     padding: 24px 8px;
-    /* A short, bright cyan→teal accent tick per stat — a deliberate marker
-       rather than a flat full-width rule that read as a broken line. */
-    background: linear-gradient(90deg, var(--cyan), var(--teal)) left top / 52px 3px
-        no-repeat;
+    border-top: 3px solid var(--teal);
 }
 .lp-stat__value {
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 52px;
     line-height: 1;
-    color: var(--cyan);
+    color: var(--teal-dark);
 }
 .lp-stat__label {
     margin-top: 8px;
@@ -509,7 +322,7 @@
     align-items: flex-start;
     position: relative;
     padding: 28px 24px;
-    background: var(--surface);
+    background: #ffffff;
     border: 1px solid var(--line);
 }
 .lp-step__num {
@@ -542,8 +355,8 @@
     right: -24px;
     width: 24px;
     height: 2px;
-    background: var(--cyan);
-    opacity: 0.65;
+    background: var(--teal);
+    opacity: 0.5;
     z-index: 1;
 }
 
@@ -575,7 +388,7 @@
     flex-direction: column;
     align-items: flex-start;
     padding: 24px;
-    background: var(--surface);
+    background: #ffffff;
     border: 1px solid var(--line);
     box-sizing: border-box;
     transition: transform 0.16s ease, box-shadow 0.16s ease,
@@ -583,8 +396,8 @@
 }
 .lp-card:hover {
     transform: translateY(-3px);
-    border-color: var(--line-2);
-    box-shadow: 0 10px 30px rgba(2, 8, 20, 0.55);
+    border-color: #cfe0e0;
+    box-shadow: 0 10px 30px rgba(36, 107, 108, 0.12);
 }
 /* Optional project thumbnail — full-bleed to the card edges above the title.
    Only rendered when the project has an image, so text-only cards are unchanged. */
@@ -593,7 +406,7 @@
     margin: -24px -24px 20px;
     height: 172px;
     overflow: hidden;
-    background: var(--surface-2);
+    background: #eef4f4;
 }
 .lp-card__media img {
     display: block;
@@ -640,32 +453,6 @@
     max-height: 440px;
     object-fit: cover;
 }
-/* Homepage hero: two columns (headline | image) when an image is set; the
-   text-only hero (no `--media`) is untouched. */
-.lp-hero--media .lp-inner {
-    display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: 48px;
-    align-items: center;
-}
-.lp-hero__media {
-    display: block;
-    overflow: hidden;
-    border: 1px solid var(--line);
-}
-.lp-hero__media img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    max-height: 460px;
-    object-fit: cover;
-}
-@media (max-width: 860px) {
-    .lp-hero--media .lp-inner {
-        grid-template-columns: 1fr;
-        gap: 28px;
-    }
-}
 .lp-card__title {
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 21px;
@@ -673,7 +460,7 @@
 }
 .lp-card__meta {
     font-size: 14px;
-    color: var(--cyan);
+    color: var(--teal-dark);
     font-weight: bold;
 }
 .lp-card__sub {
@@ -685,7 +472,7 @@
 .lp-card__text {
     font-size: 15px;
     line-height: 1.55;
-    color: var(--body);
+    color: #41494a;
     margin-top: 12px;
 }
 .lp-card__row {
@@ -699,7 +486,7 @@
     margin-top: 16px;
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 14px;
-    color: var(--cyan);
+    color: var(--teal-dark);
     text-decoration: none;
     border-bottom: 2px solid var(--teal);
     padding-bottom: 2px;
@@ -739,9 +526,9 @@
     display: inline-block;
     padding: 3px 10px;
     font-size: 12px;
-    color: var(--cyan);
-    background: rgba(127, 227, 228, 0.1);
-    border: 1px solid rgba(127, 227, 228, 0.22);
+    color: var(--teal-dark);
+    background: #eaf2f2;
+    border: 1px solid #d4e3e3;
     border-radius: 999px;
 }
 
@@ -761,7 +548,7 @@
     font-size: 12px;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color: var(--cyan);
+    color: var(--teal-dark);
     margin: 0 0 16px;
 }
 .lp-tier .lp-sponsors {
@@ -779,7 +566,7 @@
     justify-content: center;
     height: 110px;
     padding: 18px;
-    background: var(--surface);
+    background: #fff;
     border: 1px solid var(--line);
     box-sizing: border-box;
     text-decoration: none;
@@ -787,7 +574,7 @@
     transition: border-color 0.16s ease, transform 0.16s ease;
 }
 .lp-sponsor:hover {
-    border-color: var(--line-2);
+    border-color: #cfe0e0;
     transform: translateY(-2px);
 }
 .lp-sponsor img {
@@ -830,7 +617,7 @@
     color: var(--ink);
 }
 .lp-faq__q:hover {
-    color: var(--cyan);
+    color: var(--teal-dark);
 }
 .lp-faq__sign {
     flex-shrink: 0;
@@ -854,7 +641,7 @@
     width: 100%;
     box-sizing: border-box;
     padding: 80px 0;
-    background: linear-gradient(135deg, #0f2b4d 0%, var(--teal-dark) 92%);
+    background: linear-gradient(135deg, var(--teal-dark), var(--teal));
     color: #fff;
     scroll-margin-top: 72px;
 }
@@ -890,8 +677,8 @@
     align-items: flex-start;
     max-width: 560px;
     margin-top: 28px;
-    background: var(--surface);
-    border: 1px dashed var(--line-2);
+    background: #f4faf9;
+    border: 1px dashed #b8d3d3;
 }
 .lp-event-empty:hover {
     transform: none;
@@ -924,10 +711,51 @@
 }
 /* Solid once the page has scrolled away from the very top. */
 .lp-nav--scrolled {
-    background: rgba(9, 20, 40, 0.82);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom-color: var(--line, #e3eaea);
+    box-shadow: 0 1px 12px rgba(0, 0, 0, 0.05);
+}
+/* While the landing's background scrub is active it stamps
+   html[data-nav='light'|'dark'] with the current background's luminance
+   (see Landing.tsx). The nav then stays fully transparent — a backdrop blur
+   keeps the links readable as content slides underneath — and flips its ink
+   white over dark sections. Off the landing (attribute absent) the solid
+   white --scrolled treatment above applies as before. */
+html[data-nav] .lp-nav,
+html[data-nav] .lp-nav.lp-nav--scrolled {
+    background: transparent;
     backdrop-filter: blur(10px);
-    border-bottom-color: var(--line);
-    box-shadow: 0 1px 16px rgba(0, 0, 0, 0.4);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom-color: transparent;
+    box-shadow: none;
+}
+html[data-nav='dark'] .lp-nav .lp-nav__link {
+    color: rgba(255, 255, 255, 0.88);
+}
+html[data-nav='dark'] .lp-nav .lp-nav__link:hover {
+    color: #7fe3e4;
+}
+html[data-nav='dark'] .lp-nav .lp-nav__link--active {
+    color: #7fe3e4;
+    border-bottom-color: #7fe3e4;
+}
+html[data-nav='dark'] .lp-nav .lp-nav__logo {
+    filter: brightness(0) invert(1);
+}
+html[data-nav='dark'] .lp-nav .lp-lang__btn {
+    color: rgba(255, 255, 255, 0.55);
+}
+html[data-nav='dark'] .lp-nav .lp-lang__btn--active {
+    color: #ffffff;
+}
+html[data-nav='dark'] .lp-nav .enter3d-btn {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.35);
+}
+/* Ease the ink flip so it reads as part of the background blend. */
+.lp-nav__logo {
+    transition: filter 0.25s ease;
 }
 /* The landing's hero is pulled up under the overlay nav so the gradient
    shows through; the 64px clearance on .site-scroll (see index.css) keeps
@@ -951,8 +779,6 @@
     width: auto;
     object-fit: contain;
     display: block;
-    /* The wordmark SVG is solid black; invert it to white for the dark bar. */
-    filter: brightness(0) invert(1);
 }
 .lp-nav__links {
     display: flex;
@@ -979,7 +805,7 @@
     /* Larger on wide screens (up to 18px) yet still compact near the 1024px
        breakpoint; the shorter sentence-case labels leave room for the bump. */
     font-size: clamp(13px, 1.1vw + 2px, 18px);
-    color: var(--body);
+    color: #44504f;
     text-decoration: none;
     white-space: nowrap;
     border-bottom: 2px solid transparent;
@@ -993,11 +819,11 @@
     }
 }
 .lp-nav__link:hover {
-    color: var(--cyan);
+    color: #2f8f90;
 }
 .lp-nav__link--active {
-    color: var(--cyan);
-    border-bottom-color: var(--cyan);
+    color: #246b6c;
+    border-bottom-color: #2f8f90;
 }
 .lp-nav__right {
     display: flex;
@@ -1017,13 +843,13 @@
     border: none;
     cursor: pointer;
     padding: 4px 6px;
-    color: var(--muted);
+    color: #8a9594;
     font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 13px;
     text-transform: uppercase;
 }
 .lp-lang__btn--active {
-    color: var(--cyan);
+    color: #246b6c;
     font-weight: bold;
     text-decoration: underline;
 }
@@ -1031,34 +857,26 @@
     display: inline-flex;
     align-items: center;
     padding: 10px 20px;
-    background: var(--teal);
-    color: var(--on-accent);
+    background: #2f8f90;
+    color: #fff;
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 15px;
-    font-weight: 600;
     text-decoration: none;
     border: none;
     cursor: pointer;
     transition: background 0.15s ease;
 }
 .lp-nav__cta:hover {
-    background: var(--cyan);
+    background: #246b6c;
 }
 
 /* ================================================================== */
-/* Standalone pages (Team / Blog / Contact) — same design language     */
+/* Standalone pages (Team / Contact) — same design language            */
 /* ================================================================== */
 .lp-page {
     display: block;
     width: 100%;
     padding: 56px 0 88px;
-    position: relative;
-    /* Interior cyan glow that fades before the edges (see .lp-section). */
-    background: radial-gradient(
-        75% 50% at 90% 40%,
-        rgba(127, 227, 228, 0.07),
-        transparent 66%
-    );
 }
 .lp-page__head {
     display: block;
@@ -1083,7 +901,7 @@
     align-items: center;
     text-align: center;
     padding: 28px 20px;
-    background: var(--surface);
+    background: #fff;
     border: 1px solid var(--line);
     box-sizing: border-box;
     transition: transform 0.16s ease, box-shadow 0.16s ease,
@@ -1091,8 +909,8 @@
 }
 .lp-member:hover {
     transform: translateY(-3px);
-    border-color: var(--line-2);
-    box-shadow: 0 10px 30px rgba(2, 8, 20, 0.55);
+    border-color: #cfe0e0;
+    box-shadow: 0 10px 30px rgba(36, 107, 108, 0.12);
 }
 .lp-member__avatar {
     width: 96px;
@@ -1120,7 +938,7 @@
 }
 .lp-member__role {
     font-size: 14px;
-    color: var(--cyan);
+    color: var(--teal-dark);
     margin-top: 4px;
 }
 .lp-member__bio {
@@ -1156,226 +974,29 @@
     margin-bottom: 20px;
 }
 
-/* ---- Blog ---- */
-.lp-blog-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin-bottom: 32px;
-}
-.lp-search {
-    width: 100%;
-    max-width: 480px;
-    padding: 12px 16px;
-    border: 1px solid var(--line);
-    box-shadow: none;
-    background: var(--surface);
-    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
-    font-size: 16px;
-    box-sizing: border-box;
-}
-.lp-search:focus {
-    outline: none;
-    border-color: var(--teal);
-    background: var(--surface);
-}
-.lp-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-.lp-tag-btn {
-    display: inline-flex;
-    padding: 7px 16px;
-    border: 1px solid var(--line);
-    background: var(--surface);
-    cursor: pointer;
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
-    font-size: 13px;
-    color: var(--muted);
-    border-radius: 999px;
-    transition: color 0.15s ease, border-color 0.15s ease,
-        background 0.15s ease;
-}
-.lp-tag-btn:hover {
-    border-color: var(--teal);
-    color: var(--cyan);
-}
-.lp-tag-btn--active {
-    background: var(--teal);
-    border-color: var(--teal);
-    color: #fff;
-}
-.lp-posts {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-.lp-post {
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    overflow: hidden;
-    cursor: pointer;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    transition: transform 0.16s ease, box-shadow 0.16s ease,
-        border-color 0.16s ease;
-}
-.lp-post:hover {
-    transform: translateY(-3px);
-    border-color: var(--line-2);
-    box-shadow: 0 12px 32px rgba(2, 8, 20, 0.55);
-}
-.lp-post__thumb {
-    display: block;
-    width: 240px;
-    flex-shrink: 0;
-    overflow: hidden;
-}
-.lp-post__thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-.lp-post__body {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-width: 0;
-    padding: 24px;
-}
-.lp-post__title {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
-    font-size: 23px;
-    margin-bottom: 10px;
-}
-.lp-post__meta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 12px;
-    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
-    font-size: 12px;
-    color: var(--muted);
-}
-.lp-post__meta .proj {
-    color: var(--cyan);
-}
-.lp-post__excerpt {
-    font-size: 15px;
-    line-height: 1.55;
-    color: var(--body);
-    margin-bottom: 14px;
-}
 .lp-empty {
     color: var(--muted);
     font-style: italic;
     margin-top: 8px;
 }
 
-/* ---- Blog article ---- */
+/* ---- Back link (case-study detail) ---- */
 .lp-back {
     display: inline-flex;
     align-self: flex-start;
     margin-bottom: 28px;
     padding: 9px 18px;
     border: 1px solid var(--line);
-    background: var(--surface);
+    background: #fff;
     cursor: pointer;
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 14px;
-    color: var(--cyan);
+    color: var(--teal-dark);
     transition: border-color 0.15s ease, color 0.15s ease;
 }
 .lp-back:hover {
     border-color: var(--teal);
     color: var(--teal);
-}
-.lp-article {
-    display: block;
-    max-width: 800px;
-}
-.lp-article__hero {
-    display: block;
-    width: 100%;
-    margin-bottom: 28px;
-    overflow: hidden;
-    border-radius: 4px;
-}
-.lp-article__hero img {
-    width: 100%;
-    max-height: 380px;
-    object-fit: cover;
-    display: block;
-}
-.lp-article__title {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
-    font-size: 40px;
-    line-height: 1.06;
-    margin-bottom: 18px;
-}
-.lp-article__meta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 20px;
-    margin-bottom: 16px;
-}
-.lp-author {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-.lp-author__avatar,
-.lp-author__avatar-ph {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0;
-}
-.lp-author__avatar-ph {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, var(--teal), var(--teal-dark));
-    color: #fff;
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
-    font-size: 15px;
-}
-.lp-author__text {
-    display: flex;
-    flex-direction: column;
-}
-.lp-author__name {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
-    font-size: 15px;
-}
-.lp-author__role {
-    font-size: 13px;
-    color: var(--muted);
-    font-style: italic;
-}
-.lp-article__date {
-    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
-    font-size: 13px;
-    color: var(--muted);
-}
-.lp-article__divider {
-    border: none;
-    border-top: 1px solid var(--line);
-    margin: 12px 0 20px;
-    width: 100%;
-}
-.lp-article__lead {
-    font-size: 18px;
-    line-height: 1.6;
-    font-style: italic;
-    color: var(--muted);
-    margin-bottom: 20px;
 }
 
 /* ---- Contact ---- */
@@ -1399,7 +1020,7 @@
 .lp-social {
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 14px;
-    color: var(--cyan);
+    color: var(--teal-dark);
     text-decoration: none;
     border-bottom: 2px solid var(--teal);
     padding-bottom: 2px;
@@ -1424,7 +1045,7 @@
     padding: 12px 14px;
     border: 1px solid var(--line);
     box-shadow: none;
-    background: var(--surface);
+    background: #fff;
     font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 16px;
     box-sizing: border-box;
@@ -1434,7 +1055,7 @@
 .lp-select:focus {
     outline: none;
     border-color: var(--teal);
-    background: var(--surface);
+    background: #fff;
 }
 .lp-textarea {
     height: auto;
@@ -1479,7 +1100,7 @@
     margin-top: 12px;
 }
 .lp-required {
-    color: #ff8a8a;
+    color: #cc3333;
     margin-right: 3px;
 }
 
@@ -1512,7 +1133,7 @@
     font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 16px;
     line-height: 1.5;
-    color: var(--body);
+    color: #41494a;
 }
 .lp-list li::before {
     content: '›';
@@ -1555,12 +1176,6 @@
     .lp-inner {
         padding: 0 20px;
     }
-    .lp-hero__title {
-        font-size: 50px;
-    }
-    .lp-hero__lead {
-        font-size: 19px;
-    }
     .lp-h2,
     .lp-cta__heading {
         font-size: 32px;
@@ -1574,16 +1189,6 @@
     }
     .lp-page__title {
         font-size: 34px;
-    }
-    .lp-article__title {
-        font-size: 30px;
-    }
-    .lp-post {
-        flex-direction: column;
-    }
-    .lp-post__thumb {
-        width: 100%;
-        height: 180px;
     }
     .lp-cols2 {
         grid-template-columns: 1fr;
@@ -1608,9 +1213,9 @@
         background 0.18s ease, transform 0.18s ease;
 }
 .enter3d-btn:hover {
-    color: var(--cyan);
-    border-color: var(--teal);
-    background: var(--glow);
+    color: var(--teal, #2f8f90);
+    border-color: var(--teal, #2f8f90);
+    background: rgba(47, 143, 144, 0.06);
     transform: translateY(-1px);
 }
 .enter3d-btn:focus-visible {
@@ -1618,48 +1223,6 @@
     outline-offset: 2px;
 }
 
-/* ---- Credits page ---- */
-.lp-credits {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 28px;
-    margin-top: 32px;
-}
-.lp-credits__section {
-    display: flex;
-    flex-direction: column;
-    padding: 24px;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    box-sizing: border-box;
-}
-.lp-credits__heading {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
-    font-size: 18px;
-    margin: 0 0 14px;
-}
-.lp-credits__list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-.lp-credits__row {
-    display: flex;
-    flex-direction: column;
-    padding: 8px 0;
-    border-top: 1px solid var(--line);
-}
-.lp-credits__row:first-child {
-    border-top: none;
-}
-.lp-credits__name {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
-    font-size: 15px;
-}
-.lp-credits__role {
-    font-size: 13px;
-    color: var(--muted);
-}
 
 /* ---- Advisers section heading ---- */
 .lp-team__group-head {
@@ -1695,8 +1258,7 @@
     object-fit: contain;
 }
 
-/* ---- Per-member company logos (always visible — a member's experience is
-   one of the strongest signals on the site, so it must show on touch too) ---- */
+/* ---- Per-member company logos (hidden until the card is hovered/focused) ---- */
 .lp-member__companies {
     display: flex;
     flex-wrap: wrap;
@@ -1704,18 +1266,22 @@
     justify-content: center;
     gap: 12px;
     width: 100%;
-    margin-top: 16px;
-    padding-top: 14px;
-    border-top: 1px solid var(--line);
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+    padding-top: 0;
+    overflow: hidden;
+    border-top: 1px solid transparent;
+    transition: max-height 0.28s ease, opacity 0.2s ease,
+        margin-top 0.28s ease, padding-top 0.28s ease, border-color 0.28s ease;
 }
-.lp-member__companies-label {
-    width: 100%;
-    margin-bottom: 2px;
-    font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
-    font-size: 10px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--muted);
+.lp-member:hover .lp-member__companies,
+.lp-member:focus-within .lp-member__companies {
+    max-height: 120px;
+    opacity: 1;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top-color: var(--line);
 }
 .lp-member__company {
     display: flex;
@@ -1727,8 +1293,6 @@
     max-height: 26px;
     max-width: 92px;
     object-fit: contain;
-    /* Full colour so the employer logos read at a glance, no hover needed. */
-    opacity: 1;
 }
 .lp-member__company-name {
     font-size: 12px;
@@ -1752,7 +1316,7 @@
     height: 100%;
     box-sizing: border-box;
     border: 1px solid var(--line);
-    background: var(--surface);
+    background: #fff;
     display: block;
 }
 .lp-booking__link {
@@ -1760,7 +1324,7 @@
     margin-top: 14px;
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 14px;
-    color: var(--cyan);
+    color: var(--teal-dark, #246b6c);
     text-decoration: none;
     border-bottom: 2px solid var(--teal, #2f8f90);
     padding-bottom: 2px;
@@ -1773,7 +1337,7 @@
     flex-direction: column;
     gap: 8px;
     padding: 28px;
-    background: var(--surface);
+    background: #fff;
     border: 1px dashed var(--line);
     color: var(--muted);
     font-size: 15px;
@@ -1794,7 +1358,7 @@
 .lp-prose__p {
     font-size: 18px;
     line-height: 1.7;
-    color: var(--body);
+    color: #3a4342;
     margin: 0 0 18px;
 }
 .lp-stats--about {
@@ -1836,23 +1400,20 @@
     width: 100%;
     box-sizing: border-box;
     padding: 88px 0;
-    position: relative;
-    overflow: hidden;
-    background: radial-gradient(
-            980px 460px at 84% -25%,
-            rgba(127, 227, 228, 0.16),
-            transparent 60%
-        ),
-        radial-gradient(
-            760px 420px at 4% 125%,
-            rgba(47, 143, 144, 0.28),
-            transparent 62%
-        ),
-        #0f2040;
+    /* No background of its own — the navy comes from the scroll-scrubbed
+       page background (data-bg="#0f2040"), so the band blends in seamlessly
+       instead of starting at a hard edge. */
     color: #fff;
 }
+@media (prefers-reduced-motion: reduce) {
+    /* No scrub → the band must carry its own navy or its white text is
+       unreadable on the light page. */
+    .lp-3d {
+        background: #0f2040;
+    }
+}
 .lp-3d__kicker {
-    color: var(--cyan);
+    color: #7fe3e4;
 }
 .lp-3d__title {
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
@@ -1886,7 +1447,7 @@
     grid-template-columns: 1fr;
     margin: 12px 0 40px;
     border: 1px solid var(--line);
-    background: var(--surface);
+    background: #fff;
     overflow: hidden;
 }
 .lp-proj-feat--media {
@@ -1921,7 +1482,7 @@
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 15px;
     line-height: 1.4;
-    color: var(--cyan);
+    color: var(--teal-dark);
 }
 .lp-proj-feat__cta {
     margin-top: 14px;
@@ -1962,12 +1523,12 @@
 .lp-cs__impact {
     margin-top: 18px;
     padding: 12px 18px;
-    background: var(--surface-2);
+    background: #eaf2f2;
     border-left: 3px solid var(--teal);
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 17px;
     line-height: 1.45;
-    color: var(--cyan);
+    color: var(--teal-dark);
 }
 .lp-cs__hero {
     display: block;
@@ -1996,7 +1557,7 @@
 .lp-cs__p {
     font-size: 18px;
     line-height: 1.7;
-    color: var(--body);
+    color: #3a4342;
     margin: 0 0 14px;
     max-width: 70ch;
 }
@@ -2181,7 +1742,7 @@
     justify-content: center;
     padding: 24px;
     box-sizing: border-box;
-    background: rgba(5, 11, 24, 0.95);
+    background: rgba(9, 18, 18, 0.93);
     animation: lp-lightbox-in 0.18s ease;
 }
 .lp-lightbox__figure {
@@ -2356,15 +1917,15 @@
     text-align: left;
     padding: 28px;
     cursor: pointer;
-    background: var(--surface);
+    background: #fff;
     border: 1px solid var(--line);
     border-left: 3px solid var(--teal);
     transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
 }
 .lp-cs-choice:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(2, 8, 20, 0.55);
-    border-color: var(--line-2);
+    box-shadow: 0 10px 30px rgba(36, 107, 108, 0.12);
+    border-color: #cfe0e0;
     border-left-color: var(--teal);
 }
 .lp-cs-choice__tag {
@@ -2381,7 +1942,7 @@
     margin-top: 6px;
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 14px;
-    color: var(--cyan);
+    color: var(--teal-dark);
     border-bottom: 2px solid var(--teal);
     padding-bottom: 2px;
 }
@@ -2422,7 +1983,7 @@
     padding: 32px;
 }
 .lp-cs-cta--join {
-    background: linear-gradient(135deg, #0f2b4d 0%, var(--teal-dark) 92%);
+    background: linear-gradient(135deg, var(--teal-dark), var(--teal));
     color: #fff;
 }
 .lp-cs-cta--book {
@@ -2512,7 +2073,7 @@
 /* hyphenate instead of overflowing their container.                   */
 /* ------------------------------------------------------------------ */
 .lp-h2,
-.lp-hero__title,
+.lp-zhero__title,
 .lp-page__title,
 .lp-card__title,
 .lp-cs__title,
@@ -2532,31 +2093,4 @@
    many across as the width allows and wrap cleanly, without connectors. */
 .lp-steps--wrap {
     grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-}
-
-/* ================================================================== */
-/* Card accents — a faint cyan top-sheen (over the surface colour) plus a  */
-/* mint hover glow, so cards read as lit panels on the navy, not flat      */
-/* boxes. Layered as background-image so each card keeps its surface fill.  */
-/* ================================================================== */
-.lp-card,
-.lp-step,
-.lp-member,
-.lp-post,
-.lp-credits__section,
-.lp-cs-choice,
-.lp-sponsor {
-    background-image: linear-gradient(
-        180deg,
-        rgba(127, 227, 228, 0.055),
-        transparent 44%
-    );
-}
-.lp-card:hover,
-.lp-member:hover,
-.lp-post:hover,
-.lp-sponsor:hover {
-    border-color: rgba(127, 227, 228, 0.4);
-    box-shadow: 0 16px 40px rgba(2, 8, 20, 0.55),
-        0 6px 26px rgba(127, 227, 228, 0.12);
 }

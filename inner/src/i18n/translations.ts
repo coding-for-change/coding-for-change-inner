@@ -2,7 +2,7 @@ export type Locale = 'en' | 'de';
 
 export interface Translations {
     nav: {
-        home: string; about: string; events: string; projects: string;
+        home: string; events: string; projects: string;
         sponsors: string; team: string; blog: string; qa: string; join: string; contact: string;
         partner: string;
     };
@@ -13,6 +13,7 @@ export interface Translations {
     home: {
         about: string; events: string; projects: string; team: string; join: string;
         kicker: string; ctaPrimary: string; ctaSecondary: string; scrollHint: string;
+        heroLineOne: string; heroLineTwo: string;
     };
     about: {
         title: string;
@@ -99,35 +100,28 @@ export interface Translations {
     navbar: { title: string; subtitle: string; };
     footer: {
         pages: string; info: string;
-        home: string; about: string; projects: string; team: string; blog: string;
+        home: string; projects: string; team: string; blog: string;
         sponsors: string; join: string; contact: string; qa: string; partner: string;
-        privacy: string; imprint: string; credits: string;
+        privacy: string; imprint: string;
     };
     aboutPage: {
-        kicker: string; title: string; lead: string;
-        story: string[];
         valuesTitle: string;
         values: { title: string; text: string }[];
-        teamTeaser: string; teamCta: string;
     };
     partner: {
         kicker: string; fallbackTitle: string; fallbackLead: string;
-        bring: string; how: string; pastWork: string; talkCta: string;
-    };
-    credits: {
-        kicker: string; title: string; lead: string;
-        sections: { title: string; rows: [string, string][] }[];
+        talkCta: string;
     };
     notFound: {
         kicker: string; title: string; lead: string;
         backHome: string; helpfulLinks: string;
-        projects: string; about: string; join: string;
+        projects: string; join: string;
     };
 }
 
 const en: Translations = {
     nav: {
-        home: 'Home', about: 'About', events: 'Events', projects: 'Projects',
+        home: 'Home', events: 'Events', projects: 'Projects',
         sponsors: 'Sponsors', team: 'Team', blog: 'Blog', qa: 'Q&A', join: 'Join', contact: 'Contact',
         partner: 'For NGOs',
     },
@@ -142,6 +136,8 @@ const en: Translations = {
         ctaPrimary: 'Join the club',
         ctaSecondary: 'See our work',
         scrollHint: '↓ scroll to explore',
+        heroLineOne: 'Tech meets Social Impact',
+        heroLineTwo: 'A match made in heaven',
     },
     about: {
         title: 'About Us',
@@ -311,19 +307,11 @@ const en: Translations = {
     navbar: { title: 'Coding for Change', subtitle: 'Munich Student Club' },
     footer: {
         pages: 'Pages', info: 'Information',
-        home: 'Home', about: 'About', projects: 'Projects', team: 'Team', blog: 'Blog',
+        home: 'Home', projects: 'Projects', team: 'Team', blog: 'Blog',
         sponsors: 'Sponsors', join: 'Join', contact: 'Contact', qa: 'Q&A', partner: 'For NGOs',
-        privacy: 'Privacy', imprint: 'Imprint', credits: 'Credits',
+        privacy: 'Privacy', imprint: 'Imprint',
     },
     aboutPage: {
-        kicker: 'About us',
-        title: 'We turn student skill into software that nonprofits keep.',
-        lead: 'Coding for Change is a Munich student initiative. We pair ambitious students with non-profit organisations and ship them real, production software — in a single semester, at no cost.',
-        story: [
-            'NGOs run on tight budgets and even tighter time. The tools they need — to schedule volunteers, track impact, bill hours, reach the people they serve — are usually out of financial reach, so the work happens in spreadsheets and on paper.',
-            'We think that is a waste of two things at once: the potential of the organisation, and the talent of students who want to build something that matters. So we bring them together. Students from TUM and LMU — engineers, product and consulting minds, designers, organisers — form a team around one partner and one real problem.',
-            'Every project is scoped to ship in a semester, handed off with documentation and support, and owned by the partner afterwards. No lock-in, no invoice. Just software that keeps working after we leave.',
-        ],
         valuesTitle: 'What we care about',
         values: [
             { title: 'Real work, real stakes', text: 'No toy projects. Everything we build goes into production and gets used by real people.' },
@@ -331,47 +319,12 @@ const en: Translations = {
             { title: 'Open to every discipline', text: 'Great software needs more than engineers. Product, design, comms and operations shape every project.' },
             { title: 'Impact you can point at', text: 'Success is measured by what changes for our partner and the people they serve — not by lines of code.' },
         ],
-        teamTeaser: 'A cross-disciplinary group of students from TUM and LMU, with experience at companies like Bloomberg, Optiver and Picus Capital.',
-        teamCta: 'Meet the team',
     },
     partner: {
         kicker: 'For NGOs',
         fallbackTitle: 'Have a problem worth solving? Let’s build it together.',
         fallbackLead: 'We partner with non-profits to design and ship the software they need — free of charge, delivered by a dedicated student team in a single semester.',
-        bring: 'What we bring',
-        how: 'How a partnership works',
-        pastWork: 'Recent work',
         talkCta: 'Start a conversation',
-    },
-    credits: {
-        kicker: 'Colophon',
-        title: 'Credits',
-        lead: 'The people, projects and technologies behind this site.',
-        sections: [
-            {
-                title: 'Original Template',
-                rows: [['Henry Heffernan', 'Design & Engineering']],
-            },
-            {
-                title: 'CFC Adaptation',
-                rows: [['Coding for Change Team', 'Content & Customization']],
-            },
-            {
-                title: 'Technologies',
-                rows: [
-                    ['React', 'UI Framework'],
-                    ['TypeScript', 'Language'],
-                    ['Framer Motion', 'Animations'],
-                ],
-            },
-            {
-                title: 'Special Thanks',
-                rows: [
-                    ['Henry Heffernan', 'Original Portfolio Template'],
-                    ['All CFC Members', 'For making it happen'],
-                ],
-            },
-        ],
     },
     notFound: {
         kicker: 'Error 404',
@@ -380,14 +333,13 @@ const en: Translations = {
         backHome: 'Back to home',
         helpfulLinks: 'Or head somewhere useful',
         projects: 'Our projects',
-        about: 'About us',
         join: 'Join us',
     },
 };
 
 const de: Translations = {
     nav: {
-        home: 'Start', about: 'Über uns', events: 'Events', projects: 'Projekte',
+        home: 'Start', events: 'Events', projects: 'Projekte',
         sponsors: 'Sponsoren', team: 'Team', blog: 'Blog', qa: 'F&A', join: 'Mitmachen', contact: 'Kontakt',
         partner: 'Für NGOs',
     },
@@ -402,6 +354,8 @@ const de: Translations = {
         ctaPrimary: 'Mitglied werden',
         ctaSecondary: 'Unsere Arbeit ansehen',
         scrollHint: '↓ zum Entdecken scrollen',
+        heroLineOne: 'Tech trifft soziale Wirkung',
+        heroLineTwo: 'Ein Match wie im Himmel',
     },
     about: {
         title: 'Über Uns',
@@ -571,19 +525,11 @@ const de: Translations = {
     navbar: { title: 'Coding for Change', subtitle: 'Münchner Studierendenclub' },
     footer: {
         pages: 'Seiten', info: 'Informationen',
-        home: 'Startseite', about: 'Über uns', projects: 'Projekte', team: 'Team', blog: 'Blog',
+        home: 'Startseite', projects: 'Projekte', team: 'Team', blog: 'Blog',
         sponsors: 'Sponsoren', join: 'Mitmachen', contact: 'Kontakt', qa: 'F&A', partner: 'Für NGOs',
-        privacy: 'Datenschutz', imprint: 'Impressum', credits: 'Credits',
+        privacy: 'Datenschutz', imprint: 'Impressum',
     },
     aboutPage: {
-        kicker: 'Über uns',
-        title: 'Wir machen aus studentischem Können Software, die NGOs behalten.',
-        lead: 'Coding for Change ist eine Münchner Studierendeninitiative. Wir bringen engagierte Studierende mit gemeinnützigen Organisationen zusammen und liefern echte, produktreife Software – in einem einzigen Semester, kostenlos.',
-        story: [
-            'NGOs arbeiten mit knappen Budgets und noch knapperer Zeit. Die Tools, die sie brauchen – um Freiwillige zu planen, Wirkung zu messen, Stunden abzurechnen, Menschen zu erreichen – sind finanziell meist außer Reichweite. Also passiert die Arbeit in Tabellen und auf Papier.',
-            'Wir finden, das verschwendet zweierlei zugleich: das Potenzial der Organisation und das Talent von Studierenden, die etwas Sinnvolles bauen wollen. Also bringen wir beide zusammen. Studierende von TUM und LMU – Engineering, Produkt und Consulting, Design, Organisation – bilden ein Team rund um einen Partner und ein echtes Problem.',
-            'Jedes Projekt ist so zugeschnitten, dass es in einem Semester fertig wird, wird mit Dokumentation und Support übergeben und gehört danach dem Partner. Kein Lock-in, keine Rechnung. Einfach Software, die weiterläuft, wenn wir gehen.',
-        ],
         valuesTitle: 'Worauf es uns ankommt',
         values: [
             { title: 'Echte Arbeit, echte Verantwortung', text: 'Keine Spielprojekte. Alles, was wir bauen, geht in Produktion und wird von echten Menschen genutzt.' },
@@ -591,47 +537,12 @@ const de: Translations = {
             { title: 'Offen für jede Disziplin', text: 'Gute Software braucht mehr als Entwickler:innen. Produkt, Design, Kommunikation und Operations prägen jedes Projekt.' },
             { title: 'Wirkung, auf die man zeigen kann', text: 'Erfolg misst sich daran, was sich für unsere Partner und die Menschen, die sie erreichen, verändert – nicht an Codezeilen.' },
         ],
-        teamTeaser: 'Eine interdisziplinäre Gruppe Studierender von TUM und LMU – mit Erfahrung bei Unternehmen wie Bloomberg, Optiver und Picus Capital.',
-        teamCta: 'Team kennenlernen',
     },
     partner: {
         kicker: 'Für NGOs',
         fallbackTitle: 'Ein Problem, das es zu lösen lohnt? Lass es uns gemeinsam bauen.',
         fallbackLead: 'Wir entwickeln gemeinsam mit gemeinnützigen Organisationen die Software, die sie brauchen – kostenlos, geliefert von einem festen Studierendenteam in einem einzigen Semester.',
-        bring: 'Was wir mitbringen',
-        how: 'So läuft eine Partnerschaft',
-        pastWork: 'Aktuelle Projekte',
         talkCta: 'Gespräch starten',
-    },
-    credits: {
-        kicker: 'Kolophon',
-        title: 'Mitwirkende',
-        lead: 'Die Menschen, Projekte und Technologien hinter dieser Website.',
-        sections: [
-            {
-                title: 'Ursprüngliche Vorlage',
-                rows: [['Henry Heffernan', 'Design & Entwicklung']],
-            },
-            {
-                title: 'CFC-Anpassung',
-                rows: [['Coding for Change Team', 'Inhalt & Anpassung']],
-            },
-            {
-                title: 'Technologien',
-                rows: [
-                    ['React', 'UI-Framework'],
-                    ['TypeScript', 'Sprache'],
-                    ['Framer Motion', 'Animationen'],
-                ],
-            },
-            {
-                title: 'Besonderer Dank',
-                rows: [
-                    ['Henry Heffernan', 'Ursprüngliche Portfolio-Vorlage'],
-                    ['Alle CFC-Mitglieder', 'Dafür, dass sie es möglich machen'],
-                ],
-            },
-        ],
     },
     notFound: {
         kicker: 'Fehler 404',
@@ -640,7 +551,6 @@ const de: Translations = {
         backHome: 'Zurück zur Startseite',
         helpfulLinks: 'Oder gehen Sie direkt weiter',
         projects: 'Unsere Projekte',
-        about: 'Über uns',
         join: 'Mitmachen',
     },
 };

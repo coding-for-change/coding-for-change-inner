@@ -3,18 +3,18 @@ import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useCmsCollection, useCmsGlobal, useSiteConfig, mediaUrl } from '../../api';
+import { useCmsCollection, useCmsGlobal, useSiteConfig } from '../../api';
 import {
     CmsEvent,
     CmsProject,
     CmsSponsor,
     CmsFaqItem,
-    CmsBlogPost,
     CmsHomepage,
 } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
 import BookingEmbed from '../general/BookingEmbed';
 import ProjectShowcase from './ProjectShowcase';
+import ScrollRevealText from './ScrollRevealText';
 import SponsorTiers from './SponsorTiers';
 import ClosingCta from './ClosingCta';
 import './landing.css';
@@ -31,7 +31,6 @@ export interface LandingProps {
     projects?: CmsProject[] | null;
     sponsors?: CmsSponsor[] | null;
     faq?: CmsFaqItem[] | null;
-    blog?: CmsBlogPost[] | null;
     homepage?: CmsHomepage | null;
 }
 
@@ -68,11 +67,6 @@ const Landing: React.FC<LandingProps> = (props) => {
         undefined,
         props.events
     );
-    const { data: blog } = useCmsCollection<CmsBlogPost>(
-        'blog-posts',
-        { depth: '2', sort: '-publishedAt', limit: '3' },
-        props.blog
-    );
     const { data: projects, loading: projectsLoading } =
         useCmsCollection<CmsProject>('projects', undefined, props.projects);
     const { data: sponsors, loading: sponsorsLoading } =
@@ -80,11 +74,9 @@ const Landing: React.FC<LandingProps> = (props) => {
     const { data: faq, loading: faqLoading } =
         useCmsCollection<CmsFaqItem>('faq', undefined, props.faq);
     const { data: hp } = useCmsGlobal<CmsHomepage>('homepage', props.homepage);
-    const heroImage = mediaUrl(hp?.heroImage);
 
     // Homepage copy: CMS value if set, else the built-in i18n string.
     const c = {
-        heroKicker: hp?.heroKicker || t.home.kicker,
         heroCtaPrimary: hp?.heroCtaPrimary || t.home.ctaPrimary,
         heroCtaSecondary: hp?.heroCtaSecondary || t.home.ctaSecondary,
         heroScrollHint: hp?.heroScrollHint || t.home.scrollHint,
@@ -115,16 +107,76 @@ const Landing: React.FC<LandingProps> = (props) => {
         ctaJoin: hp?.ctaJoin || t.cta.join,
         ctaContact: hp?.ctaContact || t.cta.contact,
     };
-    const stats = hp?.stats?.length ? hp.stats : t.about.stats;
     const steps = hp?.steps?.length ? hp.steps : t.about.steps;
 
     const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-    // Deep-link / nav handling: scroll to the section named in the URL hash
-    // (e.g. /#projects). Next's router doesn't expose the hash, so we read it
-    // off `window.location` and also listen for `hashchange`. Re-runs after a
-    // short delay so async CMS sections that grow taller after loading still
-    // land in the right spot.
+
+    const bgRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        const root = bgRef.current;
+        if (!root) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+            return;
+
+        const scroller = root.closest('.site-scroll') as HTMLElement | null;
+        const listenTarget: HTMLElement | Window = scroller ?? window;
+        const toRgb = (hex: string) =>
+            [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+
+        let raf = 0;
+        const paint = () => {
+            raf = 0;
+            const viewTop = scroller
+                ? scroller.getBoundingClientRect().top
+                : 0;
+            const viewH = scroller ? scroller.clientHeight : window.innerHeight;
+
+            const sections = Array.from(
+                root.querySelectorAll<HTMLElement>('[data-bg]')
+            ).filter((el) => el.offsetParent !== null);
+            if (sections.length === 0) return;
+
+            let [r, g, b] = toRgb(sections[0].dataset.bg!);
+            for (const el of sections.slice(1)) {
+                const topRatio =
+                    (el.getBoundingClientRect().top - viewTop) / viewH;
+                const p = Math.min(
+                    1,
+                    Math.max(0, (0.78 - topRatio) / (0.78 - 0.32))
+                );
+                if (p === 0) continue;
+                const [r2, g2, b2] = toRgb(el.dataset.bg!);
+                r += (r2 - r) * p;
+                g += (g2 - g) * p;
+                b += (b2 - b) * p;
+            }
+            root.style.backgroundColor = `rgb(${r | 0}, ${g | 0}, ${b | 0})`;
+
+            const hero = root.querySelector<HTMLElement>('.lp-zhero');
+            const heroUnderNav = hero
+                ? hero.getBoundingClientRect().bottom - viewTop > 64
+                : false;
+            const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+            document.documentElement.dataset.nav =
+                heroUnderNav || lum < 0.5 ? 'dark' : 'light';
+        };
+        const onScroll = () => {
+            if (!raf) raf = requestAnimationFrame(paint);
+        };
+        paint();
+        listenTarget.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll);
+        return () => {
+            listenTarget.removeEventListener('scroll', onScroll);
+            window.removeEventListener('resize', onScroll);
+            if (raf) cancelAnimationFrame(raf);
+            root.style.backgroundColor = '';
+            delete document.documentElement.dataset.nav;
+        };
+    }, []);
+
+
     const scrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     useEffect(() => {
         const scrollToHash = () => {
@@ -155,8 +207,6 @@ const Landing: React.FC<LandingProps> = (props) => {
     const past = (events ?? []).filter((e) => !e.isUpcoming);
     const hasEvents = (events?.length ?? 0) > 0;
     const hasSponsors = (sponsors?.length ?? 0) > 0;
-    const recentPosts = (blog ?? []).slice(0, 3);
-    const hasBlog = recentPosts.length > 0;
 
     const renderEventCard = (event: CmsEvent, i: number) => (
         <motion.div
@@ -186,89 +236,80 @@ const Landing: React.FC<LandingProps> = (props) => {
     );
 
     return (
-        <div className="lp lp--landing">
-            {/* ---- Hero ---- */}
-            <section
-                id="home"
-                className={'lp-hero' + (heroImage ? ' lp-hero--media' : '')}
-            >
-                <div className="lp-inner">
-                    <motion.div
-                        style={{ display: 'block' }}
-                        initial={{ opacity: 0, y: 24 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.55, ease: 'easeOut' }}
-                    >
-                        <p className="lp-kicker">{c.heroKicker}</p>
-                        <h1 className="lp-hero__title">
-                            {siteConfig.clubName || 'Coding for Change'}
-                        </h1>
-                        <p className="lp-hero__lead">
-                            {siteConfig.tagline || t.about.oneLiner}
-                        </p>
-                        <div className="lp-hero__ctas">
-                            <Link className="lp-btn lp-btn--primary" href="/join">
-                                {c.heroCtaPrimary}
-                            </Link>
-                            <a
-                                className="lp-btn lp-btn--ghost"
-                                href="#projects"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    router.push('/#projects');
-                                }}
-                            >
-                                {c.heroCtaSecondary}
-                            </a>
-                        </div>
-                        <span className="lp-scrollhint">{c.heroScrollHint}</span>
-                    </motion.div>
-                    {heroImage && (
-                        <motion.div
-                            className="lp-hero__media"
-                            initial={{ opacity: 0, scale: 0.98 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.6, ease: 'easeOut', delay: 0.1 }}
+        <div className="lp lp--landing" ref={bgRef}>
+            {}
+            {}
+            <section id="home" className="lp-zhero">
+                <img
+                    className="lp-zhero__img"
+                    src="/images/creation-of-adam.webp"
+                    alt={
+                        'Michelangelo’s “The Creation of Adam” — two ' +
+                        'hands reaching toward one another'
+                    }
+                    draggable={false}
+                />
+                <div className="lp-zhero__scrim" />
+                <motion.div
+                    className="lp-zhero__copy"
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.55, ease: 'easeOut' }}
+                >
+                    <p className="lp-zhero__kicker">{t.home.heroLineOne}</p>
+                    <h1 className="lp-zhero__title">{t.home.heroLineTwo}</h1>
+                    <p className="lp-zhero__lead">
+                        {siteConfig.tagline || t.about.oneLiner}
+                    </p>
+                    <div className="lp-zhero__ctas">
+                        <Link className="lp-btn lp-btn--primary" href="/join">
+                            {c.heroCtaPrimary}
+                        </Link>
+                        <a
+                            className="lp-btn lp-btn--ghost"
+                            href="#projects"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                router.push('/#projects');
+                            }}
                         >
-                            <img
-                                src={heroImage}
-                                alt={siteConfig.clubName || 'Coding for Change'}
-                            />
-                        </motion.div>
-                    )}
-                </div>
+                            {c.heroCtaSecondary}
+                        </a>
+                    </div>
+                </motion.div>
+                <span className="lp-zhero__hint">{c.heroScrollHint}</span>
             </section>
 
-            {/* ---- About + stats ---- */}
-            <section id="about" className="lp-section">
+            {/* ---- About — pure-text statement with word-by-word reveal ---- */}
+            <section id="about" data-bg="#ffffff" className="lp-section">
                 <div className="lp-inner">
-                    <motion.div
-                        style={{ display: 'block' }}
+                    <motion.p
+                        className="lp-kicker"
                         {...reveal}
                         transition={{ duration: 0.5 }}
                     >
-                        <p className="lp-kicker">{c.aboutKicker}</p>
-                        <h2 className="lp-h2">{c.aboutOneLiner}</h2>
-                        <p className="lp-lead">{c.aboutPitch}</p>
-                    </motion.div>
-                    <div className="lp-stats">
-                        {stats.map((s, i) => (
-                            <motion.div
-                                key={s.label}
-                                className="lp-stat"
-                                {...reveal}
-                                transition={{ duration: 0.45, delay: i * 0.1 }}
-                            >
-                                <span className="lp-stat__value">{s.value}</span>
-                                <span className="lp-stat__label">{s.label}</span>
-                            </motion.div>
-                        ))}
-                    </div>
+                        {c.aboutKicker}
+                    </motion.p>
+                    <ScrollRevealText
+                        as="h2"
+                        text={c.aboutOneLiner}
+                        className="lp-about-statement"
+                    />
+                    <ScrollRevealText
+                        as="p"
+                        text={c.aboutPitch}
+                        className="lp-lead lp-about-statement__sub"
+                        end={0.75}
+                    />
                 </div>
             </section>
 
             {/* ---- Process: how we work with NGOs ---- */}
-            <section id="process" className="lp-section lp-section--alt">
+            <section
+                id="process"
+                data-bg="#0f2040"
+                className="lp-section lp-section--dark"
+            >
                 <div className="lp-inner">
                     <motion.div
                         style={{ display: 'block' }}
@@ -302,7 +343,7 @@ const Landing: React.FC<LandingProps> = (props) => {
             </section>
 
             {/* ---- Projects ---- */}
-            <section id="projects" className="lp-section">
+            <section id="projects" data-bg="#ffffff" className="lp-section">
                 <div className="lp-inner">
                     <motion.div
                         style={{ display: 'block' }}
@@ -328,7 +369,11 @@ const Landing: React.FC<LandingProps> = (props) => {
 
             {/* ---- Events (homepage teaser; only shown when events exist) ---- */}
             {hasEvents && (
-                <section id="events" className="lp-section lp-section--alt">
+                <section
+                    id="events"
+                    data-bg="#f1f6f6"
+                    className="lp-section lp-section--alt"
+                >
                     <div className="lp-inner">
                         <motion.div style={{ display: 'block' }} {...reveal} transition={{ duration: 0.5 }}>
                             <p className="lp-kicker">{c.eventsSubtitle}</p>
@@ -356,42 +401,9 @@ const Landing: React.FC<LandingProps> = (props) => {
                 </section>
             )}
 
-            {/* ---- News / blog teaser (only when posts exist) ---- */}
-            {hasBlog && (
-                <section id="news" className="lp-section">
-                    <div className="lp-inner">
-                        <motion.div style={{ display: 'block' }} {...reveal} transition={{ duration: 0.5 }}>
-                            <p className="lp-kicker">{t.blog.subtitle}</p>
-                            <h2 className="lp-h2">{t.blog.title}</h2>
-                        </motion.div>
-                        <div className="lp-grid">
-                            {recentPosts.map((post, i) => (
-                                <motion.div
-                                    key={post.id}
-                                    className="lp-card"
-                                    {...reveal}
-                                    transition={{ duration: 0.45, delay: Math.min(i * 0.05, 0.3) }}
-                                >
-                                    <h3 className="lp-card__title">{post.title}</h3>
-                                    <p className="lp-card__text">{post.excerpt}</p>
-                                    <Link className="lp-card__link" href={`/blog/${post.slug}`}>
-                                        {t.common.learnMore} →
-                                    </Link>
-                                </motion.div>
-                            ))}
-                        </div>
-                        <div className="lp-section__more">
-                            <Link className="lp-btn lp-btn--ghost" href="/blog">
-                                {t.blog.title} →
-                            </Link>
-                        </div>
-                    </div>
-                </section>
-            )}
-
             {/* ---- 3D experience (hidden on mobile). Inside the 3D scene it
                  flips to a "back to the standard site" prompt. ---- */}
-            <section className="lp-3d">
+            <section className="lp-3d" data-bg="#0f2040">
                 <div className="lp-inner">
                     <motion.div
                         style={{ display: 'block' }}
@@ -426,7 +438,11 @@ const Landing: React.FC<LandingProps> = (props) => {
 
             {/* ---- Sponsors (only shown when there are sponsors) ---- */}
             {hasSponsors && (
-            <section id="sponsors" className="lp-section lp-section--alt">
+            <section
+                id="sponsors"
+                data-bg="#f1f6f6"
+                className="lp-section lp-section--alt"
+            >
                 <div className="lp-inner">
                     <motion.div
                         style={{ display: 'block' }}
@@ -447,7 +463,7 @@ const Landing: React.FC<LandingProps> = (props) => {
             )}
 
             {/* ---- FAQ ---- */}
-            <section id="qa" className="lp-section">
+            <section id="qa" data-bg="#ffffff" className="lp-section">
                 <div className="lp-inner">
                     <motion.div
                         style={{ display: 'block' }}

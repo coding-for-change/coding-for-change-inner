@@ -7,39 +7,8 @@ body {
     /* -moz-osx-font-smoothing: grayscale; */
 }
 
-/* App-shell theme tokens (page background, footer, mobile nav). Dark is the
-   base; [data-theme="light"] overrides. Namespaced --cfc-* to avoid clashing
-   with the retro Win95 button vars defined in :root further down. The <html>
-   data-theme attribute is set server-side + by the no-flash script in layout. */
-:root {
-    --cfc-bg: #0b1a34;
-    --cfc-surface: #10213f;
-    --cfc-heading: #eef4fb;
-    --cfc-text: #9db0c7;
-    --cfc-accent: #7fe3e4;
-    --cfc-line: rgba(255, 255, 255, 0.12);
-    --cfc-logo-filter: brightness(0) invert(1);
-    --cfc-cta-bg: #7fe3e4;
-    --cfc-cta-fg: #06121f;
-    --cfc-footer-bg: #0a1830;
-}
-html[data-theme='light'] {
-    --cfc-bg: #eaf4f3; /* pale aqua (matches the .lp base) */
-    --cfc-surface: #ffffff;
-    --cfc-heading: #14313a; /* deep teal-navy headings */
-    --cfc-text: #6b7b82;
-    --cfc-accent: #0d9499; /* turquoise accent (footer email) */
-    --cfc-line: #d2e6e4;
-    --cfc-logo-filter: none;
-    --cfc-cta-bg: #12a5a9; /* turquoise CTA */
-    --cfc-cta-fg: #ffffff;
-    --cfc-footer-bg: #e0edeb; /* a slightly deeper patch of sky */
-}
-
 html, body {
-    /* Site base colour — flips with the theme (see --cfc-bg). Prevents any
-       flash/gutter behind the modern (.lp) content and footer. */
-    background-color: var(--cfc-bg);
+    background-color: #fff;
 }
 
 code {
@@ -300,7 +269,6 @@ input:active {
     bottom: 0px;
     top: 0px;
     overflow: hidden;
-    background: var(--cfc-bg);
     transform: translate3d(0, 0, 0);
 }
 

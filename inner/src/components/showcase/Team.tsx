@@ -112,9 +112,6 @@ const MemberCard: React.FC<{
                     className="lp-member__companies"
                     aria-label={t.team.experienceLabel}
                 >
-                    <span className="lp-member__companies-label">
-                        {t.team.experienceLabel}
-                    </span>
                     {companies.map((company) => {
                         const logo = mediaUrl(company.logo);
                         return (

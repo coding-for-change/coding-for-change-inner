@@ -26,8 +26,6 @@ function buildUrl(path: string, params: Record<string, string>): string {
 async function getJson<T>(url: string): Promise<T | null> {
     try {
         const res = await fetch(url, {
-            // Always fresh — CMS edits should appear immediately. (Blog pages
-            // additionally set `export const dynamic = 'force-dynamic'`.)
             cache: 'no-store',
             signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
         });
