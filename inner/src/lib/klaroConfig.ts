@@ -31,6 +31,7 @@ export const GOOGLE_BDR_URL = 'https://business.safety.google/privacy/';
 /** Bump on any material change to services or purposes. See note above. */
 export const CONSENT_CONFIG_VERSION = 1;
 
+export const SERVICE_NECESSARY = 'necessary';
 export const SERVICE_ANALYTICS = 'analytics';
 export const SERVICE_GOOGLE_ADS = 'google-ads';
 
@@ -96,8 +97,15 @@ const EN = {
             'Choose per purpose below — the site works fully either way.',
     },
     purposes: {
+        necessary: 'Strictly necessary',
         analytics: 'Audience measurement',
         advertising: 'Advertising measurement',
+    },
+    [SERVICE_NECESSARY]: {
+        title: 'Site basics',
+        description:
+            'Remembers the language you chose, your decision on this banner, and a random id proving we asked — we are legally required to keep that proof. ' +
+            'Exempt from consent under § 25(2) TDDDG because the site cannot work as you asked without it, so there is nothing here to switch off. Never used to track you.',
     },
     // Audit criterion 2: ads personalisation named explicitly, and criteria 4/5:
     // recipient named, with the Google data-responsibility link.
@@ -157,8 +165,15 @@ const DE = {
             'Wähle unten pro Zweck – die Seite funktioniert in jedem Fall vollständig.',
     },
     purposes: {
+        necessary: 'Unbedingt erforderlich',
         analytics: 'Reichweitenmessung',
         advertising: 'Werbemessung',
+    },
+    [SERVICE_NECESSARY]: {
+        title: 'Website-Grundfunktionen',
+        description:
+            'Speichert die von dir gewählte Sprache, deine Entscheidung zu diesem Banner und eine zufällige Kennung als Nachweis, dass wir gefragt haben – diesen Nachweis müssen wir gesetzlich aufbewahren. ' +
+            'Nach § 25 Abs. 2 TDDDG einwilligungsfrei, weil die Seite ohne das nicht wie gewünscht funktioniert; es gibt hier also nichts abzuschalten. Wird nie zum Tracking verwendet.',
     },
     [SERVICE_GOOGLE_ADS]: {
         title: 'Google Ads Conversion-Tracking',
@@ -220,6 +235,37 @@ export function buildKlaroConfig(locale: Locale): KlaroConfig {
         lang: locale,
         testing: false,
         services: [
+            {
+                // Declared purely for transparency: `required` means Klaro shows
+                // it as always-on and offers no toggle. It carries no consent —
+                // these items are § 25(2) exempt — but a visitor opening the
+                // settings deserves to see what runs regardless, rather than a
+                // list that silently omits it.
+                //
+                // NOTE: adding this does NOT warrant a CONSENT_CONFIG_VERSION
+                // bump, even though CLAUDE.md says to bump when a service is
+                // added. That rule exists to re-ask when new *processing* appears
+                // under an already-consented purpose. This adds none — it only
+                // describes storage that was always exempt.
+                name: SERVICE_NECESSARY,
+                title:
+                    locale === 'de'
+                        ? DE[SERVICE_NECESSARY].title
+                        : EN[SERVICE_NECESSARY].title,
+                purposes: ['necessary'],
+                // Deliberately NO `cookies` list. Verified in the vendored
+                // bundle that `updateServiceStorage` uses that field for exactly
+                // one thing — deleting the named cookies when the service is
+                // *not* consented (`if (!t && ...)`). A `required` service is
+                // always consented, so the list would be inert; and naming
+                // `cfc_consent` there would mean any edge case that treated this
+                // as unconsented would delete Klaro's own consent cookie and
+                // re-show the banner on every page load. The three cookies are
+                // described in the text above and listed in the Datenschutz
+                // table, which is where a visitor actually reads them.
+                required: true,
+                default: true,
+            },
             {
                 name: SERVICE_ANALYTICS,
                 title: locale === 'de' ? DE[SERVICE_ANALYTICS].title : EN[SERVICE_ANALYTICS].title,
