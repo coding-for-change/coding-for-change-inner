@@ -65,17 +65,17 @@ Erhoben werden dabei:
 - bei nicht markierten Aufrufen – sofern Ihr Browser sie übermittelt – die Domain der verweisenden Webseite (z. B. google.com), die wir einem groben Kanal zuordnen (Suche, Social Media, Verweis oder Direktzugriff); die vollständige Adresse der verweisenden Seite speichern wir nicht;
 - die von Ihnen aufgerufenen Seiten sowie einzelne Interaktionen (Beginn und Absenden eines Formulars, Erreichen des Buchungs-Widgets, Abschluss einer Terminbuchung) und die Spracheinstellung.
 
-Kennungen: Diese Angaben werden mit zwei zufällig erzeugten Kennungen verknüpft: einer Sitzungskennung, die nur für die Dauer Ihres Besuchs im Session-Storage Ihres Browsers gespeichert wird, und einer Besucherkennung, die für 180 Tage im lokalen Speicher (localStorage) Ihres Browsers bleibt. Die Besucherkennung ermöglicht es uns, einen späteren Besuch der Kampagne zuzuordnen, über die Sie ursprünglich zu uns gekommen sind – scannen Sie im Mai einen Plakat-Code und melden sich im Juli an, können wir diese Anmeldung dem Plakat zuordnen (sogenannte First-Touch-Zuordnung).
+Keine Cookies und keine Speicherung auf Ihrem Gerät: Diese Messung speichert nichts auf Ihrem Endgerät – kein Cookie, keinen lokalen Speicher. Die Kampagnen-Bezeichnung und eine zufällig erzeugte Sitzungsnummer bestehen ausschließlich im Arbeitsspeicher Ihres Browsers, solange der Tab geöffnet ist, damit eine Anmeldung dem Link zugeordnet werden kann, über den Sie gekommen sind. Sie sind verloren, sobald Sie die Seite neu laden, einen neuen Tab öffnen oder den Tab schließen. Wir können Sie bei einem späteren Besuch, auf einem anderen Gerät oder in einem anderen Tab nicht wiedererkennen.
 
-Wir speichern in diesem Zusammenhang keine IP-Adresse, erstellen keinen Fingerprint, verfolgen Sie nicht über andere Webseiten hinweg und führen diese Daten nicht mit anderen Quellen zusammen.
+Wir speichern keine IP-Adresse, erstellen keinen Fingerprint, verfolgen Sie nicht über andere Webseiten hinweg und führen diese Daten nicht mit anderen Quellen zusammen. Wir zählen Ereignisse, nicht Personen: Wir können erkennen, dass ein Plakat 37 Aufrufe und 4 Anmeldungen erzeugt hat, aber nicht, wie viele verschiedene Menschen das waren.
 
 Wenn Sie ein Formular absenden (Kontakt-, Bewerbungs- oder Warteliste-Formular), wird die Kampagnen-Bezeichnung Ihres Besuchs zusammen mit Ihrer Übermittlung gespeichert, damit wir nachvollziehen können, welche Maßnahme dazu geführt hat.
 
-Rechtsgrundlage: Ihre Einwilligung nach Art. 6 Abs. 1 lit. a DSGVO sowie § 25 Abs. 1 TDDDG für die Speicherung auf Ihrem Endgerät. Vor Ihrer Einwilligung wird nichts gelesen oder geschrieben; ein Widerruf löscht die gespeicherten Kennungen unmittelbar aus Ihrem Browser.
+Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO. Unser berechtigtes Interesse liegt in der Messung und Verbesserung der Reichweite und Wirksamkeit unserer nicht-kommerziellen Öffentlichkeitsarbeit. Da nichts auf Ihrem Endgerät gespeichert oder von dort gelesen wird, ist § 25 TDDDG nicht anwendbar und es ist keine Einwilligung erforderlich.
 
-Speicherdauer: Die Nutzungsereignisse werden für längstens 12 Monate gespeichert und anschließend automatisch gelöscht. Eine mit einer Formular-Übermittlung gespeicherte Kampagnen-Bezeichnung wird gemeinsam mit dieser Übermittlung gelöscht.
+Ihr Widerspruchsrecht: Übermittelt Ihr Browser ein „Do Not Track"- oder „Global Privacy Control"-Signal, erheben wir überhaupt nichts. Das ist der einfachste Weg, Ihr Widerspruchsrecht nach Art. 21 DSGVO auszuüben. Ihre weiteren Rechte nach Ziffer 15 bleiben unberührt.
 
-Übermittelt Ihr Browser zusätzlich ein „Do Not Track"- oder „Global Privacy Control"-Signal, erheben wir keine Nutzungsanalyse – auch dann nicht, wenn eine Einwilligung vorliegt. Ihr Widerspruchsrecht nach Art. 21 DSGVO sowie Ihre weiteren Rechte nach Ziffer 15 bleiben unberührt.
+Speicherdauer: Nutzungsereignisse werden automatisch nach 12 Monaten gelöscht. Eine mit einer Formular-Übermittlung gespeicherte Kampagnen-Bezeichnung wird gemeinsam mit dieser Übermittlung gelöscht.
 
 8. Einwilligungsverwaltung und Cookies
 
@@ -90,9 +90,6 @@ Alles, was auf Ihrem Endgerät gespeichert wird:
 - cfc_consent – speichert Ihre Cookie-Entscheidung. Unbedingt erforderlich, 180 Tage.
 - cfc_consent_id – zufällige Kennung zur Verknüpfung Ihrer Entscheidung mit unserem Einwilligungsnachweis. Unbedingt erforderlich, 180 Tage.
 - cfc-locale – speichert die von Ihnen gewählte Sprache. Unbedingt erforderlich, 12 Monate.
-- cfc.visitor (localStorage) – zufällige Besucherkennung für die Reichweitenmessung (Ziffer 7). Einwilligung, 180 Tage.
-- cfc.attribution (localStorage) – Kampagne, über die Sie gekommen sind (Ziffer 7). Einwilligung, 180 Tage.
-- cfc.session (sessionStorage) – zufällige Sitzungskennung (Ziffer 7). Einwilligung, bis zum Ende der Sitzung.
 - _gcl_aw und _gcl_dc – Google Ads Conversion-Messung (Ziffer 9). Einwilligung, bis zu 90 Tage.
 - _ga sowie Cookies, deren Name mit _ga_ beginnt – Google Analytics (Ziffer 10). Einwilligung, bis zu 14 Monate.
 

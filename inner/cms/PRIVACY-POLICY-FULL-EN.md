@@ -67,17 +67,17 @@ We collect:
 - for untagged visits — if your browser transmits it — the domain of the referring website (e.g. google.com), which we assign to a broad channel (search, social media, referral or direct); we do not store the full address of the referring page;
 - the pages you view and individual interactions (starting and submitting a form, reaching the booking widget, completing a booking) and the language setting.
 
-Identifiers: This information is linked to two randomly generated identifiers: a session identifier stored only for the duration of your visit in your browser's session storage, and a visitor identifier that remains in your browser's local storage for 180 days. The visitor identifier is what allows us to connect a later visit to the campaign you originally arrived through — if you scan a poster code in May and sign up in July, we can attribute that signup to the poster (known as first-touch attribution).
+No cookies and no storage on your device: this measurement stores nothing at all on your device — no cookie, no local storage. The campaign label and a randomly generated session number exist only in your browser's working memory for as long as the tab is open, so that a sign-up can be related to the link you arrived through. They are gone when you reload the page, open a new tab, or close the tab. There is no way for us to recognise you on a later visit, on another device, or in another tab.
 
-In this context we store no IP address, create no fingerprint, do not track you across other websites, and do not combine this data with any other source.
+We store no IP address, create no fingerprint, do not track you across other websites, and do not combine this data with any other source. We count events, not people: we can tell that a poster produced 37 visits and 4 sign-ups, but not how many distinct individuals that was.
 
 If you submit a form (contact, application or waitlist form), the campaign label of your visit is stored together with your submission so that we can understand which measure led to it.
 
-Legal basis: your consent, Art. 6(1)(a) GDPR, together with § 25(1) TDDDG for the storage on your device. Nothing is read or written before you consent, and withdrawing consent deletes the stored identifiers from your browser immediately.
+Legal basis: Art. 6(1)(f) GDPR. Our legitimate interest lies in measuring and improving the reach and effectiveness of our non-commercial public-relations work. Because nothing is stored on or read from your device, § 25 TDDDG does not apply and no consent is required.
 
-Storage duration: Usage events are stored for a maximum of 12 months and then deleted automatically. A campaign label stored with a form submission is deleted together with that submission.
+Your right to object: if your browser sends a "Do Not Track" or "Global Privacy Control" signal, we collect nothing at all. That is the simplest way to exercise your right to object under Art. 21 GDPR. Your other rights under section 15 remain unaffected.
 
-If your browser additionally transmits a "Do Not Track" or "Global Privacy Control" signal, we do not collect any usage analytics from you — not even if consent has been given. Your right to object under Art. 21 GDPR and your other rights under section 15 remain unaffected.
+Storage duration: usage events are deleted automatically after 12 months. A campaign label stored with a form submission is deleted together with that submission.
 
 8. Consent management and cookies
 
@@ -92,9 +92,6 @@ Everything stored on your device:
 - cfc_consent – remembers your cookie choice. Strictly necessary, 180 days.
 - cfc_consent_id – random id linking your choice to our consent record. Strictly necessary, 180 days.
 - cfc-locale – remembers the language you selected. Strictly necessary, 12 months.
-- cfc.visitor (localStorage) – random visitor id for reach measurement (section 7). Consent, 180 days.
-- cfc.attribution (localStorage) – the campaign you arrived through (section 7). Consent, 180 days.
-- cfc.session (sessionStorage) – random session id (section 7). Consent, until the end of the session.
 - _gcl_aw and _gcl_dc – Google Ads conversion measurement (section 9). Consent, up to 90 days.
 - _ga, and cookies whose name begins with _ga_ – Google Analytics (section 10). Consent, up to 14 months.
 
