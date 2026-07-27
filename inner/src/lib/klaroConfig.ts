@@ -116,10 +116,16 @@ const EN = {
             'Covers our own measurement, which keeps a random id on your device for <strong>180 days</strong> so a later visit can still be credited to the campaign you arrived through, and <strong>Google Analytics</strong>, which shares data with Google. ' +
             'No IP address, no fingerprint, and we never sell this data.',
     },
-    ok: 'Accept all',
-    acceptAll: 'Accept all',
+    // Short pair rather than "Accept all"/"Reject all". Permitted: the rules
+    // require each button's consequence to be clear and neither to be favoured,
+    // not particular wording. Scope stays obvious because "Choose individually"
+    // sits directly alongside. Keep both labels similar in length — an "Agree"
+    // next to a long, hedged reject label would be exactly the nudging the DSK
+    // equal-prominence rule prohibits.
+    ok: 'Agree',
+    acceptAll: 'Agree',
     acceptSelected: 'Save selection',
-    decline: 'Reject all',
+    decline: 'Reject',
     save: 'Save',
     close: 'Close',
     service: {
@@ -169,10 +175,12 @@ const DE = {
             'Umfasst unsere eigene Messung, die eine zufällige Kennung <strong>180 Tage</strong> auf deinem Gerät speichert, damit ein späterer Besuch noch der Kampagne zugeordnet werden kann, über die du gekommen bist, sowie <strong>Google Analytics</strong>, wobei Daten an Google übermittelt werden. ' +
             'Keine IP-Adresse, kein Fingerprint, und wir verkaufen diese Daten nicht.',
     },
-    ok: 'Alle akzeptieren',
-    acceptAll: 'Alle akzeptieren',
+    // „Zustimmen" / „Ablehnen" — die übliche Paarung auf deutschen Seiten.
+    // Siehe Kommentar in EN zur Gleichwertigkeit.
+    ok: 'Zustimmen',
+    acceptAll: 'Zustimmen',
     acceptSelected: 'Auswahl speichern',
-    decline: 'Alle ablehnen',
+    decline: 'Ablehnen',
     save: 'Speichern',
     close: 'Schließen',
     service: {
