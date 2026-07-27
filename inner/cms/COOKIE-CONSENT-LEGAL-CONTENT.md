@@ -409,11 +409,37 @@ Change "July 2026" / „Juli 2026" to the month you actually publish this.
 
 ---
 
-## Two things to do outside the CMS
+## Settings outside the CMS that this text asserts
 
-1. **Google Ads → accept the Data Processing Terms** in the account. §9 above
-   claims we have standard contractual clauses with Google; that claim is only
-   true once you've accepted them.
-2. **Cal.com → confirm the DPA.** §11 claims a data processing agreement with
-   Cal.com. Check it's actually in place on the account (Cal.com offers one);
-   if not, either sign it or soften that sentence before publishing.
+Several sentences above are **claims about configuration**. They are only true
+once the corresponding setting is actually applied — a privacy policy that
+asserts a control you haven't switched on is worse than one that says nothing.
+
+| # | Action | Asserted by | Status |
+|---|---|---|---|
+| 1 | Google Ads → accept the **Data Processing Terms** | §9 "we have concluded the standard contractual clauses" | ✅ done 2026-07-27 |
+| 2 | Cal.com → confirm the **DPA** | §11 "we have concluded a data processing agreement" | ✅ confirmed 2026-07-27 |
+| 3 | GA4 → **Google signals off** | §10 "'Google signals' is switched off" | ⬜ outstanding |
+| 4 | GA4 → **event retention 14 months** | §10 "retention period … is set to 14 months" | ⬜ outstanding |
+
+**Do 3 and 4 before publishing §10**, or that section states two things that
+aren't so.
+
+- **Google signals:** GA4 → *Admin* → Property → *Data Settings* →
+  *Data Collection* → untick **Google signals data collection**.
+  Note this is now a *reporting* control only. Since **15 June 2026** it no
+  longer governs the GA4 → Google Ads data flow — that is Consent Mode's
+  `ad_storage`, which our banner keeps denied unless the visitor accepts
+  advertising measurement. Worth switching off anyway: Ad Grants is search-only,
+  so demographics and cross-device reporting gain us nothing, and leaving it on
+  would widen what §10 has to disclose.
+- **Event retention:** GA4 → *Admin* → Property → *Data Settings* →
+  *Data Retention* → *Event data retention* → **14 months** (the default is 2,
+  which makes year-on-year comparison impossible).
+
+### Not asserted, but do it anyway
+
+**Do not import GA4 key events into Google Ads as conversions.** The direct Ads
+tag already reports all four; doing both double-counts and walks into the Ad
+Grants rule that total clicks must not nearly equal total conversions. Linking
+the accounts for *reporting* is fine.
