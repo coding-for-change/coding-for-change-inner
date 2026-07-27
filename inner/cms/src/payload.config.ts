@@ -17,6 +17,7 @@ import { Users } from './collections/Users';
 import { BlogPost } from './collections/BlogPost';
 import { WaitlistSignups } from './collections/WaitlistSignups';
 import { AnalyticsEvents } from './collections/AnalyticsEvents';
+import { ConsentRecords } from './collections/ConsentRecords';
 import { attributionField } from './fields/attribution';
 import { analyticsExportEndpoints } from './endpoints/analyticsExport';
 import { purgeAnalyticsEvents } from './lib/purgeAnalytics';
@@ -29,7 +30,7 @@ import { Homepage } from './globals/Homepage';
 
 export default buildConfig({
   editor: lexicalEditor(),
-  collections: [Users, Team, TeamGroups, Projects, Events, FAQ, Sponsors, SponsorTiers, Companies, Media, BlogPost, WaitlistSignups, AnalyticsEvents],
+  collections: [Users, Team, TeamGroups, Projects, Events, FAQ, Sponsors, SponsorTiers, Companies, Media, BlogPost, WaitlistSignups, AnalyticsEvents, ConsentRecords],
   globals: [SiteConfig, Membership, Legal, Partner, About, Homepage],
   // Admin-only CSV export endpoints (campaign funnel, raw events, signups).
   endpoints: analyticsExportEndpoints,

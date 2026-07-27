@@ -5,6 +5,7 @@ import { useSiteConfig, useCmsCollection, submitForm } from '../../api';
 import type { CmsForm, CmsFormField } from '../../api';
 import { getAttribution } from '../../lib/attribution';
 import { trackFormStart, trackConversion } from '../../lib/analytics';
+import { trackAdsConversion } from '../../lib/googleAds';
 import { useLanguage } from '../../contexts/LanguageContext';
 import RichText from '../RichText';
 import BookingEmbed from '../general/BookingEmbed';
@@ -109,6 +110,7 @@ const Contact: React.FC<ContactProps> = (props) => {
             await submitForm(form.id, submissionData, getAttribution());
             setSubmitted(true);
             trackConversion('contact');
+            trackAdsConversion('contact');
         } catch (err) {
             setSendError(true);
         } finally {

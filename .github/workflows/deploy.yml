@@ -16,6 +16,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Gate the deploy on the consent scan. We self-host the CMP, so nothing
+      # else watches for trackers added without being declared in the consent
+      # config — an undeclared cookie firing before consent breaks TDDDG § 25 and
+      # fails Google's EU User Consent Policy audit, which can suspend conversion
+      # measurement and take the Ad Grant with it. Cheap check, expensive miss.
+      - name: Consent scan
+        run: node scripts/consent-scan.mjs
+
       # 2. Build Docker images
       - name: Build Docker images
         run: |

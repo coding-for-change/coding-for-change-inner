@@ -25,6 +25,15 @@ services:
     environment:
       # Server-side CMS fetches go directly to the CMS container.
       - CMS_INTERNAL_URL=http://cms:3000/api
+      # Google Ads / GA4 tag IDs — read at runtime by the server-rendered
+      # layout, so a change needs only a restart, not an image rebuild. Unset
+      # means no gtag.js is emitted at all. See .env.example.
+      - GOOGLE_ADS_CONVERSION_ID=${GOOGLE_ADS_CONVERSION_ID:-}
+      - GOOGLE_ADS_LABEL_WAITLIST=${GOOGLE_ADS_LABEL_WAITLIST:-}
+      - GOOGLE_ADS_LABEL_APPLICATION=${GOOGLE_ADS_LABEL_APPLICATION:-}
+      - GOOGLE_ADS_LABEL_CONTACT=${GOOGLE_ADS_LABEL_CONTACT:-}
+      - GOOGLE_ADS_LABEL_BOOKING=${GOOGLE_ADS_LABEL_BOOKING:-}
+      - GA4_MEASUREMENT_ID=${GA4_MEASUREMENT_ID:-}
     depends_on:
       - cms
 

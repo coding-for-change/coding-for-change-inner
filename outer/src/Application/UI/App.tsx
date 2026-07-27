@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import LoadingScreen from './components/LoadingScreen';
 import HelpPrompt from './components/HelpPrompt';
 import InterfaceUI from './components/InterfaceUI';
+import ConsentLink from './components/ConsentLink';
 import eventBus from './EventBus';
 import './style.css';
 
@@ -18,6 +19,7 @@ const App = () => {
     return (
         <div id="ui-app">
             {!loading && <HelpPrompt />}
+            {!loading && <ConsentLink />}
             <LoadingScreen />
         </div>
     );

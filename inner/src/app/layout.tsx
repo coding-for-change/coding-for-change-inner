@@ -4,6 +4,8 @@ import { IBM_Plex_Sans, Space_Grotesk } from 'next/font/google';
 // All four global stylesheets — importing every one here is what the old CRA
 // build did via index.tsx/App.tsx. (The abandoned migration dropped App.css and
 // mobile.css, which is what broke its formatting.)
+import '../vendor/klaro/klaro.min.css';
+import '../consent.css';
 import '../index.css';
 import '../App.css';
 import '../components/showcase/landing.css';
@@ -11,6 +13,7 @@ import '../components/mobile/mobile.css';
 
 import Providers from './providers';
 import InputRelay from './InputRelay';
+import GoogleTag from '@/components/general/GoogleTag';
 import { fetchGlobal } from '@/lib/cms';
 import { getServerLocale } from '@/lib/locale';
 import type { CmsSiteConfig } from '@/api/types';
@@ -137,6 +140,7 @@ export default async function RootLayout({
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_JSONLD) }}
                 />
+                <GoogleTag />
             </head>
             <body>
                 <noscript>

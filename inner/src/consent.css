@@ -1,0 +1,70 @@
+/**
+ * Klaro consent banner — brand overrides.
+ *
+ * Klaro ships a neutral dark theme; these variables pull it onto the site's navy
+ * palette so the banner reads as part of the site rather than a bolted-on
+ * vendor widget. Only variables and a few structural rules are touched, so a
+ * Klaro upgrade can't be broken by us re-styling its internals.
+ *
+ * One rule here is a compliance requirement, not taste: **"Reject all" must be
+ * as visually prominent as "Accept all".** A greyed-out or de-emphasised reject
+ * button is the single most-fined cookie-banner mistake under German DSK
+ * guidance, and it's one of the things Google's EU User Consent Policy audit
+ * checks (functional consent buttons, affirmative action). Do not "improve" the
+ * hierarchy here by making accept louder.
+ */
+
+.klaro {
+    --green1: #0f2040; /* primary button background — site navy */
+    --green2: #16305f; /* hover */
+    --green3: #ffffff; /* text on primary */
+    --dark1: #0f2040; /* notice/modal background */
+    --dark2: #1b2b4a;
+    --dark3: #2c3d5e;
+    --light1: #ffffff;
+    --light2: #e5e7eb;
+    --light3: #cbd5e1;
+    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial,
+        sans-serif;
+    --border-radius: 8px;
+}
+
+.klaro .cookie-notice:not(.cookie-modal-notice),
+.klaro .cookie-modal .cm-modal {
+    font-family: var(--font-family);
+    box-shadow: 0 8px 32px rgba(15, 32, 64, 0.24);
+}
+
+/* Equal prominence for accept and reject. See the note above before changing. */
+.klaro .cm-btn.cm-btn-success,
+.klaro .cm-btn.cm-btn-danger,
+.klaro .cm-btn.cn-decline {
+    font-weight: 600;
+    opacity: 1;
+}
+
+.klaro .cm-btn.cm-btn-danger,
+.klaro .cm-btn.cn-decline {
+    background-color: transparent;
+    border: 1px solid var(--light2);
+    color: var(--light1);
+}
+
+.klaro .cm-btn.cm-btn-danger:hover,
+.klaro .cm-btn.cn-decline:hover {
+    background-color: var(--dark3);
+}
+
+/* Links inside the banner text (privacy policy, Google's data-responsibility
+   page) need to be obviously clickable against the navy background. */
+.klaro .cookie-notice a,
+.klaro .cookie-modal a {
+    color: #9ec5ff;
+    text-decoration: underline;
+}
+
+/* The notice sits above the site chrome but must never cover the 3D scene's
+   fullscreen prompt or trap focus behind it. */
+.klaro .cookie-notice:not(.cookie-modal-notice) {
+    z-index: 1000;
+}

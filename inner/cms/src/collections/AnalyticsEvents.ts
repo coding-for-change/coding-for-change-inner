@@ -11,21 +11,32 @@ export const EVENT_TYPES = [
   'form_start',
   'conversion',
   'outbound_click',
+  // Booking widget scrolled into view. An impression, not intent — kept for
+  // funnel shape only, never used as an ad conversion.
   'booking_started',
+  // A booking actually submitted on cal.com (embed `bookingSuccessful` event).
+  // This is the real conversion.
+  'booking_completed',
 ] as const;
 
 /**
- * Cookieless, first-party behavioural analytics.
+ * First-party behavioural analytics.
  *
  * The inner site beacons events here (page views, form starts, conversions)
- * tagged with the visit's random `sessionId` and its campaign attribution, so
- * we can measure the funnel from traffic source → interaction → conversion.
+ * tagged with the visit's `sessionId`, its persistent `visitorId` and its
+ * campaign attribution, so we can measure the funnel from traffic source →
+ * interaction → conversion.
  *
- * No cookies, no IP, no fingerprint, no personal data: the only identifier is
- * the per-visit `sessionId` (sessionStorage, gone when the tab closes), which
- * also links these events to a conversion row in waitlist-signups /
- * form-submissions. Public create (the site posts anonymously); admin-only read
- * — mirrors the WaitlistSignups access model.
+ * No IP, no fingerprint, no personal data beyond the two random identifiers:
+ * `sessionId` (sessionStorage, gone when the tab closes) groups one visit, and
+ * `visitorId` (localStorage, 182 days) joins a person's visits across sessions
+ * so a poster QR scanned in May can be credited for a signup in July.
+ *
+ * **Consent-gated.** `visitorId` is a persistent identifier and every write here
+ * is device storage under TDDDG § 25, so nothing is collected until the visitor
+ * accepts the `statistics` purpose in the consent banner. Withdrawal wipes the
+ * stored identifiers client-side. Public create (the site posts anonymously);
+ * admin-only read — mirrors the WaitlistSignups access model.
  */
 export const AnalyticsEvents: CollectionConfig = {
   slug: 'analytics-events',

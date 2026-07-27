@@ -88,6 +88,27 @@ Hard rules / gotchas:
 - `inner/cms/package.json` **must keep `"type": "module"`** — `payload migrate` loads the TS config via tsx and without it the extensionless `./collections/*` imports fail with `ERR_MODULE_NOT_FOUND` (the boot crash fixed in `9dcc818`). `next build`/`next start` bundle the config so they hide this; only the migrate CLI exposes it.
 - To repair a DB that already drifted (has the old schema, no matching migrations): restore a backup into a local Postgres, write a transactional reconcile script that creates the missing tables, copies data, drops old columns, and records the baseline migration as applied; diff the result against a fresh `pnpm payload migrate` (`pg_dump --schema-only`) to prove it matches, and boot the CMS against it before touching prod. `scripts/prod-localize-reconcile.sql` is the worked example.
 
+## Consent — REQUIRED process when adding anything third-party
+
+The site runs a **self-hosted Klaro CMP** (`inner/src/lib/klaroConfig.ts`), not a hosted one. That means **there is no scanner watching for undeclared trackers** — the compliance obligation is manual and it is on whoever adds the code.
+
+**Any change that loads a third-party script, embeds a third-party iframe, or writes a cookie / `localStorage` / `sessionStorage` key MUST be declared in the consent config before it ships.** Undeclared storage that fires before consent violates TDDDG § 25, and it is criterion 7 of the [Google EU User Consent Policy audit](https://support.google.com/google-ads/answer/16724512) — failing that audit can suspend conversion measurement, which in turn breaks the Ad Grants ≥1-conversion/month requirement and takes the grant down.
+
+Steps:
+
+1. **Add a service** to `services` in `inner/src/lib/klaroConfig.ts`, with its cookie patterns and a `purposes` entry.
+2. **Write the DE + EN description.** Name the recipient explicitly (e.g. "Google Ireland Ltd. and Google LLC (USA)") and, if it touches advertising, say **"ads personalisation"** in words — audit criteria 2 and 4 are about the text, not the wiring.
+3. **Gate the actual load** on consent. Either mark the script for Klaro to block, or check `consentFor(...)` from `inner/src/lib/consent.ts` before initialising. Don't assume Klaro blocks something it hasn't been told about.
+4. **Bump `CONSENT_CONFIG_VERSION`** if the new tracker falls under a purpose visitors have already consented to — otherwise everyone who consented previously keeps a stale consent that never covered this. The version is stamped on every consent record, so it's also how an audit maps a consent to the banner text it was given against.
+5. **Update the Datenschutz** (Legal global) — Art. 13 requires disclosure per recipient/purpose.
+6. **Verify with an empty profile**: load the site, decline, and confirm in DevTools → Application that no cookie or storage key from the new service exists. Nothing fires before consent.
+
+Hard rules / gotchas:
+- **Never make "Reject all" less prominent than "Accept all".** `hideDeclineAll` stays `false`. This is the most-fined banner mistake under German DSK guidance and the styling note in `inner/src/consent.css` says so for a reason.
+- **Google Consent Mode defaults live in `inner/src/components/general/GoogleTag.tsx`** and must execute *before* `gtag.js`. Reordering those two `<script>` tags silently reintroduces pre-consent cookies.
+- Klaro clears cookies it declares, but **it cannot clear `localStorage`** — our persistent `visitorId` is wiped explicitly by `clearAttribution()` in `inner/src/lib/attribution.ts`, wired to consent withdrawal. Any new persistent storage needs the same treatment.
+- Klaro is self-hosted and **upstream is quiet** (no npm release since v0.7.21, March 2024). Nothing updates automatically; a fix arrives only when someone bumps the package and deploys.
+
 ## Key Architectural Details
 
 - The outer site uses a **singleton pattern** for the `Application` class (`outer/src/Application/Application.ts`) which manages the Three.js scene, camera, renderer, and world objects.
