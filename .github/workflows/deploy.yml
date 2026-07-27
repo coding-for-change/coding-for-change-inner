@@ -83,7 +83,17 @@ jobs:
           # Copy Caddyfile
           $SCP Caddyfile ${SSH_TARGET}:/var/www/homepage/Caddyfile
 
-          # Write .env from GitHub secrets and copy to VPS
+          # Write .env from GitHub secrets and copy to VPS.
+          #
+          # This OVERWRITES /var/www/homepage/.env wholesale — deliberately, so
+          # the server holds no configuration that isn't reproducible from here.
+          # Consequence: anything added to that file by hand is lost on the next
+          # deploy, so every value must come from a secret.
+          #
+          # The Ads / GA4 ids are required for Ad Grants compliance, and an unset
+          # one is SILENT: GoogleTag.tsx renders no tag at all, the deploy goes
+          # green, and conversion tracking simply stops. If you add a new
+          # conversion action, add its secret here in the same commit.
           printf '%s\n' \
             "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" \
             "DATABASE_URL=postgresql://payload:${{ secrets.POSTGRES_PASSWORD }}@postgres:5432/payload" \
@@ -94,6 +104,12 @@ jobs:
             "EMAIL_FROM=info@codingforchange.com" \
             "EMAIL_FROM_NAME=Coding for Change" \
             "CONTACT_TO_EMAIL=info@codingforchange.com" \
+            "GOOGLE_ADS_CONVERSION_ID=${{ secrets.GOOGLE_ADS_CONVERSION_ID }}" \
+            "GOOGLE_ADS_LABEL_WAITLIST=${{ secrets.GOOGLE_ADS_LABEL_WAITLIST }}" \
+            "GOOGLE_ADS_LABEL_CONTACT=${{ secrets.GOOGLE_ADS_LABEL_CONTACT }}" \
+            "GOOGLE_ADS_LABEL_APPLICATION=${{ secrets.GOOGLE_ADS_LABEL_APPLICATION }}" \
+            "GOOGLE_ADS_LABEL_BOOKING=${{ secrets.GOOGLE_ADS_LABEL_BOOKING }}" \
+            "GA4_MEASUREMENT_ID=${{ secrets.GA4_MEASUREMENT_ID }}" \
             > /tmp/.env
           $SCP /tmp/.env ${SSH_TARGET}:/var/www/homepage/.env
           rm -f /tmp/.env
