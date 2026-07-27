@@ -106,11 +106,20 @@ const VISITOR_KEY = 'cfc.visitor';
 const SESSION_KEY = 'cfc.session';
 
 /**
- * How long a first-touch campaign keeps credit. Matched to the consent cookie's
- * lifetime so there is one expiry to reason about rather than two. `localStorage`
- * has no native TTL, so we store the deadline and enforce it on read.
+ * How long a first-touch campaign keeps credit — about six months.
+ *
+ * Chosen for two reasons, not arbitrarily:
+ *   - Consent must not be indefinite, and re-asking roughly every six months is
+ *     the settled expectation (CNIL recommends six months explicitly; German
+ *     DPAs don't fix a number but 6–12 months is standard practice). Matched to
+ *     the consent cookie so there is one expiry to reason about, not two.
+ *   - It has to comfortably exceed Google's ad click window (30 days default,
+ *     90 maximum), otherwise our own cross-session attribution would expire
+ *     before the ad platform's and buy us nothing.
+ *
+ * `localStorage` has no native TTL, so we store the deadline and enforce it on read.
  */
-const RETENTION_DAYS = 182;
+const RETENTION_DAYS = 180;
 
 interface VisitorRecord {
   visitorId: string;

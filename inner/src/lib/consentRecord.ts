@@ -21,7 +21,7 @@ import { CONSENT_CONFIG_VERSION } from './klaroConfig';
 
 const ENDPOINT = '/api/consent-records';
 const ID_COOKIE = 'cfc_consent_id';
-const ID_MAX_AGE_DAYS = 182; // matches the consent cookie's lifetime
+const ID_MAX_AGE_DAYS = 180; // matches the consent cookie's lifetime
 
 function readIdCookie(): string | null {
     try {

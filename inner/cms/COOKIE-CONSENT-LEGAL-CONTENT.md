@@ -88,7 +88,7 @@ Replace with:
 > completing a booking.
 >
 > **Identifiers:** a random session id, stored for the duration of your visit,
-> and a random visitor id stored for **182 days**. The visitor id is what allows
+> and a random visitor id stored for **180 days**. The visitor id is what allows
 > us to connect a later visit to the campaign you originally arrived through — if
 > you scan a poster code in May and sign up in July, we can attribute that
 > signup to the poster. We do **not** store your IP address, we do not create a
@@ -120,7 +120,7 @@ Replace with:
 > das Beginnen eines Formulars oder das Abschließen einer Terminbuchung.
 >
 > **Kennungen:** eine zufällige Sitzungskennung für die Dauer Ihres Besuchs und
-> eine zufällige Besucherkennung mit einer Speicherdauer von **182 Tagen**. Die
+> eine zufällige Besucherkennung mit einer Speicherdauer von **180 Tagen**. Die
 > Besucherkennung ermöglicht es uns, einen späteren Besuch der Kampagne
 > zuzuordnen, über die Sie ursprünglich zu uns gekommen sind – scannen Sie im Mai
 > einen Plakat-Code und melden sich im Juli an, können wir diese Anmeldung dem
@@ -165,11 +165,11 @@ Replace with:
 >
 > | Name | Purpose | Basis | Duration |
 > |---|---|---|---|
-> | `cfc_consent` | Remembers your cookie choice | Strictly necessary | 182 days |
-> | `cfc_consent_id` | Random id linking your choice to our consent record | Strictly necessary | 182 days |
+> | `cfc_consent` | Remembers your cookie choice | Strictly necessary | 180 days |
+> | `cfc_consent_id` | Random id linking your choice to our consent record | Strictly necessary | 180 days |
 > | `cfc-locale` | Remembers the language you selected | Strictly necessary | 12 months |
-> | `cfc.visitor` (localStorage) | Random visitor id for reach measurement (§7) | Consent | 182 days |
-> | `cfc.attribution` (localStorage) | The campaign you arrived through (§7) | Consent | 182 days |
+> | `cfc.visitor` (localStorage) | Random visitor id for reach measurement (§7) | Consent | 180 days |
+> | `cfc.attribution` (localStorage) | The campaign you arrived through (§7) | Consent | 180 days |
 > | `cfc.session` (sessionStorage) | Random session id (§7) | Consent | End of session |
 > | `_gcl_*` | Google Ads conversion measurement (§9) | Consent | up to 90 days |
 > | `_ga`, `_ga_*` | Google Analytics (§10) | Consent | up to 14 months |
@@ -201,11 +201,11 @@ Replace with:
 >
 > | Name | Zweck | Grundlage | Dauer |
 > |---|---|---|---|
-> | `cfc_consent` | Speichert Ihre Cookie-Entscheidung | Unbedingt erforderlich | 182 Tage |
-> | `cfc_consent_id` | Zufällige Kennung zur Verknüpfung mit unserem Einwilligungsnachweis | Unbedingt erforderlich | 182 Tage |
+> | `cfc_consent` | Speichert Ihre Cookie-Entscheidung | Unbedingt erforderlich | 180 Tage |
+> | `cfc_consent_id` | Zufällige Kennung zur Verknüpfung mit unserem Einwilligungsnachweis | Unbedingt erforderlich | 180 Tage |
 > | `cfc-locale` | Speichert die von Ihnen gewählte Sprache | Unbedingt erforderlich | 12 Monate |
-> | `cfc.visitor` (localStorage) | Zufällige Besucherkennung für die Reichweitenmessung (§ 7) | Einwilligung | 182 Tage |
-> | `cfc.attribution` (localStorage) | Kampagne, über die Sie gekommen sind (§ 7) | Einwilligung | 182 Tage |
+> | `cfc.visitor` (localStorage) | Zufällige Besucherkennung für die Reichweitenmessung (§ 7) | Einwilligung | 180 Tage |
+> | `cfc.attribution` (localStorage) | Kampagne, über die Sie gekommen sind (§ 7) | Einwilligung | 180 Tage |
 > | `cfc.session` (sessionStorage) | Zufällige Sitzungskennung (§ 7) | Einwilligung | Ende der Sitzung |
 > | `_gcl_*` | Google Ads Conversion-Messung (§ 9) | Einwilligung | bis zu 90 Tage |
 > | `_ga`, `_ga_*` | Google Analytics (§ 10) | Einwilligung | bis zu 14 Monate |

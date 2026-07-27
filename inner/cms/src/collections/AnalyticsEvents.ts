@@ -29,7 +29,7 @@ export const EVENT_TYPES = [
  *
  * No IP, no fingerprint, no personal data beyond the two random identifiers:
  * `sessionId` (sessionStorage, gone when the tab closes) groups one visit, and
- * `visitorId` (localStorage, 182 days) joins a person's visits across sessions
+ * `visitorId` (localStorage, 180 days) joins a person's visits across sessions
  * so a poster QR scanned in May can be credited for a signup in July.
  *
  * **Consent-gated.** `visitorId` is a persistent identifier and every write here

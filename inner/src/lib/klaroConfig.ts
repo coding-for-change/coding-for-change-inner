@@ -113,7 +113,7 @@ const EN = {
         title: 'Site analytics',
         description:
             'Counts page views and which campaign brought you here, so we know what is worth doing again. ' +
-            'Covers our own measurement, which keeps a random id on your device for <strong>182 days</strong> so a later visit can still be credited to the campaign you arrived through, and <strong>Google Analytics</strong>, which shares data with Google. ' +
+            'Covers our own measurement, which keeps a random id on your device for <strong>180 days</strong> so a later visit can still be credited to the campaign you arrived through, and <strong>Google Analytics</strong>, which shares data with Google. ' +
             'No IP address, no fingerprint, and we never sell this data.',
     },
     ok: 'Accept all',
@@ -166,7 +166,7 @@ const DE = {
         title: 'Website-Analyse',
         description:
             'Zählt Seitenaufrufe und über welche Kampagne du hergekommen bist, damit wir wissen, was sich lohnt. ' +
-            'Umfasst unsere eigene Messung, die eine zufällige Kennung <strong>182 Tage</strong> auf deinem Gerät speichert, damit ein späterer Besuch noch der Kampagne zugeordnet werden kann, über die du gekommen bist, sowie <strong>Google Analytics</strong>, wobei Daten an Google übermittelt werden. ' +
+            'Umfasst unsere eigene Messung, die eine zufällige Kennung <strong>180 Tage</strong> auf deinem Gerät speichert, damit ein späterer Besuch noch der Kampagne zugeordnet werden kann, über die du gekommen bist, sowie <strong>Google Analytics</strong>, wobei Daten an Google übermittelt werden. ' +
             'Keine IP-Adresse, kein Fingerprint, und wir verkaufen diese Daten nicht.',
     },
     ok: 'Alle akzeptieren',
@@ -199,7 +199,7 @@ export function buildKlaroConfig(locale: Locale): KlaroConfig {
         elementID: 'klaro',
         storageMethod: 'cookie',
         cookieName: 'cfc_consent',
-        cookieExpiresAfterDays: 182, // ~6 months; re-ask rather than assume forever
+        cookieExpiresAfterDays: 180, // ~6 months — see RETENTION_DAYS in attribution.ts
         privacyPolicy: '/privacy',
         default: false, // nothing on by default
         mustConsent: false, // no cookie wall — the site stays usable while undecided

@@ -13,7 +13,7 @@ import type { Field } from 'payload';
  *
  * All fields are system-populated (read-only in the admin) and hold no name,
  * email, IP or free text. Two identifiers: `sessionId` (per visit) and
- * `visitorId` (persistent, 182 days). The latter *is* a stable identifier and
+ * `visitorId` (persistent, 180 days). The latter *is* a stable identifier and
  * therefore personal data, which is why the whole capture is gated behind the
  * `statistics` consent purpose and wiped when consent is withdrawn.
  *
@@ -121,7 +121,7 @@ export const attributionField: Field = {
       admin: {
         readOnly: true,
         description:
-          'Persistent random id (localStorage, 182 days) joining a visitor\'s sessions across weeks — this is what lets a campaign get credit for a conversion that happens on a later visit. Consent-gated; wiped on withdrawal.',
+          'Persistent random id (localStorage, 180 days) joining a visitor\'s sessions across weeks — this is what lets a campaign get credit for a conversion that happens on a later visit. Consent-gated; wiped on withdrawal.',
       },
     },
     {

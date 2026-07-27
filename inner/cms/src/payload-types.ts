@@ -581,7 +581,7 @@ export interface WaitlistSignup {
      */
     sessionId?: string | null;
     /**
-     * Persistent random id (localStorage, 182 days) joining a visitor's sessions across weeks — this is what lets a campaign get credit for a conversion that happens on a later visit. Consent-gated; wiped on withdrawal.
+     * Persistent random id (localStorage, 180 days) joining a visitor's sessions across weeks — this is what lets a campaign get credit for a conversion that happens on a later visit. Consent-gated; wiped on withdrawal.
      */
     visitorId?: string | null;
     /**
@@ -658,7 +658,7 @@ export interface AnalyticsEvent {
      */
     sessionId?: string | null;
     /**
-     * Persistent random id (localStorage, 182 days) joining a visitor's sessions across weeks — this is what lets a campaign get credit for a conversion that happens on a later visit. Consent-gated; wiped on withdrawal.
+     * Persistent random id (localStorage, 180 days) joining a visitor's sessions across weeks — this is what lets a campaign get credit for a conversion that happens on a later visit. Consent-gated; wiped on withdrawal.
      */
     visitorId?: string | null;
     /**
@@ -923,7 +923,7 @@ export interface FormSubmission {
      */
     sessionId?: string | null;
     /**
-     * Persistent random id (localStorage, 182 days) joining a visitor's sessions across weeks — this is what lets a campaign get credit for a conversion that happens on a later visit. Consent-gated; wiped on withdrawal.
+     * Persistent random id (localStorage, 180 days) joining a visitor's sessions across weeks — this is what lets a campaign get credit for a conversion that happens on a later visit. Consent-gated; wiped on withdrawal.
      */
     visitorId?: string | null;
     /**
