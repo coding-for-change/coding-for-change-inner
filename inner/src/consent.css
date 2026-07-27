@@ -197,7 +197,10 @@
 
 .klaro .cookie-notice:not(.cookie-modal-notice) .cn-body > p:first-child {
     margin: 0 0 16px;
-    max-width: 68ch;
+    /* No max-width: capping this at ~68ch left the paragraph ending well short of
+       the card edge while the buttons sat flush right, so the actions looked
+       stranded in empty space. The card's own 760px max-width already keeps the
+       line length readable. */
 }
 
 /* Actions row: "Choose individually" on the left, the two buttons on the right,
@@ -235,6 +238,27 @@
     width: auto;
     margin: 0;
     white-space: nowrap;
+}
+
+/*
+ * Accept before Reject, by request. Order is not regulated — GDPR/TDDDG/DSK
+ * require *equal prominence*, not a particular sequence, and all three buttons
+ * share one style block above, so neither is favoured.
+ *
+ * Caveat: Klaro emits decline first in the DOM, so this reorders visually only.
+ * A keyboard user therefore reaches "Reject all" first while seeing "Accept all"
+ * leftmost — a WCAG 2.4.3 focus-order mismatch. Judged acceptable here because
+ * the two controls are adjacent, identically styled and equally weighted, so
+ * neither meaning nor operability is lost. If Klaro's DOM order ever becomes
+ * configurable, drop these two rules and use that instead.
+ */
+.klaro .cookie-notice:not(.cookie-modal-notice) .cn-body .cn-buttons button.cm-btn.cm-btn-success {
+    order: 1;
+}
+
+.klaro .cookie-notice:not(.cookie-modal-notice) .cn-body .cn-buttons button.cm-btn.cm-btn-danger,
+.klaro .cookie-notice:not(.cookie-modal-notice) .cn-body .cn-buttons button.cm-btn.cn-decline {
+    order: 2;
 }
 
 .klaro .cm-btn {
