@@ -77,10 +77,16 @@ export interface KlaroConfig {
 const EN = {
     privacyPolicyUrl: '/privacy',
     consentNotice: {
-        title: 'Your choice about cookies',
+        // Kept deliberately short: this is a banner, not the privacy policy. The
+        // per-service detail lives in the modal behind "Choose individually".
+        // The Google link is here rather than only in the modal so it is visible
+        // without a click — audit criterion 5.
+        title: 'Cookies',
         description:
-            'We use cookies and similar storage for two things: measuring how our site is used, and measuring whether our Google Ads reach the people we are trying to reach. ' +
-            'Nothing in these categories is set unless you agree. You can change or withdraw your choice at any time via “Cookie settings” in the footer.',
+            'We measure how the site is used and whether our Google Ads reach the right people. ' +
+            'Nothing is stored unless you agree, and you can change your mind any time via “Cookie settings”. ' +
+            '<a href="/privacy">Privacy policy</a> · ' +
+            `<a href="${GOOGLE_BDR_URL}" target="_blank" rel="noopener noreferrer">How Google uses this data</a>`,
         learnMore: 'Choose individually',
     },
     consentModal: {
@@ -107,8 +113,8 @@ const EN = {
         title: 'Site analytics',
         description:
             'Counts page views and which campaign brought you here, so we know what is worth doing again. ' +
-            'Covers our own first-party measurement (no cookies, cleared when you close the tab) and <strong>Google Analytics</strong>, which shares data with Google. ' +
-            'We never sell this data.',
+            'Covers our own measurement, which keeps a random id on your device for <strong>182 days</strong> so a later visit can still be credited to the campaign you arrived through, and <strong>Google Analytics</strong>, which shares data with Google. ' +
+            'No IP address, no fingerprint, and we never sell this data.',
     },
     ok: 'Accept all',
     acceptAll: 'Accept all',
@@ -129,10 +135,13 @@ const EN = {
 const DE = {
     privacyPolicyUrl: '/privacy',
     consentNotice: {
-        title: 'Deine Entscheidung über Cookies',
+        // Siehe Kommentar in EN: absichtlich kurz, Details im Modal.
+        title: 'Cookies',
         description:
-            'Wir nutzen Cookies und ähnliche Speicher für zwei Dinge: um zu messen, wie unsere Seite genutzt wird, und um zu messen, ob unsere Google Ads die Leute erreichen, die wir erreichen wollen. ' +
-            'Ohne deine Zustimmung wird davon nichts gesetzt. Du kannst deine Entscheidung jederzeit über „Cookie-Einstellungen“ im Footer ändern oder widerrufen.',
+            'Wir messen, wie die Seite genutzt wird und ob unsere Google Ads die richtigen Leute erreichen. ' +
+            'Ohne deine Zustimmung wird nichts gespeichert, und du kannst deine Wahl jederzeit über „Cookie-Einstellungen“ ändern. ' +
+            '<a href="/privacy">Datenschutz</a> · ' +
+            `<a href="${GOOGLE_BDR_URL}" target="_blank" rel="noopener noreferrer">Wie Google diese Daten nutzt</a>`,
         learnMore: 'Einzeln auswählen',
     },
     consentModal: {
@@ -157,8 +166,8 @@ const DE = {
         title: 'Website-Analyse',
         description:
             'Zählt Seitenaufrufe und über welche Kampagne du hergekommen bist, damit wir wissen, was sich lohnt. ' +
-            'Umfasst unsere eigene First-Party-Messung (keine Cookies, wird beim Schließen des Tabs gelöscht) und <strong>Google Analytics</strong>, wobei Daten an Google übermittelt werden. ' +
-            'Wir verkaufen diese Daten nicht.',
+            'Umfasst unsere eigene Messung, die eine zufällige Kennung <strong>182 Tage</strong> auf deinem Gerät speichert, damit ein späterer Besuch noch der Kampagne zugeordnet werden kann, über die du gekommen bist, sowie <strong>Google Analytics</strong>, wobei Daten an Google übermittelt werden. ' +
+            'Keine IP-Adresse, kein Fingerprint, und wir verkaufen diese Daten nicht.',
     },
     ok: 'Alle akzeptieren',
     acceptAll: 'Alle akzeptieren',
