@@ -83,7 +83,18 @@ jobs:
           # Copy Caddyfile
           $SCP Caddyfile ${SSH_TARGET}:/var/www/homepage/Caddyfile
 
-          # Write .env from GitHub secrets and copy to VPS
+          # Write .env from GitHub secrets and copy to VPS.
+          #
+          # NOTE: this OVERWRITES /var/www/homepage/.env wholesale, so anything
+          # added there by hand is lost on every deploy. That is why the Google
+          # Ads / GA4 ids live here rather than on the server.
+          #
+          # They are deliberately literals, not secrets: every one of them ships
+          # to the browser in the page source, so hiding them buys nothing while
+          # keeping them here makes them reviewable in git. Ad Grants compliance
+          # depends on them — an unset id makes GoogleTag.tsx render no tag at
+          # all, which fails silently and would stop conversion tracking with no
+          # error anywhere. See ADS-CONVERSION-TRACKING-PLAN.md.
           printf '%s\n' \
             "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" \
             "DATABASE_URL=postgresql://payload:${{ secrets.POSTGRES_PASSWORD }}@postgres:5432/payload" \
@@ -94,6 +105,12 @@ jobs:
             "EMAIL_FROM=info@codingforchange.com" \
             "EMAIL_FROM_NAME=Coding for Change" \
             "CONTACT_TO_EMAIL=info@codingforchange.com" \
+            "GOOGLE_ADS_CONVERSION_ID=AW-18268266052" \
+            "GOOGLE_ADS_LABEL_WAITLIST=pVB3CJamodccEMS8_oZE" \
+            "GOOGLE_ADS_LABEL_CONTACT=mHJLCJmmodccEMS8_oZE" \
+            "GOOGLE_ADS_LABEL_APPLICATION=uSXJCJymodccEMS8_oZE" \
+            "GOOGLE_ADS_LABEL_BOOKING=63jkCJ-modccEMS8_oZE" \
+            "GA4_MEASUREMENT_ID=G-9CT0R0CSKW" \
             > /tmp/.env
           $SCP /tmp/.env ${SSH_TARGET}:/var/www/homepage/.env
           rm -f /tmp/.env
