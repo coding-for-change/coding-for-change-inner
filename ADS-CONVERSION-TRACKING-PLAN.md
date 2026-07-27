@@ -1,6 +1,6 @@
 # Google Ad Grants — Conversion Tracking + Cookie Consent Plan
 
-Status: **implemented — PR #44.** Prepared 2026-07-27. Migrations generated and verified; awaiting the Google Ads / GA4 IDs and the Datenschutz paste (see `inner/cms/COOKIE-CONSENT-LEGAL-CONTENT.md`).
+Status: **implemented — PR #44.** Prepared 2026-07-27. Migrations generated and verified. All Google Ads + GA4 IDs supplied and set in both local and production `.env`. Remaining before merge: the Datenschutz paste (`inner/cms/COOKIE-CONSENT-LEGAL-CONTENT.md`), a manual runtime test of the consent→cookie behaviour, and the two external acknowledgements (Google Data Processing Terms, Cal.com DPA).
 
 **Locked decisions (2026-07-27):**
 - **CMP: Klaro, self-hosted, with a `consent-records` collection.** Chosen over Cookiebot Free after weighing the effort (§4a). No page ceiling, no surprise auto-upgrade invoice, no third-party JS, banner matches the redesign, and Google does **not** require a certified CMP for advertisers (verified, §3). Cost: ~8h of build, and we own the compliance surface — including a drifting upstream (no npm release since Mar 2024, no commits since Mar 2025).
