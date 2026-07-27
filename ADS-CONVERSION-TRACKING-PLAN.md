@@ -1,6 +1,6 @@
 # Google Ad Grants — Conversion Tracking + Cookie Consent Plan
 
-Status: **research done, decisions locked, no code written yet.** Prepared 2026-07-27.
+Status: **implemented — PR #44.** Prepared 2026-07-27. Migrations generated and verified; awaiting the Google Ads / GA4 IDs and the Datenschutz paste (see `inner/cms/COOKIE-CONSENT-LEGAL-CONTENT.md`).
 
 **Locked decisions (2026-07-27):**
 - **CMP: Klaro, self-hosted, with a `consent-records` collection.** Chosen over Cookiebot Free after weighing the effort (§4a). No page ceiling, no surprise auto-upgrade invoice, no third-party JS, banner matches the redesign, and Google does **not** require a certified CMP for advertisers (verified, §3). Cost: ~8h of build, and we own the compliance surface — including a drifting upstream (no npm release since Mar 2024, no commits since Mar 2025).
@@ -18,7 +18,7 @@ Status: **research done, decisions locked, no code written yet.** Prepared 2026-
 | Is conversion tracking really mandatory for Ad Grants? | **Yes.** Confirmed in Google's own policy. Our account (created 2026) is squarely in scope. |
 | Is ≥1 conversion/month really required? | **Yes**, and it's checked. Zero-conversion months are a compliance risk. |
 | Is a cookie banner mandatory? | **Yes — but only because we're adding Google Ads tags.** It is not mandated by Ad Grants itself; it's mandated by German TDDDG § 25 + Google's own EU user consent policy once Google's cookies land on the site. |
-| Best free CMP tier? | **Cookiebot Free** is the right call for us today (site is ~20–30 URLs, limit is 50). CookieYes Free is the better long-term free tier if the blog grows. Klaro (self-hosted) is the zero-cost-forever option if we accept manual maintenance. |
+| Best free CMP tier? | **Klaro, self-hosted** — chosen. Cookiebot Free was the hosted runner-up; CookieYes Free was eliminated on its 5,000-pageview cap. See §4. |
 | Biggest hidden risk | Consent refusal + very low ad volume ⇒ a month with **0 recorded conversions** ⇒ Ad Grants non-compliance, even though the site actually converted. Mitigations in §6. |
 
 **Important:** this reverses a deliberate earlier decision. The whole first-party analytics stack was built *specifically to avoid a cookie banner* (legitimate interest, no cookies, sessionStorage only). Putting Google Ads tags on the site ends that. If you want to keep the no-banner site, the alternative is §6c (offline conversion import) — but that has its own consent problem, so it is not a clean escape.

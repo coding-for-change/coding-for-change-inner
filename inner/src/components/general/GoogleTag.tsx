@@ -8,17 +8,26 @@
  * rendering is already dynamic (the root layout awaits the cookie-derived
  * locale). The IDs aren't secret; this is purely about deployment ergonomics.
  *
- * Script order is load-bearing and must not be rearranged:
+ * **We inject `gtag.js` from inside the inline script rather than rendering a
+ * `<script src>` tag, and that is not a style choice.** Next's App Router hoists
+ * `<script src>` elements from a layout to the very top of `<head>`, ahead of
+ * inline scripts. Rendering the tag declaratively put `gtag.js` at byte ~1300
+ * while the denied defaults sat at ~4050 — so an async `gtag.js` could
+ * initialise *before* the defaults existed and write `_gcl_*` / `_ga*` cookies
+ * with no consent. That is audit criterion 7 ("no cookies before consent")
+ * failing, and it is invisible unless you read the rendered HTML. Creating the
+ * element in JS after the defaults makes the order unconditional. The same
+ * pattern is used for the Typekit stylesheet in `layout.tsx`.
+ *
+ * Order within the single inline script:
  *
  *   1. `dataLayer` + `gtag` shim, then `consent default` with **everything
- *      denied**. This has to execute before gtag.js so that no `_gcl_*` or `_ga*`
- *      cookie can be written before the visitor answers the banner — audit
- *      criterion 7, and the thing a reviewer can check in ten seconds.
- *   2. `gtag.js` itself, async. It loads regardless of consent and sends
+ *      denied**.
+ *   2. `config` for the Ads conversion ID and the GA4 measurement ID.
+ *   3. inject `gtag.js`, async. It loads regardless of consent and sends
  *      cookieless pings while denied. That's what makes this *Advanced* rather
- *      than *Basic* Consent Mode, and it's the only mode under which Google can
- *      ever model the denied traffic.
- *   3. `config` for the Ads conversion ID and the GA4 measurement ID.
+ *      than *Basic* Consent Mode, and the only mode under which Google can ever
+ *      model the denied traffic.
  *
  * `ConsentManager` later flips the signals via `gtag('consent','update',…)`.
  * Because the shim defines `gtag` synchronously as a `dataLayer.push` wrapper,
@@ -71,15 +80,12 @@ export default function GoogleTag() {
         "gtag('js',new Date());" +
         (ADS_ID ? `gtag('config','${ADS_ID}');` : '') +
         (GA4_ID ? `gtag('config','${GA4_ID}');` : '') +
-        `window.__CFC_ADS__=${JSON.stringify({ conversionId: ADS_ID, labels })};`;
+        `window.__CFC_ADS__=${JSON.stringify({ conversionId: ADS_ID, labels })};` +
+        // Only now fetch gtag.js — see the ordering note above. One script serves
+        // both products; the id in the URL just picks the container to prime.
+        "(function(){var s=document.createElement('script');s.async=true;" +
+        `s.src='https://www.googletagmanager.com/gtag/js?id=${ADS_ID || GA4_ID}';` +
+        'document.head.appendChild(s);})();';
 
-    // gtag.js is fetched with whichever id is present; one script serves both.
-    const tagId = ADS_ID || GA4_ID;
-
-    return (
-        <>
-            <script dangerouslySetInnerHTML={{ __html: bootstrap }} />
-            <script async src={`https://www.googletagmanager.com/gtag/js?id=${tagId}`} />
-        </>
-    );
+    return <script dangerouslySetInnerHTML={{ __html: bootstrap }} />;
 }
