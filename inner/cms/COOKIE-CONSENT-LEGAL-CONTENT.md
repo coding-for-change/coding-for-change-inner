@@ -419,11 +419,14 @@ asserts a control you haven't switched on is worse than one that says nothing.
 |---|---|---|---|
 | 1 | Google Ads → accept the **Data Processing Terms** | §9 "we have concluded the standard contractual clauses" | ✅ done 2026-07-27 |
 | 2 | Cal.com → confirm the **DPA** | §11 "we have concluded a data processing agreement" | ✅ confirmed 2026-07-27 |
-| 3 | GA4 → **Google signals off** | §10 "'Google signals' is switched off" | ⬜ outstanding |
-| 4 | GA4 → **event retention 14 months** | §10 "retention period … is set to 14 months" | ⬜ outstanding |
+| 3 | GA4 → **Google signals off** | §10 "'Google signals' is switched off" | ✅ done 2026-07-27 |
+| 4 | GA4 → **event retention 14 months** | §10 "retention period … is set to 14 months" | ✅ done 2026-07-27 (Ereignisdaten 2 → 14 Monate) |
 
-**Do 3 and 4 before publishing §10**, or that section states two things that
-aren't so.
+All four are now applied, so every configuration claim in §9–§11 is true.
+
+**Full ready-to-paste policies:** `PRIVACY-POLICY-FULL-DE.md` and
+`PRIVACY-POLICY-FULL-EN.md` in this directory — the complete 17-section text with
+renumbered cross-references, rather than the diff blocks above.
 
 - **Google signals:** GA4 → *Admin* → Property → *Data Settings* →
   *Data Collection* → untick **Google signals data collection**.
