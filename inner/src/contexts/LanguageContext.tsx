@@ -5,9 +5,23 @@ import { Locale, Translations, translations } from '../i18n/translations';
 
 const STORAGE_KEY = 'cfc-locale';
 
-/** SSR-safe: `window`/`localStorage`/`navigator` only exist in the browser. */
+/**
+ * SSR-safe: `window`/`localStorage`/`navigator` only exist in the browser.
+ *
+ * Precedence matters. `?lang=` wins over the stored preference because an
+ * inbound link asking for a language is an explicit, current request — a German
+ * Google Ad, say. Without this, a visitor who once picked English would click a
+ * German ad, get German HTML from the middleware, then get silently flipped back
+ * to English on hydration. See `src/middleware.ts` for the server half.
+ */
 function getClientLocale(fallback: Locale): Locale {
     if (typeof window === 'undefined') return fallback;
+    try {
+        const requested = new URLSearchParams(window.location.search).get('lang');
+        if (requested === 'en' || requested === 'de') return requested;
+    } catch {
+        /* malformed query string — fall through to the stored preference */
+    }
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored === 'en' || stored === 'de') return stored;
     if (navigator.language.startsWith('de')) return 'de';
@@ -48,6 +62,15 @@ export const LanguageProvider: React.FC<{
             // (e.g. first visit by a German speaker → server defaulted to 'en').
             // Persist the preference and re-render server-side so the CMS
             // content matches — no client-side CMS fetch needed.
+            // Persist to localStorage too, not just the cookie: otherwise a
+            // `?lang=de` arrival is forgotten the moment the visitor clicks
+            // through to a URL without the param, and `getClientLocale` falls
+            // back to navigator/stored and flips the language mid-session.
+            try {
+                localStorage.setItem(STORAGE_KEY, client);
+            } catch {
+                /* private mode / quota — the cookie still carries the choice */
+            }
             writeLocaleCookie(client);
             setLocaleState(client);
             router.refresh();
