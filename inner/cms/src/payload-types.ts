@@ -581,10 +581,6 @@ export interface WaitlistSignup {
      */
     sessionId?: string | null;
     /**
-     * Persistent random id (localStorage, 180 days) joining a visitor's sessions across weeks — this is what lets a campaign get credit for a conversion that happens on a later visit. Consent-gated; wiped on withdrawal.
-     */
-    visitorId?: string | null;
-    /**
      * When attribution was first captured this session.
      */
     firstSeenAt?: string | null;
@@ -657,10 +653,6 @@ export interface AnalyticsEvent {
      * Random per-visit id (sessionStorage). Links this conversion to the behavioural funnel; not a stable identifier, not personal data.
      */
     sessionId?: string | null;
-    /**
-     * Persistent random id (localStorage, 180 days) joining a visitor's sessions across weeks — this is what lets a campaign get credit for a conversion that happens on a later visit. Consent-gated; wiped on withdrawal.
-     */
-    visitorId?: string | null;
     /**
      * When attribution was first captured this session.
      */
@@ -922,10 +914,6 @@ export interface FormSubmission {
      * Random per-visit id (sessionStorage). Links this conversion to the behavioural funnel; not a stable identifier, not personal data.
      */
     sessionId?: string | null;
-    /**
-     * Persistent random id (localStorage, 180 days) joining a visitor's sessions across weeks — this is what lets a campaign get credit for a conversion that happens on a later visit. Consent-gated; wiped on withdrawal.
-     */
-    visitorId?: string | null;
     /**
      * When attribution was first captured this session.
      */
@@ -1656,7 +1644,6 @@ export interface WaitlistSignupsSelect<T extends boolean = true> {
         referrer?: T;
         landingPath?: T;
         sessionId?: T;
-        visitorId?: T;
         firstSeenAt?: T;
       };
   updatedAt?: T;
@@ -1682,7 +1669,6 @@ export interface AnalyticsEventsSelect<T extends boolean = true> {
         referrer?: T;
         landingPath?: T;
         sessionId?: T;
-        visitorId?: T;
         firstSeenAt?: T;
       };
   meta?: T;
@@ -1840,7 +1826,6 @@ export interface FormSubmissionsSelect<T extends boolean = true> {
         referrer?: T;
         landingPath?: T;
         sessionId?: T;
-        visitorId?: T;
         firstSeenAt?: T;
       };
   updatedAt?: T;
