@@ -18,19 +18,19 @@ const ImprintContent: React.FC<{
     if (!legal) return null;
 
     if (props.section === 'impressum') {
-        return <RichText content={legal.impressum} />;
+        return <RichText className="lp-prose" content={legal.impressum} />;
     }
     if (props.section === 'privacy') {
-        return <RichText content={legal.privacyPolicy} />;
+        return <RichText className="lp-prose" content={legal.privacyPolicy} />;
     }
 
     return (
         <>
-            <RichText content={legal.impressum} />
+            <RichText className="lp-prose" content={legal.impressum} />
             <br />
             <hr style={styles.divider} />
             <br />
-            <RichText content={legal.privacyPolicy} />
+            <RichText className="lp-prose" content={legal.privacyPolicy} />
         </>
     );
 };
