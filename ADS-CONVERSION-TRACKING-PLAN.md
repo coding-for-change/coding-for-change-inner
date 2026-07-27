@@ -282,9 +282,14 @@ Roughly 60–90 minutes total.
 
 **Q4 — The two extras? → Both in scope.** `/3d` banner fix (§5, item 9) and real Cal.com booking conversions (§6d, items 5–6).
 
-### Still open — one blocker
+### A-16 — RESOLVED 2026-07-27
 
-**A-16: is the CMS booking URL a `cal.com` link or a Google Calendar appointment schedule?** If the latter, the `bookingSuccessful` approach is dead on arrival (opaque cross-origin iframe) and the booking conversion needs a Cal.com/Google webhook instead — a materially bigger piece of work. Everything else can proceed regardless.
+The booking URL is **`https://cal.com/david-franke-vxzmfh/30min`** — a real cal.com
+link, so `toCalLink()` yields `david-franke-vxzmfh/30min`, the `<Cal>` component
+branch renders, and `bookingSuccessful` fires. **No webhook needed.** The
+raw-iframe fallback path is not in use.
+
+No blockers remain.
 
 ---
 
