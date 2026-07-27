@@ -58,10 +58,12 @@ const ALLOWED_HOSTS = new Map([
 
 /** Storage keys we knowingly write, each gated on consent where required. */
 const ALLOWED_STORAGE_KEYS = new Map([
-    ['cfc.attribution', 'First-touch campaign — gated on statistics consent'],
-    ['cfc.visitor', 'Persistent visitor id — gated on statistics consent'],
-    ['cfc.session', 'Per-visit session id — gated on statistics consent'],
-    ['cfc.landed', 'Landing-once flag — gated on statistics consent'],
+    // NOTE: cfc.attribution / cfc.visitor / cfc.session / cfc.landed were
+    // REMOVED, not forgotten. Our visitor counting now keeps state in page
+    // memory so it needs no consent (see inner/src/lib/attribution.ts). They are
+    // deliberately absent from this allowlist so that reintroducing any of them
+    // fails the build — putting that storage back would silently drag the whole
+    // subsystem back under TDDDG § 25 and, with it, back to near-zero data.
     ['cfc_consent', 'Klaro consent cookie — strictly necessary'],
     ['cfc_consent_id', 'Consent record id — strictly necessary (Art. 7(1) proof)'],
     // Language preference. Strictly necessary and consent-exempt: it stores a

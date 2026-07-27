@@ -1,36 +1,21 @@
 'use client';
 import { useEffect } from 'react';
-import { captureAttribution, clearAttribution } from '@/lib/attribution';
-import { onConsentChange } from '@/lib/consent';
+import { captureAttribution } from '@/lib/attribution';
 
 /**
- * Records this visit's traffic source (`?src` / `utm_*`) and tidies the URL.
- * Renders nothing. Mounted high in the tree (in Providers) so it fires on every
- * entry page.
+ * Records this page context's traffic source (`?src` / `utm_*`) and tidies the
+ * URL. Renders nothing. Mounted high in the tree (in Providers) so it runs on
+ * every entry page.
  *
- * Runs twice by design. The first call happens on mount, before the CMP has
- * resolved, and only strips the URL params — it can't touch storage yet. The
- * consent subscription then re-runs the capture once the visitor accepts, which
- * is what actually persists the campaign. Doing it in that order matters:
- * the tracking params must be read *before* they're stripped, and stripping has
- * to happen on the first paint whether or not consent ever arrives.
- *
- * On withdrawal it wipes the persistent visitor id and stored campaign, since
- * Klaro only knows how to clear the cookies it declares — not our localStorage.
+ * No consent subscription any more: `attribution.ts` keeps its state in page
+ * memory rather than on the device, so there is no TDDDG § 25 storage event to
+ * gate and nothing persisted for a withdrawal to clear. See the rationale at the
+ * top of that file — in short, gating this behind consent took measurement to
+ * zero, because almost nobody answers a banner that doesn't block them.
  */
 export default function AttributionTracker() {
   useEffect(() => {
-    // Strips params immediately; persists only if consent is already in place
-    // (returning visitor with a stored decision).
     captureAttribution();
-
-    return onConsentChange((snap) => {
-      if (snap.statistics) {
-        captureAttribution();
-      } else {
-        clearAttribution();
-      }
-    });
   }, []);
 
   return null;

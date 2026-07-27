@@ -15,8 +15,15 @@
  *   8. CMP configured correctly                     → this file, reviewed in git
  *
  * Services are grouped by *purpose*, not vendor: consent is a purpose-level
- * decision under GDPR, and our own first-party measurement serves the same
- * purpose as GA4, so they share one toggle with both disclosed in the text.
+ * decision under GDPR.
+ *
+ * Note what is deliberately NOT here: our own first-party visitor counting. It
+ * used to sit under the analytics purpose, back when it wrote to
+ * `sessionStorage`/`localStorage`. It now keeps its state in page memory only
+ * (see `lib/attribution.ts`), so no TDDDG § 25 storage event occurs and there is
+ * nothing to consent to — it runs on Art. 6(1)(f) with DNT/GPC as the Art. 21
+ * objection route. Gating it here took measurement to zero, because almost
+ * nobody answers a banner that doesn't block them.
  *
  * Bumping `CONSENT_CONFIG_VERSION` invalidates stored consent and re-asks
  * everyone. Do that whenever a service is added or a purpose materially
@@ -28,8 +35,16 @@ import type { Locale } from '@/i18n/translations';
 /** Audit criterion 5 — must be reachable from the banner. */
 export const GOOGLE_BDR_URL = 'https://business.safety.google/privacy/';
 
-/** Bump on any material change to services or purposes. See note above. */
-export const CONSENT_CONFIG_VERSION = 1;
+/**
+ * Bump on any material change to services or purposes. See note above.
+ *
+ * v2: the analytics purpose narrowed to Google Analytics only — our own visitor
+ * counting moved out of consent entirely when it stopped touching device
+ * storage. Strictly this *reduces* what is consented to, so a re-ask isn't
+ * legally required, but the wording changed materially and only a handful of
+ * consents existed, so re-asking against the accurate text is nearly free.
+ */
+export const CONSENT_CONFIG_VERSION = 2;
 
 export const SERVICE_NECESSARY = 'necessary';
 export const SERVICE_ANALYTICS = 'analytics';
@@ -118,11 +133,12 @@ const EN = {
             `Details of how Google handles this data: <a href="${GOOGLE_BDR_URL}" target="_blank" rel="noopener noreferrer">Google Business Data Responsibility</a>.`,
     },
     [SERVICE_ANALYTICS]: {
-        title: 'Site analytics',
+        title: 'Google Analytics',
         description:
-            'Counts page views and which campaign brought you here, so we know what is worth doing again. ' +
-            'Covers our own measurement, which keeps a random id on your device for <strong>180 days</strong> so a later visit can still be credited to the campaign you arrived through, and <strong>Google Analytics</strong>, which shares data with Google. ' +
-            'No IP address, no fingerprint, and we never sell this data.',
+            'Lets us see how the site is used in aggregate, using <strong>Google Analytics</strong>, which sets cookies and shares data with Google. ' +
+            'This is optional and off unless you agree. ' +
+            'Note that our own visitor counting works differently and needs no cookies at all — it stores nothing on your device and keeps no identifier once you close the tab, so it is not listed here. ' +
+            'You can still switch it off entirely with your browser\'s "Do Not Track" or "Global Privacy Control" setting.',
     },
     // Short pair rather than "Accept all"/"Reject all". Permitted: the rules
     // require each button's consequence to be clear and neither to be favoured,
@@ -184,11 +200,12 @@ const DE = {
             `Wie Google diese Daten verarbeitet: <a href="${GOOGLE_BDR_URL}" target="_blank" rel="noopener noreferrer">Google Business Data Responsibility</a>.`,
     },
     [SERVICE_ANALYTICS]: {
-        title: 'Website-Analyse',
+        title: 'Google Analytics',
         description:
-            'Zählt Seitenaufrufe und über welche Kampagne du hergekommen bist, damit wir wissen, was sich lohnt. ' +
-            'Umfasst unsere eigene Messung, die eine zufällige Kennung <strong>180 Tage</strong> auf deinem Gerät speichert, damit ein späterer Besuch noch der Kampagne zugeordnet werden kann, über die du gekommen bist, sowie <strong>Google Analytics</strong>, wobei Daten an Google übermittelt werden. ' +
-            'Keine IP-Adresse, kein Fingerprint, und wir verkaufen diese Daten nicht.',
+            'Zeigt uns in aggregierter Form, wie die Seite genutzt wird – über <strong>Google Analytics</strong>, das Cookies setzt und Daten an Google übermittelt. ' +
+            'Das ist optional und ohne deine Zustimmung ausgeschaltet. ' +
+            'Unsere eigene Besucherzählung funktioniert anders und braucht überhaupt keine Cookies – sie speichert nichts auf deinem Gerät und behält keine Kennung, sobald du den Tab schließt; deshalb steht sie hier nicht. ' +
+            'Du kannst sie über „Do Not Track" oder „Global Privacy Control" in deinem Browser vollständig abschalten.',
     },
     // „Zustimmen" / „Ablehnen" — die übliche Paarung auf deutschen Seiten.
     // Siehe Kommentar in EN zur Gleichwertigkeit.

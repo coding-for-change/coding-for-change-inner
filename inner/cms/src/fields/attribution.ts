@@ -6,16 +6,19 @@ import type { Field } from 'payload';
  *
  * These values are captured client-side on the inner site: when a visitor lands
  * with a tracking param (`?src=poster-tumsom` or standard `utm_*`) the tag is
- * stored in `localStorage` against a persistent `visitorId` and carried through
- * every later visit, then sent alongside the conversion. First-touch wins, so the
- * campaign that *discovered* someone keeps credit even if they convert weeks
- * later on a bare URL. Empty for direct / organic visitors.
+ * held in the page's JavaScript memory and carried to the conversion in that same
+ * tab. Empty for direct / organic visitors.
  *
  * All fields are system-populated (read-only in the admin) and hold no name,
- * email, IP or free text. Two identifiers: `sessionId` (per visit) and
- * `visitorId` (persistent, 180 days). The latter *is* a stable identifier and
- * therefore personal data, which is why the whole capture is gated behind the
- * `statistics` consent purpose and wiped when consent is withdrawn.
+ * email, IP or free text. The only identifier is `sessionId`, which is random and
+ * lives in page memory — nothing is written to the visitor's device, so this
+ * needs no cookie consent and is recorded for every visitor rather than the small
+ * minority who answer a banner. Scope is one tab: a refresh or a new tab starts
+ * fresh, and there is no cross-session or cross-device linkage by design.
+ *
+ * A persistent `visitorId` existed briefly and was removed: it required consent
+ * under TDDDG § 25, and with almost nobody answering the banner it produced
+ * nearly no data in exchange for real legal surface.
  *
  * Defined once and reused by the WaitlistSignups collection and the form-builder
  * `form-submissions` collection so both expose identical, joinable columns.
@@ -111,17 +114,6 @@ export const attributionField: Field = {
         readOnly: true,
         description:
           'Random per-visit id (sessionStorage). Links this conversion to the behavioural funnel; not a stable identifier, not personal data.',
-      },
-    },
-    {
-      name: 'visitorId',
-      type: 'text',
-      label: 'Visitor ID',
-      index: true,
-      admin: {
-        readOnly: true,
-        description:
-          'Persistent random id (localStorage, 180 days) joining a visitor\'s sessions across weeks — this is what lets a campaign get credit for a conversion that happens on a later visit. Consent-gated; wiped on withdrawal.',
       },
     },
     {
