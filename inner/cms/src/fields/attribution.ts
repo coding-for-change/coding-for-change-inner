@@ -6,14 +6,16 @@ import type { Field } from 'payload';
  *
  * These values are captured client-side on the inner site: when a visitor lands
  * with a tracking param (`?src=poster-tumsom` or standard `utm_*`) the tag is
- * stored in `sessionStorage` and carried through the visit, then sent alongside
- * the conversion so we can tell which campaign a signup came from. Empty for
- * direct / organic visitors.
+ * stored in `localStorage` against a persistent `visitorId` and carried through
+ * every later visit, then sent alongside the conversion. First-touch wins, so the
+ * campaign that *discovered* someone keeps credit even if they convert weeks
+ * later on a bare URL. Empty for direct / organic visitors.
  *
- * All fields are system-populated (read-only in the admin) and non-sensitive —
- * no name, email, IP or free text lives here. `sessionId` is a random per-visit
- * id used only to line this conversion up with the behavioural funnel; it is not
- * a stable identifier and holds no personal data.
+ * All fields are system-populated (read-only in the admin) and hold no name,
+ * email, IP or free text. Two identifiers: `sessionId` (per visit) and
+ * `visitorId` (persistent, 180 days). The latter *is* a stable identifier and
+ * therefore personal data, which is why the whole capture is gated behind the
+ * `statistics` consent purpose and wiped when consent is withdrawn.
  *
  * Defined once and reused by the WaitlistSignups collection and the form-builder
  * `form-submissions` collection so both expose identical, joinable columns.
@@ -109,6 +111,17 @@ export const attributionField: Field = {
         readOnly: true,
         description:
           'Random per-visit id (sessionStorage). Links this conversion to the behavioural funnel; not a stable identifier, not personal data.',
+      },
+    },
+    {
+      name: 'visitorId',
+      type: 'text',
+      label: 'Visitor ID',
+      index: true,
+      admin: {
+        readOnly: true,
+        description:
+          'Persistent random id (localStorage, 180 days) joining a visitor\'s sessions across weeks — this is what lets a campaign get credit for a conversion that happens on a later visit. Consent-gated; wiped on withdrawal.',
       },
     },
     {

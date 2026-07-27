@@ -1,8 +1,9 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
-import Cal from '@calcom/embed-react';
+import Cal, { getCalApi } from '@calcom/embed-react';
 import { useSiteConfig } from '../../api';
 import { trackEvent } from '../../lib/analytics';
+import { trackAdsConversion } from '../../lib/googleAds';
 import { useLanguage } from '../../contexts/LanguageContext';
 
 export interface BookingEmbedProps {
@@ -67,9 +68,9 @@ const BookingEmbed: React.FC<BookingEmbedProps> = ({ height = 700 }) => {
         return () => observer.disconnect();
     }, [visible, url]);
 
-    // Funnel: record that the booking widget was reached. True completion
-    // happens on cal.com (cross-origin iframe) and isn't observable here — that
-    // needs a cal.com webhook or a success-redirect (a later phase).
+    // Funnel: the widget came into view. This is an *impression*, not intent —
+    // almost everyone who scrolls this far triggers it — so it is never used as
+    // an ad conversion. `booking_completed` below is the real signal.
     const bookingTracked = useRef(false);
     useEffect(() => {
         if (visible && url && !bookingTracked.current) {
@@ -77,6 +78,51 @@ const BookingEmbed: React.FC<BookingEmbedProps> = ({ height = 700 }) => {
             trackEvent('booking_started', { label: 'calcom' });
         }
     }, [visible, url]);
+
+    // A booking actually submitted. Cal's embed posts `bookingSuccessful` to the
+    // parent frame, so no webhook or /thanks redirect is needed — but only on the
+    // `<Cal>` path. When the configured URL isn't a cal.com link we fall back to
+    // a plain cross-origin iframe (below), which emits nothing observable.
+    //
+    // Note it fires at submission, which for a host-confirmation event type is
+    // before the meeting is confirmed. That's the right moment for an ad
+    // conversion — the lead is captured — but it means Google's count can exceed
+    // confirmed meetings.
+    const bookedUids = useRef<Set<string>>(new Set());
+    useEffect(() => {
+        if (!visible || !calLink) return;
+        let cancelled = false;
+
+        (async () => {
+            const cal = await getCalApi();
+            if (cancelled || !cal) return;
+            cal('on', {
+                action: 'bookingSuccessful',
+                callback: (e: unknown) => {
+                    // Dedupe: a re-render or a duplicated event must not double
+                    // count. `uid` is Cal's booking identifier.
+                    const detail = (e as { detail?: { data?: { uid?: string } } })?.detail;
+                    const uid = detail?.data?.uid;
+                    if (uid) {
+                        if (bookedUids.current.has(uid)) return;
+                        bookedUids.current.add(uid);
+                    }
+                    trackEvent('booking_completed', {
+                        label: 'calcom',
+                        meta: uid ? { uid } : undefined,
+                    });
+                    trackAdsConversion('booking');
+                },
+            });
+        })().catch(() => {
+            // Cal's embed API unavailable — we keep the impression event and lose
+            // only the completion signal.
+        });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [visible, calLink]);
 
     if (!url) {
         return (

@@ -6,6 +6,7 @@ import type { CmsForm, CmsFormField } from '../../api';
 import { CmsMembership } from '../../api/types';
 import { getAttribution } from '../../lib/attribution';
 import { trackFormStart, trackConversion } from '../../lib/analytics';
+import { trackAdsConversion } from '../../lib/googleAds';
 import { useLanguage } from '../../contexts/LanguageContext';
 import RichText from '../RichText';
 import ClosingCta from './ClosingCta';
@@ -61,6 +62,7 @@ const BecomeAMember: React.FC<{
             await submitWaitlist(waitlistEmail.trim(), locale, getAttribution());
             setWaitlistSubmitted(true);
             trackConversion('waitlist');
+            trackAdsConversion('waitlist');
         } catch {
             setWaitlistError(true);
         } finally {
@@ -144,6 +146,7 @@ const BecomeAMember: React.FC<{
             await submitForm(form.id, submissionData, getAttribution());
             setSubmitted(true);
             trackConversion('application');
+            trackAdsConversion('application');
         } catch (err) {
             setSendError(true);
         } finally {

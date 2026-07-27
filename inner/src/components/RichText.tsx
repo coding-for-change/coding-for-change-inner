@@ -72,11 +72,19 @@ const renderNode = (node: LexicalNode, key: React.Key): React.ReactNode => {
 
 interface RichTextProps {
     content?: LexicalRichText | null;
+    /**
+     * Optional wrapper class. Without it the nodes are returned bare, as before,
+     * so existing callers (form confirmations, field messages) are unaffected.
+     * Long-form documents pass `lp-prose` to get real paragraph and heading
+     * rhythm — see the note on that class in `landing.css`.
+     */
+    className?: string;
 }
 
-const RichText: React.FC<RichTextProps> = ({ content }) => {
+const RichText: React.FC<RichTextProps> = ({ content, className }) => {
     if (!content?.root?.children) return null;
-    return <>{content.root.children.map((node, i) => renderNode(node, i))}</>;
+    const nodes = content.root.children.map((node, i) => renderNode(node, i));
+    return className ? <div className={className}>{nodes}</div> : <>{nodes}</>;
 };
 
 const styles: StyleSheetCSS = {

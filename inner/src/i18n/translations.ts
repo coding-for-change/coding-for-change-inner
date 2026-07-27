@@ -102,7 +102,7 @@ export interface Translations {
         pages: string; info: string;
         home: string; projects: string; team: string; blog: string;
         sponsors: string; join: string; contact: string; qa: string; partner: string;
-        privacy: string; imprint: string;
+        privacy: string; imprint: string; cookieSettings: string;
     };
     aboutPage: {
         valuesTitle: string;
@@ -309,7 +309,7 @@ const en: Translations = {
         pages: 'Pages', info: 'Information',
         home: 'Home', projects: 'Projects', team: 'Team', blog: 'Blog',
         sponsors: 'Sponsors', join: 'Join', contact: 'Contact', qa: 'Q&A', partner: 'For NGOs',
-        privacy: 'Privacy', imprint: 'Imprint',
+        privacy: 'Privacy', imprint: 'Imprint', cookieSettings: 'Cookie settings',
     },
     aboutPage: {
         valuesTitle: 'What we care about',
@@ -527,7 +527,7 @@ const de: Translations = {
         pages: 'Seiten', info: 'Informationen',
         home: 'Startseite', projects: 'Projekte', team: 'Team', blog: 'Blog',
         sponsors: 'Sponsoren', join: 'Mitmachen', contact: 'Kontakt', qa: 'F&A', partner: 'Für NGOs',
-        privacy: 'Datenschutz', imprint: 'Impressum',
+        privacy: 'Datenschutz', imprint: 'Impressum', cookieSettings: 'Cookie-Einstellungen',
     },
     aboutPage: {
         valuesTitle: 'Worauf es uns ankommt',

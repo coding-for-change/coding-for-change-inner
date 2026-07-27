@@ -1,0 +1,335 @@
+/**
+ * Klaro consent banner — brand styling plus repairs for our global CSS.
+ *
+ * Loaded *after* `vendor/klaro/klaro.min.css` (see `layout.tsx`).
+ *
+ * ## Part 1 is not cosmetic — read before deleting anything
+ *
+ * This site still carries broad element selectors from its Windows-95 era, and
+ * they leak into any third-party widget:
+ *
+ *   - `App.css`  → `div { display: flex }`   — every div on the page
+ *   - `index.css` → `p { font-size: 18px }`  — absolute, so it beats inheritance
+ *   - `index.css` → `* { user-select: none }`
+ *
+ * Klaro's `.cn-body` sets padding but no `display`, so the global flex rule turned
+ * it into a flex *row* and laid the notice text and the button block side by side
+ * — which crushed the buttons into a narrow column with words breaking mid-syllable
+ * ("individua/lly"). The `p` rule then overrode Klaro's relative type scale.
+ *
+ * So the resets below are load-bearing. If the legacy globals are ever cleaned up,
+ * this block can go — but verify the banner at 375px and 1440px before removing it.
+ *
+ * ## Part 2: one rule is a compliance requirement, not taste
+ *
+ * **"Reject all" must be as prominent as "Accept all".** A de-emphasised reject
+ * button is the most-fined cookie-banner mistake under German DSK guidance and is
+ * checked by Google's EU User Consent Policy audit. Do not "improve" the visual
+ * hierarchy by making accept louder.
+ */
+
+/* ------------------------------------------------------------------------- */
+/* Part 1 — undo the host page's global CSS inside the banner only            */
+/* ------------------------------------------------------------------------- */
+
+/* `.klaro div` (0,1,1) beats `div` (0,0,1); Klaro's own layout selectors are more
+   specific still, so its intentional flex containers keep working. */
+.klaro div {
+    display: block;
+}
+
+/* Klaro's type scale is em-based; give it one explicit anchor to scale from and
+   stop the global `p { font-size: 18px }` from fighting it. */
+.klaro .cookie-notice:not(.cookie-modal-notice),
+.klaro .cookie-modal {
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.klaro .cookie-notice p,
+.klaro .cookie-modal p,
+.klaro .cookie-notice span,
+.klaro .cookie-modal span,
+.klaro .cookie-notice li,
+.klaro .cookie-modal li {
+    font-size: inherit;
+    line-height: inherit;
+    font-family: var(--font-plex-sans), -apple-system, BlinkMacSystemFont,
+        'Segoe UI', Helvetica, Arial, sans-serif;
+}
+
+/* A legal notice the visitor cannot select or copy is user-hostile. */
+.klaro .cookie-notice,
+.klaro .cookie-modal {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+/* Never hyphenate or break inside a word — this is what produced "individua lly". */
+.klaro .cookie-notice,
+.klaro .cookie-modal {
+    hyphens: none;
+    overflow-wrap: break-word;
+    word-break: normal;
+}
+
+/* ------------------------------------------------------------------------- */
+/* Part 2 — layout                                                           */
+/* ------------------------------------------------------------------------- */
+
+/*
+ * Klaro's variable names describe its own default theme, NOT semantic roles, and
+ * two of them are traps when you re-theme:
+ *
+ *   --dark3  is the **muted text colour** for `.cm-list-description`, not a
+ *            background shade. Setting it to a dark navy made every service
+ *            description invisible against the navy panel.
+ *   --green1 is the **accept-all button background**. Setting it to the same navy
+ *            as --dark1 made "Accept all" vanish entirely — it was still in the
+ *            DOM and clickable, just navy on navy.
+ *
+ * So: variables here only for backgrounds and borders, where the meaning is
+ * unambiguous. Button and text colours are set explicitly below, at a specificity
+ * that actually beats Klaro's own `.klaro .cookie-modal .cm-btn.x` (0,4,0) rules.
+ */
+.klaro {
+    --dark1: #0f2040; /* notice + modal background */
+    --dark2: #2c3d5e; /* borders and dividers */
+    --dark3: #a8b6cf; /* MUTED TEXT — must stay light. See note above. */
+    --light1: #ffffff; /* primary text */
+    --light2: #e5e7eb;
+    --light3: #b9c6dd; /* secondary text ("Purpose: …") */
+    --border-radius: 10px;
+}
+
+/* ---- text contrast -------------------------------------------------------- */
+/* Explicit, because these ride on the overloaded variables above. */
+.klaro .cookie-modal .cm-list-description,
+.klaro .cookie-notice .cm-list-description,
+.klaro .cookie-modal .cm-modal .cm-body ul.cm-services li.cm-service p {
+    color: #c3cfe2;
+}
+
+.klaro .cookie-modal .cm-modal .cm-body ul.cm-services li.cm-service p.purposes,
+.klaro .cookie-modal .cm-modal .cm-body ul.cm-services li.cm-purpose p.purposes {
+    color: #93a4c2;
+}
+
+.klaro .cookie-modal .cm-modal .cm-body ul.cm-services li.cm-service span.cm-opt-out,
+.klaro .cookie-modal .cm-modal .cm-body ul.cm-services li.cm-service span.cm-required {
+    color: #93a4c2;
+}
+
+.klaro .cookie-modal .cm-modal .cm-header h1,
+.klaro .cookie-modal .cm-modal .cm-body ul.cm-services li.cm-service span.cm-list-title,
+.klaro .cookie-modal .cm-modal .cm-body ul.cm-services li.cm-purpose span.cm-list-title {
+    color: #ffffff;
+}
+
+/* ---- buttons -------------------------------------------------------------- */
+/*
+ * All three actions get identical weight: same size, same border, same font
+ * weight, no colour nudging one way. That is the safest reading of the German
+ * DSK requirement that rejecting be as easy as accepting — no "primary" accept
+ * button drawing the eye. Do not restyle one of these to stand out.
+ *
+ * Selectors are duplicated across `.cookie-notice` and `.cookie-modal` to match
+ * Klaro's own specificity; a single `.klaro .cm-btn.x` rule loses to it.
+ */
+.klaro .cookie-notice .cm-btn.cm-btn-success,
+.klaro .cookie-modal .cm-btn.cm-btn-success,
+.klaro .cookie-notice .cm-btn.cm-btn-success.cm-btn-accept-all,
+.klaro .cookie-modal .cm-btn.cm-btn-success.cm-btn-accept-all,
+.klaro .cookie-notice .cm-btn.cm-btn-info,
+.klaro .cookie-modal .cm-btn.cm-btn-info,
+.klaro .cookie-notice .cm-btn.cm-btn-success-var,
+.klaro .cookie-modal .cm-btn.cm-btn-success-var,
+.klaro .cookie-notice .cm-btn.cm-btn-danger,
+.klaro .cookie-modal .cm-btn.cm-btn-danger,
+.klaro .cookie-notice .cm-btn.cn-decline,
+.klaro .cookie-modal .cm-btn.cn-decline {
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.klaro .cookie-notice .cm-btn:hover,
+.klaro .cookie-modal .cm-btn:hover {
+    background-color: rgba(255, 255, 255, 0.14);
+    border-color: #ffffff;
+}
+
+/* The modal footer holds three buttons on narrow screens — let them wrap rather
+   than shrink one out of reach. */
+.klaro .cookie-modal .cm-modal .cm-footer-buttons {
+    display: flex;
+    flex-flow: row wrap;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+/* Bottom-centred card rather than Klaro's corner card: the text is long enough
+   that a 400px column becomes a wall of words. */
+.klaro .cookie-notice:not(.cookie-modal-notice) {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    bottom: 16px;
+    width: calc(100% - 32px);
+    max-width: 760px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(15, 32, 64, 0.3);
+    /* Above the site chrome, below nothing that matters. */
+    z-index: 1000;
+}
+
+/* Text block, then actions — stacked, which is what reads well at this width.
+   Explicit `display` so we don't depend on the global flex rule either way. */
+.klaro .cookie-notice:not(.cookie-modal-notice) .cn-body {
+    display: block;
+    padding: 20px 22px 22px;
+    margin: 0;
+}
+
+.klaro .cookie-notice:not(.cookie-modal-notice) .cn-body > p:first-child {
+    margin: 0 0 16px;
+    /* No max-width: capping this at ~68ch left the paragraph ending well short of
+       the card edge while the buttons sat flush right, so the actions looked
+       stranded in empty space. The card's own 760px max-width already keeps the
+       line length readable. */
+}
+
+/* Actions row: "Choose individually" on the left, the two buttons on the right,
+   wrapping to a stack when there isn't room. */
+.klaro .cookie-notice:not(.cookie-modal-notice) .cn-body .cn-ok {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.klaro .cookie-notice:not(.cookie-modal-notice) .cn-body .cn-learn-more {
+    flex: 0 1 auto;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.klaro .cookie-notice:not(.cookie-modal-notice) .cn-body .cn-buttons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: auto;
+    margin: 0;
+    border: none;
+}
+
+/* Override Klaro's `width: calc(50% - 0.5em)`, which assumed its own narrow card. */
+.klaro .cookie-notice:not(.cookie-modal-notice) .cn-body .cn-buttons button.cm-btn {
+    width: auto;
+    margin: 0;
+    white-space: nowrap;
+}
+
+/*
+ * Accept before Reject, by request. Order is not regulated — GDPR/TDDDG/DSK
+ * require *equal prominence*, not a particular sequence, and all three buttons
+ * share one style block above, so neither is favoured.
+ *
+ * Caveat: Klaro emits decline first in the DOM, so this reorders visually only.
+ * A keyboard user therefore reaches "Reject all" first while seeing "Accept all"
+ * leftmost — a WCAG 2.4.3 focus-order mismatch. Judged acceptable here because
+ * the two controls are adjacent, identically styled and equally weighted, so
+ * neither meaning nor operability is lost. If Klaro's DOM order ever becomes
+ * configurable, drop these two rules and use that instead.
+ */
+.klaro .cookie-notice:not(.cookie-modal-notice) .cn-body .cn-buttons button.cm-btn.cm-btn-success {
+    order: 1;
+}
+
+.klaro .cookie-notice:not(.cookie-modal-notice) .cn-body .cn-buttons button.cm-btn.cm-btn-danger,
+.klaro .cookie-notice:not(.cookie-modal-notice) .cn-body .cn-buttons button.cm-btn.cn-decline {
+    order: 2;
+}
+
+.klaro .cm-btn {
+    font-family: var(--font-plex-sans), -apple-system, BlinkMacSystemFont,
+        'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    padding: 10px 18px;
+    border-radius: 8px;
+    min-height: 42px; /* comfortable tap target */
+}
+
+/* Links in the banner text (privacy policy, Google's data-responsibility page)
+   must be obviously clickable against navy. */
+.klaro .cookie-notice a,
+.klaro .cookie-modal a {
+    color: #9ec5ff;
+    text-decoration: underline;
+}
+
+/* Visible keyboard focus — the banner is the first thing a keyboard user meets. */
+.klaro .cm-btn:focus-visible,
+.klaro .cookie-notice a:focus-visible,
+.klaro .cookie-modal a:focus-visible {
+    outline: 2px solid #9ec5ff;
+    outline-offset: 2px;
+}
+
+/* Narrow screens: full-width bar, actions stacked full-width so both choices are
+   equally easy to hit with a thumb. */
+@media (max-width: 560px) {
+    .klaro .cookie-notice:not(.cookie-modal-notice) {
+        left: 0;
+        right: 0;
+        bottom: 0;
+        transform: none;
+        width: 100%;
+        max-width: none;
+        border-radius: 0;
+    }
+
+    .klaro .cookie-notice:not(.cookie-modal-notice) .cn-body {
+        padding: 16px 18px 18px;
+    }
+
+    .klaro .cookie-notice:not(.cookie-modal-notice) .cn-body .cn-ok {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .klaro .cookie-notice:not(.cookie-modal-notice) .cn-body .cn-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .klaro .cookie-notice:not(.cookie-modal-notice) .cn-body .cn-buttons button.cm-btn {
+        width: 100%;
+    }
+
+    .klaro .cookie-notice:not(.cookie-modal-notice) .cn-body .cn-learn-more {
+        white-space: normal;
+    }
+}
+
+/* The settings modal inherits the same repairs; keep it readable and scrollable. */
+.klaro .cookie-modal .cm-modal {
+    font-family: var(--font-plex-sans), -apple-system, BlinkMacSystemFont,
+        'Segoe UI', Helvetica, Arial, sans-serif;
+    border-radius: 10px;
+}
+
+.klaro .cookie-modal .cm-modal .cm-body {
+    max-height: 60vh;
+    overflow-y: auto;
+}

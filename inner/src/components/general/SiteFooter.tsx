@@ -1,7 +1,12 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import RouterLink from 'next/link';
 import { useSiteConfig, useLanguage } from '../../api';
+import {
+    openConsentSettings,
+    consentUiAvailable,
+    onConsentUiChange,
+} from '../../lib/consent';
 
 const NAVY = '#0f2040';
 const GRAY = '#6b7280';
@@ -34,6 +39,18 @@ const SiteFooter: React.FC = () => {
         { to: '/privacy', label: f.privacy },
         { to: '/imprint', label: f.imprint },
     ];
+
+    /**
+     * GDPR Art. 7(3): withdrawing consent must be as easy as giving it, so the
+     * banner needs a permanent way back. Only rendered once the CMP has actually
+     * registered its dialog — a dead link would be worse than none. The consent
+     * subscription is what re-renders us when that happens.
+     */
+    const [showConsentLink, setShowConsentLink] = useState(false);
+    useEffect(
+        () => onConsentUiChange(() => setShowConsentLink(consentUiAvailable())),
+        []
+    );
 
     return (
         <footer style={styles.footer}>
@@ -72,6 +89,15 @@ const SiteFooter: React.FC = () => {
                                 {link.label}
                             </RouterLink>
                         ))}
+                        {showConsentLink && (
+                            <button
+                                type="button"
+                                onClick={openConsentSettings}
+                                style={styles.consentButton}
+                            >
+                                {f.cookieSettings}
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
@@ -160,6 +186,18 @@ const styles: StyleSheetCSS = {
         color: GRAY,
         textDecoration: 'none',
         padding: '6px 0',
+    },
+    consentButton: {
+        display: 'flex',
+        fontFamily: FONT,
+        fontSize: 14,
+        color: GRAY,
+        textDecoration: 'none',
+        padding: '6px 0',
+        background: 'none',
+        border: 'none',
+        cursor: 'pointer',
+        textAlign: 'left',
     },
     copyrightWrap: {
         display: 'flex',
