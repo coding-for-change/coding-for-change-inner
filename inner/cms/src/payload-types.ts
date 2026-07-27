@@ -81,6 +81,7 @@ export interface Config {
     'blog-posts': BlogPost;
     'waitlist-signups': WaitlistSignup;
     'analytics-events': AnalyticsEvent;
+    'consent-records': ConsentRecord;
     forms: Form;
     'form-submissions': FormSubmission;
     'payload-mcp-api-keys': PayloadMcpApiKey;
@@ -104,6 +105,7 @@ export interface Config {
     'blog-posts': BlogPostsSelect<false> | BlogPostsSelect<true>;
     'waitlist-signups': WaitlistSignupsSelect<false> | WaitlistSignupsSelect<true>;
     'analytics-events': AnalyticsEventsSelect<false> | AnalyticsEventsSelect<true>;
+    'consent-records': ConsentRecordsSelect<false> | ConsentRecordsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     'payload-mcp-api-keys': PayloadMcpApiKeysSelect<false> | PayloadMcpApiKeysSelect<true>;
@@ -579,6 +581,10 @@ export interface WaitlistSignup {
      */
     sessionId?: string | null;
     /**
+     * Persistent random id (localStorage, 182 days) joining a visitor's sessions across weeks — this is what lets a campaign get credit for a conversion that happens on a later visit. Consent-gated; wiped on withdrawal.
+     */
+    visitorId?: string | null;
+    /**
      * When attribution was first captured this session.
      */
     firstSeenAt?: string | null;
@@ -594,7 +600,15 @@ export interface WaitlistSignup {
  */
 export interface AnalyticsEvent {
   id: number;
-  type: 'landing' | 'pageview' | 'cta_click' | 'form_start' | 'conversion' | 'outbound_click' | 'booking_started';
+  type:
+    | 'landing'
+    | 'pageview'
+    | 'cta_click'
+    | 'form_start'
+    | 'conversion'
+    | 'outbound_click'
+    | 'booking_started'
+    | 'booking_completed';
   /**
    * Page path where the event occurred.
    */
@@ -644,6 +658,10 @@ export interface AnalyticsEvent {
      */
     sessionId?: string | null;
     /**
+     * Persistent random id (localStorage, 182 days) joining a visitor's sessions across weeks — this is what lets a campaign get credit for a conversion that happens on a later visit. Consent-gated; wiped on withdrawal.
+     */
+    visitorId?: string | null;
+    /**
      * When attribution was first captured this session.
      */
     firstSeenAt?: string | null;
@@ -660,6 +678,41 @@ export interface AnalyticsEvent {
     | number
     | boolean
     | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Proof of cookie consent (GDPR Art. 7(1)). One row per interactive banner decision. No IP, no user agent — the random consent id matches the visitor's cfc_consent_id cookie. Never auto-purged.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "consent-records".
+ */
+export interface ConsentRecord {
+  id: number;
+  /**
+   * Random id, also stored in the visitor's cfc_consent_id cookie so a stored consent can be matched to this record.
+   */
+  consentId: string;
+  /**
+   * Audience measurement: our own first-party analytics + Google Analytics.
+   */
+  statistics?: boolean | null;
+  /**
+   * Google Ads conversion tracking and ads personalisation.
+   */
+  marketing?: boolean | null;
+  /**
+   * Banner config version the choice was made against (CONSENT_CONFIG_VERSION). Identifies which wording the visitor saw.
+   */
+  configVersion?: number | null;
+  /**
+   * Language the banner was displayed in.
+   */
+  locale?: string | null;
+  /**
+   * Page the decision was made on.
+   */
+  path?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -869,6 +922,10 @@ export interface FormSubmission {
      * Random per-visit id (sessionStorage). Links this conversion to the behavioural funnel; not a stable identifier, not personal data.
      */
     sessionId?: string | null;
+    /**
+     * Persistent random id (localStorage, 182 days) joining a visitor's sessions across weeks — this is what lets a campaign get credit for a conversion that happens on a later visit. Consent-gated; wiped on withdrawal.
+     */
+    visitorId?: string | null;
     /**
      * When attribution was first captured this session.
      */
@@ -1239,6 +1296,10 @@ export interface PayloadLockedDocument {
         value: number | AnalyticsEvent;
       } | null)
     | ({
+        relationTo: 'consent-records';
+        value: number | ConsentRecord;
+      } | null)
+    | ({
         relationTo: 'forms';
         value: number | Form;
       } | null)
@@ -1595,6 +1656,7 @@ export interface WaitlistSignupsSelect<T extends boolean = true> {
         referrer?: T;
         landingPath?: T;
         sessionId?: T;
+        visitorId?: T;
         firstSeenAt?: T;
       };
   updatedAt?: T;
@@ -1620,9 +1682,24 @@ export interface AnalyticsEventsSelect<T extends boolean = true> {
         referrer?: T;
         landingPath?: T;
         sessionId?: T;
+        visitorId?: T;
         firstSeenAt?: T;
       };
   meta?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "consent-records_select".
+ */
+export interface ConsentRecordsSelect<T extends boolean = true> {
+  consentId?: T;
+  statistics?: T;
+  marketing?: T;
+  configVersion?: T;
+  locale?: T;
+  path?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1763,6 +1840,7 @@ export interface FormSubmissionsSelect<T extends boolean = true> {
         referrer?: T;
         landingPath?: T;
         sessionId?: T;
+        visitorId?: T;
         firstSeenAt?: T;
       };
   updatedAt?: T;
