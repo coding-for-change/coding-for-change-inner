@@ -288,6 +288,15 @@ Replace with:
 
 ## 5. New §10 — Google Analytics 4
 
+> ⚠️ **Corrected 2026-07-27.** An earlier version of this block said Google
+> signals being off means "no cross-device **or advertising** data" reaches the
+> reports. As of **15 June 2026** Google retired Google signals as the control
+> over the GA4→Google Ads data flow; that is now governed solely by Consent
+> Mode's `ad_storage`. The cross-device claim still holds, the advertising one
+> does not. Wording below is fixed — **if you already pasted the old text into
+> the CMS, replace this section.**
+
+
 ### EN — "10. Google Analytics"
 
 > With your consent we use **Google Analytics 4**, a service of Google Ireland
@@ -297,8 +306,12 @@ Replace with:
 > and technical details of your device and browser.
 >
 > We have configured the service restrictively: **“Google signals” is switched
-> off**, so no cross-device or advertising data is added to the reports, and the
-> retention period for event data is set to 14 months.
+> off**, so no cross-device reporting or data from signed-in Google accounts is
+> added to our reports, and the retention period for event data is set to
+> 14 months. Whether any data reaches Google Ads for advertising purposes is
+> controlled solely by your consent decision (see section 9): without your
+> consent for advertising measurement, no advertising identifiers are set or
+> transmitted.
 >
 > **Legal basis:** your consent, Art. 6(1)(a) GDPR, and § 25(1) TDDDG.
 > **Third country:** as described in section 9 — Google LLC, USA, under the
@@ -316,9 +329,12 @@ Replace with:
 > technische Angaben zu Ihrem Gerät und Browser.
 >
 > Wir haben den Dienst restriktiv konfiguriert: **„Google-Signale" ist
-> deaktiviert**, sodass keine geräteübergreifenden oder werbebezogenen Daten in
-> die Berichte einfließen, und die Aufbewahrungsdauer für Ereignisdaten ist auf
-> 14 Monate gesetzt.
+> deaktiviert**, sodass keine geräteübergreifenden Auswertungen und keine Daten
+> aus angemeldeten Google-Konten in unsere Berichte einfließen, und die
+> Aufbewahrungsdauer für Ereignisdaten ist auf 14 Monate gesetzt. Ob Daten zu
+> Werbezwecken an Google Ads gelangen, steuert ausschließlich Ihre
+> Einwilligungsentscheidung (siehe Abschnitt 9): ohne Ihre Einwilligung in die
+> Werbemessung werden keine Werbekennungen gesetzt oder übermittelt.
 >
 > **Rechtsgrundlage:** Ihre Einwilligung nach Art. 6 Abs. 1 lit. a DSGVO sowie
 > § 25 Abs. 1 TDDDG.
