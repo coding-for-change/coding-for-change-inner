@@ -1,0 +1,519 @@
+/*
+ * /admin/analytics dashboard styles.
+ *
+ * Chart colors follow the dataviz method: categorical slots 1–2 (blue/orange),
+ * a blue ordinal ramp for the funnel, and status-style delta colors — each set
+ * validated (CVD + contrast) against the surfaces actually used here, which
+ * mirror Payload's elevation-0: #ffffff light / #141414 dark. Chrome (text,
+ * grid, borders) uses the matching ink tokens; dark values are their own
+ * selected steps, not an automatic flip.
+ */
+
+.cfc-analytics {
+  /* surfaces + ink */
+  --cfc-surface: #ffffff;
+  --cfc-ink: #0b0b0b;
+  --cfc-ink-2: #52514e;
+  --cfc-muted: #898781;
+  --cfc-grid: #e1e0d9;
+  --cfc-axis: #c3c2b7;
+  --cfc-border: rgba(11, 11, 11, 0.1);
+  --cfc-wash: rgba(11, 11, 11, 0.04);
+  /* series (categorical slots 1–2) */
+  --cfc-s1: #2a78d6;
+  --cfc-s2: #eb6834;
+  /* funnel ordinal ramp (blue 250→550) */
+  --cfc-f1: #86b6ef;
+  --cfc-f2: #5598e7;
+  --cfc-f3: #2a78d6;
+  --cfc-f4: #1c5cab;
+  /* deltas (≥ 4.5:1 as small text on the surface) */
+  --cfc-up: #006300;
+  --cfc-down: #d03b3b;
+
+  padding-bottom: 40px;
+  color: var(--cfc-ink);
+  font-family: var(--font-body, system-ui, -apple-system, 'Segoe UI', sans-serif);
+}
+
+html[data-theme='dark'] .cfc-analytics {
+  --cfc-surface: #141414;
+  --cfc-ink: #ffffff;
+  --cfc-ink-2: #c3c2b7;
+  --cfc-muted: #898781;
+  --cfc-grid: #2c2c2a;
+  --cfc-axis: #383835;
+  --cfc-border: rgba(255, 255, 255, 0.1);
+  --cfc-wash: rgba(255, 255, 255, 0.05);
+  --cfc-s1: #3987e5;
+  --cfc-s2: #d95926;
+  /* dark ramp anchors flip: nearest-surface step is the darkest (600→300) */
+  --cfc-f1: #184f95;
+  --cfc-f2: #256abf;
+  --cfc-f3: #3987e5;
+  --cfc-f4: #6da7ec;
+  --cfc-up: #0ca30c;
+  --cfc-down: #e66767;
+}
+
+/* ---- header + range filter ------------------------------------------- */
+
+.cfc-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.cfc-head__title {
+  margin: 0 0 4px;
+  font-size: 24px;
+  line-height: 1.2;
+}
+
+.cfc-head__sub {
+  margin: 0;
+  font-size: 13px;
+  color: var(--cfc-ink-2);
+}
+
+.cfc-range {
+  display: inline-flex;
+  border: 1px solid var(--cfc-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.cfc-range__btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--cfc-ink-2);
+  font: inherit;
+  font-size: 13px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.cfc-range__btn + .cfc-range__btn {
+  border-left: 1px solid var(--cfc-border);
+}
+
+.cfc-range__btn:hover {
+  background: var(--cfc-wash);
+}
+
+.cfc-range__btn.is-active {
+  background: var(--cfc-ink);
+  color: var(--cfc-surface);
+}
+
+/* ---- grid + cards ------------------------------------------------------ */
+
+.cfc-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+  transition: opacity 0.15s ease;
+}
+
+.cfc-grid.is-refetching {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.cfc-card {
+  grid-column: span 3;
+  background: var(--cfc-surface);
+  border: 1px solid var(--cfc-border);
+  border-radius: 4px;
+  padding: 16px 18px;
+  min-width: 0;
+}
+
+.cfc-card--half {
+  grid-column: span 6;
+}
+
+.cfc-card--wide {
+  grid-column: 1 / -1;
+}
+
+.cfc-card__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.cfc-card__title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.cfc-card__caption {
+  font-size: 12px;
+  color: var(--cfc-muted);
+  text-align: right;
+}
+
+@media (max-width: 1280px) {
+  .cfc-tile {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 1024px) {
+  .cfc-card--half {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 600px) {
+  .cfc-tile {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---- stat tiles -------------------------------------------------------- */
+
+.cfc-tile__label {
+  font-size: 13px;
+  color: var(--cfc-ink-2);
+  margin-bottom: 6px;
+}
+
+.cfc-tile__row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cfc-tile__value {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.cfc-spark {
+  flex: none;
+  margin-bottom: 2px;
+}
+
+.cfc-tile__delta {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+}
+
+.cfc-tile__delta--up {
+  color: var(--cfc-up);
+}
+
+.cfc-tile__delta--down {
+  color: var(--cfc-down);
+}
+
+.cfc-tile__delta--flat {
+  color: var(--cfc-muted);
+}
+
+.cfc-tile__caption {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--cfc-muted);
+}
+
+/* ---- line chart, legend, tooltip --------------------------------------- */
+
+.cfc-chart {
+  position: relative;
+}
+
+.cfc-chart svg:focus-visible {
+  outline: 2px solid var(--cfc-s1);
+  outline-offset: 2px;
+}
+
+.cfc-chart__tick {
+  fill: var(--cfc-muted);
+  font-size: 11px;
+}
+
+.cfc-legend {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: var(--cfc-ink-2);
+}
+
+.cfc-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cfc-legend__key {
+  display: inline-block;
+  width: 12px;
+  height: 2px;
+  border-radius: 1px;
+}
+
+/* legends mirror the mark: line-key for lines, rect for bars/areas */
+.cfc-legend__key--rect {
+  height: 10px;
+  border-radius: 2px;
+}
+
+.cfc-tooltip {
+  position: absolute;
+  top: 24px;
+  pointer-events: none;
+  z-index: 5;
+  background: var(--cfc-surface);
+  border: 1px solid var(--cfc-border);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  padding: 8px 10px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.cfc-tooltip__date {
+  color: var(--cfc-muted);
+  margin-bottom: 6px;
+}
+
+.cfc-tooltip__row {
+  display: grid;
+  grid-template-columns: 12px auto 1fr;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.cfc-tooltip__key {
+  height: 2px;
+  border-radius: 1px;
+}
+
+.cfc-tooltip__value {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  min-width: 40px;
+}
+
+.cfc-tooltip__label {
+  color: var(--cfc-ink-2);
+}
+
+/* ---- bar lists (funnel, channels, pages, CTAs, outbound) --------------- */
+
+.cfc-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cfc-bars__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.cfc-bars__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.cfc-bars__value {
+  flex: none;
+  color: var(--cfc-ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.cfc-bars__track {
+  border-left: 1px solid var(--cfc-axis);
+}
+
+.cfc-bars__bar {
+  height: 12px;
+  border-radius: 0 4px 4px 0; /* rounded data-end, square at the baseline */
+}
+
+.cfc-bars__row:hover .cfc-bars__bar {
+  filter: brightness(1.08);
+}
+
+/* ---- tables ------------------------------------------------------------ */
+
+.cfc-tablewrap {
+  overflow-x: auto;
+}
+
+.cfc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.cfc-table th {
+  text-align: left;
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--cfc-muted);
+  padding: 4px 8px 6px;
+  border-bottom: 1px solid var(--cfc-axis);
+}
+
+.cfc-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--cfc-grid);
+}
+
+.cfc-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.cfc-table tbody tr:hover {
+  background: var(--cfc-wash);
+}
+
+.cfc-table__source {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cfc-tableview {
+  margin-top: 10px;
+}
+
+.cfc-tableview summary {
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--cfc-muted);
+}
+
+.cfc-tableview[open] summary {
+  margin-bottom: 8px;
+}
+
+.cfc-tableview .cfc-table {
+  max-height: 260px;
+  display: block;
+  overflow-y: auto;
+}
+
+/* ---- locale split ------------------------------------------------------ */
+
+.cfc-locales__bar {
+  display: flex;
+  gap: 2px; /* the surface gap separates touching segments */
+  height: 14px;
+  margin-bottom: 10px;
+}
+
+.cfc-locales__bar div:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
+.cfc-locales__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  font-size: 13px;
+  color: var(--cfc-ink-2);
+}
+
+.cfc-locales__count {
+  color: var(--cfc-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- states + footer ---------------------------------------------------- */
+
+.cfc-loading {
+  color: var(--cfc-muted);
+  font-size: 14px;
+}
+
+.cfc-notice {
+  color: var(--cfc-ink-2);
+  font-size: 14px;
+}
+
+.cfc-error {
+  grid-column: 1 / -1;
+  border-left: 3px solid var(--cfc-down);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.cfc-error p {
+  margin: 0;
+}
+
+.cfc-retry {
+  appearance: none;
+  font: inherit;
+  font-size: 13px;
+  padding: 6px 14px;
+  border: 1px solid var(--cfc-border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--cfc-ink);
+  cursor: pointer;
+}
+
+.cfc-retry:hover {
+  background: var(--cfc-wash);
+}
+
+.cfc-footnote {
+  margin: 14px 0 0;
+  font-size: 12px;
+  color: var(--cfc-muted);
+}
+
+.cfc-empty-line {
+  font-size: 13px;
+  color: var(--cfc-muted);
+}
+
+.cfc-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 24px;
+  font-size: 12px;
+  color: var(--cfc-muted);
+  padding-top: 4px;
+}
+
+.cfc-foot a {
+  color: var(--cfc-ink-2);
+}
+
+.cfc-analytics :focus-visible {
+  outline: 2px solid var(--cfc-s1);
+  outline-offset: 2px;
+}

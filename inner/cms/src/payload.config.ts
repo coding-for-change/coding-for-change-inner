@@ -1,3 +1,5 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { buildConfig } from 'payload';
 import { postgresAdapter } from '@payloadcms/db-postgres';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
@@ -20,6 +22,7 @@ import { AnalyticsEvents } from './collections/AnalyticsEvents';
 import { ConsentRecords } from './collections/ConsentRecords';
 import { attributionField } from './fields/attribution';
 import { analyticsExportEndpoints } from './endpoints/analyticsExport';
+import { analyticsSummary } from './endpoints/analyticsSummary';
 import { purgeAnalyticsEvents } from './lib/purgeAnalytics';
 import { SiteConfig } from './globals/SiteConfig';
 import { Membership } from './globals/Membership';
@@ -28,12 +31,15 @@ import { Partner } from './globals/Partner';
 import { About } from './globals/About';
 import { Homepage } from './globals/Homepage';
 
+const dirname = path.dirname(fileURLToPath(import.meta.url));
+
 export default buildConfig({
   editor: lexicalEditor(),
   collections: [Users, Team, TeamGroups, Projects, Events, FAQ, Sponsors, SponsorTiers, Companies, Media, BlogPost, WaitlistSignups, AnalyticsEvents, ConsentRecords],
   globals: [SiteConfig, Membership, Legal, Partner, About, Homepage],
-  // Admin-only CSV export endpoints (campaign funnel, raw events, signups).
-  endpoints: analyticsExportEndpoints,
+  // Admin-only analytics reporting: JSON aggregates for the /admin/analytics
+  // dashboard, plus CSV exports (campaign funnel, raw events, signups).
+  endpoints: [analyticsSummary, ...analyticsExportEndpoints],
   localization: {
     locales: [
       { label: 'English', code: 'en' },
@@ -126,6 +132,23 @@ export default buildConfig({
     user: 'users',
     meta: {
       titleSuffix: '— Coding for Change CMS',
+    },
+    // Custom component paths ('/components/…') resolve against src/, not cwd.
+    importMap: {
+      baseDir: dirname,
+    },
+    components: {
+      views: {
+        // First-party analytics dashboard (charts over analytics-events).
+        // The view guards auth itself — root custom views are public by default.
+        analyticsDashboard: {
+          Component:
+            '/components/analytics/AnalyticsDashboardView#AnalyticsDashboardView',
+          path: '/analytics',
+          exact: true,
+        },
+      },
+      afterNavLinks: ['/components/analytics/AnalyticsNavLink#AnalyticsNavLink'],
     },
   },
   // Enforce the analytics retention window (GDPR storage limitation): purge

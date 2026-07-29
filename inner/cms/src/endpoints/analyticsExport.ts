@@ -1,4 +1,5 @@
 import type { Endpoint, PayloadRequest } from 'payload';
+import { getPool, requireAdmin } from './util';
 
 /**
  * Admin-only CSV export endpoints, mounted at the API root:
@@ -8,8 +9,9 @@ import type { Endpoint, PayloadRequest } from 'payload';
  *   GET /api/analytics/signups.csv     waitlist signups + attribution
  *
  * All accept optional ?from=YYYY-MM-DD&to=YYYY-MM-DD (on created_at) and stream
- * CSV with a UTF-8 BOM so Excel reads umlauts correctly. No dashboard — this is
- * the whole reporting surface: open the file in Excel/Sheets.
+ * CSV with a UTF-8 BOM so Excel reads umlauts correctly. For charts, see the
+ * /admin/analytics dashboard (fed by analyticsSummary.ts); these exports are
+ * the raw-data escape hatch for Excel/Sheets.
  */
 
 const CSV_HEADERS = (filename: string): Record<string, string> => ({
@@ -53,19 +55,6 @@ function dateRange(req: PayloadRequest): { clause: string; params: string[] } {
     conds.push(`created_at < ($${params.length}::date + interval '1 day')`);
   }
   return { clause: conds.length ? `WHERE ${conds.join(' AND ')}` : '', params };
-}
-
-function requireAdmin(req: PayloadRequest): Response | null {
-  if (!req.user) return new Response('Unauthorized', { status: 401 });
-  return null;
-}
-
-// The postgres adapter exposes a node-postgres Pool for raw aggregate queries.
-function getPool(req: PayloadRequest): { query: (t: string, p?: unknown[]) => Promise<{ rows: Array<Record<string, unknown>> }> } | null {
-  const pool = (req.payload.db as unknown as { pool?: unknown }).pool;
-  return pool && typeof (pool as { query?: unknown }).query === 'function'
-    ? (pool as { query: (t: string, p?: unknown[]) => Promise<{ rows: Array<Record<string, unknown>> }> })
-    : null;
 }
 
 const campaignsCsv: Endpoint = {
