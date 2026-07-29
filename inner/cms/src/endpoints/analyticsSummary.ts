@@ -206,12 +206,16 @@ export const analyticsSummary: Endpoint = {
           params,
         ),
         // Session share of the top sources, for the donut next to the chart.
+        // Channel comes along so the legend can tell "google" (tagged ads)
+        // from "google.com" (organic); the mapping is 1:1 by derivation.
         pool.query(
           `${BASE_CTE}
-           SELECT ${SOURCE_EXPR} AS source, COUNT(DISTINCT sid) AS sessions
+           SELECT ${SOURCE_EXPR}              AS source,
+                  COALESCE(channel, 'direct') AS channel,
+                  COUNT(DISTINCT sid)         AS sessions
            FROM ev
            WHERE ${IN_CURRENT}
-           GROUP BY 1
+           GROUP BY 1, 2
            HAVING COUNT(DISTINCT sid) > 0
            ORDER BY sessions DESC, source
            LIMIT 4`,
@@ -365,6 +369,7 @@ export const analyticsSummary: Endpoint = {
       }),
       sourceShare: shareRes.rows.map((r) => ({
         source: String(r.source),
+        channel: String(r.channel),
         sessions: num(r.sessions),
       })),
       pages: pagesRes.rows.map((r) => ({
@@ -410,7 +415,7 @@ export type AnalyticsSummary = {
     conversions: number;
     convRatePct: number;
   }>;
-  sourceShare: Array<{ source: string; sessions: number }>;
+  sourceShare: Array<{ source: string; channel: string; sessions: number }>;
   pages: Array<{ path: string; views: number; sessions: number }>;
   ctas: Array<{ label: string; clicks: number }>;
   outbound: Array<{ label: string; clicks: number }>;

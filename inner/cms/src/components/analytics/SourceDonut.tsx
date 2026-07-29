@@ -17,7 +17,7 @@ import React, { useMemo, useState } from 'react';
  * segment (keyboard reachable — each segment is focusable).
  */
 
-export type SourceShare = { source: string; sessions: number };
+export type SourceShare = { source: string; channel: string; sessions: number };
 
 const SLOT_COLORS = [
   'var(--cfc-s1)',
@@ -26,6 +26,18 @@ const SLOT_COLORS = [
   'var(--cfc-s4)',
 ];
 const OTHER_COLOR = 'var(--cfc-other)';
+
+/**
+ * Short channel word behind the source name, so "google" (a campaign tag) and
+ * "google.com" (the organic referrer) don't read as a duplicate. Direct is
+ * omitted — "(direct)" already says it.
+ */
+const CHANNEL_TAGS: Record<string, string> = {
+  campaign: 'tagged',
+  organic_search: 'search',
+  social: 'social',
+  referral: 'referral',
+};
 
 const SIZE = 168;
 const R_OUTER = 80;
@@ -58,6 +70,8 @@ function arcPath(a0: number, a1: number): string {
 
 type Segment = {
   label: string;
+  /** Short channel word for the legend ('' when redundant or unknown). */
+  channelTag: string;
   sessions: number;
   pct: number;
   color: string;
@@ -81,13 +95,21 @@ export function SourceDonut({
     );
     const rows: Segment[] = top.map((s, i) => ({
       label: s.source,
+      channelTag: CHANNEL_TAGS[s.channel] ?? '',
       sessions: s.sessions,
       pct: 0,
       color: SLOT_COLORS[i],
       isOther: false,
     }));
     if (other > 0) {
-      rows.push({ label: 'Other', sessions: other, pct: 0, color: OTHER_COLOR, isOther: true });
+      rows.push({
+        label: 'Other',
+        channelTag: '',
+        sessions: other,
+        pct: 0,
+        color: OTHER_COLOR,
+        isOther: true,
+      });
     }
     const total = rows.reduce((a, s) => a + s.sessions, 0);
     return rows.map((s) => ({
@@ -134,7 +156,9 @@ export function SourceDonut({
             className={`cfc-donut__seg ${active === 0 ? 'is-active' : ''}`}
             tabIndex={0}
             role="img"
-            aria-label={`${segments[0].label}: ${nf.format(segments[0].sessions)} sessions, 100%`}
+            aria-label={`${segments[0].label}${
+              segments[0].channelTag ? ` (${segments[0].channelTag})` : ''
+            }: ${nf.format(segments[0].sessions)} sessions, 100%`}
             onPointerEnter={() => setActive(0)}
             onPointerLeave={() => setActive(null)}
             onFocus={() => setActive(0)}
@@ -152,7 +176,9 @@ export function SourceDonut({
               className={`cfc-donut__seg ${active === i ? 'is-active' : ''}`}
               tabIndex={0}
               role="img"
-              aria-label={`${seg.label}: ${nf.format(seg.sessions)} sessions, ${seg.pct}%`}
+              aria-label={`${seg.label}${
+                seg.channelTag ? ` (${seg.channelTag})` : ''
+              }: ${nf.format(seg.sessions)} sessions, ${seg.pct}%`}
               onPointerEnter={() => setActive(i)}
               onPointerLeave={() => setActive(null)}
               onFocus={() => setActive(i)}
@@ -189,8 +215,12 @@ export function SourceDonut({
               className="cfc-legend__key cfc-legend__key--rect"
               style={{ background: s.color }}
             />
-            <span className="cfc-donut__name" title={s.label}>
+            <span
+              className="cfc-donut__name"
+              title={s.channelTag ? `${s.label} (${s.channelTag})` : s.label}
+            >
               {s.label}
+              {s.channelTag && <span className="cfc-donut__chan"> · {s.channelTag}</span>}
             </span>
             <span className="cfc-donut__count">
               {nf.format(s.sessions)} · {s.pct}%

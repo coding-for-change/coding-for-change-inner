@@ -251,15 +251,20 @@ html[data-theme='dark'] .cfc-analytics {
   min-width: 0;
 }
 
+/* Wide enough for donut + legend side by side, so the aside stays shorter
+   than the chart and the card carries no dead band below either column.
+   Centered against the chart column; in the wrapped single-column case
+   align-self has no visible effect. */
 .cfc-traffic__aside {
-  flex: 0 1 300px;
-  min-width: 240px;
+  flex: 0 1 430px;
+  min-width: 320px;
+  align-self: center;
 }
 
 @media (max-width: 900px) {
   .cfc-traffic__aside {
     flex: 1 1 100%;
-    max-width: 440px;
+    max-width: 460px;
   }
 }
 
@@ -280,15 +285,24 @@ html[data-theme='dark'] .cfc-analytics {
 
 /* ---- source donut -------------------------------------------------------- */
 
+/* Donut left, legend right — a compact block instead of a tall stack. */
 .cfc-donut {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 18px;
+  padding-top: 8px;
 }
 
 .cfc-donut__plot {
   display: block;
+  flex: none;
+}
+
+@media (max-width: 480px) {
+  .cfc-donut {
+    flex-direction: column;
+    gap: 12px;
+  }
 }
 
 .cfc-donut__seg {
@@ -311,12 +325,20 @@ html[data-theme='dark'] .cfc-analytics {
 }
 
 .cfc-donut__legend {
-  width: 100%;
+  flex: 1 1 auto;
+  min-width: 0;
+  width: auto;
   display: flex;
   flex-direction: column;
   gap: 2px;
   font-size: 13px;
   color: var(--cfc-ink-2);
+}
+
+@media (max-width: 480px) {
+  .cfc-donut__legend {
+    width: 100%;
+  }
 }
 
 .cfc-donut__row {
@@ -341,6 +363,12 @@ html[data-theme='dark'] .cfc-analytics {
 .cfc-donut__count {
   color: var(--cfc-muted);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* channel word behind the source name (tagged / search / social / referral) */
+.cfc-donut__chan {
+  color: var(--cfc-muted);
 }
 
 /* ---- line chart, legend, tooltip --------------------------------------- */

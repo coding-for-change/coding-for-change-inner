@@ -20,7 +20,7 @@ export type SeriesPoint = {
   conversions: number;
 };
 
-const HEIGHT = 240;
+const HEIGHT = 280;
 const MARGIN = { top: 12, right: 18, bottom: 28, left: 48 };
 
 /** Clean 0-based axis: step from the 1/2/5 ladder, ~4 intervals. */
