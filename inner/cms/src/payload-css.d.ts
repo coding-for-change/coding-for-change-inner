@@ -4,3 +4,7 @@
 // missing declaration ("Cannot find module or type declarations for side-effect
 // import of '@payloadcms/next/css'"). This ambient declaration satisfies the check.
 declare module '@payloadcms/next/css';
+
+// Same for our own global stylesheet side-effect imports (e.g. the analytics
+// dashboard's dashboard.css) — Next bundles them; TS just needs a declaration.
+declare module '*.css';
