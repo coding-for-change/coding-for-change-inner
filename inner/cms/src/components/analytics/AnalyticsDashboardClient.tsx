@@ -1,11 +1,13 @@
 'use client';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import type { AnalyticsSummary } from '../../endpoints/analyticsSummary';
+import { SourceDonut } from './SourceDonut';
 import { TimeSeriesChart } from './TimeSeriesChart';
 
 /**
- * The /admin/analytics dashboard body: range filter, KPI tiles, daily
- * time-series, funnel, and channel/source/page/CTA breakdowns, all fed by one
+ * The /admin/analytics dashboard body: range filter, KPI tiles, the traffic
+ * time-series with a session-share donut beside it, funnel, and
+ * channel/source/page/CTA breakdowns, all fed by one
  * GET /api/analytics/summary call so every panel shows the same slice.
  * Rendered inside the Payload admin (DefaultTemplate) by AnalyticsDashboardView.
  */
@@ -39,6 +41,15 @@ const nfCompact = new Intl.NumberFormat('en-GB', {
 });
 const fmtInt = (v: number) => nf.format(v);
 const fmtCompact = (v: number) => (v < 10000 ? nf.format(v) : nfCompact.format(v));
+
+/** Table row label for a series bucket: the date, plus hours when intraday. */
+const fmtBucketRow = (bucket: string, bucketHours: number): string => {
+  if (bucketHours >= 24) return bucket.slice(0, 10);
+  const from = Number(bucket.slice(11, 13));
+  const to = (from + bucketHours) % 24;
+  const pad = (v: number) => String(v).padStart(2, '0');
+  return `${bucket.slice(0, 10)} ${pad(from)}:00–${pad(to)}:00`;
+};
 
 /** Sum an array into at most `buckets` points (sparkline downsampling). */
 function downsample(values: number[], buckets = 12): number[] {
@@ -279,9 +290,9 @@ export function AnalyticsDashboardClient({ apiRoute = '/api' }: { apiRoute?: str
 
   const csvQuery = data?.range.from && data?.range.to ? `?from=${data.range.from}&to=${data.range.to}` : '';
 
-  const sparkSessions = useMemo(() => data?.daily.map((d) => d.sessions) ?? [], [data]);
-  const sparkPageviews = useMemo(() => data?.daily.map((d) => d.pageviews) ?? [], [data]);
-  const sparkConversions = useMemo(() => data?.daily.map((d) => d.conversions) ?? [], [data]);
+  const sparkSessions = useMemo(() => data?.series.map((d) => d.sessions) ?? [], [data]);
+  const sparkPageviews = useMemo(() => data?.series.map((d) => d.pageviews) ?? [], [data]);
+  const sparkConversions = useMemo(() => data?.series.map((d) => d.conversions) ?? [], [data]);
 
   return (
     <div className="cfc-analytics">
@@ -357,30 +368,41 @@ export function AnalyticsDashboardClient({ apiRoute = '/api' }: { apiRoute?: str
           />
 
           <Card title="Traffic over time" caption={`${data.range.from} → ${data.range.to}`} wide>
-            <TimeSeriesChart daily={data.daily} />
-            <details className="cfc-tableview">
-              <summary>View as table</summary>
-              <table className="cfc-table">
-                <thead>
-                  <tr>
-                    <th>Day</th>
-                    <th className="num">Sessions</th>
-                    <th className="num">Page views</th>
-                    <th className="num">Conversions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[...data.daily].reverse().map((d) => (
-                    <tr key={d.day}>
-                      <td>{d.day}</td>
-                      <td className="num">{fmtInt(d.sessions)}</td>
-                      <td className="num">{fmtInt(d.pageviews)}</td>
-                      <td className="num">{fmtInt(d.conversions)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </details>
+            <div className="cfc-traffic">
+              <div className="cfc-traffic__chart">
+                <TimeSeriesChart series={data.series} bucketHours={data.bucketHours} />
+                <details className="cfc-tableview">
+                  <summary>View as table</summary>
+                  <table className="cfc-table">
+                    <thead>
+                      <tr>
+                        <th>{data.bucketHours < 24 ? 'Time' : 'Day'}</th>
+                        <th className="num">Sessions</th>
+                        <th className="num">Page views</th>
+                        <th className="num">Conversions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[...data.series].reverse().map((d) => (
+                        <tr key={d.bucket}>
+                          <td>{fmtBucketRow(d.bucket, data.bucketHours)}</td>
+                          <td className="num">{fmtInt(d.sessions)}</td>
+                          <td className="num">{fmtInt(d.pageviews)}</td>
+                          <td className="num">{fmtInt(d.conversions)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </details>
+              </div>
+              <aside className="cfc-traffic__aside">
+                <div className="cfc-traffic__asidehead">
+                  <h3 className="cfc-traffic__asidetitle">Sessions by source</h3>
+                  <span className="cfc-card__caption">tag or referrer</span>
+                </div>
+                <SourceDonut share={data.sourceShare} totalSessions={data.totals.sessions} />
+              </aside>
+            </div>
           </Card>
 
           <Card title="Funnel" caption="distinct sessions reaching each step">
@@ -429,7 +451,7 @@ export function AnalyticsDashboardClient({ apiRoute = '/api' }: { apiRoute?: str
                 <table className="cfc-table">
                   <thead>
                     <tr>
-                      <th>Source</th>
+                      <th>Source / referrer</th>
                       <th>Channel</th>
                       <th className="num">Sessions</th>
                       <th className="num">Form starts</th>
@@ -439,9 +461,15 @@ export function AnalyticsDashboardClient({ apiRoute = '/api' }: { apiRoute?: str
                   </thead>
                   <tbody>
                     {data.sources.map((s) => (
-                      <tr key={`${s.source}|${s.channel}`}>
-                        <td className="cfc-table__source" title={s.source}>
+                      <tr key={`${s.source}|${s.channel}|${s.campaign ?? ''}`}>
+                        <td
+                          className="cfc-table__source"
+                          title={s.campaign ? `${s.source} — campaign: ${s.campaign}` : s.source}
+                        >
                           {s.source}
+                          {s.campaign && (
+                            <span className="cfc-table__campaign"> · {s.campaign}</span>
+                          )}
                         </td>
                         <td>{CHANNEL_LABELS[s.channel] ?? s.channel}</td>
                         <td className="num">{fmtInt(s.sessions)}</td>

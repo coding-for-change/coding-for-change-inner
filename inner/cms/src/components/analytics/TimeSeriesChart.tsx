@@ -2,15 +2,19 @@
 import React, { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 /**
- * Two-series daily line chart (sessions / page views) for the analytics
- * dashboard. Plain SVG — no chart library. One y-axis, 2px round-capped lines,
- * hairline solid gridlines, end-point markers with a surface ring, and a
- * crosshair tooltip that snaps to the nearest day (pointer or arrow keys).
+ * Two-series line chart (sessions / page views) for the analytics dashboard.
+ * Plain SVG — no chart library. One y-axis, 2px round-capped lines, hairline
+ * solid gridlines, end-point markers with a surface ring, and a crosshair
+ * tooltip that snaps to the nearest bucket (pointer or arrow keys).
  * All values are also reachable without hover via the card's table view.
+ *
+ * Buckets are calendar days (bucketHours = 24) or 6-hour slices of one
+ * (bucketHours = 6, used for the 7-day range). Intraday buckets label the
+ * x-axis at midnights only; the tooltip carries the hour range.
  */
 
-export type DayPoint = {
-  day: string; // YYYY-MM-DD (local, from the summary endpoint)
+export type SeriesPoint = {
+  bucket: string; // YYYY-MM-DDTHH:MM (local, from the summary endpoint)
   sessions: number;
   pageviews: number;
   conversions: number;
@@ -32,11 +36,15 @@ function niceScale(maxValue: number): { yMax: number; ticks: number[] } {
   return { yMax, ticks };
 }
 
-/** Parse YYYY-MM-DD as a local date (no timezone shifting). */
-function parseDay(day: string): Date {
-  const [y, m, d] = day.split('-').map(Number);
-  return new Date(y, (m || 1) - 1, d || 1);
+/** Parse YYYY-MM-DD[THH:MM] as a local date (no timezone shifting). */
+function parseBucket(bucket: string): Date {
+  const [date, time] = bucket.split('T');
+  const [y, m, d] = date.split('-').map(Number);
+  const [hh, mm] = (time ?? '0:0').split(':').map(Number);
+  return new Date(y, (m || 1) - 1, d || 1, hh || 0, mm || 0);
 }
+
+const pad2 = (v: number) => String(v).padStart(2, '0');
 
 const tickFmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' });
 const tooltipFmt = new Intl.DateTimeFormat('en-GB', {
@@ -46,6 +54,15 @@ const tooltipFmt = new Intl.DateTimeFormat('en-GB', {
   year: 'numeric',
 });
 const nf = new Intl.NumberFormat('en-GB');
+
+/** Tooltip heading: the day, plus the wall-clock range for intraday buckets. */
+function bucketLabel(bucket: string, bucketHours: number): string {
+  const start = parseBucket(bucket);
+  if (bucketHours >= 24) return tooltipFmt.format(start);
+  const from = start.getHours();
+  const to = (from + bucketHours) % 24;
+  return `${tooltipFmt.format(start)}, ${pad2(from)}:00–${pad2(to)}:00`;
+}
 
 function useContainerWidth<T extends HTMLElement>(): [React.RefObject<T | null>, number] {
   const ref = useRef<T>(null);
@@ -67,18 +84,24 @@ const SERIES = [
   { key: 'pageviews' as const, label: 'Page views', varName: 'var(--cfc-s2)' },
 ];
 
-export function TimeSeriesChart({ daily }: { daily: DayPoint[] }) {
+export function TimeSeriesChart({
+  series,
+  bucketHours = 24,
+}: {
+  series: SeriesPoint[];
+  bucketHours?: number;
+}) {
   const [wrapRef, width] = useContainerWidth<HTMLDivElement>();
   const [hover, setHover] = useState<number | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
 
-  const n = daily.length;
+  const n = series.length;
   const innerW = Math.max(width - MARGIN.left - MARGIN.right, 50);
   const innerH = HEIGHT - MARGIN.top - MARGIN.bottom;
 
   const { yMax, ticks } = useMemo(
-    () => niceScale(Math.max(...daily.map((d) => Math.max(d.sessions, d.pageviews)), 0)),
-    [daily],
+    () => niceScale(Math.max(...series.map((d) => Math.max(d.sessions, d.pageviews)), 0)),
+    [series],
   );
 
   const x = useCallback(
@@ -93,14 +116,24 @@ export function TimeSeriesChart({ daily }: { daily: DayPoint[] }) {
   const paths = useMemo(
     () =>
       SERIES.map((s) =>
-        daily.map((d, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)},${y(d[s.key]).toFixed(1)}`).join(''),
+        series.map((d, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)},${y(d[s.key]).toFixed(1)}`).join(''),
       ),
-    [daily, x, y],
+    [series, x, y],
   );
 
-  // Sparse x ticks: ~6 labels, always ending on the last day.
+  const perDay = Math.max(1, Math.round(24 / bucketHours));
+
+  // Sparse x ticks. Daily buckets: ~6 labels, always ending on the last day.
+  // Intraday buckets: labels sit on midnights only (the tooltip has the hours).
   const xTicks = useMemo(() => {
     if (n === 0) return [];
+    if (perDay > 1) {
+      const nDays = Math.ceil(n / perDay);
+      const dayStep = Math.max(1, Math.ceil(nDays / 7));
+      const idx: number[] = [];
+      for (let i = 0; i < n; i += perDay * dayStep) idx.push(i);
+      return idx;
+    }
     const step = Math.max(1, Math.ceil(n / 6));
     const idx: number[] = [];
     for (let i = 0; i < n; i += step) idx.push(i);
@@ -108,7 +141,7 @@ export function TimeSeriesChart({ daily }: { daily: DayPoint[] }) {
     if (n - 1 - last < step / 2 && idx.length > 1) idx.pop();
     if (idx[idx.length - 1] !== n - 1) idx.push(n - 1);
     return idx;
-  }, [n]);
+  }, [n, perDay]);
 
   const nearestIndex = useCallback(
     (clientX: number) => {
@@ -132,7 +165,7 @@ export function TimeSeriesChart({ daily }: { daily: DayPoint[] }) {
   };
 
   if (n === 0) return null;
-  const hovered = hover !== null ? daily[hover] : null;
+  const hovered = hover !== null ? series[hover] : null;
 
   // Keep the tooltip inside the plot: flip sides past the midpoint.
   const tooltipLeft = hover !== null && hover >= n / 2;
@@ -152,7 +185,9 @@ export function TimeSeriesChart({ daily }: { daily: DayPoint[] }) {
         width="100%"
         height={HEIGHT}
         role="img"
-        aria-label={`Sessions and page views per day, ${daily[0].day} to ${daily[n - 1].day}`}
+        aria-label={`Sessions and page views per ${
+          bucketHours >= 24 ? 'day' : `${bucketHours}-hour bucket`
+        }, ${series[0].bucket.slice(0, 10)} to ${series[n - 1].bucket.slice(0, 10)}`}
         tabIndex={0}
         onPointerMove={onPointerMove}
         onPointerLeave={() => setHover(null)}
@@ -191,7 +226,7 @@ export function TimeSeriesChart({ daily }: { daily: DayPoint[] }) {
             textAnchor={i === 0 ? 'start' : i === n - 1 ? 'end' : 'middle'}
             className="cfc-chart__tick"
           >
-            {tickFmt.format(parseDay(daily[i].day))}
+            {tickFmt.format(parseBucket(series[i].bucket))}
           </text>
         ))}
         {/* crosshair */}
@@ -217,7 +252,7 @@ export function TimeSeriesChart({ daily }: { daily: DayPoint[] }) {
             strokeLinejoin="round"
           />
         ))}
-        {/* hovered-day markers (surface ring keeps them legible on the lines) */}
+        {/* hovered-bucket markers (surface ring keeps them legible on the lines) */}
         {hovered !== null &&
           SERIES.map((s) => (
             <circle
@@ -236,7 +271,7 @@ export function TimeSeriesChart({ daily }: { daily: DayPoint[] }) {
             <circle
               key={s.key}
               cx={x(n - 1)}
-              cy={y(daily[n - 1][s.key])}
+              cy={y(series[n - 1][s.key])}
               r={4.5}
               fill={s.varName}
               stroke="var(--cfc-surface)"
@@ -253,7 +288,7 @@ export function TimeSeriesChart({ daily }: { daily: DayPoint[] }) {
             transform: tooltipLeft ? 'translateX(calc(-100% - 12px))' : 'translateX(12px)',
           }}
         >
-          <div className="cfc-tooltip__date">{tooltipFmt.format(parseDay(hovered.day))}</div>
+          <div className="cfc-tooltip__date">{bucketLabel(hovered.bucket, bucketHours)}</div>
           {SERIES.map((s) => (
             <div className="cfc-tooltip__row" key={s.key}>
               <span className="cfc-tooltip__key" style={{ background: s.varName }} />

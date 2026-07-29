@@ -6,13 +6,15 @@ import { getPool, requireAdmin } from './util';
  *
  * Admin-only JSON aggregates over `analytics_events` (+ `waitlist_signups`)
  * feeding the /admin/analytics dashboard: KPI totals for the selected window
- * and the window before it (for deltas), a zero-filled daily series, the
+ * and the window before it (for deltas), a zero-filled time series, the
  * behavioural funnel, and channel / source / page / CTA / outbound / locale
  * breakdowns. Same raw-SQL-over-the-adapter-pool approach as the CSV exports.
  *
- * `days` must be one of 7 | 30 | 90 | 365 (default 30). Day bucketing and the
+ * `days` must be one of 7 | 30 | 90 | 365 (default 30). Bucketing and the
  * window boundaries use ANALYTICS_TZ (default Europe/Berlin) so "a day" means
- * a local calendar day, not a UTC one.
+ * a local calendar day, not a UTC one. The 7-day window is bucketed into
+ * 6-hour slices (28 points) so the chart isn't seven stretched segments; the
+ * longer windows stay daily.
  */
 
 const ALLOWED_DAYS = new Set([7, 30, 90, 365]);
@@ -35,6 +37,7 @@ const BASE_CTE = `
            e.attribution_source          AS source,
            e.attribution_channel::text   AS channel,
            e.attribution_campaign        AS campaign,
+           e.attribution_referrer        AS referrer,
            e.attribution_session_id      AS sid,
            (e.created_at AT TIME ZONE $1) AS ts,
            cfg.today,
@@ -46,6 +49,20 @@ const BASE_CTE = `
 // Window predicates over the projected local timestamp.
 const IN_CURRENT = `ts >= today - (days - 1) * interval '1 day' AND ts < today + interval '1 day'`;
 const IN_EITHER = `ts >= today - (2 * days - 1) * interval '1 day' AND ts < today + interval '1 day'`;
+
+/**
+ * What to show as "the source": the explicit campaign tag (?src= / utm_source)
+ * when there is one, otherwise the referrer host — so untagged social/search
+ * traffic reads "linkedin.com" instead of "(none)". Referrer hosts are
+ * lowercased and common mobile/link-shim prefixes (www. m. l. lm. out.) are
+ * stripped so l.instagram.com and instagram.com count as one source. Traffic
+ * with neither tag nor referrer is "(direct)".
+ */
+const SOURCE_EXPR = `COALESCE(
+  NULLIF(source, ''),
+  NULLIF(regexp_replace(lower(referrer), '^(www|m|l|lm|out)\\.', ''), ''),
+  '(direct)'
+)`;
 
 const num = (v: unknown): number => Number(v) || 0;
 
@@ -98,9 +115,12 @@ export const analyticsSummary: Endpoint = {
       );
     }
 
+    // Short window → intraday buckets, otherwise calendar days. 7 × 4 = 28
+    // points instead of 7, so the short-range chart isn't stretched thin.
+    const bucketHours = days === 7 ? 6 : 24;
     const params = [TIMEZONE, days];
 
-    const [totalsRes, dailyRes, funnelRes, channelsRes, sourcesRes, pagesRes, ctasRes, outboundRes, localesRes, signupsRes] =
+    const [totalsRes, seriesRes, funnelRes, channelsRes, sourcesRes, shareRes, pagesRes, ctasRes, outboundRes, localesRes, signupsRes] =
       await Promise.all([
         // KPI totals, current + previous window in one pass.
         pool.query(
@@ -119,15 +139,22 @@ export const analyticsSummary: Endpoint = {
            GROUP BY 1`,
           params,
         ),
-        // Zero-filled daily series for the current window.
+        // Zero-filled time series for the current window. Buckets are aligned
+        // to local midnight ($3 = hours per bucket: 24, or 6 for the 7-day
+        // view), so a "bucket" is a calendar day or a quarter of one.
         pool.query(
           `${BASE_CTE},
            d AS (
-             SELECT generate_series(today - (days - 1) * interval '1 day', today, interval '1 day') AS day
+             SELECT generate_series(
+                      today - (days - 1) * interval '1 day',
+                      today + interval '1 day' - make_interval(hours => $3::int),
+                      make_interval(hours => $3::int)
+                    ) AS bucket
              FROM cfg
            ),
            agg AS (
-             SELECT date_trunc('day', ts) AS day,
+             SELECT date_trunc('day', ts)
+                      + make_interval(hours => (floor(extract(hour FROM ts) / $3::int) * $3)::int) AS bucket,
                     COUNT(DISTINCT sid)                                    AS sessions,
                     COUNT(*) FILTER (WHERE type IN ('landing','pageview')) AS pageviews,
                     COUNT(*) FILTER (WHERE type = 'conversion')            AS conversions
@@ -135,13 +162,13 @@ export const analyticsSummary: Endpoint = {
              WHERE ${IN_CURRENT}
              GROUP BY 1
            )
-           SELECT to_char(d.day, 'YYYY-MM-DD') AS day,
+           SELECT to_char(d.bucket, 'YYYY-MM-DD"T"HH24:MI') AS bucket,
                   COALESCE(a.sessions, 0)    AS sessions,
                   COALESCE(a.pageviews, 0)   AS pageviews,
                   COALESCE(a.conversions, 0) AS conversions
-           FROM d LEFT JOIN agg a ON a.day = d.day
-           ORDER BY d.day`,
-          params,
+           FROM d LEFT JOIN agg a ON a.bucket = d.bucket
+           ORDER BY d.bucket`,
+          [TIMEZONE, days, bucketHours],
         ),
         // Funnel: distinct sessions that reached each behavioural stage.
         pool.query(
@@ -165,16 +192,29 @@ export const analyticsSummary: Endpoint = {
         ),
         pool.query(
           `${BASE_CTE}
-           SELECT COALESCE(NULLIF(source, ''), '(none)') AS source,
-                  COALESCE(channel, 'direct')            AS channel,
+           SELECT ${SOURCE_EXPR}                          AS source,
+                  COALESCE(channel, 'direct')             AS channel,
+                  NULLIF(campaign, '')                    AS campaign,
                   COUNT(DISTINCT sid)                          AS sessions,
                   COUNT(*) FILTER (WHERE type = 'form_start')  AS form_starts,
                   COUNT(*) FILTER (WHERE type = 'conversion')  AS conversions
            FROM ev
            WHERE ${IN_CURRENT}
-           GROUP BY 1, 2
-           ORDER BY conversions DESC, sessions DESC
+           GROUP BY 1, 2, 3
+           ORDER BY conversions DESC, sessions DESC, source
            LIMIT 12`,
+          params,
+        ),
+        // Session share of the top sources, for the donut next to the chart.
+        pool.query(
+          `${BASE_CTE}
+           SELECT ${SOURCE_EXPR} AS source, COUNT(DISTINCT sid) AS sessions
+           FROM ev
+           WHERE ${IN_CURRENT}
+           GROUP BY 1
+           HAVING COUNT(DISTINCT sid) > 0
+           ORDER BY sessions DESC, source
+           LIMIT 4`,
           params,
         ),
         pool.query(
@@ -258,8 +298,8 @@ export const analyticsSummary: Endpoint = {
       else signups.previous = num(r.signups);
     }
 
-    const daily = dailyRes.rows.map((r) => ({
-      day: String(r.day),
+    const series = seriesRes.rows.map((r) => ({
+      bucket: String(r.bucket), // YYYY-MM-DDTHH:MM, local to TIMEZONE
       sessions: num(r.sessions),
       pageviews: num(r.pageviews),
       conversions: num(r.conversions),
@@ -286,8 +326,8 @@ export const analyticsSummary: Endpoint = {
       timezone: TIMEZONE,
       range: {
         days,
-        from: daily[0]?.day ?? null,
-        to: daily[daily.length - 1]?.day ?? null,
+        from: series[0]?.bucket.slice(0, 10) ?? null,
+        to: series[series.length - 1]?.bucket.slice(0, 10) ?? null,
       },
       totals: {
         ...cur,
@@ -302,7 +342,8 @@ export const analyticsSummary: Endpoint = {
           totalsByPeriod.previous.sessions,
         ),
       },
-      daily,
+      bucketHours,
+      series,
       funnel,
       channels: channelsRes.rows.map((r) => ({
         channel: String(r.channel),
@@ -315,12 +356,17 @@ export const analyticsSummary: Endpoint = {
         return {
           source: String(r.source),
           channel: String(r.channel),
+          campaign: r.campaign == null ? null : String(r.campaign),
           sessions,
           formStarts: num(r.form_starts),
           conversions,
           convRatePct: convRatePct(conversions, sessions),
         };
       }),
+      sourceShare: shareRes.rows.map((r) => ({
+        source: String(r.source),
+        sessions: num(r.sessions),
+      })),
       pages: pagesRes.rows.map((r) => ({
         path: String(r.path),
         views: num(r.views),
@@ -350,17 +396,21 @@ export type AnalyticsSummary = {
   range: { days: number; from: string | null; to: string | null };
   totals: PeriodTotals & { signups: number; convRatePct: number };
   previous: PeriodTotals & { signups: number; convRatePct: number };
-  daily: Array<{ day: string; sessions: number; pageviews: number; conversions: number }>;
+  /** Hours per series bucket: 6 for the 7-day range, otherwise 24. */
+  bucketHours: number;
+  series: Array<{ bucket: string; sessions: number; pageviews: number; conversions: number }>;
   funnel: Array<{ stage: string; sessions: number; pctOfSessions: number }>;
   channels: Array<{ channel: string; sessions: number; conversions: number }>;
   sources: Array<{
     source: string;
     channel: string;
+    campaign: string | null;
     sessions: number;
     formStarts: number;
     conversions: number;
     convRatePct: number;
   }>;
+  sourceShare: Array<{ source: string; sessions: number }>;
   pages: Array<{ path: string; views: number; sessions: number }>;
   ctas: Array<{ label: string; clicks: number }>;
   outbound: Array<{ label: string; clicks: number }>;

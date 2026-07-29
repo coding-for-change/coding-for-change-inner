@@ -19,9 +19,14 @@
   --cfc-axis: #c3c2b7;
   --cfc-border: rgba(11, 11, 11, 0.1);
   --cfc-wash: rgba(11, 11, 11, 0.04);
-  /* series (categorical slots 1–2) */
+  /* series (categorical slots 1–4) + de-emphasis "Other" for the donut.
+     Slot order is the CVD-safety mechanism; the donut folds its tail after
+     slot 4 because slot 5 (magenta) fails the CVD gate against the gray. */
   --cfc-s1: #2a78d6;
   --cfc-s2: #eb6834;
+  --cfc-s3: #1baf7a;
+  --cfc-s4: #eda100;
+  --cfc-other: #5f5e5a;
   /* funnel ordinal ramp (blue 250→550) */
   --cfc-f1: #86b6ef;
   --cfc-f2: #5598e7;
@@ -47,6 +52,9 @@ html[data-theme='dark'] .cfc-analytics {
   --cfc-wash: rgba(255, 255, 255, 0.05);
   --cfc-s1: #3987e5;
   --cfc-s2: #d95926;
+  --cfc-s3: #199e70;
+  --cfc-s4: #c98500;
+  --cfc-other: #6b6a66;
   /* dark ramp anchors flip: nearest-surface step is the darkest (600→300) */
   --cfc-f1: #184f95;
   --cfc-f2: #256abf;
@@ -229,6 +237,112 @@ html[data-theme='dark'] .cfc-analytics {
   color: var(--cfc-muted);
 }
 
+/* ---- traffic card: chart + source donut side by side -------------------- */
+
+.cfc-traffic {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 20px 32px;
+}
+
+.cfc-traffic__chart {
+  flex: 1 1 460px;
+  min-width: 0;
+}
+
+.cfc-traffic__aside {
+  flex: 0 1 300px;
+  min-width: 240px;
+}
+
+@media (max-width: 900px) {
+  .cfc-traffic__aside {
+    flex: 1 1 100%;
+    max-width: 440px;
+  }
+}
+
+.cfc-traffic__asidehead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.cfc-traffic__asidetitle {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cfc-ink-2);
+}
+
+/* ---- source donut -------------------------------------------------------- */
+
+.cfc-donut {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.cfc-donut__plot {
+  display: block;
+}
+
+.cfc-donut__seg {
+  cursor: default;
+}
+
+.cfc-donut__seg.is-active {
+  filter: brightness(1.08);
+}
+
+.cfc-donut__value {
+  fill: var(--cfc-ink);
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.cfc-donut__label {
+  fill: var(--cfc-muted);
+  font-size: 11px;
+}
+
+.cfc-donut__legend {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+  color: var(--cfc-ink-2);
+}
+
+.cfc-donut__row {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 6px;
+  border-radius: 4px;
+}
+
+.cfc-donut__row.is-active {
+  background: var(--cfc-wash);
+}
+
+.cfc-donut__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cfc-donut__count {
+  color: var(--cfc-muted);
+  font-variant-numeric: tabular-nums;
+}
+
 /* ---- line chart, legend, tooltip --------------------------------------- */
 
 .cfc-chart {
@@ -397,6 +511,11 @@ html[data-theme='dark'] .cfc-analytics {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* utm_campaign detail behind a tagged source */
+.cfc-table__campaign {
+  color: var(--cfc-muted);
 }
 
 .cfc-tableview {
