@@ -1,12 +1,21 @@
 import type { Endpoint, PayloadRequest } from 'payload';
 import { getPool, requireAdmin } from './util';
+import { buildWaitlistEmail } from '../lib/waitlistEmailTemplate';
 
 /**
  * Admin-only bulk mail to the waitlist (`waitlist-signups` collection).
  *
  *   GET  /api/waitlist/email-recipients   unique-address counts, total + per locale
+ *   POST /api/waitlist/email-preview      body { message, locale?, headerImageUrl?,
+ *                                                ctaLabel?, ctaUrl? } → { html }
  *   POST /api/waitlist/send-email         body { subject, message, locale?,
+ *                                                headerImageUrl?, ctaLabel?, ctaUrl?,
  *                                                test?, testRecipients? }
+ *
+ * Mails are rendered through the branded template in lib/waitlistEmailTemplate.ts
+ * (logo header, optional full-width image, optional CTA button, bilingual
+ * unsubscribe footer). The preview endpoint returns that exact rendering so the
+ * compose form can show it live without duplicating the template client-side.
  *
  * Every recipient gets their own individual email, so addresses are never
  * exposed to other recipients — the reason this exists instead of a
@@ -30,6 +39,11 @@ import { getPool, requireAdmin } from './util';
 const FROM = () =>
   `${process.env.EMAIL_FROM_NAME || 'Coding for Change'} <${process.env.EMAIL_FROM || 'noreply@codingforchange.com'}>`;
 const CONTACT = () => process.env.CONTACT_TO_EMAIL || 'info@codingforchange.com';
+// Absolute origin referenced inside the mails (logo image, site link). Mails
+// are read in real inboxes, so this must be the public site even when the CMS
+// itself runs elsewhere (dev, docker-internal hostname, …).
+const SITE_ORIGIN = () =>
+  (process.env.PUBLIC_SITE_ORIGIN || 'https://codingforchange.com').replace(/\/+$/, '');
 
 const BATCH_URL = 'https://api.resend.com/emails/batch';
 const BATCH_SIZE = 100; // Resend's maximum per batch request
@@ -60,43 +74,51 @@ const parseTestRecipients = (raw: unknown): { emails: string[] } | { error: stri
   return { emails };
 };
 
-const escapeHtml = (s: string): string =>
-  s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+const isHttpUrl = (s: string): boolean => {
+  try {
+    const u = new URL(s);
+    return u.protocol === 'https:' || u.protocol === 'http:';
+  } catch {
+    return false;
+  }
+};
 
-// Turn bare http(s) URLs in already-escaped text into links (quotes are
-// escaped, so the URL can't break out of the href attribute). The final
-// character class keeps trailing sentence punctuation out of the link.
-const linkify = (escaped: string): string =>
-  escaped.replace(
-    /(https?:\/\/[^\s<]*[^\s<.,;:!?)"'])/g,
-    '<a href="$1" style="color:#2a78d6;">$1</a>',
-  );
+type ComposeExtras = { headerImageUrl?: string; ctaLabel?: string; ctaUrl?: string };
 
-const renderHtml = (message: string): string =>
-  message
-    .split(/\n{2,}/)
-    .map((p) => `<p style="margin:0 0 1em;">${linkify(escapeHtml(p)).replace(/\n/g, '<br />')}</p>`)
-    .join('');
+// Optional template extras shared by send + preview: an image shown full-width
+// under the logo header, and/or a CTA button below the message. URLs must be
+// absolute http(s) — mail clients have nothing to resolve relative URLs
+// against (the compose form resolves Media-collection paths before posting).
+const parseComposeExtras = (body: {
+  headerImageUrl?: unknown;
+  ctaLabel?: unknown;
+  ctaUrl?: unknown;
+}): ComposeExtras | { error: string } => {
+  const str = (v: unknown) => (typeof v === 'string' ? v.trim() : '');
+  const headerImageUrl = str(body.headerImageUrl);
+  const ctaLabel = str(body.ctaLabel);
+  const ctaUrl = str(body.ctaUrl);
+  if (headerImageUrl && (headerImageUrl.length > 1000 || !isHttpUrl(headerImageUrl))) {
+    return { error: 'Header image must be an absolute http(s) URL (max 1,000 characters).' };
+  }
+  if ((ctaLabel === '') !== (ctaUrl === '')) {
+    return { error: 'Button label and button link belong together — fill in both or neither.' };
+  }
+  if (ctaLabel.length > 100) {
+    return { error: 'Button label is too long (max 100 characters).' };
+  }
+  if (ctaUrl && (ctaUrl.length > 1000 || !isHttpUrl(ctaUrl))) {
+    return { error: 'Button link must be an absolute http(s) URL (max 1,000 characters).' };
+  }
+  return {
+    headerImageUrl: headerImageUrl || undefined,
+    ctaLabel: ctaLabel || undefined,
+    ctaUrl: ctaUrl || undefined,
+  };
+};
 
-const footerText = () =>
-  [
-    '—',
-    `Du erhältst diese E-Mail, weil du dich auf codingforchange.com in die Warteliste eingetragen hast. Zum Abmelden genügt eine kurze Nachricht an ${CONTACT()}.`,
-    `You are receiving this email because you joined the waitlist on codingforchange.com. To unsubscribe, just send a short message to ${CONTACT()}.`,
-  ].join('\n\n');
-
-const footerHtml = () =>
-  `<hr style="border:none;border-top:1px solid #ddd;margin:24px 0 12px;" />` +
-  `<p style="margin:0;color:#666;font-size:12px;line-height:1.5;">` +
-  `Du erhältst diese E-Mail, weil du dich auf codingforchange.com in die Warteliste eingetragen hast. ` +
-  `Zum Abmelden genügt eine kurze Nachricht an <a href="mailto:${CONTACT()}">${CONTACT()}</a>.<br />` +
-  `You are receiving this email because you joined the waitlist on codingforchange.com. ` +
-  `To unsubscribe, just send a short message to <a href="mailto:${CONTACT()}">${CONTACT()}</a>.` +
-  `</p>`;
+// Signups store the site language; a German-only send gets <html lang="de">.
+const langFor = (locale: string): 'de' | 'en' => (locale === 'de' ? 'de' : 'en');
 
 type BatchItem = {
   from: string;
@@ -105,6 +127,7 @@ type BatchItem = {
   subject: string;
   text: string;
   html: string;
+  headers?: Record<string, string>;
 };
 
 /**
@@ -202,6 +225,9 @@ const sendEmail: Endpoint = {
       locale?: unknown;
       test?: unknown;
       testRecipients?: unknown;
+      headerImageUrl?: unknown;
+      ctaLabel?: unknown;
+      ctaUrl?: unknown;
     };
     try {
       body = ((await req.json?.()) ?? {}) as typeof body;
@@ -217,6 +243,10 @@ const sendEmail: Endpoint = {
     }
     if (!message || message.length > 20000) {
       return Response.json({ error: 'Message is required (max 20,000 characters).' }, { status: 400 });
+    }
+    const extras = parseComposeExtras(body);
+    if ('error' in extras) {
+      return Response.json({ error: extras.error }, { status: 400 });
     }
 
     // Recipients: the admin themself for a test run, otherwise every unique
@@ -260,10 +290,13 @@ const sendEmail: Endpoint = {
     }
 
     const finalSubject = test ? `[Test] ${subject}` : subject;
-    const text = `${message}\n\n${footerText()}`;
-    const html =
-      `<div style="font-family:Helvetica,Arial,sans-serif;font-size:15px;line-height:1.5;color:#111;max-width:600px;">` +
-      `${renderHtml(message)}${footerHtml()}</div>`;
+    const { html, text } = buildWaitlistEmail({
+      message,
+      contactEmail: CONTACT(),
+      siteOrigin: SITE_ORIGIN(),
+      lang: langFor(locale),
+      ...extras,
+    });
 
     const apiKey = process.env.RESEND_API_KEY;
     if (apiKey) {
@@ -274,6 +307,9 @@ const sendEmail: Endpoint = {
         subject: finalSubject,
         text,
         html,
+        // Lets Gmail & co. show their native "Unsubscribe" affordance; the
+        // mailto matches the manual unsubscribe flow described in the footer.
+        headers: { 'List-Unsubscribe': `<mailto:${CONTACT()}?subject=Unsubscribe>` },
       }));
       const { sent, failed, errors } = await sendViaResend(apiKey, items);
       // Counts only — recipient addresses stay out of the server logs.
@@ -315,4 +351,48 @@ const sendEmail: Endpoint = {
   },
 };
 
-export const waitlistEmailEndpoints: Endpoint[] = [emailRecipients, sendEmail];
+// Server-side render of exactly what /waitlist/send-email would deliver, so
+// the compose form can show a live preview that cannot drift from the real
+// mail. Same validation rules as the send path, minus subject/recipients.
+const emailPreview: Endpoint = {
+  path: '/waitlist/email-preview',
+  method: 'post',
+  handler: async (req: PayloadRequest) => {
+    const denied = requireAdmin(req);
+    if (denied) return denied;
+    let body: {
+      message?: unknown;
+      locale?: unknown;
+      headerImageUrl?: unknown;
+      ctaLabel?: unknown;
+      ctaUrl?: unknown;
+    };
+    try {
+      body = ((await req.json?.()) ?? {}) as typeof body;
+    } catch {
+      return Response.json({ error: 'Invalid JSON body.' }, { status: 400 });
+    }
+    const message = typeof body.message === 'string' ? body.message.trim() : '';
+    const locale = typeof body.locale === 'string' ? body.locale.trim() : '';
+    if (!message || message.length > 20000) {
+      return Response.json(
+        { error: 'Message is required (max 20,000 characters).' },
+        { status: 400 },
+      );
+    }
+    const extras = parseComposeExtras(body);
+    if ('error' in extras) {
+      return Response.json({ error: extras.error }, { status: 400 });
+    }
+    const { html, preheader } = buildWaitlistEmail({
+      message,
+      contactEmail: CONTACT(),
+      siteOrigin: SITE_ORIGIN(),
+      lang: langFor(locale),
+      ...extras,
+    });
+    return Response.json({ html, preheader });
+  },
+};
+
+export const waitlistEmailEndpoints: Endpoint[] = [emailRecipients, emailPreview, sendEmail];

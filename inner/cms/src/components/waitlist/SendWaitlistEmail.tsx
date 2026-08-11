@@ -7,9 +7,13 @@ import './waitlist-email.css';
  * (registered via admin.components.beforeListTable in the collection config).
  * Composes a message and POSTs it to /api/waitlist/send-email, which delivers
  * an individual email to every unique signup address via Resend — recipients
- * never see each other's addresses. Collapsed by default so the list view
- * stays uncluttered; "Send test" mails only the logged-in admin, or a
- * hand-picked list of preview addresses (personal inboxes) when one is given.
+ * never see each other's addresses. Mails are rendered through the branded
+ * template (logo header, optional full-width image, optional button); the
+ * preview pane below the fields shows the server's actual rendering via
+ * /api/waitlist/email-preview, so what you see is exactly what goes out.
+ * Collapsed by default so the list view stays uncluttered; "Send test" mails
+ * only the logged-in admin, or a hand-picked list of preview addresses
+ * (personal inboxes) when one is given.
  */
 
 type Counts = {
@@ -25,23 +29,47 @@ type SendResult = {
   errors: string[];
 };
 
+type MediaDoc = {
+  id: string | number;
+  url?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  alt?: string | null;
+};
+
 const LOCALE_LABELS: Record<string, string> = {
   de: 'German signups (de)',
   en: 'English signups (en)',
   unknown: 'No language recorded',
 };
 
+// Media docs carry site-relative URLs (/api/media/file/…); mail clients need
+// absolute ones. The admin runs on the public domain, so its origin is right.
+const toAbsolute = (u: string): string => {
+  try {
+    return new URL(u, window.location.origin).href;
+  } catch {
+    return u;
+  }
+};
+
 export const SendWaitlistEmail: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [counts, setCounts] = useState<Counts | null>(null);
   const [countsError, setCountsError] = useState(false);
+  const [media, setMedia] = useState<MediaDoc[] | null>(null);
   const [locale, setLocale] = useState(''); // '' = all signups
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
+  const [headerImageUrl, setHeaderImageUrl] = useState(''); // optional image at the top of the mail
+  const [ctaLabel, setCtaLabel] = useState(''); // optional button under the message
+  const [ctaUrl, setCtaUrl] = useState('');
   const [testTo, setTestTo] = useState(''); // optional preview addresses for test sends
   const [sending, setSending] = useState<null | 'test' | 'all'>(null);
   const [result, setResult] = useState<(SendResult & { wasTest?: boolean }) | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [previewHtml, setPreviewHtml] = useState('');
+  const [previewError, setPreviewError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open || counts) return;
@@ -51,9 +79,69 @@ export const SendWaitlistEmail: React.FC = () => {
       .catch(() => setCountsError(true));
   }, [open, counts]);
 
+  // Images from the Media collection for the header-image picker. Filtered
+  // client-side; a failure just leaves the picker empty (URL input still works).
+  useEffect(() => {
+    if (!open || media) return;
+    fetch('/api/media?limit=100&sort=-createdAt&depth=0')
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
+      .then((data: { docs?: MediaDoc[] }) =>
+        setMedia((data.docs ?? []).filter((d) => (d.mimeType ?? '').startsWith('image/'))),
+      )
+      .catch(() => setMedia([]));
+  }, [open, media]);
+
+  // Live preview: debounce the compose fields, then ask the server for the
+  // exact HTML the send endpoint would produce. Stale responses are aborted.
+  useEffect(() => {
+    if (!open) return;
+    if (!message.trim()) {
+      setPreviewHtml('');
+      setPreviewError(null);
+      return;
+    }
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => {
+      fetch('/api/waitlist/email-preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        signal: ctrl.signal,
+        body: JSON.stringify({
+          message: message.trim(),
+          locale: locale || undefined,
+          headerImageUrl: headerImageUrl.trim() ? toAbsolute(headerImageUrl.trim()) : undefined,
+          ctaLabel: ctaLabel.trim() || undefined,
+          ctaUrl: ctaUrl.trim() || undefined,
+        }),
+      })
+        .then(async (res) => {
+          const data = (await res.json().catch(() => null)) as {
+            html?: string;
+            error?: string;
+          } | null;
+          if (!res.ok || !data?.html) {
+            throw new Error(data?.error || `Preview failed (HTTP ${res.status}).`);
+          }
+          setPreviewHtml(data.html);
+          setPreviewError(null);
+        })
+        .catch((err: unknown) => {
+          if (ctrl.signal.aborted) return;
+          setPreviewError(err instanceof Error ? err.message : 'Preview failed.');
+        });
+    }, 500);
+    return () => {
+      ctrl.abort();
+      clearTimeout(timer);
+    };
+  }, [open, message, locale, headerImageUrl, ctaLabel, ctaUrl]);
+
   const recipientCount = locale
     ? (counts?.byLocale.find((l) => l.locale === locale)?.count ?? 0)
     : (counts?.total ?? 0);
+
+  const selectedMediaId =
+    media?.find((m) => m.url && toAbsolute(m.url) === toAbsolute(headerImageUrl.trim()))?.id ?? '';
 
   const send = async (test: boolean) => {
     setError(null);
@@ -81,6 +169,9 @@ export const SendWaitlistEmail: React.FC = () => {
           subject: subject.trim(),
           message: message.trim(),
           locale: locale || undefined,
+          headerImageUrl: headerImageUrl.trim() ? toAbsolute(headerImageUrl.trim()) : undefined,
+          ctaLabel: ctaLabel.trim() || undefined,
+          ctaUrl: ctaUrl.trim() || undefined,
           test,
           testRecipients: test && testTo.trim() ? testTo.trim() : undefined,
         }),
@@ -114,8 +205,10 @@ export const SendWaitlistEmail: React.FC = () => {
         <div className="wl-email__panel">
           <p className="wl-email__hint">
             Each person receives an <strong>individual</strong> email — recipients never see each
-            other&apos;s addresses. A bilingual footer (why they&apos;re receiving this, and how to
-            unsubscribe) is appended automatically, and plain URLs become clickable links.
+            other&apos;s addresses. Mails use the branded template (logo header, bilingual
+            unsubscribe footer); plain URLs in the message become clickable links. Optionally add
+            an image at the top and a button below the message — the preview underneath shows
+            exactly what will be sent.
           </p>
           <label className="wl-email__field">
             Recipients
@@ -160,6 +253,57 @@ export const SendWaitlistEmail: React.FC = () => {
               disabled={busy}
             />
           </label>
+          <div className="wl-email__field">
+            Header image (optional — shown full-width at the top; wide images ≈1200×500&nbsp;px
+            work best, keep the file small)
+            <select
+              value={String(selectedMediaId)}
+              onChange={(e) => {
+                const doc = media?.find((m) => String(m.id) === e.target.value);
+                setHeaderImageUrl(doc?.url ? toAbsolute(doc.url) : '');
+              }}
+              disabled={busy}
+            >
+              <option value="">
+                {media === null ? 'Loading Media…' : 'None — or pick an upload from Media'}
+              </option>
+              {media?.map((m) => (
+                <option key={String(m.id)} value={String(m.id)}>
+                  {m.filename ?? String(m.id)}
+                </option>
+              ))}
+            </select>
+            <input
+              type="text"
+              value={headerImageUrl}
+              placeholder="…or paste an https:// image URL"
+              onChange={(e) => setHeaderImageUrl(e.target.value)}
+              disabled={busy}
+            />
+          </div>
+          <div className="wl-email__row">
+            <label className="wl-email__field">
+              Button label (optional)
+              <input
+                type="text"
+                value={ctaLabel}
+                maxLength={100}
+                placeholder="e.g. Save your spot"
+                onChange={(e) => setCtaLabel(e.target.value)}
+                disabled={busy}
+              />
+            </label>
+            <label className="wl-email__field">
+              Button link
+              <input
+                type="text"
+                value={ctaUrl}
+                placeholder="https://lu.ma/…"
+                onChange={(e) => setCtaUrl(e.target.value)}
+                disabled={busy}
+              />
+            </label>
+          </div>
           <label className="wl-email__field">
             Test recipients (optional, comma-separated — used by “Send test” to preview the mail
             in personal inboxes; defaults to your admin address)
@@ -171,6 +315,27 @@ export const SendWaitlistEmail: React.FC = () => {
               disabled={busy}
             />
           </label>
+          <div className="wl-email__field">
+            Preview
+            {previewHtml ? (
+              <div className="wl-email__preview">
+                <iframe
+                  className="wl-email__preview-frame"
+                  title="Email preview"
+                  sandbox=""
+                  referrerPolicy="no-referrer"
+                  srcDoc={previewHtml}
+                />
+              </div>
+            ) : (
+              <div className="wl-email__preview wl-email__preview--empty">
+                Type a message above to see the rendered mail.
+              </div>
+            )}
+            {previewError && (
+              <div className="wl-email__notice wl-email__notice--warn">{previewError}</div>
+            )}
+          </div>
           <div className="wl-email__actions">
             <button
               type="button"
