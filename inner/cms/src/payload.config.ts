@@ -23,6 +23,7 @@ import { ConsentRecords } from './collections/ConsentRecords';
 import { attributionField } from './fields/attribution';
 import { analyticsExportEndpoints } from './endpoints/analyticsExport';
 import { analyticsSummary } from './endpoints/analyticsSummary';
+import { waitlistEmailEndpoints } from './endpoints/waitlistEmail';
 import { purgeAnalyticsEvents } from './lib/purgeAnalytics';
 import { SiteConfig } from './globals/SiteConfig';
 import { Membership } from './globals/Membership';
@@ -38,8 +39,9 @@ export default buildConfig({
   collections: [Users, Team, TeamGroups, Projects, Events, FAQ, Sponsors, SponsorTiers, Companies, Media, BlogPost, WaitlistSignups, AnalyticsEvents, ConsentRecords],
   globals: [SiteConfig, Membership, Legal, Partner, About, Homepage],
   // Admin-only analytics reporting: JSON aggregates for the /admin/analytics
-  // dashboard, plus CSV exports (campaign funnel, raw events, signups).
-  endpoints: [analyticsSummary, ...analyticsExportEndpoints],
+  // dashboard, plus CSV exports (campaign funnel, raw events, signups) and
+  // the bulk "email the waitlist" sender (individual mails via Resend).
+  endpoints: [analyticsSummary, ...analyticsExportEndpoints, ...waitlistEmailEndpoints],
   localization: {
     locales: [
       { label: 'English', code: 'en' },
