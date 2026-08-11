@@ -5,12 +5,21 @@
  * handed to Resend.
  *
  * Email clients are not browsers: Gmail strips <style> in the body of some
- * clients, Outlook (Windows) renders with Word. So the layout is 600px
- * table-based with every style inlined, images carry explicit width/height
- * attributes, and the only <style> block is a small-screen padding override
- * (ignored where unsupported — the inline styles remain a correct fallback).
- * Colors mirror the landing page palette in inner/src/components/showcase/
- * landing.css (teal #2f8f90 on white, square corners).
+ * clients, Outlook (Windows) renders with Word. So the layout is table-based
+ * with every style inlined, images carry explicit width/height attributes,
+ * and the only <style> block is a small-screen padding override (ignored
+ * where unsupported — the inline styles remain a correct fallback). The card
+ * uses the fluid-hybrid width pattern: CSS `width:100%;max-width:600px`
+ * (`width:600px;max-width:100%` does NOT shrink — percentage max-widths
+ * can't resolve inside auto-layout table cells) plus a fixed 600px ghost
+ * table in `[if mso]` conditionals for Outlook, which ignores max-width.
+ *
+ * Design: monochrome ink-on-white with square corners, echoing the >_♡
+ * terminal logo — monospace for the wordmark/button/site link (webfonts don't
+ * load in mail clients, so the mono stack leans on system fonts: Menlo on
+ * Apple, Consolas on Windows), a plain sans stack for the body. No accent
+ * color: artwork in the header image provides the color, the frame stays
+ * quiet.
  *
  * Kept dependency-free on purpose: it can be rendered standalone
  * (`node --experimental-strip-types`) to preview the design without booting
@@ -40,17 +49,15 @@ export type BuiltWaitlistEmail = {
   preheader: string;
 };
 
-// Landing-page palette (see landing.css) — inlined because emails can't use
-// CSS variables.
-const TEAL = '#2f8f90';
-const TEAL_DARK = '#246b6c';
-const INK = '#1b1f1f';
-const MUTED = '#5d6868';
-const LINE = '#e3eaea';
-const PAGE_BG = '#f1f6f6';
+// Pure neutral grays — deliberately no tint, so the frame never fights the
+// artwork in the header image.
+const INK = '#171717';
+const MUTED = '#6f6f6f';
+const LINE = '#e8e8e8';
+const PAGE_BG = '#f4f4f4';
 
-const FONT_BODY = "'IBM Plex Sans','Segoe UI',Helvetica,Arial,sans-serif";
-const FONT_DISPLAY = "'Space Grotesk','Trebuchet MS',Helvetica,Arial,sans-serif";
+const FONT_BODY = "'IBM Plex Sans','Helvetica Neue',Helvetica,Arial,sans-serif";
+const FONT_MONO = "'IBM Plex Mono','SF Mono',Menlo,Consolas,'Courier New',monospace";
 
 export const escapeHtml = (s: string): string =>
   s
@@ -65,7 +72,7 @@ export const escapeHtml = (s: string): string =>
 const linkify = (escaped: string): string =>
   escaped.replace(
     /(https?:\/\/[^\s<]*[^\s<.,;:!?)"'])/g,
-    `<a href="$1" style="color:${TEAL_DARK};text-decoration:underline;">$1</a>`,
+    `<a href="$1" style="color:${INK};text-decoration:underline;">$1</a>`,
   );
 
 const paragraphsHtml = (message: string): string =>
@@ -73,7 +80,7 @@ const paragraphsHtml = (message: string): string =>
     .split(/\n{2,}/)
     .map(
       (p) =>
-        `<p style="margin:0 0 1em;">${linkify(escapeHtml(p)).replace(/\n/g, '<br />')}</p>`,
+        `<p style="margin:0 0 1.2em;">${linkify(escapeHtml(p)).replace(/\n/g, '<br />')}</p>`,
     )
     .join('');
 
@@ -83,7 +90,7 @@ const preheaderFrom = (message: string): string =>
 
 const footerParagraphs = (contactEmail: string) => {
   const mail = escapeHtml(contactEmail);
-  const link = `<a href="mailto:${mail}" style="color:${TEAL_DARK};text-decoration:underline;">${mail}</a>`;
+  const link = `<a href="mailto:${mail}" style="color:${MUTED};text-decoration:underline;">${mail}</a>`;
   return {
     de: `Du erhältst diese E-Mail, weil du dich auf codingforchange.com in die Warteliste eingetragen hast. Zum Abmelden genügt eine kurze Nachricht an ${link}.`,
     en: `You are receiving this email because you joined the waitlist on codingforchange.com. To unsubscribe, just send a short message to ${link}.`,
@@ -117,6 +124,8 @@ export function buildWaitlistEmail(input: WaitlistEmailContent): BuiltWaitlistEm
   const text = textParts.join('\n\n');
 
   // ---- html part ----
+  const hasCta = Boolean(ctaLabel && ctaUrl);
+
   const heroRow = headerImageUrl
     ? `<tr>
         <td style="padding:0;">
@@ -127,21 +136,20 @@ export function buildWaitlistEmail(input: WaitlistEmailContent): BuiltWaitlistEm
     : '';
 
   // Solid-color td + padded link = the classic button that survives Outlook.
-  const ctaRow =
-    ctaLabel && ctaUrl
-      ? `<tr>
-          <td class="wl-pad" align="center" style="padding:4px 36px 10px;">
-            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-              <tr>
-                <td align="center" bgcolor="${TEAL}" style="background-color:${TEAL};">
-                  <a href="${escapeHtml(ctaUrl)}"
-                    style="display:inline-block;padding:13px 30px;font-family:${FONT_DISPLAY};font-size:16px;font-weight:600;color:#ffffff;text-decoration:none;">${escapeHtml(ctaLabel)}</a>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>`
-      : '';
+  const ctaRow = hasCta
+    ? `<tr>
+        <td class="wl-pad" align="center" style="padding:10px 40px 40px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td align="center" bgcolor="${INK}" style="background-color:${INK};">
+                <a href="${escapeHtml(ctaUrl as string)}"
+                  style="display:inline-block;padding:14px 36px;font-family:${FONT_MONO};font-size:15px;font-weight:600;letter-spacing:0.5px;color:#ffffff;text-decoration:none;">${escapeHtml(ctaLabel as string)}</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>`
+    : '';
 
   const footer = footerParagraphs(contactEmail);
 
@@ -162,30 +170,28 @@ export function buildWaitlistEmail(input: WaitlistEmailContent): BuiltWaitlistEm
 <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">${escapeHtml(preheader)}${'&nbsp;&zwnj;'.repeat(48)}</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:${PAGE_BG};">
   <tr>
-    <td align="center" style="padding:28px 12px;">
-      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:100%;">
+    <td align="center" style="padding:36px 12px;">
+      <!--[if mso]><table role="presentation" width="600" align="center" cellpadding="0" cellspacing="0" border="0"><tr><td><![endif]-->
+      <table role="presentation" align="center" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;">
         <tr>
-          <td style="background-color:#ffffff;border:1px solid ${LINE};border-top:4px solid ${TEAL};">
+          <td style="background-color:#ffffff;border:1px solid ${LINE};">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
               <tr>
-                <td class="wl-pad" align="center" style="padding:26px 36px 22px;">
+                <td class="wl-pad" align="center" style="padding:38px 40px 30px;">
                   <img src="${escapeHtml(logoUrl)}" width="88" height="30" alt="&gt;_&#9825;"
                     style="display:inline-block;border:0;" />
-                  <div style="font-family:${FONT_DISPLAY};font-size:12px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:${INK};padding-top:10px;">Coding for Change</div>
+                  <div style="font-family:${FONT_MONO};font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:${INK};padding-top:12px;">Coding for Change</div>
                 </td>
               </tr>
               ${heroRow}
               <tr>
-                <td class="wl-pad" style="padding:26px 36px 8px;font-family:${FONT_BODY};font-size:15px;line-height:1.6;color:${INK};">
+                <td class="wl-pad" style="padding:34px 40px ${hasCta ? '6px' : '36px'};font-family:${FONT_BODY};font-size:16px;line-height:1.7;color:${INK};">
                   ${paragraphsHtml(message)}
                 </td>
               </tr>
               ${ctaRow}
               <tr>
-                <td style="padding:0 36px 22px;"></td>
-              </tr>
-              <tr>
-                <td class="wl-pad" style="padding:18px 36px 22px;border-top:1px solid ${LINE};font-family:${FONT_BODY};font-size:12px;line-height:1.6;color:${MUTED};">
+                <td class="wl-pad" style="padding:22px 40px 26px;border-top:1px solid ${LINE};font-family:${FONT_BODY};font-size:12px;line-height:1.65;color:${MUTED};">
                   <p style="margin:0 0 8px;">${footer.de}</p>
                   <p style="margin:0;">${footer.en}</p>
                 </td>
@@ -194,11 +200,12 @@ export function buildWaitlistEmail(input: WaitlistEmailContent): BuiltWaitlistEm
           </td>
         </tr>
         <tr>
-          <td align="center" style="padding:16px 8px 0;font-family:${FONT_BODY};font-size:12px;color:${MUTED};">
-            <a href="${escapeHtml(siteOrigin)}" style="color:${TEAL_DARK};text-decoration:none;">codingforchange.com</a>
+          <td align="center" style="padding:20px 8px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:1.5px;color:${MUTED};">
+            <a href="${escapeHtml(siteOrigin)}" style="color:${MUTED};text-decoration:none;">&gt;_&#9825;&nbsp;&nbsp;codingforchange.com</a>
           </td>
         </tr>
       </table>
+      <!--[if mso]></td></tr></table><![endif]-->
     </td>
   </tr>
 </table>
