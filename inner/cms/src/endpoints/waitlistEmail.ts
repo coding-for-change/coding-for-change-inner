@@ -5,7 +5,8 @@ import { getPool, requireAdmin } from './util';
  * Admin-only bulk mail to the waitlist (`waitlist-signups` collection).
  *
  *   GET  /api/waitlist/email-recipients   unique-address counts, total + per locale
- *   POST /api/waitlist/send-email         body { subject, message, locale?, test? }
+ *   POST /api/waitlist/send-email         body { subject, message, locale?,
+ *                                                test?, testRecipients? }
  *
  * Every recipient gets their own individual email, so addresses are never
  * exposed to other recipients — the reason this exists instead of a
@@ -19,8 +20,11 @@ import { getPool, requireAdmin } from './util';
  *
  * Every message gets a bilingual footer explaining why the recipient is
  * getting it and how to unsubscribe (a short mail to CONTACT_TO_EMAIL —
- * replies also go there). `test: true` sends only to the logged-in admin,
- * with the subject prefixed "[Test]".
+ * replies also go there). `test: true` sends only to the logged-in admin —
+ * or, when `testRecipients` is given, to that hand-picked list (≤10
+ * addresses, e.g. personal inboxes to preview rendering in different mail
+ * clients) — with the subject prefixed "[Test]". Test mode never reads the
+ * waitlist.
  */
 
 const FROM = () =>
@@ -32,6 +36,29 @@ const BATCH_SIZE = 100; // Resend's maximum per batch request
 const BATCH_INTERVAL_MS = 600; // stay under Resend's default 2 requests/second
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Test sends may target a hand-picked address list (e.g. personal inboxes, to
+// preview rendering across mail clients) instead of the admin's own address.
+// Comma/semicolon/whitespace separated; the small cap keeps the test path
+// from doubling as a second bulk sender.
+const MAX_TEST_RECIPIENTS = 10;
+
+const parseTestRecipients = (raw: unknown): { emails: string[] } | { error: string } => {
+  const parts = Array.isArray(raw)
+    ? raw.map((p) => String(p))
+    : typeof raw === 'string'
+      ? raw.split(/[\s,;]+/)
+      : [];
+  const emails = [...new Set(parts.map((p) => p.trim().toLowerCase()).filter(Boolean))];
+  const invalid = emails.find((e) => !EMAIL_RE.test(e));
+  if (invalid) return { error: `Invalid test recipient address: “${invalid}”` };
+  if (emails.length > MAX_TEST_RECIPIENTS) {
+    return { error: `At most ${MAX_TEST_RECIPIENTS} test recipients are allowed.` };
+  }
+  return { emails };
+};
 
 const escapeHtml = (s: string): string =>
   s
@@ -169,7 +196,13 @@ const sendEmail: Endpoint = {
     const denied = requireAdmin(req);
     if (denied) return denied;
 
-    let body: { subject?: unknown; message?: unknown; locale?: unknown; test?: unknown };
+    let body: {
+      subject?: unknown;
+      message?: unknown;
+      locale?: unknown;
+      test?: unknown;
+      testRecipients?: unknown;
+    };
     try {
       body = ((await req.json?.()) ?? {}) as typeof body;
     } catch {
@@ -192,17 +225,26 @@ const sendEmail: Endpoint = {
     // catches anything older than that hook.
     let recipients: string[];
     if (test) {
-      // req.user is User | PayloadMcpApiKey (the MCP plugin's key auth);
-      // only real admin users have an email to send the test to.
-      const u = req.user;
-      const adminEmail = u && 'email' in u && typeof u.email === 'string' ? u.email : null;
-      if (!adminEmail) {
-        return Response.json(
-          { error: 'Test mode requires a logged-in admin user.' },
-          { status: 400 },
-        );
+      const parsed = parseTestRecipients(body.testRecipients);
+      if ('error' in parsed) {
+        return Response.json({ error: parsed.error }, { status: 400 });
       }
-      recipients = [adminEmail];
+      if (parsed.emails.length > 0) {
+        recipients = parsed.emails;
+      } else {
+        // No explicit list: default to the logged-in admin. req.user is
+        // User | PayloadMcpApiKey (the MCP plugin's key auth); only real
+        // admin users have an email to send the test to.
+        const u = req.user;
+        const adminEmail = u && 'email' in u && typeof u.email === 'string' ? u.email : null;
+        if (!adminEmail) {
+          return Response.json(
+            { error: 'Test mode requires a logged-in admin user or explicit test recipients.' },
+            { status: 400 },
+          );
+        }
+        recipients = [adminEmail];
+      }
     } else {
       const pool = getPool(req);
       if (!pool) return new Response('Database unavailable', { status: 500 });
@@ -211,9 +253,7 @@ const sendEmail: Endpoint = {
         `SELECT DISTINCT lower(trim(email)) AS email FROM waitlist_signups ${where} ORDER BY 1`,
         locale ? [locale] : [],
       );
-      recipients = rows
-        .map((r) => String(r.email))
-        .filter((e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e));
+      recipients = rows.map((r) => String(r.email)).filter((e) => EMAIL_RE.test(e));
     }
     if (recipients.length === 0) {
       return Response.json({ error: 'No recipients found.' }, { status: 400 });

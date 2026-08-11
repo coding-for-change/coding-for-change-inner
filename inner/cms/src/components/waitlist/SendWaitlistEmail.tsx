@@ -8,7 +8,8 @@ import './waitlist-email.css';
  * Composes a message and POSTs it to /api/waitlist/send-email, which delivers
  * an individual email to every unique signup address via Resend — recipients
  * never see each other's addresses. Collapsed by default so the list view
- * stays uncluttered; "Send test to me" mails only the logged-in admin.
+ * stays uncluttered; "Send test" mails only the logged-in admin, or a
+ * hand-picked list of preview addresses (personal inboxes) when one is given.
  */
 
 type Counts = {
@@ -37,8 +38,9 @@ export const SendWaitlistEmail: React.FC = () => {
   const [locale, setLocale] = useState(''); // '' = all signups
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
+  const [testTo, setTestTo] = useState(''); // optional preview addresses for test sends
   const [sending, setSending] = useState<null | 'test' | 'all'>(null);
-  const [result, setResult] = useState<SendResult | null>(null);
+  const [result, setResult] = useState<(SendResult & { wasTest?: boolean }) | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -80,6 +82,7 @@ export const SendWaitlistEmail: React.FC = () => {
           message: message.trim(),
           locale: locale || undefined,
           test,
+          testRecipients: test && testTo.trim() ? testTo.trim() : undefined,
         }),
       });
       const data = (await res.json().catch(() => null)) as (SendResult & { error?: string }) | null;
@@ -87,7 +90,7 @@ export const SendWaitlistEmail: React.FC = () => {
         setError((data && typeof data.error === 'string' && data.error) || `Sending failed (HTTP ${res.status}).`);
         return;
       }
-      if (data) setResult(data);
+      if (data) setResult({ ...data, wasTest: test });
     } catch {
       setError('Sending failed — network error.');
     } finally {
@@ -157,6 +160,17 @@ export const SendWaitlistEmail: React.FC = () => {
               disabled={busy}
             />
           </label>
+          <label className="wl-email__field">
+            Test recipients (optional, comma-separated — used by “Send test” to preview the mail
+            in personal inboxes; defaults to your admin address)
+            <input
+              type="text"
+              value={testTo}
+              placeholder="you@gmail.com, someone@icloud.com"
+              onChange={(e) => setTestTo(e.target.value)}
+              disabled={busy}
+            />
+          </label>
           <div className="wl-email__actions">
             <button
               type="button"
@@ -164,7 +178,11 @@ export const SendWaitlistEmail: React.FC = () => {
               onClick={() => void send(true)}
               disabled={busy}
             >
-              {sending === 'test' ? 'Sending test…' : 'Send test to me'}
+              {sending === 'test'
+                ? 'Sending test…'
+                : testTo.trim()
+                  ? 'Send test to listed addresses'
+                  : 'Send test to me'}
             </button>
             <button
               type="button"
@@ -188,7 +206,9 @@ export const SendWaitlistEmail: React.FC = () => {
                 ? `No RESEND_API_KEY configured — ${result.sent} mail(s) were logged to the server console instead of being sent (dev mode).`
                 : result.failed > 0
                   ? `Sent ${result.sent} of ${result.requested}; ${result.failed} failed.${result.errors[0] ? ` First error: ${result.errors[0]}` : ''}`
-                  : `Sent ${result.sent} email${result.sent === 1 ? '' : 's'}.`}
+                  : result.wasTest
+                    ? `Test sent to ${result.sent} address${result.sent === 1 ? '' : 'es'} — subject is prefixed “[Test]”. Check the inbox (and spam folder).`
+                    : `Sent ${result.sent} email${result.sent === 1 ? '' : 's'}.`}
             </div>
           )}
         </div>
