@@ -130,18 +130,20 @@ export function buildWaitlistEmail(input: WaitlistEmailContent): BuiltWaitlistEm
   // ---- html part ----
   const hasCta = Boolean(ctaLabel && ctaUrl);
 
-  // The image is shown as a contained card on a dark ink band (not
+  // The image is shown as a contained card on a soft warm-gray band (not
   // full-bleed): event artwork tends to be big and square, and at full width
   // it dominates the mail. ~360px keeps it a skimmable banner, like a chat
-  // link preview, and the dark band makes the artwork pop while staying
-  // monochrome. The gradient is progressive enhancement: clients that don't
-  // parse `background:linear-gradient(…)` drop that declaration and keep the
-  // flat ink from bgcolor/background-color (Outlook renders solid ${INK}).
+  // link preview. The band is a gentle stone gradient — enough tone that the
+  // white card visibly floats (helped by the soft shadow), nowhere near the
+  // harshness of a dark block. Gradient and shadow are progressive
+  // enhancement: clients that drop them (Outlook, partly Gmail) keep the
+  // flat stone tone from bgcolor/background-color and the tonal contrast
+  // still defines the card.
   const heroRow = headerImageUrl
     ? `<tr>
-        <td class="wl-pad" align="center" bgcolor="${INK}" style="background-color:${INK};background:linear-gradient(160deg,#2e2e2e 0%,#141414 55%,#000000 100%);padding:32px 40px;">
+        <td class="wl-pad" align="center" bgcolor="#e7e3de" style="background-color:#e7e3de;background:linear-gradient(150deg,#f1efec 0%,#e7e3de 45%,#d8d3cc 100%);padding:34px 40px;">
           <img src="${escapeHtml(headerImageUrl)}" width="360" alt=""
-            style="display:inline-block;border:0;border-radius:10px;width:100%;max-width:360px;height:auto;background-color:#ffffff;" />
+            style="display:inline-block;border:0;border-radius:12px;width:100%;max-width:360px;height:auto;background-color:#ffffff;box-shadow:0 14px 34px rgba(23,23,23,0.14),0 3px 8px rgba(23,23,23,0.08);" />
         </td>
       </tr>`
     : '';
