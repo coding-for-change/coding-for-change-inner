@@ -130,14 +130,18 @@ export function buildWaitlistEmail(input: WaitlistEmailContent): BuiltWaitlistEm
   // ---- html part ----
   const hasCta = Boolean(ctaLabel && ctaUrl);
 
-  // The image is shown as a contained card on a light band (not full-bleed):
-  // event artwork tends to be big and square, and at full width it dominates
-  // the mail. ~360px keeps it a skimmable banner, like a chat link preview.
+  // The image is shown as a contained card on a dark ink band (not
+  // full-bleed): event artwork tends to be big and square, and at full width
+  // it dominates the mail. ~360px keeps it a skimmable banner, like a chat
+  // link preview, and the dark band makes the artwork pop while staying
+  // monochrome. The gradient is progressive enhancement: clients that don't
+  // parse `background:linear-gradient(…)` drop that declaration and keep the
+  // flat ink from bgcolor/background-color (Outlook renders solid ${INK}).
   const heroRow = headerImageUrl
     ? `<tr>
-        <td class="wl-pad" align="center" bgcolor="${PAGE_BG}" style="background-color:${PAGE_BG};padding:28px 40px;">
+        <td class="wl-pad" align="center" bgcolor="${INK}" style="background-color:${INK};background:linear-gradient(160deg,#2e2e2e 0%,#141414 55%,#000000 100%);padding:32px 40px;">
           <img src="${escapeHtml(headerImageUrl)}" width="360" alt=""
-            style="display:inline-block;border:1px solid ${LINE};border-radius:10px;width:100%;max-width:360px;height:auto;background-color:#ffffff;" />
+            style="display:inline-block;border:0;border-radius:10px;width:100%;max-width:360px;height:auto;background-color:#ffffff;" />
         </td>
       </tr>`
     : '';
