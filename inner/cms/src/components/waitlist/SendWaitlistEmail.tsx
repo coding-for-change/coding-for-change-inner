@@ -254,8 +254,8 @@ export const SendWaitlistEmail: React.FC = () => {
             />
           </label>
           <div className="wl-email__field">
-            Header image (optional — shown full-width at the top; wide images ≈1200×500&nbsp;px
-            work best, keep the file small)
+            Header image (optional — shown as a card on a tinted banner at the top; the banner
+            color adapts to the image. Square-ish artwork works well, keep the file small)
             <select
               value={String(selectedMediaId)}
               onChange={(e) => {
