@@ -39,6 +39,12 @@ export type WaitlistEmailContent = {
   lang?: 'en' | 'de';
   /** Optional image shown full-width between header and body (absolute URL). */
   headerImageUrl?: string;
+  /**
+   * Dominant hue/sat of the header image (see lib/heroAccent.ts) — tints the
+   * band behind the image card. Lightness is owned here so the band stays in
+   * its soft pastel range; omitted/null → neutral stone band.
+   */
+  heroAccent?: { hue: number; sat: number } | null;
   /** Optional button under the message; both label and URL or neither. */
   ctaLabel?: string;
   ctaUrl?: string;
@@ -60,6 +66,37 @@ const PAGE_BG = '#f4f4f4';
 
 const FONT_BODY = "'IBM Plex Sans','Helvetica Neue',Helvetica,Arial,sans-serif";
 const FONT_MONO = "'IBM Plex Mono','SF Mono',Menlo,Consolas,'Courier New',monospace";
+
+/** h in [0,360), s and l in [0,1] → #rrggbb (emails need literal hex). */
+const hslToHex = (h: number, s: number, l: number): string => {
+  const k = (n: number) => (n + h / 30) % 12;
+  const a = s * Math.min(l, 1 - l);
+  const channel = (n: number) => {
+    const c = l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+    return Math.round(c * 255)
+      .toString(16)
+      .padStart(2, '0');
+  };
+  return `#${channel(0)}${channel(8)}${channel(4)}`;
+};
+
+// Band behind the header-image card: three gradient stops + a flat fallback
+// (the middle stop) for clients without gradient support. With an accent
+// from the artwork the band is a soft pastel of that hue — saturation is
+// clamped and lightness fixed, so even loud artwork gets a gentle band —
+// otherwise a warm neutral stone.
+const bandStops = (accent?: { hue: number; sat: number } | null) => {
+  if (!accent) {
+    return { top: '#f1efec', mid: '#e7e3de', deep: '#d8d3cc' };
+  }
+  const hue = ((accent.hue % 360) + 360) % 360;
+  const sat = Math.min(0.58, Math.max(0.3, accent.sat));
+  return {
+    top: hslToHex(hue, sat * 0.75, 0.9),
+    mid: hslToHex(hue, sat, 0.8),
+    deep: hslToHex(hue, sat, 0.68),
+  };
+};
 
 export const escapeHtml = (s: string): string =>
   s
@@ -106,6 +143,7 @@ export function buildWaitlistEmail(input: WaitlistEmailContent): BuiltWaitlistEm
     siteOrigin,
     lang = 'en',
     headerImageUrl,
+    heroAccent,
     ctaLabel,
     ctaUrl,
   } = input;
@@ -130,18 +168,20 @@ export function buildWaitlistEmail(input: WaitlistEmailContent): BuiltWaitlistEm
   // ---- html part ----
   const hasCta = Boolean(ctaLabel && ctaUrl);
 
-  // The image is shown as a contained card on a dark ink band (not
+  // The image is shown as a contained card on a soft tinted band (not
   // full-bleed): event artwork tends to be big and square, and at full width
   // it dominates the mail. ~360px keeps it a skimmable banner, like a chat
-  // link preview, and the dark band makes the artwork pop while staying
-  // monochrome. The gradient is progressive enhancement: clients that don't
-  // parse `background:linear-gradient(…)` drop that declaration and keep the
-  // flat ink from bgcolor/background-color (Outlook renders solid ${INK}).
+  // link preview — and like those previews, the band picks up the artwork's
+  // dominant color (bandStops above; neutral stone when no accent was
+  // extractable). Gradient and shadow are progressive enhancement: clients
+  // that drop them (Outlook, partly Gmail) keep the flat mid tone from
+  // bgcolor/background-color and the tonal contrast still defines the card.
+  const band = bandStops(heroAccent);
   const heroRow = headerImageUrl
     ? `<tr>
-        <td class="wl-pad" align="center" bgcolor="${INK}" style="background-color:${INK};background:linear-gradient(160deg,#2e2e2e 0%,#141414 55%,#000000 100%);padding:32px 40px;">
+        <td class="wl-pad" align="center" bgcolor="${band.mid}" style="background-color:${band.mid};background:linear-gradient(150deg,${band.top} 0%,${band.mid} 45%,${band.deep} 100%);padding:34px 40px;">
           <img src="${escapeHtml(headerImageUrl)}" width="360" alt=""
-            style="display:inline-block;border:0;border-radius:10px;width:100%;max-width:360px;height:auto;background-color:#ffffff;" />
+            style="display:inline-block;border:0;border-radius:12px;width:100%;max-width:360px;height:auto;background-color:#ffffff;box-shadow:0 14px 34px rgba(23,23,23,0.14),0 3px 8px rgba(23,23,23,0.08);" />
         </td>
       </tr>`
     : '';

@@ -1,6 +1,7 @@
 import type { Endpoint, PayloadRequest } from 'payload';
 import { getPool, requireAdmin } from './util';
 import { buildWaitlistEmail } from '../lib/waitlistEmailTemplate';
+import { extractHeroAccent } from '../lib/heroAccent';
 
 /**
  * Admin-only bulk mail to the waitlist (`waitlist-signups` collection).
@@ -290,11 +291,17 @@ const sendEmail: Endpoint = {
     }
 
     const finalSubject = test ? `[Test] ${subject}` : subject;
+    // Band tint behind the header image adapts to the artwork (memoized per
+    // URL; null → neutral fallback). Never blocks a send: errors → null.
+    const heroAccent = extras.headerImageUrl
+      ? await extractHeroAccent(extras.headerImageUrl)
+      : null;
     const { html, text } = buildWaitlistEmail({
       message,
       contactEmail: CONTACT(),
       siteOrigin: SITE_ORIGIN(),
       lang: langFor(locale),
+      heroAccent,
       ...extras,
     });
 
@@ -384,11 +391,15 @@ const emailPreview: Endpoint = {
     if ('error' in extras) {
       return Response.json({ error: extras.error }, { status: 400 });
     }
+    const heroAccent = extras.headerImageUrl
+      ? await extractHeroAccent(extras.headerImageUrl)
+      : null;
     const { html, preheader } = buildWaitlistEmail({
       message,
       contactEmail: CONTACT(),
       siteOrigin: SITE_ORIGIN(),
       lang: langFor(locale),
+      heroAccent,
       ...extras,
     });
     return Response.json({ html, preheader });
