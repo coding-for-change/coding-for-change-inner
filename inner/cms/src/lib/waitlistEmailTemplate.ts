@@ -14,11 +14,13 @@
  * can't resolve inside auto-layout table cells) plus a fixed 600px ghost
  * table in `[if mso]` conditionals for Outlook, which ignores max-width.
  *
- * Design: monochrome ink-on-white with square corners, echoing the >_♡
- * terminal logo — monospace for the wordmark/button/site link (webfonts don't
- * load in mail clients, so the mono stack leans on system fonts: Menlo on
- * Apple, Consolas on Windows), a plain sans stack for the body. No accent
- * color: artwork in the header image provides the color, the frame stays
+ * Design: monochrome ink-on-white, echoing the >_♡ terminal logo — the header
+ * is the horizontal brand lockup as a 2x PNG (inner/public/images/
+ * email-logo-wordmark.png, rasterized from the brand SVG), monospace for the
+ * button/site link (webfonts don't load in mail clients, so the mono stack
+ * leans on system fonts: Menlo on Apple, Consolas on Windows), a plain sans
+ * stack for the body. No accent color: the header image is shown as a
+ * contained card on a light band and provides the color, the frame stays
  * quiet.
  *
  * Kept dependency-free on purpose: it can be rendered standalone
@@ -109,7 +111,9 @@ export function buildWaitlistEmail(input: WaitlistEmailContent): BuiltWaitlistEm
   } = input;
 
   const preheader = preheaderFrom(message);
-  const logoUrl = `${siteOrigin}/images/email-logo.png`;
+  // Horizontal ">_♡ Coding for Change" lockup (rasterized from the brand SVG
+  // at 2x — mail clients don't render SVG). Served by the inner app.
+  const logoUrl = `${siteOrigin}/images/email-logo-wordmark.png`;
 
   // ---- text/plain part (kept close to what the admin typed) ----
   const textParts = [message.trim()];
@@ -126,11 +130,14 @@ export function buildWaitlistEmail(input: WaitlistEmailContent): BuiltWaitlistEm
   // ---- html part ----
   const hasCta = Boolean(ctaLabel && ctaUrl);
 
+  // The image is shown as a contained card on a light band (not full-bleed):
+  // event artwork tends to be big and square, and at full width it dominates
+  // the mail. ~360px keeps it a skimmable banner, like a chat link preview.
   const heroRow = headerImageUrl
     ? `<tr>
-        <td style="padding:0;">
-          <img src="${escapeHtml(headerImageUrl)}" width="598" alt=""
-            style="display:block;border:0;width:100%;max-width:100%;height:auto;" />
+        <td class="wl-pad" align="center" bgcolor="${PAGE_BG}" style="background-color:${PAGE_BG};padding:28px 40px;">
+          <img src="${escapeHtml(headerImageUrl)}" width="360" alt=""
+            style="display:inline-block;border:1px solid ${LINE};border-radius:10px;width:100%;max-width:360px;height:auto;background-color:#ffffff;" />
         </td>
       </tr>`
     : '';
@@ -177,10 +184,9 @@ export function buildWaitlistEmail(input: WaitlistEmailContent): BuiltWaitlistEm
           <td style="background-color:#ffffff;border:1px solid ${LINE};">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
               <tr>
-                <td class="wl-pad" align="center" style="padding:38px 40px 30px;">
-                  <img src="${escapeHtml(logoUrl)}" width="88" height="30" alt="&gt;_&#9825;"
-                    style="display:inline-block;border:0;" />
-                  <div style="font-family:${FONT_MONO};font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:${INK};padding-top:12px;">Coding for Change</div>
+                <td class="wl-pad" align="center" style="padding:36px 40px 28px;">
+                  <img src="${escapeHtml(logoUrl)}" width="300" height="41" alt="&gt;_&#9825; Coding for Change"
+                    style="display:inline-block;border:0;max-width:100%;height:auto;" />
                 </td>
               </tr>
               ${heroRow}
@@ -201,7 +207,7 @@ export function buildWaitlistEmail(input: WaitlistEmailContent): BuiltWaitlistEm
         </tr>
         <tr>
           <td align="center" style="padding:20px 8px 0;font-family:${FONT_MONO};font-size:11px;letter-spacing:1.5px;color:${MUTED};">
-            <a href="${escapeHtml(siteOrigin)}" style="color:${MUTED};text-decoration:none;">&gt;_&#9825;&nbsp;&nbsp;codingforchange.com</a>
+            <a href="${escapeHtml(siteOrigin)}" style="color:${MUTED};text-decoration:none;">codingforchange.com</a>
           </td>
         </tr>
       </table>
