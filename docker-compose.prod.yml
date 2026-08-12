@@ -1,5 +1,7 @@
 services:
   website:
+    labels:
+      alloy-logging: true
     image: localhost:5000/homepage-website:latest
     restart: unless-stopped
     ports:
@@ -14,6 +16,8 @@ services:
       - cms
 
   inner:
+    labels:
+      alloy-logging: true
     image: localhost:5000/homepage-inner:latest
     restart: unless-stopped
     environment:
@@ -30,6 +34,8 @@ services:
       - GA4_MEASUREMENT_ID=${GA4_MEASUREMENT_ID:-}
 
   cms:
+    labels:
+      alloy-logging: true
     image: localhost:5000/homepage-cms:latest
     restart: unless-stopped
     env_file:
@@ -45,6 +51,8 @@ services:
         condition: service_healthy
 
   postgres:
+    labels:
+      alloy-logging: true
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
