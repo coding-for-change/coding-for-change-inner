@@ -109,16 +109,14 @@ export interface CmsGalleryBlock {
     images?: CmsGalleryImage[] | null;
 }
 
-/** A product demo: an uploaded screen recording, or a YouTube / Vimeo link. */
+/** A product demo: a screen recording uploaded through the CMS. */
 export interface CmsDemoBlock {
     blockType: 'demo';
     id?: string | null;
     heading?: string | null;
     video?: CmsMedia | null;
-    /** Still shown before playback (and the video element's poster frame). */
+    /** Still frame shown before playback. */
     poster?: CmsMedia | null;
-    /** Used when there is no uploaded file — a watch URL, normalised on render. */
-    embedUrl?: string | null;
     caption?: string | null;
 }
 

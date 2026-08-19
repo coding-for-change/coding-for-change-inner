@@ -227,70 +227,38 @@ const GalleryBlock: React.FC<{ block: CmsGalleryBlock; title: string }> = ({
     );
 };
 
-/** Normalises a YouTube / Vimeo watch link into its embeddable form. */
-const embedUrl = (raw?: string | null): string | null => {
-    const url = raw?.trim();
-    if (!url) return null;
-    const yt = url.match(
-        /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{6,})/
-    );
-    if (yt) return `https://www.youtube-nocookie.com/embed/${yt[1]}`;
-    const vimeo = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-    if (vimeo) return `https://player.vimeo.com/video/${vimeo[1]}`;
-    return url;
-};
-
 /**
- * A product demo: an uploaded screen recording, or a YouTube/Vimeo embed.
+ * A product demo: a screen recording uploaded through the CMS, served from our
+ * own origin.
  *
- * Uploaded video is not auto-played — a demo is something a visitor chooses to
- * watch, and an unbidden moving image derails the page around it. Third-party
- * embeds only mount once the visitor clicks the poster, so the provider sets no
- * cookies for anyone who never asks to watch (see the consent section of
- * CLAUDE.md — an iframe that loads on page load would need declaring).
+ * Deliberately upload-only. A YouTube/Vimeo embed shipped here first and the
+ * consent scan rejected it, correctly: those players set cookies on a visitor's
+ * device the moment they load, which under TDDDG § 25 needs consent whether the
+ * load is automatic or click-triggered. Supporting them means a declared Klaro
+ * service, a consent gate, and an Art. 13 entry in the Datenschutz — see the
+ * consent section of CLAUDE.md. Until that exists, self-hosted only.
+ *
+ * Not auto-played: a demo is something a visitor chooses to watch, and an
+ * unbidden moving image derails the page around it.
  */
-const DemoBlock: React.FC<{ block: CmsDemoBlock; playLabel: string }> = ({
-    block,
-    playLabel,
-}) => {
-    const [playing, setPlaying] = useState(false);
+const DemoBlock: React.FC<{ block: CmsDemoBlock }> = ({ block }) => {
     const file = mediaUrl(block.video);
     const poster = mediaUrl(block.poster);
-    const embed = embedUrl(block.embedUrl);
-    if (!file && !embed) return null;
+    if (!file) return null;
 
     return (
         <section className="lp-cs__block lp-cs__block--wide">
             <BlockHead heading={block.heading} />
             <figure className="lp-cs-demo">
                 <div className="lp-cs-demo__frame">
-                    {file ? (
-                        <video
-                            className="lp-cs-demo__media"
-                            src={file}
-                            poster={poster || undefined}
-                            controls
-                            playsInline
-                            preload="metadata"
-                        />
-                    ) : playing ? (
-                        <iframe
-                            className="lp-cs-demo__media"
-                            src={`${embed}${embed?.includes('?') ? '&' : '?'}autoplay=1`}
-                            title={block.heading || playLabel}
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
-                            allowFullScreen
-                        />
-                    ) : (
-                        <button
-                            type="button"
-                            className="lp-cs-demo__poster"
-                            onClick={() => setPlaying(true)}
-                        >
-                            {poster && <img src={poster} alt="" />}
-                            <span className="lp-cs-demo__play">▶ {playLabel}</span>
-                        </button>
-                    )}
+                    <video
+                        className="lp-cs-demo__media"
+                        src={file}
+                        poster={poster || undefined}
+                        controls
+                        playsInline
+                        preload="metadata"
+                    />
                 </div>
                 {block.caption && (
                     <figcaption className="lp-cs-demo__cap">{block.caption}</figcaption>
@@ -403,7 +371,7 @@ const CaseStudyBlocks: React.FC<{ project: CmsProject }> = ({ project }) => {
                     case 'gallery':
                         return <GalleryBlock key={key} block={b} title={project.title} />;
                     case 'demo':
-                        return <DemoBlock key={key} block={b} playLabel={t.caseStudy.playDemo} />;
+                        return <DemoBlock key={key} block={b} />;
                     case 'timeline':
                         return <TimelineBlock key={key} block={b} />;
                     case 'team':
