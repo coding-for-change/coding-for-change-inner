@@ -383,13 +383,9 @@ export interface Project {
              */
             heading?: string | null;
             /**
-             * A screen recording (MP4). Keep it short and silent-friendly — it plays on tap, never on its own.
+             * A screen recording (MP4), served from our own domain. Keep it short and silent-friendly — it plays on tap, never on its own.
              */
-            video?: (number | null) | Media;
-            /**
-             * Used only when no file is uploaded. The player loads on click, so nothing third-party runs for visitors who do not watch.
-             */
-            embedUrl?: string | null;
+            video: number | Media;
             /**
              * Still frame shown before playback. Recommended for embeds.
              */
@@ -1510,7 +1506,6 @@ export interface ProjectsSelect<T extends boolean = true> {
           | {
               heading?: T;
               video?: T;
-              embedUrl?: T;
               poster?: T;
               caption?: T;
               id?: T;

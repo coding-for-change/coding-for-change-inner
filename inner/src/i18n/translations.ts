@@ -55,7 +55,7 @@ export interface Translations {
         challengeHeading: string; solutionHeading: string; resultsHeading: string;
         workingHeading: string; workingPoints: string[]; partnerLink: string;
         faqHeading: string; bookHeading: string; bookText: string;
-        eyebrow: string; teamLink: string; moreProjects: string; playDemo: string;
+        eyebrow: string; teamLink: string; moreProjects: string;
     };
     events: {
         title: string; subtitle: string; intro: string;
@@ -222,7 +222,6 @@ const en: Translations = {
         eyebrow: 'Case study',
         teamLink: 'Meet the whole team',
         moreProjects: 'See all projects',
-        playDemo: 'Watch the demo',
     },
     events: {
         title: 'Events', subtitle: 'Workshops, Hackathons & More',
@@ -445,7 +444,6 @@ const de: Translations = {
         eyebrow: 'Fallstudie',
         teamLink: 'Das ganze Team ansehen',
         moreProjects: 'Alle Projekte ansehen',
-        playDemo: 'Demo ansehen',
         bookHeading: 'Ein Problem, das es zu lösen lohnt?',
         bookText: 'Erzählen Sie uns davon – wählen Sie einen Termin und wir schauen, ob wir helfen können.',
     },

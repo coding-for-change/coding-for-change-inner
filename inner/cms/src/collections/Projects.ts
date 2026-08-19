@@ -152,6 +152,14 @@ export const Projects: CollectionConfig = {
           // A demo of the thing itself — the strongest argument on a case-study
           // page, and the piece another organisation needs before it can picture
           // the software running at its own desk.
+          //
+          // Self-hosted upload only. A YouTube/Vimeo URL field shipped here
+          // first and the consent scan rejected it, correctly: those players
+          // store data on a visitor's device whenever they load, which under
+          // TDDDG § 25 needs consent regardless of whether the load is
+          // automatic or click-triggered. Adding them back means a declared
+          // Klaro service, a consent gate in the component, and an Art. 13
+          // entry in the Datenschutz — see the consent section of CLAUDE.md.
           slug: 'demo',
           labels: { singular: 'Product demo', plural: 'Product demos' },
           fields: [
@@ -165,18 +173,10 @@ export const Projects: CollectionConfig = {
               name: 'video',
               type: 'upload',
               relationTo: 'media',
+              required: true,
               admin: {
                 description:
-                  'A screen recording (MP4). Keep it short and silent-friendly — it plays on tap, never on its own.',
-              },
-            },
-            {
-              name: 'embedUrl',
-              type: 'text',
-              label: 'YouTube / Vimeo URL',
-              admin: {
-                description:
-                  'Used only when no file is uploaded. The player loads on click, so nothing third-party runs for visitors who do not watch.',
+                  'A screen recording (MP4), served from our own domain. Keep it short and silent-friendly — it plays on tap, never on its own.',
               },
             },
             {

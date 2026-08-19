@@ -2096,50 +2096,6 @@ a.lp-projstrip__item:hover .lp-projstrip__name {
     background: #0d1a1a;
     object-fit: contain;
 }
-/* Third-party players stay unmounted until this is clicked, so nothing
-   third-party runs — or sets a cookie — for a visitor who never asks to watch. */
-.lp-cs-demo__poster {
-    display: block;
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    padding: 0;
-    border: 0;
-    background: #0d1a1a;
-    cursor: pointer;
-}
-.lp-cs-demo__poster img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.78;
-    transition: opacity 0.25s ease, transform 0.5s ease;
-}
-.lp-cs-demo__poster:hover img {
-    opacity: 0.92;
-    transform: scale(1.02);
-}
-.lp-cs-demo__play {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 26px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.94);
-    color: var(--ink);
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
-    font-size: 16px;
-    transition: background 0.2s ease;
-}
-.lp-cs-demo__poster:hover .lp-cs-demo__play {
-    background: #fff;
-}
 .lp-cs-demo__cap {
     display: block;
     margin-top: 14px;
