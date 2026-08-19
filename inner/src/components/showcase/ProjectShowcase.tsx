@@ -38,7 +38,7 @@ const TechPills: React.FC<{ project: CmsProject }> = ({ project }) =>
 
 /**
  * Projects laid out with the flagship dominant at the top (a large featured
- * card) and the rest in a grid below. Shared by the /projects page and the
+ * card) and the rest as a logo wall below. Shared by the /projects page and the
  * homepage projects section so both read the same way.
  */
 const ProjectShowcase: React.FC<{ projects: CmsProject[] }> = ({ projects }) => {
@@ -97,35 +97,68 @@ const ProjectShowcase: React.FC<{ projects: CmsProject[] }> = ({ projects }) => 
             )}
 
             {rest.length > 0 && (
-                <div className="lp-grid lp-grid--projects">
-                    {rest.map((project, i) => {
-                        // Non-featured projects show only their image (a clean logo
-                        // wall); the featured project above carries the full detail.
-                        const img = mediaUrl(project.image);
-                        return (
-                            <motion.div
-                                key={project.id}
-                                className={
-                                    'lp-card lp-card--logo' +
-                                    (img ? '' : ' lp-card--logo-empty')
-                                }
-                                {...reveal}
-                                transition={{
-                                    duration: 0.45,
-                                    delay: Math.min(i * 0.05, 0.3),
-                                }}
-                            >
-                                {img ? (
-                                    <div className="lp-card__media">
-                                        <img src={img} alt={project.title} />
+                <>
+                    {featured && <h3 className="lp-subhead">{t.projects.more}</h3>}
+                    <div className="lp-logowall">
+                        {rest.map((project, i) => {
+                            // Non-featured projects are logo tiles: the partner mark on
+                            // its own plate plus a name/status caption, so a tile still
+                            // reads as a project when the logo alone says nothing. The
+                            // featured card above carries the full detail.
+                            const img = mediaUrl(project.image);
+                            const linked = hasCaseStudy(project);
+                            const inner = (
+                                <>
+                                    <div className="lp-logotile__plate">
+                                        {img ? (
+                                            <img src={img} alt={project.title} />
+                                        ) : (
+                                            <span className="lp-logotile__mark">
+                                                {project.title.charAt(0)}
+                                            </span>
+                                        )}
                                     </div>
-                                ) : (
-                                    <h3 className="lp-card__title">{project.title}</h3>
-                                )}
-                            </motion.div>
-                        );
-                    })}
-                </div>
+                                    <div className="lp-logotile__cap">
+                                        <span
+                                            className="lp-logotile__dot"
+                                            style={{
+                                                backgroundColor:
+                                                    statusColors[project.status] ||
+                                                    '#808080',
+                                            }}
+                                            title={statusLabel(project.status)}
+                                        />
+                                        <span className="lp-logotile__name">
+                                            {project.title}
+                                        </span>
+                                    </div>
+                                </>
+                            );
+                            return (
+                                <motion.div
+                                    key={project.id}
+                                    className="lp-logotile__wrap"
+                                    {...reveal}
+                                    transition={{
+                                        duration: 0.45,
+                                        delay: Math.min(i * 0.05, 0.3),
+                                    }}
+                                >
+                                    {linked ? (
+                                        <Link
+                                            className="lp-logotile"
+                                            href={`/projects/${project.slug}`}
+                                        >
+                                            {inner}
+                                        </Link>
+                                    ) : (
+                                        <div className="lp-logotile">{inner}</div>
+                                    )}
+                                </motion.div>
+                            );
+                        })}
+                    </div>
+                </>
             )}
         </>
     );
