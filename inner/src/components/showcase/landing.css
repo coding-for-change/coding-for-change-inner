@@ -414,27 +414,6 @@
     height: 100%;
     object-fit: cover;
 }
-/* Image-only project cards (non-featured): the media fills the entire card —
-   no padding, no text — for a clean logo/thumbnail wall. */
-.lp-card--logo {
-    padding: 0;
-    overflow: hidden;
-}
-.lp-card--logo .lp-card__media {
-    margin: 0;
-    flex: 1;
-    height: auto;
-    min-height: 220px;
-}
-/* Fallback when a non-featured project has no image: keep its title centred. */
-.lp-card--logo-empty {
-    padding: 24px;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    min-height: 220px;
-}
-
 /* ---- CMS-driven page hero images (all optional; only render with an upload) ---- */
 /* Generic wide hero used on the Partner, Join and Team pages. `display:block`
    is explicit because a bare `div` is otherwise caught by the global
@@ -1439,64 +1418,223 @@ html[data-nav='dark'] .lp-nav .enter3d-btn {
 /* ================================================================== */
 /* Projects list — featured flagship + grid                            */
 /* ================================================================== */
-.lp-grid--projects {
-    margin-top: 32px;
-}
-.lp-proj-feat {
+/* The flagship reads as an editorial feature, not a card: no enclosing box, a
+   hairline rule and whitespace instead of chrome, and the partner logo shown as
+   a *contained* mark (same treatment as the sponsors wall) rather than a
+   full-bleed hero — a 2048px brand square blown up to half the row is a slab of
+   colour that says nothing and dwarfs the copy it sits beside. */
+.lp-feature {
     display: grid;
-    grid-template-columns: 1fr;
-    margin: 12px 0 40px;
+    grid-template-columns: 236px minmax(0, 1fr);
+    gap: 48px;
+    align-items: start;
+    margin: 26px 0 4px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+}
+.lp-feature--nomark {
+    grid-template-columns: minmax(0, 1fr);
+}
+.lp-feature__mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    padding: 18px;
     border: 1px solid var(--line);
     background: #fff;
-    overflow: hidden;
+    box-sizing: border-box;
 }
-.lp-proj-feat--media {
-    grid-template-columns: 1.05fr 1fr;
-}
-.lp-proj-feat__media {
+.lp-feature__mark img {
     display: block;
-    background: var(--alt);
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
 }
-.lp-proj-feat__media img {
-    width: 100%;
-    height: 100%;
-    min-height: 200px;
-    object-fit: cover;
-    display: block;
-}
-.lp-proj-feat__body {
+.lp-feature__body {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding: 22px 40px;
-    box-sizing: border-box;
 }
-.lp-proj-feat__title {
+.lp-feature__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 12px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+.lp-feature__sep {
+    color: #b9c9c9;
+}
+/* A notch under the page title in both size and weight — this is a card head,
+   not a second H1, and at 38px/700 it was competing with the one above it. */
+.lp-feature__title {
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
-    font-size: 25px;
-    line-height: 1.02;
-    margin: 8px 0 4px;
+    font-size: clamp(25px, 2.3vw, 31px);
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.012em;
+    margin: 13px 0 0;
 }
-.lp-proj-feat__impact {
-    margin-top: 10px;
+/* Body face, not the display face: this is a paragraph, and four lines of a
+   grotesque built for headings read as shouting. Slightly above body size and a
+   shade off full ink, so it still leads without pulling focus from the title. */
+.lp-feature__lead {
+    margin: 14px 0 0;
+    max-width: 64ch;
+    font-size: 17px;
+    line-height: 1.62;
+    color: #41494a;
+}
+/* Editors write this field freely, so the teaser is capped rather than allowed
+   to set the block's height — three lines, then an ellipsis, with the case-study
+   link right below carrying the rest. Applied only when that link exists (see
+   ProjectShowcase), so nothing is ever clipped without a way to read on. */
+.lp-feature__lead--clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
+}
+.lp-feature__stack {
+    margin: 22px 0 0;
+    font-size: 13px;
+    letter-spacing: 0.6px;
+    color: var(--muted);
+}
+.lp-feature__cta {
+    margin-top: 24px;
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 15px;
-    line-height: 1.4;
+    color: var(--teal-dark);
+    text-decoration: none;
+    border-bottom: 2px solid var(--teal);
+    padding-bottom: 3px;
+    transition: color 0.16s ease, border-color 0.16s ease;
+}
+.lp-feature__cta:hover {
+    color: var(--teal);
+    border-color: var(--teal-dark);
+}
+@media (max-width: 780px) {
+    .lp-feature {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 26px;
+    }
+    .lp-feature__mark {
+        width: 132px;
+        padding: 16px;
+    }
+    /* Lines are roughly half as wide once the block stacks, so three of them
+       would cut the teaser twice as hard as on desktop. */
+    .lp-feature__lead--clamp {
+        -webkit-line-clamp: 5;
+        line-clamp: 5;
+    }
+}
+
+/* ---- The remaining projects: a quiet partner strip -------------------- */
+/* Fixed-width cells rather than a stretching grid, so a short list (often a
+   single partner) reads as a deliberate strip instead of one orphan tile in an
+   otherwise empty row. */
+.lp-projstrip {
+    display: block;
+    margin-top: 46px;
+    padding-top: 26px;
+    border-top: 1px solid var(--line);
+}
+.lp-projstrip__head {
+    margin: 0 0 16px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
     color: var(--teal-dark);
 }
-.lp-proj-feat__cta {
-    margin-top: 14px;
+.lp-projstrip__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 26px 22px;
 }
-@media (max-width: 820px) {
-    .lp-proj-feat--media {
-        grid-template-columns: 1fr;
-    }
-    .lp-proj-feat__media img {
-        min-height: 200px;
-    }
-    .lp-proj-feat__body {
-        padding: 28px;
-    }
+.lp-projstrip__cell {
+    display: flex;
+    flex: 0 0 auto;
+    width: 194px;
+}
+.lp-projstrip__item {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    color: inherit;
+    text-decoration: none;
+}
+.lp-projstrip__mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 108px;
+    padding: 14px;
+    border: 1px solid var(--line);
+    background: #fff;
+    box-sizing: border-box;
+    transition: border-color 0.16s ease, transform 0.16s ease;
+}
+.lp-projstrip__mark img {
+    display: block;
+    max-width: 100%;
+    max-height: 74px;
+    object-fit: contain;
+}
+.lp-projstrip__initial {
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-size: 30px;
+    color: var(--teal);
+}
+a.lp-projstrip__item:hover .lp-projstrip__mark {
+    border-color: #cfe0e0;
+    transform: translateY(-2px);
+}
+.lp-projstrip__name {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 11px;
+    /* Two lines' worth, so a row of cells keeps a common baseline whatever the
+       titles happen to be. */
+    min-height: 38px;
+    font-size: 14px;
+    line-height: 1.35;
+    color: var(--ink);
+}
+.lp-projstrip__label {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    min-width: 0;
+}
+a.lp-projstrip__item:hover .lp-projstrip__name {
+    color: var(--teal-dark);
+}
+/* Status dot — shared by the feature eyebrow and the strip captions. */
+.lp-dot {
+    display: block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex: none;
+}
+/* In the strip the caption can wrap to two lines, so the dot hangs off the
+   first line rather than centring itself against the whole block. */
+.lp-projstrip__name .lp-dot {
+    margin-top: 6px;
 }
 
 /* ================================================================== */
@@ -2077,7 +2215,7 @@ html[data-nav='dark'] .lp-nav .enter3d-btn {
 .lp-page__title,
 .lp-card__title,
 .lp-cs__title,
-.lp-proj-feat__title,
+.lp-feature__title,
 .lp-3d__title,
 .lp-cs-choice__tag,
 .lp-step__title,
