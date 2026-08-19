@@ -1,13 +1,25 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Cal, { getCalApi } from '@calcom/embed-react';
 import { useSiteConfig } from '../../api';
 import { trackEvent } from '../../lib/analytics';
 import { trackAdsConversion } from '../../lib/googleAds';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useOverlay } from '../../hooks/useOverlay';
 
 export interface BookingEmbedProps {
     height?: number;
+    /**
+     * `inline` parks the calendar in the page — right for a page whose job is
+     * booking (/partner, /contact).
+     *
+     * `compact` shows a button that opens the same calendar in an overlay. The
+     * widget is ~900px tall, which is most of a screen; on a page that is about
+     * something else (a case study, the homepage) it buries the content that was
+     * meant to do the persuading.
+     */
+    variant?: 'inline' | 'compact';
 }
 
 const ENV_BOOKING_URL = process.env.NEXT_PUBLIC_BOOKING_URL?.trim() || '';
@@ -26,6 +38,44 @@ const toCalLink = (url: string): string | null => {
 };
 
 /**
+ * The calendar in an overlay: a centred panel on a dimmed backdrop, dismissed by
+ * Esc, the close button or a backdrop click. Portalled onto <body> because
+ * `.site-page` is transformed and would otherwise become the containing block
+ * (the same reason the gallery lightbox does it).
+ */
+const BookingOverlay: React.FC<{
+    label: string;
+    closeLabel: string;
+    onClose: () => void;
+    children: React.ReactNode;
+}> = ({ label, closeLabel, onClose, children }) => {
+    useOverlay(onClose);
+    if (typeof document === 'undefined') return null;
+    return createPortal(
+        <div
+            className="lp-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label={label}
+            onClick={onClose}
+        >
+            <div className="lp-modal__panel" onClick={(e) => e.stopPropagation()}>
+                <button
+                    type="button"
+                    className="lp-modal__close"
+                    aria-label={closeLabel}
+                    onClick={onClose}
+                >
+                    ×
+                </button>
+                <div className="lp-modal__body">{children}</div>
+            </div>
+        </div>,
+        document.body
+    );
+};
+
+/**
  * Embeds the club's Cal.com booking page as an iframe.
  *
  * The URL comes from the CMS (Site Configuration → "Booking page URL"), or from
@@ -35,18 +85,31 @@ const toCalLink = (url: string): string | null => {
  *
  * To get the URL: copy the Cal.com event link (cal.com/<user>/<event>).
  */
-const BookingEmbed: React.FC<BookingEmbedProps> = ({ height = 700 }) => {
+const BookingEmbed: React.FC<BookingEmbedProps> = ({
+    height = 700,
+    variant = 'inline',
+}) => {
     const siteConfig = useSiteConfig();
     const { t } = useLanguage();
     const rawUrl = (siteConfig.bookingUrl?.trim() || ENV_BOOKING_URL) || '';
     const url = rawUrl ? toEmbeddable(rawUrl) : '';
     const calLink = url ? toCalLink(url) : null;
 
+    const compact = variant === 'compact';
     const containerRef = useRef<HTMLDivElement>(null);
     const [visible, setVisible] = useState(false);
+    const [open, setOpen] = useState(false);
+    const close = useCallback(() => setOpen(false), []);
 
+    // Compact: the widget mounts the moment the overlay opens, so `visible`
+    // tracks intent rather than scroll depth.
     useEffect(() => {
-        if (visible || !url) return;
+        if (open) setVisible(true);
+    }, [open]);
+
+    // Inline: prefetch as it approaches the viewport, so it is ready on arrival.
+    useEffect(() => {
+        if (compact || visible || !url) return;
         const el = containerRef.current;
         if (!el) return;
         // No IntersectionObserver (very old browsers) → load immediately.
@@ -66,18 +129,22 @@ const BookingEmbed: React.FC<BookingEmbedProps> = ({ height = 700 }) => {
         );
         observer.observe(el);
         return () => observer.disconnect();
-    }, [visible, url]);
+    }, [compact, visible, url]);
 
-    // Funnel: the widget came into view. This is an *impression*, not intent —
-    // almost everyone who scrolls this far triggers it — so it is never used as
-    // an ad conversion. `booking_completed` below is the real signal.
+    // Funnel: the calendar was shown. Inline, that is an *impression* — almost
+    // everyone who scrolls this far triggers it — so it is never used as an ad
+    // conversion. Compact only mounts on a click, so `calcom_modal` really is
+    // intent; the label keeps the two apart in the dashboard. `booking_completed`
+    // below stays the conversion signal either way.
     const bookingTracked = useRef(false);
     useEffect(() => {
         if (visible && url && !bookingTracked.current) {
             bookingTracked.current = true;
-            trackEvent('booking_started', { label: 'calcom' });
+            trackEvent('booking_started', {
+                label: compact ? 'calcom_modal' : 'calcom',
+            });
         }
-    }, [visible, url]);
+    }, [compact, visible, url]);
 
     // A booking actually submitted. Cal's embed posts `bookingSuccessful` to the
     // parent frame, so no webhook or /thanks redirect is needed — but only on the
@@ -139,41 +206,67 @@ const BookingEmbed: React.FC<BookingEmbedProps> = ({ height = 700 }) => {
         );
     }
 
+    // A cal.com link gets the native embed (responsive, and it reports bookings
+    // back to us); anything else falls back to a plain iframe at a fixed height.
+    const widget = calLink ? (
+        <Cal calLink={calLink} config={{ theme: 'light' }} style={{ width: '100%' }} />
+    ) : (
+        <div className="lp-booking__scale" style={{ height }}>
+            <iframe
+                className="lp-booking__frame"
+                src={url}
+                title={t.book.title}
+                frameBorder={0}
+                loading="lazy"
+            />
+        </div>
+    );
+
+    const newTabLink = (
+        <a
+            className="lp-booking__link"
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            {t.book.openInNewTab} ↗
+        </a>
+    );
+
+    if (compact) {
+        return (
+            <div className="lp-booking lp-booking--compact">
+                <button
+                    type="button"
+                    className="lp-btn lp-btn--primary"
+                    onClick={() => setOpen(true)}
+                >
+                    {t.book.pickTime} →
+                </button>
+                {newTabLink}
+                {open && (
+                    <BookingOverlay
+                        label={t.book.title}
+                        closeLabel={t.common.close}
+                        onClose={close}
+                    >
+                        {widget}
+                    </BookingOverlay>
+                )}
+            </div>
+        );
+    }
+
     return (
         <div className="lp-booking" ref={containerRef}>
-            {calLink ? (
-                visible ? (
-                    <Cal
-                        calLink={calLink}
-                        config={{ theme: 'light' }}
-                        style={{ width: '100%' }}
-                    />
-                ) : (
-                    <div className="lp-booking__scale" style={{ height }} aria-hidden />
-                )
-            ) : (   
-                <div className="lp-booking__scale" style={{ height }}>
-                    {visible ? (
-                        <iframe
-                            className="lp-booking__frame"
-                            src={url}
-                            title={t.book.title}
-                            frameBorder={0}
-                            loading="lazy"
-                        />
-                    ) : (
-                        <div className="lp-booking__frame" aria-hidden />
-                    )}
+            {visible ? (
+                widget
+            ) : (
+                <div className="lp-booking__scale" style={{ height }} aria-hidden>
+                    {!calLink && <div className="lp-booking__frame" />}
                 </div>
             )}
-            <a
-                className="lp-booking__link"
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                {t.book.openInNewTab} ↗
-            </a>
+            {newTabLink}
         </div>
     );
 };
