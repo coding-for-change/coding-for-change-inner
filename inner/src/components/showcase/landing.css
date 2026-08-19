@@ -1471,23 +1471,25 @@ html[data-nav='dark'] .lp-nav .enter3d-btn {
 .lp-feature__sep {
     color: #b9c9c9;
 }
+/* A notch under the page title in both size and weight — this is a card head,
+   not a second H1, and at 38px/700 it was competing with the one above it. */
 .lp-feature__title {
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
-    font-size: clamp(28px, 2.9vw, 38px);
-    line-height: 1.06;
-    letter-spacing: -0.015em;
-    margin: 14px 0 0;
+    font-size: clamp(25px, 2.3vw, 31px);
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.012em;
+    margin: 13px 0 0;
 }
-/* The lead is the whole body copy of the feature: display face, ink, one notch
-   above the surrounding text. No pull-quote rule — the size shift is enough and
-   keeps the block quiet. */
+/* Body face, not the display face: this is a paragraph, and four lines of a
+   grotesque built for headings read as shouting. Slightly above body size and a
+   shade off full ink, so it still leads without pulling focus from the title. */
 .lp-feature__lead {
-    margin: 16px 0 0;
-    max-width: 52ch;
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
-    font-size: 19px;
-    line-height: 1.45;
-    color: var(--ink);
+    margin: 14px 0 0;
+    max-width: 64ch;
+    font-size: 17px;
+    line-height: 1.62;
+    color: #41494a;
 }
 /* Editors write this field freely, so the teaser is capped rather than allowed
    to set the block's height — three lines, then an ellipsis, with the case-study
