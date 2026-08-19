@@ -1478,18 +1478,11 @@ html[data-nav='dark'] .lp-nav .enter3d-btn {
     letter-spacing: -0.015em;
     margin: 14px 0 0;
 }
-.lp-feature__desc {
-    margin: 12px 0 0;
-    max-width: 58ch;
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--muted);
-}
-/* The impact sentence is the payoff, so it outranks the description above it:
-   display face, ink, one notch larger. No pull-quote rule — the size shift is
-   enough and keeps the block quiet. */
+/* The lead is the whole body copy of the feature: display face, ink, one notch
+   above the surrounding text. No pull-quote rule — the size shift is enough and
+   keeps the block quiet. */
 .lp-feature__lead {
-    margin: 18px 0 0;
+    margin: 16px 0 0;
     max-width: 52ch;
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 19px;

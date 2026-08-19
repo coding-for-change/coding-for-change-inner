@@ -70,10 +70,14 @@ const ProjectShowcase: React.FC<{ projects: CmsProject[] }> = ({ projects }) => 
                             {featured.ngoPartner}
                         </p>
                         <h2 className="lp-feature__title">{featured.title}</h2>
-                        <p className="lp-feature__desc">{featured.description}</p>
-                        {featured.impact && (
-                            <p className="lp-feature__lead">{featured.impact}</p>
-                        )}
+                        {/* The impact sentence and the description say the same
+                            thing at different lengths, and the partner is already
+                            in the eyebrow — so show the impact when there is one
+                            and fall back to the description only when there is
+                            not, rather than stacking both. */}
+                        <p className="lp-feature__lead">
+                            {featured.impact || featured.description}
+                        </p>
                         {(featured.technologies ?? []).length > 0 && (
                             <p className="lp-feature__stack">
                                 {(featured.technologies ?? [])

@@ -171,7 +171,7 @@ const en: Translations = {
     },
     projects: {
         title: 'Projects', subtitle: 'Building Tech for Social Good',
-        intro: 'We partner with NGOs to build software solutions that make a real difference. Each project is led by student teams and developed in close collaboration with our partners.',
+        intro: 'We build software for NGOs that makes a real difference — by student teams, together with our partners.',
         viewAll: 'See all projects',
         more: 'More projects',
         status: { active: 'Active', completed: 'Completed', recruiting: 'Recruiting' },
@@ -390,7 +390,7 @@ const de: Translations = {
     },
     projects: {
         title: 'Projekte', subtitle: 'Technologie für das Gemeinwohl',
-        intro: 'Wir arbeiten mit NGOs zusammen, um Softwarelösungen zu entwickeln, die wirklich etwas bewirken. Jedes Projekt wird von Studierendenteams geleitet und in enger Zusammenarbeit mit unseren Partnern entwickelt.',
+        intro: 'Wir bauen Software für NGOs, die wirklich etwas verändert – von Studierendenteams, gemeinsam mit unseren Partnern.',
         viewAll: 'Alle Projekte ansehen',
         more: 'Weitere Projekte',
         status: { active: 'Aktiv', completed: 'Abgeschlossen', recruiting: 'Team gesucht' },
