@@ -1,5 +1,5 @@
 'use client';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -14,8 +14,10 @@ import {
     CmsTimelineBlock,
     CmsTeamBlock,
     CmsFaqBlock,
+    CmsDemoBlock,
 } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useOverlay } from '../../hooks/useOverlay';
 import BookingEmbed from '../general/BookingEmbed';
 import './landing.css';
 
@@ -39,19 +41,6 @@ const Paragraphs: React.FC<{ text?: string | null }> = ({ text }) =>
         </>
     ) : null;
 
-const StatusPill: React.FC<{ status: string }> = ({ status }) => {
-    const { t } = useLanguage();
-    const label = (t.projects.status as Record<string, string>)[status] || status;
-    return (
-        <span
-            className="lp-status"
-            style={{ backgroundColor: statusColors[status] || '#808080' }}
-        >
-            {label}
-        </span>
-    );
-};
-
 type Shot = CmsGalleryImage;
 
 /**
@@ -73,26 +62,14 @@ const Lightbox: React.FC<{
         [index, count, onNavigate]
     );
 
-    useEffect(() => {
-        const onKey = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') onClose();
-            else if (e.key === 'ArrowRight') go(1);
+    const onKey = useCallback(
+        (e: KeyboardEvent) => {
+            if (e.key === 'ArrowRight') go(1);
             else if (e.key === 'ArrowLeft') go(-1);
-        };
-        window.addEventListener('keydown', onKey);
-        // Lock background scroll (the desktop scroller is `.site-scroll`, not
-        // <body>, so lock both) and restore on close.
-        const scroller = document.querySelector<HTMLElement>('.site-scroll');
-        const prevBody = document.body.style.overflow;
-        const prevScroller = scroller?.style.overflow ?? '';
-        document.body.style.overflow = 'hidden';
-        if (scroller) scroller.style.overflow = 'hidden';
-        return () => {
-            window.removeEventListener('keydown', onKey);
-            document.body.style.overflow = prevBody;
-            if (scroller) scroller.style.overflow = prevScroller;
-        };
-    }, [go, onClose]);
+        },
+        [go]
+    );
+    useOverlay(onClose, onKey);
 
     if (typeof document === 'undefined') return null;
 
@@ -164,18 +141,22 @@ const Lightbox: React.FC<{
 
 /* ---- Content blocks (rendered in the CMS-defined order) ---- */
 
+/** A section heading with the hairline that opens a new movement of the page. */
+const BlockHead: React.FC<{ heading?: string | null }> = ({ heading }) =>
+    heading ? <h2 className="lp-cs__h">{heading}</h2> : null;
+
 const TextBlock: React.FC<{ block: CmsTextBlock }> = ({ block }) =>
     block.body ? (
-        <section className="lp-cs__block">
-            {block.heading && <h2 className="lp-cs__h">{block.heading}</h2>}
+        <section className="lp-cs__block lp-cs__block--prose">
+            <BlockHead heading={block.heading} />
             <Paragraphs text={block.body} />
         </section>
     ) : null;
 
 const QuoteBlock: React.FC<{ block: CmsQuoteBlock }> = ({ block }) =>
     block.text ? (
-        <blockquote className="lp-cs__quote">
-            <p className="lp-cs__quote-text">“{block.text}”</p>
+        <blockquote className="lp-cs__block lp-cs__block--quote lp-cs__quote">
+            <p className="lp-cs__quote-text">{block.text}</p>
             {(block.author || block.role) && (
                 <footer className="lp-cs__quote-by">
                     {block.author}
@@ -186,6 +167,17 @@ const QuoteBlock: React.FC<{ block: CmsQuoteBlock }> = ({ block }) =>
         </blockquote>
     ) : null;
 
+/**
+ * A gallery in one of two registers, chosen per block in the CMS:
+ *
+ * - `stage` — product shots (app screens, device mock-ups) stood on a shared
+ *   tinted ground. Bottom-aligned and sized by their own aspect ratio, so a
+ *   phone stands taller than a laptop instead of both being letterboxed into an
+ *   identical row of floating rectangles.
+ * - `photos` — photographs (workshops, on-site visits, presentations) in an
+ *   edge-to-edge grid, uniformly cropped, the first one given a double cell so
+ *   the block leads with an image instead of reading as a contact sheet.
+ */
 const GalleryBlock: React.FC<{ block: CmsGalleryBlock; title: string }> = ({
     block,
     title,
@@ -193,14 +185,22 @@ const GalleryBlock: React.FC<{ block: CmsGalleryBlock; title: string }> = ({
     const items = (block.images ?? []).filter((g) => mediaUrl(g.image));
     const [openIndex, setOpenIndex] = useState<number | null>(null);
     if (items.length === 0) return null;
+    const photos = block.layout === 'photos';
     return (
-        <>
-            <div className="lp-cs__gallery">
+        <section className="lp-cs__block lp-cs__block--wide">
+            <BlockHead heading={block.heading} />
+            <div
+                className={
+                    'lp-cs-gal' +
+                    (photos ? ' lp-cs-gal--photos' : ' lp-cs-gal--stage') +
+                    (photos && items.length > 2 ? ' lp-cs-gal--lead' : '')
+                }
+            >
                 {items.map((g, i) => (
-                    <figure className="lp-cs__shot" key={g.id ?? i}>
+                    <figure className="lp-cs-gal__item" key={g.id ?? i}>
                         <button
                             type="button"
-                            className="lp-cs__shot-btn"
+                            className="lp-cs-gal__btn"
                             onClick={() => setOpenIndex(i)}
                             aria-label={
                                 g.caption ? `View image: ${g.caption}` : `View image ${i + 1}`
@@ -208,7 +208,9 @@ const GalleryBlock: React.FC<{ block: CmsGalleryBlock; title: string }> = ({
                         >
                             <img src={mediaUrl(g.image) || ''} alt={g.caption ?? title} />
                         </button>
-                        {g.caption && <figcaption className="lp-cs__caption">{g.caption}</figcaption>}
+                        {g.caption && (
+                            <figcaption className="lp-cs-gal__cap">{g.caption}</figcaption>
+                        )}
                     </figure>
                 ))}
             </div>
@@ -221,7 +223,80 @@ const GalleryBlock: React.FC<{ block: CmsGalleryBlock; title: string }> = ({
                     onNavigate={setOpenIndex}
                 />
             )}
-        </>
+        </section>
+    );
+};
+
+/** Normalises a YouTube / Vimeo watch link into its embeddable form. */
+const embedUrl = (raw?: string | null): string | null => {
+    const url = raw?.trim();
+    if (!url) return null;
+    const yt = url.match(
+        /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{6,})/
+    );
+    if (yt) return `https://www.youtube-nocookie.com/embed/${yt[1]}`;
+    const vimeo = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+    if (vimeo) return `https://player.vimeo.com/video/${vimeo[1]}`;
+    return url;
+};
+
+/**
+ * A product demo: an uploaded screen recording, or a YouTube/Vimeo embed.
+ *
+ * Uploaded video is not auto-played — a demo is something a visitor chooses to
+ * watch, and an unbidden moving image derails the page around it. Third-party
+ * embeds only mount once the visitor clicks the poster, so the provider sets no
+ * cookies for anyone who never asks to watch (see the consent section of
+ * CLAUDE.md — an iframe that loads on page load would need declaring).
+ */
+const DemoBlock: React.FC<{ block: CmsDemoBlock; playLabel: string }> = ({
+    block,
+    playLabel,
+}) => {
+    const [playing, setPlaying] = useState(false);
+    const file = mediaUrl(block.video);
+    const poster = mediaUrl(block.poster);
+    const embed = embedUrl(block.embedUrl);
+    if (!file && !embed) return null;
+
+    return (
+        <section className="lp-cs__block lp-cs__block--wide">
+            <BlockHead heading={block.heading} />
+            <figure className="lp-cs-demo">
+                <div className="lp-cs-demo__frame">
+                    {file ? (
+                        <video
+                            className="lp-cs-demo__media"
+                            src={file}
+                            poster={poster || undefined}
+                            controls
+                            playsInline
+                            preload="metadata"
+                        />
+                    ) : playing ? (
+                        <iframe
+                            className="lp-cs-demo__media"
+                            src={`${embed}${embed?.includes('?') ? '&' : '?'}autoplay=1`}
+                            title={block.heading || playLabel}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture"
+                            allowFullScreen
+                        />
+                    ) : (
+                        <button
+                            type="button"
+                            className="lp-cs-demo__poster"
+                            onClick={() => setPlaying(true)}
+                        >
+                            {poster && <img src={poster} alt="" />}
+                            <span className="lp-cs-demo__play">▶ {playLabel}</span>
+                        </button>
+                    )}
+                </div>
+                {block.caption && (
+                    <figcaption className="lp-cs-demo__cap">{block.caption}</figcaption>
+                )}
+            </figure>
+        </section>
     );
 };
 
@@ -229,8 +304,8 @@ const TimelineBlock: React.FC<{ block: CmsTimelineBlock }> = ({ block }) => {
     const points = (block.points ?? []).filter((p) => p.title);
     if (points.length === 0) return null;
     return (
-        <section className="lp-cs__block lp-cs__timeline">
-            {block.heading && <h2 className="lp-cs__h">{block.heading}</h2>}
+        <section className="lp-cs__block lp-cs__block--prose lp-cs__timeline">
+            <BlockHead heading={block.heading} />
             <ol className="lp-cs-tl">
                 {points.map((p, i) => (
                     <li className="lp-cs-tl__item" key={p.id ?? i}>
@@ -251,14 +326,17 @@ const TeamBlock: React.FC<{ block: CmsTeamBlock; fallbackHeading: string }> = ({
     block,
     fallbackHeading,
 }) => {
+    const { t } = useLanguage();
     // Keep only rows whose relationship actually populated (object, not an ID).
     const members = (block.members ?? []).filter(
         (m) => m.member && typeof m.member === 'object'
     );
     if (members.length === 0) return null;
     return (
-        <section className="lp-cs__block lp-cs__team">
-            <h2 className="lp-cs__h">{block.heading || fallbackHeading}</h2>
+        <section className="lp-cs__block lp-cs__block--wide lp-cs-team-band">
+            <h2 className="lp-cs__h lp-cs__h--centred">
+                {block.heading || fallbackHeading}
+            </h2>
             <ul className="lp-cs-team">
                 {members.map((m, i) => {
                     const person = m.member as CmsTeamMember;
@@ -285,6 +363,9 @@ const TeamBlock: React.FC<{ block: CmsTeamBlock; fallbackHeading: string }> = ({
                     );
                 })}
             </ul>
+            <Link className="lp-cs__more" href="/team">
+                {t.caseStudy.teamLink} →
+            </Link>
         </section>
     );
 };
@@ -293,7 +374,7 @@ const FaqBlock: React.FC<{ block: CmsFaqBlock; heading: string }> = ({ block, he
     const items = (block.items ?? []).filter((it) => it.question && it.answer);
     if (items.length === 0) return null;
     return (
-        <div className="lp-cs-faq">
+        <section className="lp-cs__block lp-cs__block--prose lp-cs-faq">
             <h2 className="lp-cs__h">{heading}</h2>
             {items.map((item, i) => (
                 <div className="lp-cs-faq__item" key={item.id ?? i}>
@@ -301,7 +382,7 @@ const FaqBlock: React.FC<{ block: CmsFaqBlock; heading: string }> = ({ block, he
                     <p className="lp-cs-faq__a">{item.answer}</p>
                 </div>
             ))}
-        </div>
+        </section>
     );
 };
 
@@ -321,6 +402,8 @@ const CaseStudyBlocks: React.FC<{ project: CmsProject }> = ({ project }) => {
                         return <QuoteBlock key={key} block={b} />;
                     case 'gallery':
                         return <GalleryBlock key={key} block={b} title={project.title} />;
+                    case 'demo':
+                        return <DemoBlock key={key} block={b} playLabel={t.caseStudy.playDemo} />;
                     case 'timeline':
                         return <TimelineBlock key={key} block={b} />;
                     case 'team':
@@ -337,69 +420,150 @@ const CaseStudyBlocks: React.FC<{ project: CmsProject }> = ({ project }) => {
     );
 };
 
-/* ---- The case-study page: a fixed head + hero, a freely-ordered block body,
-   then the reassurance + booking call-to-action. ---- */
+/* ---- The case-study page ----
+   A masthead that states what happened and for whom, the CMS-ordered body, then
+   the two things a nonprofit reading this needs next: what working with us
+   costs them, and a way to start the conversation.
+
+   Widths do the structural work. Every block is centred on one axis and picks a
+   measure from three: prose for reading, mid for lists and quotes, wide for
+   media and the team. Nothing is left-aligned inside a wider box — that reads as
+   a mistake, not as a layout. */
 const ProjectCaseStudy: React.FC<{ project: CmsProject }> = ({ project }) => {
     const { t } = useLanguage();
-    const hero = mediaUrl(project.image);
+    const mark = mediaUrl(project.image);
+    const statusLabel =
+        (t.projects.status as Record<string, string>)[project.status] || project.status;
+    const stack = (project.technologies ?? [])
+        .map((tech) => tech.name)
+        .filter(Boolean);
+    const links = (project.links ?? []).filter((l) => l.url && l.label);
 
     return (
-        <div className="lp lp-page">
+        <div className="lp lp-page lp-cs-page">
             <div className="lp-inner">
-                <Link className="lp-back" href="/projects">
-                    ← {t.projectDetail.back}
-                </Link>
-
                 <motion.article
                     className="lp-cs"
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4 }}
                 >
-                    <div className="lp-cs__head">
-                        <StatusPill status={project.status} />
+                    <header className="lp-cs__masthead">
+                        <Link className="lp-cs__back" href="/projects">
+                            ← {t.projectDetail.back}
+                        </Link>
+                        <p className="lp-cs__eyebrow">
+                            <span
+                                className="lp-dot"
+                                style={{
+                                    backgroundColor:
+                                        statusColors[project.status] || '#808080',
+                                }}
+                            />
+                            {statusLabel}
+                            <span className="lp-cs__sep">·</span>
+                            {t.caseStudy.eyebrow}
+                        </p>
                         <h1 className="lp-cs__title">
                             {project.impactHeadline || project.title}
                         </h1>
-                        <span className="lp-card__sub">
-                            {t.common.partner} {project.ngoPartner}
-                        </span>
-                        {project.impact && <p className="lp-cs__impact">{project.impact}</p>}
-                    </div>
+                        {project.impact && <p className="lp-cs__lead">{project.impact}</p>}
 
-                    {hero && (
-                        <div className="lp-cs__hero">
-                            <img src={hero} alt={project.title} />
+                        {/* Facts strip: the partner's own mark, then the details a
+                            visitor scans for. The logo is *contained* here rather
+                            than blown up into a hero — a brand square at full
+                            width is a slab of colour that says nothing and buries
+                            the copy (same call as the projects feature). */}
+                        <div className="lp-cs__facts">
+                            {mark && (
+                                <span className="lp-cs__mark">
+                                    <img src={mark} alt={project.ngoPartner} />
+                                </span>
+                            )}
+                            {/* The cells wrap inside their own group, so a third
+                                fact drops under the first two rather than under
+                                the mark — which would leave the mark hanging off
+                                the top of a two-line strip. */}
+                            <div className="lp-cs__fact-set">
+                                <span className="lp-cs__fact">
+                                    <span className="lp-cs__fact-k">
+                                        {t.projectDetail.partnerLabel}
+                                    </span>
+                                    <span className="lp-cs__fact-v">{project.ngoPartner}</span>
+                                </span>
+                                {stack.length > 0 && (
+                                    <span className="lp-cs__fact">
+                                        <span className="lp-cs__fact-k">
+                                            {t.projectDetail.stack}
+                                        </span>
+                                        <span className="lp-cs__fact-v">
+                                            {stack.join(' · ')}
+                                        </span>
+                                    </span>
+                                )}
+                                {links.length > 0 && (
+                                    <span className="lp-cs__fact">
+                                        <span className="lp-cs__fact-k">
+                                            {t.projectDetail.links}
+                                        </span>
+                                        <span className="lp-cs__fact-v">
+                                            {links.map((l, i) => (
+                                                <React.Fragment key={l.id ?? i}>
+                                                    {i > 0 && ' · '}
+                                                    <a
+                                                        className="lp-cs__fact-link"
+                                                        href={l.url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                    >
+                                                        {l.label}
+                                                    </a>
+                                                </React.Fragment>
+                                            ))}
+                                        </span>
+                                    </span>
+                                )}
+                                </div>
                         </div>
-                    )}
+                    </header>
 
                     <CaseStudyBlocks project={project} />
 
                     {/* Reassurance: how partnering works. Full pitch lives at /partner. */}
-                    <div className="lp-cs-working">
-                        <h2 className="lp-cs__h">{t.caseStudy.workingHeading}</h2>
-                        <ul className="lp-list">
+                    <section className="lp-cs__block lp-cs__block--wide lp-cs-working">
+                        <h2 className="lp-cs__h lp-cs__h--centred">
+                            {t.caseStudy.workingHeading}
+                        </h2>
+                        <ul className="lp-cs-working__row">
                             {t.caseStudy.workingPoints.map((pt, i) => (
-                                <li key={i}>{pt}</li>
+                                <li className="lp-cs-working__point" key={i}>
+                                    <span className="lp-cs-working__num">{i + 1}</span>
+                                    <span className="lp-cs-working__text">{pt}</span>
+                                </li>
                             ))}
                         </ul>
-                        <Link className="lp-card__link" href="/partner">
+                        <Link className="lp-cs__more" href="/partner">
                             {t.caseStudy.partnerLink} →
                         </Link>
-                    </div>
+                    </section>
 
-                    {/* Book-a-meeting — the primary action for a nonprofit reading this. */}
-                    <div className="lp-cs-cta lp-cs-cta--book">
-                        <h2 className="lp-cs-cta__heading lp-cs-cta__heading--dark">
-                            {t.caseStudy.bookHeading}
-                        </h2>
-                        <p className="lp-cs-cta__text lp-cs-cta__text--dark">
-                            {t.caseStudy.bookText}
-                        </p>
-                        <div style={{ marginTop: 24, width: '100%' }}>
-                            <BookingEmbed />
+                    {/* Book-a-meeting — the primary action for a nonprofit reading
+                        this. The calendar itself opens in an overlay: inline it is
+                        ~900px of widget, which on a page whose job is to tell a
+                        story pushes the story off the screen. */}
+                    <section className="lp-cs__block lp-cs__block--wide lp-cs-book">
+                        <div className="lp-cs-book__copy">
+                            <h2 className="lp-cs-book__heading">{t.caseStudy.bookHeading}</h2>
+                            <p className="lp-cs-book__text">{t.caseStudy.bookText}</p>
                         </div>
-                    </div>
+                        <BookingEmbed variant="compact" />
+                    </section>
+
+                    <p className="lp-cs__foot">
+                        <Link className="lp-cs__more" href="/projects">
+                            {t.caseStudy.moreProjects} →
+                        </Link>
+                    </p>
                 </motion.article>
             </div>
         </div>

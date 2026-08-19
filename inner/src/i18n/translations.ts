@@ -9,6 +9,7 @@ export interface Translations {
     common: {
         learnMore: string; partner: string; at: string;
         enterThreeD: string; exitThreeD: string; unavailable: string;
+        close: string;
     };
     home: {
         about: string; events: string; projects: string; team: string; join: string;
@@ -43,7 +44,7 @@ export interface Translations {
     projectDetail: {
         back: string; problem: string; approach: string; outcome: string;
         impact: string; stack: string; links: string;
-        timeline: string; team: string;
+        timeline: string; team: string; partnerLabel: string;
     };
     caseStudy: {
         chooseKicker: string; chooseTitle: string;
@@ -54,6 +55,7 @@ export interface Translations {
         challengeHeading: string; solutionHeading: string; resultsHeading: string;
         workingHeading: string; workingPoints: string[]; partnerLink: string;
         faqHeading: string; bookHeading: string; bookText: string;
+        eyebrow: string; teamLink: string; moreProjects: string; playDemo: string;
     };
     events: {
         title: string; subtitle: string; intro: string;
@@ -85,7 +87,7 @@ export interface Translations {
         submitting: string; sendError: string; loadingForm: string;
         formUnavailable: string; successFallback: string;
     };
-    book: { title: string; intro: string; fallback: string; openInNewTab: string; };
+    book: { title: string; intro: string; fallback: string; openInNewTab: string; pickTime: string; };
     talk: {
         ngoKicker: string; ngoHeading: string; ngoText: string;
         studentKicker: string; studentHeading: string; studentText: string; studentCta: string;
@@ -130,6 +132,7 @@ const en: Translations = {
         learnMore: 'Learn More', partner: 'Partner:', at: 'at',
         enterThreeD: 'Enter 3D mode', exitThreeD: 'Exit 3D mode',
         unavailable: 'Content unavailable.',
+        close: 'Close',
     },
     home: {
         about: 'ABOUT', events: 'EVENTS', projects: 'PROJECTS', team: 'TEAM', join: 'JOIN',
@@ -189,7 +192,7 @@ const en: Translations = {
     projectDetail: {
         back: 'Back to projects', problem: 'The problem', approach: 'Our approach',
         outcome: 'What we shipped', impact: 'Impact', stack: 'Built with', links: 'Links',
-        timeline: 'Timeline', team: 'The team',
+        timeline: 'Timeline', team: 'The team', partnerLabel: 'Partner',
     },
     caseStudy: {
         chooseKicker: 'Two ways to read this',
@@ -216,6 +219,10 @@ const en: Translations = {
         faqHeading: 'Questions nonprofits ask',
         bookHeading: 'Have a problem worth solving?',
         bookText: 'Tell us about it — grab a slot and we’ll explore whether we can help.',
+        eyebrow: 'Case study',
+        teamLink: 'Meet the whole team',
+        moreProjects: 'See all projects',
+        playDemo: 'Watch the demo',
     },
     events: {
         title: 'Events', subtitle: 'Workshops, Hackathons & More',
@@ -286,6 +293,7 @@ const en: Translations = {
         intro: 'Prefer to talk? Grab a slot that suits you and we will meet you there.',
         fallback: 'Online booking is not set up yet — email us and we will find a time.',
         openInNewTab: 'Open booking page',
+        pickTime: 'Pick a time',
     },
     talk: {
         ngoKicker: 'For NGOs',
@@ -349,6 +357,7 @@ const de: Translations = {
         learnMore: 'Mehr erfahren', partner: 'Partner:', at: 'um',
         enterThreeD: '3D-Modus starten', exitThreeD: '3D-Modus beenden',
         unavailable: 'Inhalt nicht verfügbar.',
+        close: 'Schließen',
     },
     home: {
         about: 'ÜBER UNS', events: 'EVENTS', projects: 'PROJEKTE', team: 'TEAM', join: 'MITMACHEN',
@@ -408,7 +417,7 @@ const de: Translations = {
     projectDetail: {
         back: 'Zurück zu Projekten', problem: 'Das Problem', approach: 'Unser Vorgehen',
         outcome: 'Was wir geliefert haben', impact: 'Wirkung', stack: 'Gebaut mit', links: 'Links',
-        timeline: 'Ablauf', team: 'Das Team',
+        timeline: 'Ablauf', team: 'Das Team', partnerLabel: 'Partner',
     },
     caseStudy: {
         chooseKicker: 'Zwei Perspektiven',
@@ -433,6 +442,10 @@ const de: Translations = {
         ],
         partnerLink: 'So funktioniert eine Partnerschaft',
         faqHeading: 'Fragen von NGOs',
+        eyebrow: 'Fallstudie',
+        teamLink: 'Das ganze Team ansehen',
+        moreProjects: 'Alle Projekte ansehen',
+        playDemo: 'Demo ansehen',
         bookHeading: 'Ein Problem, das es zu lösen lohnt?',
         bookText: 'Erzählen Sie uns davon – wählen Sie einen Termin und wir schauen, ob wir helfen können.',
     },
@@ -505,6 +518,7 @@ const de: Translations = {
         intro: 'Lieber sprechen? Wählen Sie einen passenden Slot und wir treffen uns dort.',
         fallback: 'Online-Buchung ist noch nicht eingerichtet — schreiben Sie uns und wir finden einen Termin.',
         openInNewTab: 'Buchungsseite öffnen',
+        pickTime: 'Termin wählen',
     },
     talk: {
         ngoKicker: 'Für NGOs',

@@ -99,7 +99,27 @@ export interface CmsQuoteBlock {
 export interface CmsGalleryBlock {
     blockType: 'gallery';
     id?: string | null;
+    heading?: string | null;
+    /**
+     * How the images are presented: `stage` stands product shots on a shared
+     * tinted ground (the default — device mock-ups were the original use), while
+     * `photos` lays photographs out in an edge-to-edge grid.
+     */
+    layout?: 'stage' | 'photos' | null;
     images?: CmsGalleryImage[] | null;
+}
+
+/** A product demo: an uploaded screen recording, or a YouTube / Vimeo link. */
+export interface CmsDemoBlock {
+    blockType: 'demo';
+    id?: string | null;
+    heading?: string | null;
+    video?: CmsMedia | null;
+    /** Still shown before playback (and the video element's poster frame). */
+    poster?: CmsMedia | null;
+    /** Used when there is no uploaded file — a watch URL, normalised on render. */
+    embedUrl?: string | null;
+    caption?: string | null;
 }
 
 /** An ordered list of milestones. */
@@ -141,6 +161,7 @@ export type CmsCaseStudyBlock =
     | CmsTextBlock
     | CmsQuoteBlock
     | CmsGalleryBlock
+    | CmsDemoBlock
     | CmsTimelineBlock
     | CmsTeamBlock
     | CmsFaqBlock;
