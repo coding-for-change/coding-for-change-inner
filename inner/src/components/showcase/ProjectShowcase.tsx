@@ -39,6 +39,7 @@ const ProjectShowcase: React.FC<{ projects: CmsProject[] }> = ({ projects }) => 
     const featured = projects.find((p) => p.featured) ?? null;
     const rest = projects.filter((p) => p !== featured);
     const featuredMark = featured ? mediaUrl(featured.image) : '';
+    const featuredHasCaseStudy = !!featured && hasCaseStudy(featured);
     const caseStudyLabel = locale === 'de' ? 'Fallstudie lesen' : 'Read the case study';
 
     return (
@@ -74,8 +75,17 @@ const ProjectShowcase: React.FC<{ projects: CmsProject[] }> = ({ projects }) => 
                             thing at different lengths, and the partner is already
                             in the eyebrow — so show the impact when there is one
                             and fall back to the description only when there is
-                            not, rather than stacking both. */}
-                        <p className="lp-feature__lead">
+                            not, rather than stacking both.
+                            The copy is editor-written and unbounded, so the teaser
+                            is capped at three lines — but only when the case-study
+                            link is there to carry the rest. Without somewhere to
+                            read on, an ellipsis would just swallow content. */}
+                        <p
+                            className={
+                                'lp-feature__lead' +
+                                (featuredHasCaseStudy ? ' lp-feature__lead--clamp' : '')
+                            }
+                        >
                             {featured.impact || featured.description}
                         </p>
                         {(featured.technologies ?? []).length > 0 && (
@@ -85,7 +95,7 @@ const ProjectShowcase: React.FC<{ projects: CmsProject[] }> = ({ projects }) => 
                                     .join(' · ')}
                             </p>
                         )}
-                        {hasCaseStudy(featured) && (
+                        {featuredHasCaseStudy && (
                             <Link
                                 className="lp-feature__cta"
                                 href={`/projects/${featured.slug}`}
@@ -131,7 +141,9 @@ const ProjectShowcase: React.FC<{ projects: CmsProject[] }> = ({ projects }) => 
                                             }}
                                             title={statusLabel(project.status)}
                                         />
-                                        {project.title}
+                                        <span className="lp-projstrip__label">
+                                            {project.title}
+                                        </span>
                                     </span>
                                 </>
                             );

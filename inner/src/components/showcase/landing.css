@@ -1489,6 +1489,17 @@ html[data-nav='dark'] .lp-nav .enter3d-btn {
     line-height: 1.45;
     color: var(--ink);
 }
+/* Editors write this field freely, so the teaser is capped rather than allowed
+   to set the block's height — three lines, then an ellipsis, with the case-study
+   link right below carrying the rest. Applied only when that link exists (see
+   ProjectShowcase), so nothing is ever clipped without a way to read on. */
+.lp-feature__lead--clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
+}
 .lp-feature__stack {
     margin: 22px 0 0;
     font-size: 13px;
@@ -1517,6 +1528,12 @@ html[data-nav='dark'] .lp-nav .enter3d-btn {
     .lp-feature__mark {
         width: 132px;
         padding: 16px;
+    }
+    /* Lines are roughly half as wide once the block stacks, so three of them
+       would cut the teaser twice as hard as on desktop. */
+    .lp-feature__lead--clamp {
+        -webkit-line-clamp: 5;
+        line-clamp: 5;
     }
 }
 
@@ -1585,9 +1602,19 @@ a.lp-projstrip__item:hover .lp-projstrip__mark {
     align-items: flex-start;
     gap: 8px;
     margin-top: 11px;
+    /* Two lines' worth, so a row of cells keeps a common baseline whatever the
+       titles happen to be. */
+    min-height: 38px;
     font-size: 14px;
     line-height: 1.35;
     color: var(--ink);
+}
+.lp-projstrip__label {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
     overflow-wrap: break-word;
     min-width: 0;
 }
