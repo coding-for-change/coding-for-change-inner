@@ -25,21 +25,12 @@ export const hasCaseStudy = (p: CmsProject): boolean =>
     !!p.slug &&
     !!(p.impactHeadline || p.impact || (p.layout && p.layout.length > 0));
 
-const TechPills: React.FC<{ project: CmsProject }> = ({ project }) =>
-    (project.technologies ?? []).length > 0 ? (
-        <div className="lp-pills">
-            {(project.technologies ?? []).map((tech) => (
-                <span key={tech.name} className="lp-pill">
-                    {tech.name}
-                </span>
-            ))}
-        </div>
-    ) : null;
-
 /**
- * Projects laid out with the flagship dominant at the top (a large featured
- * card) and the rest as a logo wall below. Shared by the /projects page and the
- * homepage projects section so both read the same way.
+ * Projects laid out as one editorial feature for the flagship and a quiet
+ * partner strip for the rest. Deliberately low-chrome: the partner mark is a
+ * contained logo (as on the sponsors wall), not a full-bleed hero, so the
+ * typography carries the block instead of a big slab of brand colour.
+ * Shared by the /projects page and the homepage projects section.
  */
 const ProjectShowcase: React.FC<{ projects: CmsProject[] }> = ({ projects }) => {
     const { t, locale } = useLanguage();
@@ -47,7 +38,7 @@ const ProjectShowcase: React.FC<{ projects: CmsProject[] }> = ({ projects }) => 
         (t.projects.status as Record<string, string>)[s] || s;
     const featured = projects.find((p) => p.featured) ?? null;
     const rest = projects.filter((p) => p !== featured);
-    const featuredHero = featured ? mediaUrl(featured.image) : '';
+    const featuredMark = featured ? mediaUrl(featured.image) : '';
     const caseStudyLabel = locale === 'de' ? 'Fallstudie lesen' : 'Read the case study';
 
     return (
@@ -55,38 +46,44 @@ const ProjectShowcase: React.FC<{ projects: CmsProject[] }> = ({ projects }) => 
             {featured && (
                 <motion.article
                     className={
-                        'lp-proj-feat' + (featuredHero ? ' lp-proj-feat--media' : '')
+                        'lp-feature' + (featuredMark ? '' : ' lp-feature--nomark')
                     }
                     {...reveal}
                     transition={{ duration: 0.5 }}
                 >
-                    {featuredHero && (
-                        <div className="lp-proj-feat__media">
-                            <img src={featuredHero} alt={featured.title} />
+                    {featuredMark && (
+                        <div className="lp-feature__mark">
+                            <img src={featuredMark} alt={featured.title} />
                         </div>
                     )}
-                    <div className="lp-proj-feat__body">
-                        <span
-                            className="lp-status"
-                            style={{
-                                backgroundColor:
-                                    statusColors[featured.status] || '#808080',
-                            }}
-                        >
+                    <div className="lp-feature__body">
+                        <p className="lp-feature__eyebrow">
+                            <span
+                                className="lp-dot"
+                                style={{
+                                    backgroundColor:
+                                        statusColors[featured.status] || '#808080',
+                                }}
+                            />
                             {statusLabel(featured.status)}
-                        </span>
-                        <h2 className="lp-proj-feat__title">{featured.title}</h2>
-                        <span className="lp-card__sub">
-                            {t.common.partner} {featured.ngoPartner}
-                        </span>
-                        <p className="lp-card__text">{featured.description}</p>
+                            <span className="lp-feature__sep">·</span>
+                            {featured.ngoPartner}
+                        </p>
+                        <h2 className="lp-feature__title">{featured.title}</h2>
+                        <p className="lp-feature__desc">{featured.description}</p>
                         {featured.impact && (
-                            <p className="lp-proj-feat__impact">{featured.impact}</p>
+                            <p className="lp-feature__lead">{featured.impact}</p>
                         )}
-                        <TechPills project={featured} />
+                        {(featured.technologies ?? []).length > 0 && (
+                            <p className="lp-feature__stack">
+                                {(featured.technologies ?? [])
+                                    .map((tech) => tech.name)
+                                    .join(' · ')}
+                            </p>
+                        )}
                         {hasCaseStudy(featured) && (
                             <Link
-                                className="lp-btn lp-btn--primary lp-proj-feat__cta"
+                                className="lp-feature__cta"
                                 href={`/projects/${featured.slug}`}
                             >
                                 {caseStudyLabel} →
@@ -97,30 +94,32 @@ const ProjectShowcase: React.FC<{ projects: CmsProject[] }> = ({ projects }) => 
             )}
 
             {rest.length > 0 && (
-                <>
-                    {featured && <h3 className="lp-subhead">{t.projects.more}</h3>}
-                    <div className="lp-logowall">
+                <div className="lp-projstrip">
+                    {featured && (
+                        <p className="lp-projstrip__head">{t.projects.more}</p>
+                    )}
+                    <div className="lp-projstrip__row">
                         {rest.map((project, i) => {
-                            // Non-featured projects are logo tiles: the partner mark on
-                            // its own plate plus a name/status caption, so a tile still
-                            // reads as a project when the logo alone says nothing. The
-                            // featured card above carries the full detail.
+                            // The non-flagship projects stay quiet: the partner mark
+                            // contained in a hairline frame (same treatment as the
+                            // sponsors wall) with the name beneath it. The feature
+                            // above carries the full story.
                             const img = mediaUrl(project.image);
                             const linked = hasCaseStudy(project);
                             const inner = (
                                 <>
-                                    <div className="lp-logotile__plate">
+                                    <span className="lp-projstrip__mark">
                                         {img ? (
                                             <img src={img} alt={project.title} />
                                         ) : (
-                                            <span className="lp-logotile__mark">
+                                            <span className="lp-projstrip__initial">
                                                 {project.title.charAt(0)}
                                             </span>
                                         )}
-                                    </div>
-                                    <div className="lp-logotile__cap">
+                                    </span>
+                                    <span className="lp-projstrip__name">
                                         <span
-                                            className="lp-logotile__dot"
+                                            className="lp-dot"
                                             style={{
                                                 backgroundColor:
                                                     statusColors[project.status] ||
@@ -128,16 +127,14 @@ const ProjectShowcase: React.FC<{ projects: CmsProject[] }> = ({ projects }) => 
                                             }}
                                             title={statusLabel(project.status)}
                                         />
-                                        <span className="lp-logotile__name">
-                                            {project.title}
-                                        </span>
-                                    </div>
+                                        {project.title}
+                                    </span>
                                 </>
                             );
                             return (
                                 <motion.div
                                     key={project.id}
-                                    className="lp-logotile__wrap"
+                                    className="lp-projstrip__cell"
                                     {...reveal}
                                     transition={{
                                         duration: 0.45,
@@ -146,19 +143,21 @@ const ProjectShowcase: React.FC<{ projects: CmsProject[] }> = ({ projects }) => 
                                 >
                                     {linked ? (
                                         <Link
-                                            className="lp-logotile"
+                                            className="lp-projstrip__item"
                                             href={`/projects/${project.slug}`}
                                         >
                                             {inner}
                                         </Link>
                                     ) : (
-                                        <div className="lp-logotile">{inner}</div>
+                                        <span className="lp-projstrip__item">
+                                            {inner}
+                                        </span>
                                     )}
                                 </motion.div>
                             );
                         })}
                     </div>
-                </>
+                </div>
             )}
         </>
     );
