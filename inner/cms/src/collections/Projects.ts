@@ -78,7 +78,7 @@ export const Projects: CollectionConfig = {
       type: 'blocks',
       admin: {
         description:
-          'The body of the case-study page. Add, remove and reorder blocks freely — text sections, quote, gallery, timeline, team and FAQ.',
+          'The body of the case-study page. Add, remove and reorder blocks freely — text sections, quote, gallery, product demo, timeline, team and FAQ.',
       },
       blocks: [
         {
@@ -114,6 +114,29 @@ export const Projects: CollectionConfig = {
           labels: { singular: 'Gallery', plural: 'Galleries' },
           fields: [
             {
+              name: 'heading',
+              type: 'text',
+              localized: true,
+              admin: { description: 'Optional section heading (e.g. "From the workshop").' },
+            },
+            {
+              // Product shots and photographs want opposite treatments, and the
+              // difference is editorial, not something the code can infer from
+              // the file: mock-ups need a ground to stand on, photographs need
+              // to be big and uniformly cropped.
+              name: 'layout',
+              type: 'select',
+              defaultValue: 'stage',
+              options: [
+                { label: 'Product shots — stood on a tinted stage', value: 'stage' },
+                { label: 'Photographs — edge-to-edge grid', value: 'photos' },
+              ],
+              admin: {
+                description:
+                  'Use "Product shots" for app screens and device mock-ups, "Photographs" for workshops, on-site visits and presentations.',
+              },
+            },
+            {
               name: 'images',
               type: 'array',
               minRows: 1,
@@ -123,6 +146,48 @@ export const Projects: CollectionConfig = {
                 { name: 'caption', type: 'text', localized: true },
               ],
             },
+          ],
+        },
+        {
+          // A demo of the thing itself — the strongest argument on a case-study
+          // page, and the piece another organisation needs before it can picture
+          // the software running at its own desk.
+          slug: 'demo',
+          labels: { singular: 'Product demo', plural: 'Product demos' },
+          fields: [
+            {
+              name: 'heading',
+              type: 'text',
+              localized: true,
+              admin: { description: 'Optional section heading (e.g. "See it in action").' },
+            },
+            {
+              name: 'video',
+              type: 'upload',
+              relationTo: 'media',
+              admin: {
+                description:
+                  'A screen recording (MP4). Keep it short and silent-friendly — it plays on tap, never on its own.',
+              },
+            },
+            {
+              name: 'embedUrl',
+              type: 'text',
+              label: 'YouTube / Vimeo URL',
+              admin: {
+                description:
+                  'Used only when no file is uploaded. The player loads on click, so nothing third-party runs for visitors who do not watch.',
+              },
+            },
+            {
+              name: 'poster',
+              type: 'upload',
+              relationTo: 'media',
+              admin: {
+                description: 'Still frame shown before playback. Recommended for embeds.',
+              },
+            },
+            { name: 'caption', type: 'text', localized: true },
           ],
         },
         {

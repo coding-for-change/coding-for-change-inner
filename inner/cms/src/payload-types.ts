@@ -332,7 +332,7 @@ export interface Project {
    */
   impact?: string | null;
   /**
-   * The body of the case-study page. Add, remove and reorder blocks freely — text sections, quote, gallery, timeline, team and FAQ.
+   * The body of the case-study page. Add, remove and reorder blocks freely — text sections, quote, gallery, product demo, timeline, team and FAQ.
    */
   layout?:
     | (
@@ -358,6 +358,14 @@ export interface Project {
             blockType: 'quote';
           }
         | {
+            /**
+             * Optional section heading (e.g. "From the workshop").
+             */
+            heading?: string | null;
+            /**
+             * Use "Product shots" for app screens and device mock-ups, "Photographs" for workshops, on-site visits and presentations.
+             */
+            layout?: ('stage' | 'photos') | null;
             images?:
               | {
                   image: number | Media;
@@ -368,6 +376,28 @@ export interface Project {
             id?: string | null;
             blockName?: string | null;
             blockType: 'gallery';
+          }
+        | {
+            /**
+             * Optional section heading (e.g. "See it in action").
+             */
+            heading?: string | null;
+            /**
+             * A screen recording (MP4). Keep it short and silent-friendly — it plays on tap, never on its own.
+             */
+            video?: (number | null) | Media;
+            /**
+             * Used only when no file is uploaded. The player loads on click, so nothing third-party runs for visitors who do not watch.
+             */
+            embedUrl?: string | null;
+            /**
+             * Still frame shown before playback. Recommended for embeds.
+             */
+            poster?: (number | null) | Media;
+            caption?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'demo';
           }
         | {
             /**
@@ -1463,6 +1493,8 @@ export interface ProjectsSelect<T extends boolean = true> {
         gallery?:
           | T
           | {
+              heading?: T;
+              layout?: T;
               images?:
                 | T
                 | {
@@ -1470,6 +1502,17 @@ export interface ProjectsSelect<T extends boolean = true> {
                     caption?: T;
                     id?: T;
                   };
+              id?: T;
+              blockName?: T;
+            };
+        demo?:
+          | T
+          | {
+              heading?: T;
+              video?: T;
+              embedUrl?: T;
+              poster?: T;
+              caption?: T;
               id?: T;
               blockName?: T;
             };
