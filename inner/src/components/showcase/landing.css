@@ -209,13 +209,13 @@
 }
 .lp-hero__glyph {
     position: absolute;
-    right: 20px;
-    top: 14px;
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
-    font-size: 22px;
-    letter-spacing: 2px;
-    color: #7fe3e4;
+    right: 22px;
+    top: 20px;
+    width: clamp(64px, 7vw, 92px);
+    height: auto;
     opacity: 0.9;
+    -webkit-user-drag: none;
+    user-select: none;
 }
 .lp-hero__ph {
     position: absolute;

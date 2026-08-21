@@ -271,7 +271,12 @@ const Landing: React.FC<LandingProps> = (props) => {
                             animate={{ opacity: 1 }}
                             transition={{ duration: 0.6 }}
                         >
-                            <span className="lp-hero__glyph">&gt;_♡</span>
+                            <img
+                                className="lp-hero__glyph"
+                                src="/images/logo-mark.svg"
+                                alt=""
+                                draggable={false}
+                            />
                         </motion.div>
                         {[
                             {
@@ -286,8 +291,8 @@ const Landing: React.FC<LandingProps> = (props) => {
                             },
                             {
                                 cls: 'lp-hero__ph lp-hero__ph--c',
-                                src: '/images/community/tournament.webp',
-                                alt: 'Group photo at the Coding for Change Mario Kart charity tournament',
+                                src: '/images/community/crowd.webp',
+                                alt: 'Guests at a Coding for Change community event',
                             },
                         ].map((ph, i) => (
                             <motion.img
