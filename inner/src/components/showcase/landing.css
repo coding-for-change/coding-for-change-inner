@@ -261,6 +261,7 @@
     letter-spacing: 1px;
     text-transform: uppercase;
     color: var(--muted);
+    white-space: nowrap;
     pointer-events: none;
 }
 @media (max-width: 960px) {
@@ -278,6 +279,35 @@
         max-width: 560px;
         max-height: none;
         margin: 0 auto;
+    }
+}
+/* Phones: the three-photo desktop cluster gets cramped — switch to a
+   calmer two-photo arrangement locked onto the panel (crowd photo hidden). */
+@media (max-width: 640px) {
+    .lp-hero__visual {
+        aspect-ratio: 1 / 1.08;
+    }
+    .lp-hero__panel {
+        top: 8%;
+        bottom: 0;
+        left: 30%;
+        right: -10%;
+    }
+    .lp-hero__glyph {
+        width: 52px;
+        right: 14px;
+        top: 14px;
+    }
+    .lp-hero__ph--a {
+        width: 86%;
+    }
+    .lp-hero__ph--b {
+        width: 42%;
+        right: 0;
+        top: 46%;
+    }
+    .lp-hero__ph--c {
+        display: none;
     }
 }
 @media (max-width: 520px) {
