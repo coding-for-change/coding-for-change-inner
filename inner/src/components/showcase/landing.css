@@ -121,124 +121,223 @@
     }
 }
 
-/* ---- Hero: Michelangelo, "The Creation of Adam", full-bleed ---- */
-/* Static full-viewport image hero. Runs full-bleed under the fixed nav via
-   the .site-scroll > .lp--landing negative margin (see below). */
-.lp-zhero {
+/* ---- Hero: split layout — copy on white left, photo collage over a navy
+   panel right. Runs full-bleed under the fixed nav via the
+   .site-scroll > .lp--landing negative margin (see below). ---- */
+.lp-hero {
+    --navy: #0f2040;
     position: relative;
-    height: 100vh;
-    height: 100svh;
-    min-height: 540px;
+    display: flex;
+    align-items: center;
+    min-height: 100vh;
+    min-height: 100svh;
+    box-sizing: border-box;
+    padding: 110px 0 84px;
+    background: #ffffff;
     overflow: hidden;
-    background: #05060a;
 }
-.lp-zhero__img {
-    display: block;
+.lp-hero__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.94fr);
+    align-items: center;
+    gap: clamp(36px, 5vw, 76px);
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    /* Keep the near-touching fingertips in the frame at every viewport. */
-    object-position: 40% 47%;
-    -webkit-user-drag: none;
-    user-select: none;
-}
-/* Legibility scrim: darkened top (under the nav) and bottom (behind the
-   headline) edges, luminous fresco centre left clear. */
-.lp-zhero__scrim {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    background: linear-gradient(
-        180deg,
-        rgba(5, 6, 10, 0.58) 0%,
-        rgba(5, 6, 10, 0) 20%,
-        rgba(5, 6, 10, 0) 50%,
-        rgba(5, 6, 10, 0.66) 100%
-    );
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 32px;
+    box-sizing: border-box;
 }
 /* NB: App.css sets a global `div { display: flex }`, so wrapper divs here
    must opt back into `display: block`. */
-.lp-zhero__copy {
+.lp-hero__copy {
     display: block;
-    position: absolute;
-    /* Centered via auto margins, not translateX — framer-motion's entrance
-       animation owns this element's `transform`. */
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    bottom: clamp(72px, 13vh, 150px);
-    width: min(1060px, 92vw);
-    padding: 0 32px;
-    box-sizing: border-box;
-    text-align: center;
-    color: #fff;
-    z-index: 2;
 }
-.lp-zhero__kicker {
+.lp-hero__kicker {
     font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 13px;
     font-weight: 600;
     letter-spacing: 2.5px;
     text-transform: uppercase;
-    margin: 0 0 16px;
-    color: var(--cyan-2);
-    text-shadow: 0 1px 14px rgba(0, 0, 0, 0.55);
+    margin: 0 0 18px;
+    color: var(--teal-dark);
 }
-.lp-zhero__title {
+.lp-hero__title {
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-weight: 700;
-    font-size: clamp(38px, 7.6vw, 94px);
-    line-height: 1.02;
+    /* Capped at 60px so "Built by students." holds one line in the
+       ~570px copy column once .lp-hero__inner hits its max-width. */
+    font-size: clamp(36px, 4.6vw, 60px);
+    line-height: 1.04;
     letter-spacing: -1.5px;
     margin: 0;
-    text-shadow: 0 2px 34px rgba(0, 0, 0, 0.6);
+    color: var(--navy);
+    /* Wrap at spaces/hyphens only — auto-hyphenation chops the short
+       headline words ("stu-dents") on narrow screens. break-word stays
+       as a last resort for very long German compounds. */
+    hyphens: manual;
+    overflow-wrap: break-word;
 }
-.lp-zhero__lead {
-    font-size: clamp(16px, 2.1vw, 22px);
-    line-height: 1.5;
-    max-width: 620px;
-    margin: 22px auto 0;
-    color: rgba(255, 255, 255, 0.92);
-    text-shadow: 0 1px 20px rgba(0, 0, 0, 0.65);
+.lp-hero__lead {
+    font-size: clamp(16px, 1.6vw, 20px);
+    line-height: 1.6;
+    max-width: 500px;
+    margin: 24px 0 0;
+    color: var(--muted);
 }
-.lp-zhero__ctas {
+.lp-hero__ctas {
     display: flex;
     flex-wrap: wrap;
     gap: 14px;
-    justify-content: center;
-    margin-top: 32px;
+    margin-top: 36px;
 }
-/* On the image, the ghost button needs a light outline to read against the
-   fresco rather than the theme's teal-on-navy tokens. */
-.lp-zhero__ctas .lp-btn--ghost {
-    color: #fff;
-    border-color: rgba(255, 255, 255, 0.7);
-    background: rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(2px);
+/* Collage: three photos layered over a floating navy block. Sized by
+   aspect-ratio against percentage widths so the composition scales. */
+.lp-hero__visual {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 10 / 9;
+    max-height: min(66vh, 620px);
 }
-.lp-zhero__ctas .lp-btn--ghost:hover {
-    color: #fff;
-    border-color: #fff;
-    background: rgba(255, 255, 255, 0.16);
+.lp-hero__panel {
+    display: block;
+    position: absolute;
+    top: 4%;
+    right: -6%;
+    bottom: 10%;
+    left: 32%;
+    background: var(--navy);
+    z-index: 0;
 }
-.lp-zhero__hint {
+.lp-hero__glyph {
+    position: absolute;
+    right: 22px;
+    top: 20px;
+    width: clamp(64px, 7vw, 92px);
+    height: auto;
+    opacity: 0.9;
+    -webkit-user-drag: none;
+    user-select: none;
+}
+.lp-hero__ph {
+    position: absolute;
+    display: block;
+    object-fit: cover;
+    box-sizing: border-box;
+    border: 5px solid #ffffff;
+    box-shadow: 0 24px 60px rgba(15, 32, 64, 0.28);
+    -webkit-user-drag: none;
+    user-select: none;
+}
+.lp-hero__ph--a {
+    /* Full 3:2 frame — both room edges stay visible, nothing is cropped. */
+    width: 72%;
+    aspect-ratio: 3 / 2;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+/* The three photos form one connected cluster: every neighbouring pair
+   overlaps a little (talk↔workshop, talk↔crowd, crowd↔workshop), so no
+   navy gap ever opens between two photos. */
+.lp-hero__ph--b {
+    /* Starts below the talk photo's speaker so it never covers him. */
+    width: 36%;
+    aspect-ratio: 3 / 4;
+    right: 0;
+    top: 36%;
+    z-index: 3;
+}
+.lp-hero__ph--c {
+    width: 58%;
+    aspect-ratio: 16 / 10;
+    left: 8%;
+    top: 47%;
+    z-index: 2;
+}
+.lp-hero__hint {
     position: absolute;
     left: 50%;
-    bottom: 26px;
+    bottom: 24px;
     transform: translateX(-50%);
     z-index: 2;
     font-family: var(--font-plex-sans), 'IBM Plex Sans', system-ui, sans-serif;
     font-size: 12px;
     letter-spacing: 1px;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.85);
-    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6);
+    color: var(--muted);
+    white-space: nowrap;
     pointer-events: none;
 }
-@media (max-width: 720px) {
-    .lp-zhero__copy {
-        bottom: clamp(56px, 10vh, 96px);
+@media (max-width: 960px) {
+    .lp-hero {
+        padding: 104px 0 76px;
+    }
+    .lp-hero__inner {
+        grid-template-columns: 1fr;
+        gap: 48px;
+    }
+    .lp-hero__lead {
+        max-width: 560px;
+    }
+    .lp-hero__visual {
+        max-width: 560px;
+        max-height: none;
+        margin: 0 auto;
+    }
+}
+/* Phones: the vertical navy slab becomes a full-bleed horizontal band and
+   the photos snap to the content grid — the talk photo spans the full
+   content width (flush with the headline), crowd + workshop sit directly
+   beneath with a shared top edge and one slim navy gutter between them,
+   and the logo fills the leftover corner under the crowd photo. Aligned
+   edges and no stray navy fields keep it looking set, not scattered. */
+@media (max-width: 640px) {
+    .lp-hero__visual {
+        aspect-ratio: 1 / 1.19;
+        /* Full content width — the tablet rule's 560px cap would leave the
+           collage narrower than the copy above it. */
+        max-width: none;
+    }
+    .lp-hero__panel {
+        top: 12%;
+        bottom: 2%;
+        /* True full-bleed at any width: extend to the viewport edges no
+           matter what padding or centering the ancestors apply — the
+           hero's overflow: hidden clips the excess. */
+        left: calc(50% - 50vw);
+        right: calc(50% - 50vw);
+    }
+    .lp-hero__glyph {
+        width: 44px;
+        right: auto;
+        top: auto;
+        left: 20px;
+        bottom: 16px;
+    }
+    .lp-hero__ph {
+        box-shadow: 0 14px 34px rgba(15, 32, 64, 0.24);
+    }
+    .lp-hero__ph--a {
+        width: 100%;
+        top: 0;
+        left: 0;
+    }
+    .lp-hero__ph--b {
+        width: 46%;
+        top: 47%;
+        right: 0;
+    }
+    .lp-hero__ph--c {
+        width: 58%;
+        left: 0;
+        top: 49%;
+    }
+}
+@media (max-width: 520px) {
+    .lp-hero__ctas .lp-btn {
+        padding: 12px 20px;
+        font-size: 15px;
     }
 }
 
@@ -2682,7 +2781,6 @@ a.lp-projstrip__item:hover .lp-projstrip__name {
 /* hyphenate instead of overflowing their container.                   */
 /* ------------------------------------------------------------------ */
 .lp-h2,
-.lp-zhero__title,
 .lp-page__title,
 .lp-card__title,
 .lp-cs__title,

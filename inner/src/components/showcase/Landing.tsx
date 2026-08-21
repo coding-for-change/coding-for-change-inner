@@ -153,13 +153,9 @@ const Landing: React.FC<LandingProps> = (props) => {
             }
             root.style.backgroundColor = `rgb(${r | 0}, ${g | 0}, ${b | 0})`;
 
-            const hero = root.querySelector<HTMLElement>('.lp-zhero');
-            const heroUnderNav = hero
-                ? hero.getBoundingClientRect().bottom - viewTop > 64
-                : false;
             const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
             document.documentElement.dataset.nav =
-                heroUnderNav || lum < 0.5 ? 'dark' : 'light';
+                lum < 0.5 ? 'dark' : 'light';
         };
         const onScroll = () => {
             if (!raf) raf = requestAnimationFrame(paint);
@@ -237,47 +233,86 @@ const Landing: React.FC<LandingProps> = (props) => {
 
     return (
         <div className="lp lp--landing" ref={bgRef}>
-            {}
-            {}
-            <section id="home" className="lp-zhero">
-                <img
-                    className="lp-zhero__img"
-                    src="/images/creation-of-adam.webp"
-                    alt={
-                        'Michelangelo’s “The Creation of Adam” — two ' +
-                        'hands reaching toward one another'
-                    }
-                    draggable={false}
-                />
-                <div className="lp-zhero__scrim" />
-                <motion.div
-                    className="lp-zhero__copy"
-                    initial={{ opacity: 0, y: 24 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.55, ease: 'easeOut' }}
-                >
-                    <p className="lp-zhero__kicker">{t.home.heroLineOne}</p>
-                    <h1 className="lp-zhero__title">{t.home.heroLineTwo}</h1>
-                    <p className="lp-zhero__lead">
-                        {siteConfig.tagline || t.about.oneLiner}
-                    </p>
-                    <div className="lp-zhero__ctas">
-                        <Link className="lp-btn lp-btn--primary" href="/join">
-                            {c.heroCtaPrimary}
-                        </Link>
-                        <a
-                            className="lp-btn lp-btn--ghost"
-                            href="#projects"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                router.push('/#projects');
-                            }}
+            {/* ---- Hero: copy left, photo collage over a navy panel right ---- */}
+            <section id="home" className="lp-hero">
+                <div className="lp-hero__inner">
+                    <motion.div
+                        className="lp-hero__copy"
+                        initial={{ opacity: 0, y: 24 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.55, ease: 'easeOut' }}
+                    >
+                        <p className="lp-hero__kicker">{t.home.heroLineOne}</p>
+                        <h1 className="lp-hero__title">{t.home.heroLineTwo}</h1>
+                        <p className="lp-hero__lead">
+                            {siteConfig.tagline || t.about.oneLiner}
+                        </p>
+                        <div className="lp-hero__ctas">
+                            <Link className="lp-btn lp-btn--primary" href="/join">
+                                {c.heroCtaPrimary}
+                            </Link>
+                            <a
+                                className="lp-btn lp-btn--ghost"
+                                href="#projects"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    router.push('/#projects');
+                                }}
+                            >
+                                {c.heroCtaSecondary}
+                            </a>
+                        </div>
+                    </motion.div>
+                    <div className="lp-hero__visual">
+                        <motion.div
+                            className="lp-hero__panel"
+                            aria-hidden="true"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.6 }}
                         >
-                            {c.heroCtaSecondary}
-                        </a>
+                            <img
+                                className="lp-hero__glyph"
+                                src="/images/logo-mark.svg"
+                                alt=""
+                                draggable={false}
+                            />
+                        </motion.div>
+                        {[
+                            {
+                                cls: 'lp-hero__ph lp-hero__ph--a',
+                                src: '/images/community/talk.webp',
+                                alt: 'Coding for Change members presenting the club to a full room',
+                            },
+                            {
+                                cls: 'lp-hero__ph lp-hero__ph--b',
+                                src: '/images/community/meeting.webp',
+                                alt: 'Coding for Change members in a project workshop with an NGO partner',
+                            },
+                            {
+                                cls: 'lp-hero__ph lp-hero__ph--c',
+                                src: '/images/community/crowd.webp',
+                                alt: 'Guests at a Coding for Change community event',
+                            },
+                        ].map((ph, i) => (
+                            <motion.img
+                                key={ph.src}
+                                className={ph.cls}
+                                src={ph.src}
+                                alt={ph.alt}
+                                draggable={false}
+                                initial={{ opacity: 0, y: 28 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{
+                                    duration: 0.55,
+                                    delay: 0.15 + i * 0.14,
+                                    ease: 'easeOut',
+                                }}
+                            />
+                        ))}
                     </div>
-                </motion.div>
-                <span className="lp-zhero__hint">{c.heroScrollHint}</span>
+                </div>
+                <span className="lp-hero__hint">{c.heroScrollHint}</span>
             </section>
 
             {/* ---- About — pure-text statement with word-by-word reveal ---- */}

@@ -141,7 +141,7 @@ const en: Translations = {
         ctaSecondary: 'See our work',
         scrollHint: '↓ scroll to explore',
         heroLineOne: 'Tech meets Social Impact',
-        heroLineTwo: 'A match made in heaven',
+        heroLineTwo: 'Built by students. For non-profits.',
     },
     about: {
         title: 'About Us',
@@ -365,7 +365,7 @@ const de: Translations = {
         ctaSecondary: 'Unsere Arbeit ansehen',
         scrollHint: '↓ zum Entdecken scrollen',
         heroLineOne: 'Tech trifft soziale Wirkung',
-        heroLineTwo: 'Ein Match wie im Himmel',
+        heroLineTwo: 'Von Studierenden gebaut. Für Non-Profits.',
     },
     about: {
         title: 'Über Uns',
