@@ -237,21 +237,22 @@
     left: 0;
     z-index: 1;
 }
+/* The three photos form one connected cluster: every neighbouring pair
+   overlaps a little (talk↔workshop, talk↔crowd, crowd↔workshop), so no
+   navy gap ever opens between two photos. */
 .lp-hero__ph--b {
     /* Starts below the talk photo's speaker so it never covers him. */
-    width: 34%;
+    width: 36%;
     aspect-ratio: 3 / 4;
     right: 0;
     top: 36%;
     z-index: 3;
 }
 .lp-hero__ph--c {
-    width: 50%;
+    width: 58%;
     aspect-ratio: 16 / 10;
-    left: 6%;
-    /* Slightly overlaps the talk photo's bottom edge — otherwise the navy
-       panel's left edge peeks through the gap as a stray sliver. */
-    top: 52%;
+    left: 8%;
+    top: 50%;
     z-index: 2;
 }
 .lp-hero__hint {
@@ -294,14 +295,18 @@
 @media (max-width: 640px) {
     .lp-hero__visual {
         aspect-ratio: 1 / 1.19;
+        /* Full content width — the tablet rule's 560px cap would leave the
+           collage narrower than the copy above it. */
+        max-width: none;
     }
     .lp-hero__panel {
         top: 12%;
         bottom: 2%;
-        /* Bleed through .lp-hero__inner's 32px side padding to both screen
-           edges — the hero's overflow: hidden clips any excess. */
-        left: -32px;
-        right: -32px;
+        /* True full-bleed at any width: extend to the viewport edges no
+           matter what padding or centering the ancestors apply — the
+           hero's overflow: hidden clips the excess. */
+        left: calc(50% - 50vw);
+        right: calc(50% - 50vw);
     }
     .lp-hero__glyph {
         width: 44px;
@@ -319,14 +324,14 @@
         left: 0;
     }
     .lp-hero__ph--b {
-        width: 38%;
-        top: 53%;
+        width: 46%;
+        top: 47%;
         right: 0;
     }
     .lp-hero__ph--c {
-        width: 56%;
+        width: 58%;
         left: 0;
-        top: 53%;
+        top: 52%;
     }
 }
 @media (max-width: 520px) {
