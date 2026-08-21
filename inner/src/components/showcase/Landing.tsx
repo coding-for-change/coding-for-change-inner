@@ -286,8 +286,8 @@ const Landing: React.FC<LandingProps> = (props) => {
                             },
                             {
                                 cls: 'lp-hero__ph lp-hero__ph--b',
-                                src: '/images/community/poster.webp',
-                                alt: 'Two members next to a Coding for Change poster at TUM',
+                                src: '/images/community/meeting.webp',
+                                alt: 'Coding for Change members in a project workshop with an NGO partner',
                             },
                             {
                                 cls: 'lp-hero__ph lp-hero__ph--c',

@@ -242,8 +242,6 @@
     right: 2%;
     top: 26%;
     z-index: 3;
-    /* The poster hangs low in the source photo — bias the crop down. */
-    object-position: 50% 72%;
 }
 .lp-hero__ph--c {
     width: 52%;
