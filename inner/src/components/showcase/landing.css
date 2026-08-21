@@ -281,30 +281,39 @@
         margin: 0 auto;
     }
 }
-/* Phones: the three-photo desktop cluster gets cramped — switch to a
-   calmer two-photo arrangement locked onto the panel (crowd photo hidden). */
+/* Phones: the three-photo desktop cluster gets cramped. The vertical navy
+   slab becomes a full-bleed horizontal band, and two photos hang diagonally
+   over its top-left and bottom-right edges; the logo anchors the free
+   bottom-left corner of the band (crowd photo hidden). */
 @media (max-width: 640px) {
     .lp-hero__visual {
-        aspect-ratio: 1 / 1.08;
+        aspect-ratio: 1 / 0.92;
     }
     .lp-hero__panel {
-        top: 8%;
-        bottom: 0;
-        left: 30%;
-        right: -10%;
+        top: 12%;
+        bottom: 8%;
+        /* Bleed through .lp-hero__inner's 32px side padding to both screen
+           edges — the hero's overflow: hidden clips any excess. */
+        left: -32px;
+        right: -32px;
     }
     .lp-hero__glyph {
-        width: 52px;
-        right: 14px;
-        top: 14px;
+        width: 48px;
+        right: auto;
+        top: auto;
+        left: 20px;
+        bottom: 20px;
     }
     .lp-hero__ph--a {
-        width: 86%;
+        width: 64%;
+        top: 0;
+        left: 0;
     }
     .lp-hero__ph--b {
-        width: 42%;
+        width: 44%;
+        top: auto;
+        bottom: 0;
         right: 0;
-        top: 46%;
     }
     .lp-hero__ph--c {
         display: none;
