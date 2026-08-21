@@ -249,7 +249,9 @@
     width: 50%;
     aspect-ratio: 16 / 10;
     left: 6%;
-    bottom: 4%;
+    /* Slightly overlaps the talk photo's bottom edge — otherwise the navy
+       panel's left edge peeks through the gap as a stray sliver. */
+    top: 52%;
     z-index: 2;
 }
 .lp-hero__hint {
@@ -284,43 +286,47 @@
     }
 }
 /* Phones: the vertical navy slab becomes a full-bleed horizontal band and
-   the three photos tile tightly onto it — talk photo on top, crowd and
-   workshop side by side directly beneath, each closing the gap to the one
-   above with a slim overlap. The logo anchors the band's bottom-left. */
+   the photos snap to the content grid — the talk photo spans the full
+   content width (flush with the headline), crowd + workshop sit directly
+   beneath with a shared top edge and one slim navy gutter between them,
+   and the logo fills the leftover corner under the crowd photo. Aligned
+   edges and no stray navy fields keep it looking set, not scattered. */
 @media (max-width: 640px) {
     .lp-hero__visual {
-        aspect-ratio: 1 / 1.15;
+        aspect-ratio: 1 / 1.19;
     }
     .lp-hero__panel {
-        top: 10%;
-        bottom: 10%;
+        top: 12%;
+        bottom: 2%;
         /* Bleed through .lp-hero__inner's 32px side padding to both screen
            edges — the hero's overflow: hidden clips any excess. */
         left: -32px;
         right: -32px;
     }
     .lp-hero__glyph {
-        width: 48px;
+        width: 44px;
         right: auto;
         top: auto;
         left: 20px;
-        bottom: 18px;
+        bottom: 16px;
+    }
+    .lp-hero__ph {
+        box-shadow: 0 14px 34px rgba(15, 32, 64, 0.24);
     }
     .lp-hero__ph--a {
-        width: 80%;
+        width: 100%;
         top: 0;
         left: 0;
     }
     .lp-hero__ph--b {
-        width: 44%;
-        top: 42%;
+        width: 38%;
+        top: 53%;
         right: 0;
     }
     .lp-hero__ph--c {
-        width: 52%;
+        width: 56%;
         left: 0;
-        top: 44%;
-        bottom: auto;
+        top: 53%;
     }
 }
 @media (max-width: 520px) {
