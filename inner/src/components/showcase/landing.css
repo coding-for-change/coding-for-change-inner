@@ -164,7 +164,9 @@
 .lp-hero__title {
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-weight: 700;
-    font-size: clamp(36px, 4.9vw, 72px);
+    /* Capped at 60px so "Built by students." holds one line in the
+       ~570px copy column once .lp-hero__inner hits its max-width. */
+    font-size: clamp(36px, 4.6vw, 60px);
     line-height: 1.04;
     letter-spacing: -1.5px;
     margin: 0;
@@ -228,26 +230,26 @@
     user-select: none;
 }
 .lp-hero__ph--a {
-    width: 66%;
-    /* talk.webp is pre-cropped to exactly 6:5 (left bystander removed, so
-       the speaker stays clear of the workshop photo's overlap). */
-    aspect-ratio: 6 / 5;
+    /* Full 3:2 frame — both room edges stay visible, nothing is cropped. */
+    width: 72%;
+    aspect-ratio: 3 / 2;
     top: 0;
     left: 0;
     z-index: 1;
 }
 .lp-hero__ph--b {
-    width: 38%;
+    /* Starts below the talk photo's speaker so it never covers him. */
+    width: 34%;
     aspect-ratio: 3 / 4;
-    right: 2%;
-    top: 26%;
+    right: 0;
+    top: 36%;
     z-index: 3;
 }
 .lp-hero__ph--c {
-    width: 52%;
+    width: 50%;
     aspect-ratio: 16 / 10;
-    left: 8%;
-    bottom: 0;
+    left: 6%;
+    bottom: 4%;
     z-index: 2;
 }
 .lp-hero__hint {
@@ -281,17 +283,17 @@
         margin: 0 auto;
     }
 }
-/* Phones: the three-photo desktop cluster gets cramped. The vertical navy
-   slab becomes a full-bleed horizontal band, and two photos hang diagonally
-   over its top-left and bottom-right edges; the logo anchors the free
-   bottom-left corner of the band (crowd photo hidden). */
+/* Phones: the vertical navy slab becomes a full-bleed horizontal band and
+   the three photos tile tightly onto it — talk photo on top, crowd and
+   workshop side by side directly beneath, each closing the gap to the one
+   above with a slim overlap. The logo anchors the band's bottom-left. */
 @media (max-width: 640px) {
     .lp-hero__visual {
-        aspect-ratio: 1 / 0.92;
+        aspect-ratio: 1 / 1.15;
     }
     .lp-hero__panel {
-        top: 12%;
-        bottom: 8%;
+        top: 10%;
+        bottom: 10%;
         /* Bleed through .lp-hero__inner's 32px side padding to both screen
            edges — the hero's overflow: hidden clips any excess. */
         left: -32px;
@@ -302,21 +304,23 @@
         right: auto;
         top: auto;
         left: 20px;
-        bottom: 20px;
+        bottom: 18px;
     }
     .lp-hero__ph--a {
-        width: 64%;
+        width: 80%;
         top: 0;
         left: 0;
     }
     .lp-hero__ph--b {
         width: 44%;
-        top: auto;
-        bottom: 0;
+        top: 42%;
         right: 0;
     }
     .lp-hero__ph--c {
-        display: none;
+        width: 52%;
+        left: 0;
+        top: 44%;
+        bottom: auto;
     }
 }
 @media (max-width: 520px) {
