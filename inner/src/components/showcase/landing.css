@@ -228,13 +228,13 @@
     user-select: none;
 }
 .lp-hero__ph--a {
-    width: 72%;
-    aspect-ratio: 4 / 3;
+    width: 66%;
+    /* talk.webp is pre-cropped to exactly 6:5 (left bystander removed, so
+       the speaker stays clear of the workshop photo's overlap). */
+    aspect-ratio: 6 / 5;
     top: 0;
     left: 0;
     z-index: 1;
-    /* Keep the projected slide (top of frame) in the crop. */
-    object-position: 50% 22%;
 }
 .lp-hero__ph--b {
     width: 38%;
