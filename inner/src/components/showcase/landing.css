@@ -252,7 +252,7 @@
     width: 58%;
     aspect-ratio: 16 / 10;
     left: 8%;
-    top: 50%;
+    top: 47%;
     z-index: 2;
 }
 .lp-hero__hint {
@@ -331,7 +331,7 @@
     .lp-hero__ph--c {
         width: 58%;
         left: 0;
-        top: 52%;
+        top: 49%;
     }
 }
 @media (max-width: 520px) {
