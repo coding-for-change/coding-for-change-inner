@@ -128,8 +128,14 @@ export interface CmsTimelineBlock {
     points?: {
         /** Shown inside the circle; falls back to the point's position. */
         marker?: string | null;
+        /** Small badge above the title (e.g. "March 2026" or "Week 2"). */
+        timing?: string | null;
         title: string;
         subtitle?: string | null;
+        /** Set 'current' on the phase the project is in — the frontend derives done/upcoming for the rest. */
+        state?: 'done' | 'current' | 'upcoming' | null;
+        /** Optional screenshot / mock-up shown with this step. */
+        image?: CmsMedia | null;
         id?: string | null;
     }[] | null;
 }
@@ -309,7 +315,16 @@ export interface CmsHomepage {
     aboutOneLiner?: string | null;
     aboutPitch?: string | null;
     stats?: { value: string; label: string; id?: string }[] | null;
-    steps?: { title: string; text: string; id?: string }[] | null;
+    steps?: {
+        title: string;
+        text: string;
+        /** Small badge above the title (e.g. "Week 0", "≈ 2 weeks in"). */
+        timing?: string | null;
+        /** Optional button on this step; href defaults to the page's booking section. */
+        ctaLabel?: string | null;
+        ctaHref?: string | null;
+        id?: string;
+    }[] | null;
     processKicker?: string | null;
     processHeading?: string | null;
     processIntro?: string | null;

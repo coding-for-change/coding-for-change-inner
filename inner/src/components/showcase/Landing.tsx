@@ -13,6 +13,7 @@ import {
 } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
 import BookingEmbed from '../general/BookingEmbed';
+import ProcessTimeline, { buildProcessSteps } from './ProcessTimeline';
 import ProjectShowcase from './ProjectShowcase';
 import ScrollRevealText from './ScrollRevealText';
 import SponsorTiers from './SponsorTiers';
@@ -107,7 +108,9 @@ const Landing: React.FC<LandingProps> = (props) => {
         ctaJoin: hp?.ctaJoin || t.cta.join,
         ctaContact: hp?.ctaContact || t.cta.contact,
     };
-    const steps = hp?.steps?.length ? hp.steps : t.about.steps;
+    // Process timeline: CMS steps override the built-in ones; a CMS step's
+    // button defaults to this page's booking section.
+    const processSteps = buildProcessSteps(hp?.steps, t.process.steps, '#book');
 
     const [openFaq, setOpenFaq] = useState<number | null>(null);
 
@@ -355,25 +358,7 @@ const Landing: React.FC<LandingProps> = (props) => {
                         <h2 className="lp-h2">{c.processHeading}</h2>
                         <p className="lp-lead">{c.processIntro}</p>
                     </motion.div>
-                    <div className="lp-steps">
-                        {steps.map((step, i) => (
-                            <motion.div
-                                key={step.title}
-                                className="lp-step"
-                                {...reveal}
-                                transition={{ duration: 0.45, delay: i * 0.12 }}
-                            >
-                                {i < steps.length - 1 && (
-                                    <span className="lp-step__connector" />
-                                )}
-                                <span className="lp-step__num">{i + 1}</span>
-                                <span className="lp-step__title">
-                                    {step.title}
-                                </span>
-                                <span className="lp-step__text">{step.text}</span>
-                            </motion.div>
-                        ))}
-                    </div>
+                    <ProcessTimeline steps={processSteps} />
                 </div>
             </section>
 

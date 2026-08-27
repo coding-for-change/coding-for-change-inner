@@ -214,8 +214,37 @@ export const Projects: CollectionConfig = {
                       'Shown inside the circle — a number (1, 2, 3) or a symbol (e.g. ✓). Leave blank to auto-number by position.',
                   },
                 },
+                {
+                  name: 'timing',
+                  type: 'text',
+                  localized: true,
+                  admin: {
+                    description: 'Small badge above the title (e.g. "March 2026" or "Week 2").',
+                  },
+                },
                 { name: 'title', type: 'text', required: true, localized: true },
                 { name: 'subtitle', type: 'text', localized: true },
+                {
+                  name: 'state',
+                  type: 'select',
+                  options: [
+                    { label: 'Done', value: 'done' },
+                    { label: 'Current', value: 'current' },
+                    { label: 'Upcoming', value: 'upcoming' },
+                  ],
+                  admin: {
+                    description:
+                      'Progress marker: set "Current" on the phase the project is in — earlier steps then show as done, later ones as upcoming. Leave every point blank for a plain timeline.',
+                  },
+                },
+                {
+                  name: 'image',
+                  type: 'upload',
+                  relationTo: 'media',
+                  admin: {
+                    description: 'Optional screenshot or mock-up shown with this step.',
+                  },
+                },
               ],
             },
           ],
