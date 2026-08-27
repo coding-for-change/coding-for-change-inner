@@ -51,9 +51,35 @@ export const Homepage: GlobalConfig = {
           name: 'steps',
           label: 'Process steps',
           type: 'array',
+          admin: {
+            description:
+              'Overrides the built-in process timeline (homepage and partner page). Add, remove or reorder steps freely — e.g. drop the MVP step or add an expansion step.',
+          },
           fields: [
+            {
+              name: 'timing',
+              type: 'text',
+              localized: true,
+              admin: { description: 'Small badge above the title (e.g. "Week 0", "≈ 2 weeks in").' },
+            },
             { name: 'title', type: 'text', required: true, localized: true },
             { name: 'text', type: 'textarea', required: true, localized: true },
+            {
+              name: 'ctaLabel',
+              label: 'Button label',
+              type: 'text',
+              localized: true,
+              admin: { description: 'Optional button on this step (e.g. "Book a first talk").' },
+            },
+            {
+              name: 'ctaHref',
+              label: 'Button target',
+              type: 'text',
+              admin: {
+                description:
+                  'Where the button links to. Left blank, it scrolls to the booking section of the page.',
+              },
+            },
           ],
         },
       ],

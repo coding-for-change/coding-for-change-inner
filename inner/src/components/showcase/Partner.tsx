@@ -7,6 +7,7 @@ import { CmsPartner, CmsAbout, CmsHomepage } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
 import BookingEmbed from '../general/BookingEmbed';
 import ClosingCta from './ClosingCta';
+import ProcessTimeline, { buildProcessSteps } from './ProcessTimeline';
 import './landing.css';
 
 const reveal = {
@@ -35,7 +36,12 @@ const Partner: React.FC<PartnerProps> = (props) => {
     const email = partner?.contactEmail || siteConfig.email;
     const valuesTitle = about?.valuesTitle || t.aboutPage.valuesTitle;
     const values = about?.values?.length ? about.values : t.aboutPage.values;
-    const steps = hp?.steps?.length ? hp.steps : t.about.steps;
+    // Same timeline as the homepage; the CTA anchors to this page's booking
+    // section instead.
+    const processSteps = buildProcessSteps(hp?.steps, t.process.steps, {
+        label: t.process.stepCta,
+        href: '#partner-book',
+    });
     const processKicker = hp?.processKicker || t.process.kicker;
     const processHeading = hp?.processHeading || t.process.heading;
     const processIntro = hp?.processIntro || t.process.intro;
@@ -95,21 +101,7 @@ const Partner: React.FC<PartnerProps> = (props) => {
                     <h2 className="lp-h2">{processHeading}</h2>
                     <p className="lp-lead">{processIntro}</p>
                 </motion.div>
-                <div className="lp-steps">
-                    {steps.map((step, i) => (
-                        <motion.div
-                            key={step.title}
-                            className="lp-step"
-                            {...reveal}
-                            transition={{ duration: 0.45, delay: i * 0.12 }}
-                        >
-                            {i < steps.length - 1 && <span className="lp-step__connector" />}
-                            <span className="lp-step__num">{i + 1}</span>
-                            <span className="lp-step__title">{step.title}</span>
-                            <span className="lp-step__text">{step.text}</span>
-                        </motion.div>
-                    ))}
-                </div>
+                <ProcessTimeline steps={processSteps} />
             </div>
             </div>
 

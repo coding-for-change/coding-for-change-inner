@@ -19,6 +19,7 @@ import {
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useOverlay } from '../../hooks/useOverlay';
 import BookingEmbed from '../general/BookingEmbed';
+import ProcessTimeline from './ProcessTimeline';
 import './landing.css';
 
 const statusColors: Record<string, string> = {
@@ -274,18 +275,20 @@ const TimelineBlock: React.FC<{ block: CmsTimelineBlock }> = ({ block }) => {
     return (
         <section className="lp-cs__block lp-cs__block--prose lp-cs__timeline">
             <BlockHead heading={block.heading} />
-            <ol className="lp-cs-tl">
-                {points.map((p, i) => (
-                    <li className="lp-cs-tl__item" key={p.id ?? i}>
-                        {/* Marker: the editor's number/symbol, or the position as a fallback. */}
-                        <span className="lp-cs-tl__marker">{p.marker?.trim() || i + 1}</span>
-                        <div className="lp-cs-tl__content">
-                            <h3 className="lp-cs-tl__title">{p.title}</h3>
-                            {p.subtitle && <p className="lp-cs-tl__sub">{p.subtitle}</p>}
-                        </div>
-                    </li>
-                ))}
-            </ol>
+            <ProcessTimeline
+                className="lp-tl--cs"
+                steps={points.map((p) => {
+                    const img = mediaUrl(p.image);
+                    return {
+                        title: p.title,
+                        text: p.subtitle || undefined,
+                        timing: p.timing || undefined,
+                        marker: p.marker?.trim() || undefined,
+                        state: p.state || undefined,
+                        media: img ? { src: img, alt: p.title } : undefined,
+                    };
+                })}
+            />
         </section>
     );
 };

@@ -406,8 +406,20 @@ export interface Project {
                    * Shown inside the circle — a number (1, 2, 3) or a symbol (e.g. ✓). Leave blank to auto-number by position.
                    */
                   marker?: string | null;
+                  /**
+                   * Small badge above the title (e.g. "March 2026" or "Week 2").
+                   */
+                  timing?: string | null;
                   title: string;
                   subtitle?: string | null;
+                  /**
+                   * Progress marker: set "Current" on the phase the project is in — earlier steps then show as done, later ones as upcoming. Leave every point blank for a plain timeline.
+                   */
+                  state?: ('done' | 'current' | 'upcoming') | null;
+                  /**
+                   * Optional screenshot or mock-up shown with this step.
+                   */
+                  image?: (number | null) | Media;
                   id?: string | null;
                 }[]
               | null;
@@ -1519,8 +1531,11 @@ export interface ProjectsSelect<T extends boolean = true> {
                 | T
                 | {
                     marker?: T;
+                    timing?: T;
                     title?: T;
                     subtitle?: T;
+                    state?: T;
+                    image?: T;
                     id?: T;
                   };
               id?: T;
@@ -2268,10 +2283,25 @@ export interface Homepage {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Overrides the built-in process timeline (homepage and partner page). Add, remove or reorder steps freely — e.g. drop the MVP step or add an expansion step.
+   */
   steps?:
     | {
+        /**
+         * Small badge above the title (e.g. "Week 0", "≈ 2 weeks in").
+         */
+        timing?: string | null;
         title: string;
         text: string;
+        /**
+         * Optional button on this step (e.g. "Book a first talk").
+         */
+        ctaLabel?: string | null;
+        /**
+         * Where the button links to. Left blank, it scrolls to the booking section of the page.
+         */
+        ctaHref?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -2457,8 +2487,11 @@ export interface HomepageSelect<T extends boolean = true> {
   steps?:
     | T
     | {
+        timing?: T;
         title?: T;
         text?: T;
+        ctaLabel?: T;
+        ctaHref?: T;
         id?: T;
       };
   processKicker?: T;

@@ -23,11 +23,12 @@ export interface Translations {
         pitch: string;
         stats: { value: string; label: string }[];
         howItWorks: string;
-        steps: { title: string; text: string }[];
         explore: string;
     };
     process: {
         kicker: string; heading: string; intro: string;
+        steps: { timing: string; title: string; text: string }[];
+        stepCta: string;
     };
     cta: {
         heading: string; text: string; join: string; contact: string;
@@ -154,17 +155,40 @@ const en: Translations = {
             { value: '150+', label: 'Users’ time saved' },
         ],
         howItWorks: 'How it works',
-        steps: [
-            { title: 'Match', text: 'We pair an NGO that needs software with a student team.' },
-            { title: 'Build', text: 'The team ships it over one semester of agile sprints.' },
-            { title: 'Hand off', text: 'We deliver the finished product with docs and support.' },
-        ],
         explore: 'Explore',
     },
     process: {
         kicker: 'How it works',
         heading: 'How we work with NGOs',
         intro: 'From first conversation to finished software in a single semester — here is the path every project follows.',
+        steps: [
+            {
+                timing: 'Week 0',
+                title: 'First talk',
+                text: 'Tell us about your organisation and the problem you want solved — a relaxed 30-minute call, free and non-binding.',
+            },
+            {
+                timing: '≈ 2 weeks in',
+                title: 'Clickable mock-up',
+                text: 'You see a first clickable design of your product, and we refine it together until it fits the way your team works.',
+            },
+            {
+                timing: '≈ 8 weeks in',
+                title: 'Working MVP',
+                text: 'The core features run with real data, so your team can try the software early and steer what matters most.',
+            },
+            {
+                timing: '≈ 12 weeks in',
+                title: 'Fully featured product',
+                text: 'We hand over the finished software — tested, documented and yours, with everything your team needs to run it.',
+            },
+            {
+                timing: 'Beyond',
+                title: 'Support & expansion',
+                text: 'We stay reachable for fixes and questions, and can plan a follow-up semester to grow the product further.',
+            },
+        ],
+        stepCta: 'Book a first talk',
     },
     cta: {
         heading: 'Ready to build something great?',
@@ -378,17 +402,40 @@ const de: Translations = {
             { value: '150+', label: 'Nutzer:innen sparen Zeit' },
         ],
         howItWorks: 'So funktioniert es',
-        steps: [
-            { title: 'Matching', text: 'Wir bringen eine NGO mit Softwarebedarf mit einem Studierendenteam zusammen.' },
-            { title: 'Entwicklung', text: 'Das Team setzt es in einem Semester in agilen Sprints um.' },
-            { title: 'Übergabe', text: 'Wir liefern das fertige Produkt mit Dokumentation und Support.' },
-        ],
         explore: 'Entdecken',
     },
     process: {
         kicker: 'So funktioniert es',
         heading: 'Wie wir mit NGOs arbeiten',
         intro: 'Vom ersten Gespräch bis zur fertigen Software in einem einzigen Semester – diesen Weg geht jedes Projekt.',
+        steps: [
+            {
+                timing: 'Woche 0',
+                title: 'Erstgespräch',
+                text: 'Erzählen Sie uns von Ihrer Organisation und dem Problem, das gelöst werden soll – ein lockeres 30-Minuten-Gespräch, kostenlos und unverbindlich.',
+            },
+            {
+                timing: 'nach ca. 2 Wochen',
+                title: 'Klickbares Mock-up',
+                text: 'Sie sehen einen ersten klickbaren Entwurf Ihres Produkts – gemeinsam passen wir ihn an, bis er zur Arbeitsweise Ihres Teams passt.',
+            },
+            {
+                timing: 'nach ca. 8 Wochen',
+                title: 'Funktionierendes MVP',
+                text: 'Die Kernfunktionen laufen mit echten Daten – Ihr Team kann die Software früh ausprobieren und mitsteuern, was am wichtigsten ist.',
+            },
+            {
+                timing: 'nach ca. 12 Wochen',
+                title: 'Fertiges Produkt',
+                text: 'Wir übergeben die fertige Software – getestet, dokumentiert und in Ihrem Besitz, mit allem, was Ihr Team für den Betrieb braucht.',
+            },
+            {
+                timing: 'Danach',
+                title: 'Support & Ausbau',
+                text: 'Wir bleiben für Fixes und Fragen erreichbar – und planen auf Wunsch ein Folgesemester, um das Produkt weiterzuentwickeln.',
+            },
+        ],
+        stepCta: 'Erstgespräch buchen',
     },
     cta: {
         heading: 'Bereit, etwas Großartiges zu bauen?',

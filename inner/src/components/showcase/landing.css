@@ -407,56 +407,177 @@
     color: var(--muted);
 }
 
-/* ---- Process timeline ---- */
-.lp-steps {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-    margin-top: 48px;
-    position: relative;
+/* ---- Process timeline (vertical progress line) ----
+   Shared by the homepage/partner "how we work" section and case-study
+   timelines (ProcessTimeline.tsx). Light context by default; recolored
+   under `.lp-section--dark`. Spacing between steps lives on the body's
+   padding (not the <li>) so the rail — stretched to the grid row —
+   reaches the next node instead of stopping short of it. */
+.lp-tl {
+    display: block;
+    list-style: none;
+    max-width: 720px;
+    margin: 56px 0 0;
+    padding: 0;
 }
-.lp-step {
+.lp-tl__step {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    column-gap: 24px;
+    margin: 0;
+    padding: 0;
+}
+.lp-tl__rail {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    position: relative;
-    padding: 28px 24px;
-    background: #ffffff;
-    border: 1px solid var(--line);
+    align-items: center;
 }
-.lp-step__num {
+.lp-tl__node {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 46px;
-    height: 46px;
-    margin-bottom: 18px;
+    flex: 0 0 auto;
+    width: 44px;
+    height: 44px;
+    box-sizing: border-box;
     border-radius: 50%;
-    background: var(--teal);
-    color: #fff;
+    border: 2px solid var(--teal);
+    background: #ffffff;
+    color: var(--teal-dark);
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+.lp-tl__line {
+    display: block;
+    flex: 1 1 auto;
+    width: 2px;
+    margin-top: 6px;
+    background: var(--line);
+    transform-origin: top;
+}
+.lp-tl__body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* Keeps a short step from squeezing its rail segment to nothing. */
+    min-height: 88px;
+    padding: 8px 0 48px;
+}
+.lp-tl__step:last-child .lp-tl__body {
+    min-height: 0;
+    padding-bottom: 0;
+}
+.lp-tl__timing {
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 4px 10px;
+    border: 1px solid rgba(47, 143, 144, 0.35);
+    background: rgba(47, 143, 144, 0.08);
+    color: var(--teal-dark);
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1.4;
+}
+.lp-tl__title {
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 22px;
+    line-height: 1.25;
+    margin: 0 0 8px;
+    color: var(--ink);
 }
-.lp-step__title {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
-    font-size: 22px;
-    margin-bottom: 8px;
-}
-.lp-step__text {
+.lp-tl__text {
     font-size: 16px;
-    line-height: 1.55;
+    line-height: 1.6;
+    color: var(--muted);
+    margin: 0;
+    max-width: 58ch;
+}
+.lp-tl__cta {
+    margin-top: 18px;
+}
+.lp-tl__media {
+    display: block;
+    margin: 18px 0 0;
+    max-width: min(440px, 100%);
+}
+.lp-tl__media img {
+    display: block;
+    width: 100%;
+    border: 1px solid var(--line);
+}
+
+/* Progress states (case studies): the current phase is ringed, done steps
+   tick off and tint their rail segment teal, upcoming steps recede. */
+.lp-tl__step[data-state='done'] .lp-tl__node {
+    background: var(--teal);
+    color: #ffffff;
+}
+.lp-tl__step[data-state='done'] .lp-tl__line {
+    background: var(--teal);
+    opacity: 0.55;
+}
+.lp-tl__step[data-state='current'] .lp-tl__node {
+    background: var(--teal);
+    color: #ffffff;
+    box-shadow: 0 0 0 6px rgba(47, 143, 144, 0.18);
+}
+.lp-tl__step[data-state='upcoming'] .lp-tl__node {
+    border-color: var(--line);
     color: var(--muted);
 }
-.lp-step__connector {
-    display: block;
-    position: absolute;
-    top: 50px;
-    right: -24px;
-    width: 24px;
-    height: 2px;
+.lp-tl__step[data-state='upcoming'] .lp-tl__body {
+    opacity: 0.72;
+}
+
+/* Dark band (homepage process section): light-on-navy. */
+.lp-section--dark .lp-tl__node {
     background: var(--teal);
-    opacity: 0.5;
-    z-index: 1;
+    border-color: var(--teal);
+    color: #ffffff;
+}
+.lp-section--dark .lp-tl__line {
+    background: rgba(255, 255, 255, 0.22);
+}
+.lp-section--dark .lp-tl__step[data-state='done'] .lp-tl__line {
+    background: var(--teal);
+}
+.lp-section--dark .lp-tl__timing {
+    border-color: rgba(127, 227, 228, 0.4);
+    background: rgba(127, 227, 228, 0.08);
+    color: #7fe3e4;
+}
+.lp-section--dark .lp-tl__title {
+    color: #ffffff;
+}
+.lp-section--dark .lp-tl__text {
+    color: rgba(255, 255, 255, 0.78);
+}
+.lp-section--dark .lp-tl__media img {
+    border-color: rgba(255, 255, 255, 0.22);
+}
+
+@media (max-width: 640px) {
+    .lp-tl__step {
+        grid-template-columns: 36px 1fr;
+        column-gap: 16px;
+    }
+    .lp-tl__node {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+    .lp-tl__body {
+        min-height: 72px;
+        padding: 5px 0 40px;
+    }
+    .lp-tl__title {
+        font-size: 20px;
+    }
 }
 
 /* ---- Card grids (events / projects) ---- */
@@ -1258,12 +1379,8 @@ html[data-nav='dark'] .lp-nav .enter3d-btn {
     .lp-cta__heading {
         font-size: 32px;
     }
-    .lp-stats,
-    .lp-steps {
+    .lp-stats {
         grid-template-columns: 1fr;
-    }
-    .lp-step__connector {
-        display: none;
     }
     .lp-page__title {
         font-size: 34px;
@@ -2205,79 +2322,36 @@ a.lp-projstrip__item:hover .lp-projstrip__name {
 }
 
 /* ---- Case-study element: timeline ---- */
-/* Numbers sitting on the line in a square hairline frame — the same frame the
-   partner mark uses in the masthead above, so the two read as one system.
-   What this replaced, in order: filled teal discs, which were the only round
-   heavily-filled element on a site whose structural shapes are all square
-   hairline frames; then numerals set beside a teal rail that faded down the
-   list, which read as an effect rather than a structure. Colour is left to the
-   numeral, which is the part that carries meaning. */
-.lp-cs-tl {
-    list-style: none;
-    margin: 12px 0 0;
-    padding: 0;
+/* Rendered by the shared ProcessTimeline (.lp-tl), compacted to sit inside
+   prose: smaller nodes and type than the homepage process band, so the line
+   reads as part of the story rather than a section of its own. This unifies
+   what used to be a separate square-hairline-marker treatment here with the
+   landing's progress line — one visual language for "the plan" (homepage)
+   and "where this project actually is" (case study). */
+.lp-tl--cs {
+    margin-top: 12px;
 }
-.lp-cs-tl__item {
-    position: relative;
-    display: grid;
+.lp-tl--cs .lp-tl__step {
     grid-template-columns: 36px 1fr;
-    gap: 22px;
-    padding-bottom: 34px;
-    margin: 0;
+    column-gap: 22px;
 }
-.lp-cs-tl__item:last-child {
-    padding-bottom: 0;
-}
-/* Drawn per item and dropped on the last one, so the rail stops at the final
-   step instead of trailing past it to the bottom of its paragraph. */
-.lp-cs-tl__item::before {
-    content: '';
-    position: absolute;
-    left: 18px;
-    top: 36px;
-    bottom: -2px;
-    width: 1px;
-    background: var(--line);
-}
-.lp-cs-tl__item:last-child::before {
-    display: none;
-}
-.lp-cs-tl__marker {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.lp-tl--cs .lp-tl__node {
     width: 36px;
     height: 36px;
-    box-sizing: border-box;
-    border: 1px solid var(--teal);
-    /* Opaque, so it knocks the rail out rather than being crossed by it. */
-    background: #fff;
-    color: var(--teal-dark);
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 15px;
-    font-weight: 600;
-    line-height: 1;
-    letter-spacing: 0;
-    font-variant-numeric: tabular-nums;
-    z-index: 1;
 }
-.lp-cs-tl__content {
-    display: flex;
-    flex-direction: column;
+.lp-tl--cs .lp-tl__body {
+    min-height: 68px;
+    padding: 5px 0 34px;
 }
-.lp-cs-tl__title {
-    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+.lp-tl--cs .lp-tl__title {
     font-size: 19px;
     font-weight: 600;
-    line-height: 1.25;
-    margin: 0 0 6px;
-    color: var(--ink);
+    margin-bottom: 6px;
 }
-.lp-cs-tl__sub {
+.lp-tl--cs .lp-tl__text {
     font-size: 15.5px;
     line-height: 1.65;
-    color: var(--muted);
-    margin: 0;
 }
 
 /* ---- Case-study element: team ---- */
@@ -2701,8 +2775,8 @@ a.lp-projstrip__item:hover .lp-projstrip__name {
     .lp-cs-gal--stage .lp-cs-gal__btn img {
         max-height: 300px;
     }
-    .lp-cs-tl__item {
-        gap: 18px;
+    .lp-tl--cs .lp-tl__step {
+        column-gap: 18px;
     }
     .lp-cs-gal--photos {
         grid-auto-rows: 150px;
@@ -2786,7 +2860,7 @@ a.lp-projstrip__item:hover .lp-projstrip__name {
 .lp-cs__title,
 .lp-feature__title,
 .lp-3d__title,
-.lp-step__title,
+.lp-tl__title,
 .lp-cs__quote-text,
 .lp-cs-book__heading {
     overflow-wrap: break-word;
@@ -2794,12 +2868,6 @@ a.lp-projstrip__item:hover .lp-projstrip__name {
 }
 .lp-card__title {
     min-width: 0;
-}
-
-/* Process steps that vary in count (e.g. the 4-step partner process): fit as
-   many across as the width allows and wrap cleanly, without connectors. */
-.lp-steps--wrap {
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
 }
 
 /* ------------------------------------------------------------------ */
