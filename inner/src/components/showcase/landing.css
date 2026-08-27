@@ -534,6 +534,36 @@
     opacity: 0.72;
 }
 
+/* Wide screens, process band only (not the compact case-study variant):
+   the rail runs down the centre and step bodies alternate right/left of it,
+   so four steps read as a path rather than a long left-hand list. */
+@media (min-width: 641px) {
+    .lp-tl:not(.lp-tl--cs) {
+        max-width: 920px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .lp-tl:not(.lp-tl--cs) .lp-tl__step {
+        grid-template-columns: 1fr 44px 1fr;
+        column-gap: 36px;
+    }
+    .lp-tl:not(.lp-tl--cs) .lp-tl__rail {
+        grid-row: 1;
+        grid-column: 2;
+    }
+    .lp-tl:not(.lp-tl--cs) .lp-tl__body {
+        grid-row: 1;
+        grid-column: 3;
+        max-width: 460px;
+    }
+    .lp-tl:not(.lp-tl--cs) .lp-tl__step:nth-child(even) .lp-tl__body {
+        grid-column: 1;
+        justify-self: end;
+        align-items: flex-end;
+        text-align: right;
+    }
+}
+
 /* Dark band (homepage process section): light-on-navy. */
 .lp-section--dark .lp-tl__node {
     background: var(--teal);

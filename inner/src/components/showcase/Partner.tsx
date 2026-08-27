@@ -36,12 +36,13 @@ const Partner: React.FC<PartnerProps> = (props) => {
     const email = partner?.contactEmail || siteConfig.email;
     const valuesTitle = about?.valuesTitle || t.aboutPage.valuesTitle;
     const values = about?.values?.length ? about.values : t.aboutPage.values;
-    // Same timeline as the homepage; the CTA anchors to this page's booking
-    // section instead.
-    const processSteps = buildProcessSteps(hp?.steps, t.process.steps, {
-        label: t.process.stepCta,
-        href: '#partner-book',
-    });
+    // Same timeline as the homepage; a CMS step's button anchors to this
+    // page's booking section instead.
+    const processSteps = buildProcessSteps(
+        hp?.steps,
+        t.process.steps,
+        '#partner-book'
+    );
     const processKicker = hp?.processKicker || t.process.kicker;
     const processHeading = hp?.processHeading || t.process.heading;
     const processIntro = hp?.processIntro || t.process.intro;

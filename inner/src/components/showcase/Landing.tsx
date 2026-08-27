@@ -108,12 +108,9 @@ const Landing: React.FC<LandingProps> = (props) => {
         ctaJoin: hp?.ctaJoin || t.cta.join,
         ctaContact: hp?.ctaContact || t.cta.contact,
     };
-    // Process timeline: CMS steps override the built-in ones; the first
-    // built-in step carries the booking CTA (anchor to the #book section).
-    const processSteps = buildProcessSteps(hp?.steps, t.process.steps, {
-        label: t.process.stepCta,
-        href: '#book',
-    });
+    // Process timeline: CMS steps override the built-in ones; a CMS step's
+    // button defaults to this page's booking section.
+    const processSteps = buildProcessSteps(hp?.steps, t.process.steps, '#book');
 
     const [openFaq, setOpenFaq] = useState<number | null>(null);
 

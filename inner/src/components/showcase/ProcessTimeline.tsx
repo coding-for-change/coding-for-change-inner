@@ -33,13 +33,14 @@ export interface ProcessTimelineProps {
 /**
  * Maps the CMS process-steps override (homepage global) onto timeline steps,
  * falling back to the built-in i18n steps when the CMS array is empty. The
- * i18n first step carries the page's booking CTA; CMS steps opt in per step
- * via `ctaLabel` (with `cta.href` as the target when `ctaHref` is blank).
+ * built-in steps carry no buttons; CMS steps opt in per step via `ctaLabel`,
+ * with `defaultCtaHref` (the page's booking section) as the target when
+ * `ctaHref` is blank.
  */
 export const buildProcessSteps = (
     cmsSteps: CmsHomepage['steps'],
     fallback: { timing: string; title: string; text: string }[],
-    cta: { label: string; href: string }
+    defaultCtaHref: string
 ): TimelineStep[] =>
     cmsSteps?.length
         ? cmsSteps.map((s) => ({
@@ -47,10 +48,10 @@ export const buildProcessSteps = (
               text: s.text,
               timing: s.timing || undefined,
               cta: s.ctaLabel
-                  ? { label: s.ctaLabel, href: s.ctaHref || cta.href }
+                  ? { label: s.ctaLabel, href: s.ctaHref || defaultCtaHref }
                   : undefined,
           }))
-        : fallback.map((s, i) => ({ ...s, cta: i === 0 ? cta : undefined }));
+        : fallback;
 
 const ProcessTimeline: React.FC<ProcessTimelineProps> = ({
     steps,

@@ -28,7 +28,6 @@ export interface Translations {
     process: {
         kicker: string; heading: string; intro: string;
         steps: { timing: string; title: string; text: string }[];
-        stepCta: string;
     };
     cta: {
         heading: string; text: string; join: string; contact: string;
@@ -168,27 +167,21 @@ const en: Translations = {
                 text: 'Tell us about your organisation and the problem you want solved — a relaxed 30-minute call, free and non-binding.',
             },
             {
-                timing: '≈ 2 weeks in',
+                timing: 'Week 2',
                 title: 'Clickable mock-up',
                 text: 'You see a first clickable design of your product, and we refine it together until it fits the way your team works.',
             },
             {
-                timing: '≈ 8 weeks in',
+                timing: 'Week 8',
                 title: 'Working MVP',
                 text: 'The core features run with real data, so your team can try the software early and steer what matters most.',
             },
             {
-                timing: '≈ 12 weeks in',
+                timing: 'Week 12',
                 title: 'Fully featured product',
                 text: 'We hand over the finished software — tested, documented and yours, with everything your team needs to run it.',
             },
-            {
-                timing: 'Beyond',
-                title: 'Support & expansion',
-                text: 'We stay reachable for fixes and questions, and can plan a follow-up semester to grow the product further.',
-            },
         ],
-        stepCta: 'Book a first talk',
     },
     cta: {
         heading: 'Ready to build something great?',
@@ -415,27 +408,21 @@ const de: Translations = {
                 text: 'Erzählen Sie uns von Ihrer Organisation und dem Problem, das gelöst werden soll – ein lockeres 30-Minuten-Gespräch, kostenlos und unverbindlich.',
             },
             {
-                timing: 'nach ca. 2 Wochen',
+                timing: 'Woche 2',
                 title: 'Klickbares Mock-up',
                 text: 'Sie sehen einen ersten klickbaren Entwurf Ihres Produkts – gemeinsam passen wir ihn an, bis er zur Arbeitsweise Ihres Teams passt.',
             },
             {
-                timing: 'nach ca. 8 Wochen',
+                timing: 'Woche 8',
                 title: 'Funktionierendes MVP',
                 text: 'Die Kernfunktionen laufen mit echten Daten – Ihr Team kann die Software früh ausprobieren und mitsteuern, was am wichtigsten ist.',
             },
             {
-                timing: 'nach ca. 12 Wochen',
+                timing: 'Woche 12',
                 title: 'Fertiges Produkt',
                 text: 'Wir übergeben die fertige Software – getestet, dokumentiert und in Ihrem Besitz, mit allem, was Ihr Team für den Betrieb braucht.',
             },
-            {
-                timing: 'Danach',
-                title: 'Support & Ausbau',
-                text: 'Wir bleiben für Fixes und Fragen erreichbar – und planen auf Wunsch ein Folgesemester, um das Produkt weiterzuentwickeln.',
-            },
         ],
-        stepCta: 'Erstgespräch buchen',
     },
     cta: {
         heading: 'Bereit, etwas Großartiges zu bauen?',
