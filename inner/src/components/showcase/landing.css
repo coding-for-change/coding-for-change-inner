@@ -3232,9 +3232,8 @@ a.lp-projstrip__item:hover .lp-projstrip__name {
     max-width: 540px;
     margin: 30px auto;
 }
-/* The slot carries the packed position and the entrance animation; the button
-   inside owns hover and selection, so framer-motion's inline opacity/transform
-   never fights the CSS that dims the rest of the heap. */
+/* The slot's width/left/top are written by the simulation every frame, so it
+   must carry no CSS transition of its own — that would fight the physics. */
 .lp-heap__slot {
     display: block;
     position: absolute;
@@ -3252,8 +3251,7 @@ a.lp-projstrip__item:hover .lp-projstrip__name {
     cursor: pointer;
     -webkit-appearance: none;
     appearance: none;
-    transition: transform 0.28s cubic-bezier(0.2, 0.7, 0.3, 1),
-        opacity 0.24s ease, box-shadow 0.28s ease;
+    transition: opacity 0.24s ease, box-shadow 0.28s ease;
     box-shadow: 0 5px 16px rgba(21, 48, 48, 0.12);
 }
 .lp-heap__bubble img,
@@ -3274,10 +3272,12 @@ a.lp-projstrip__item:hover .lp-projstrip__name {
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 22px;
 }
-/* Scale and shadow only — a teal ring around a photograph read as a sticker. */
+/* Growing is the simulation's job — it is what shoves the neighbours aside, so
+   the bubble must not also scale itself here. Shadow and stacking only. */
 .lp-heap__bubble:hover {
-    transform: scale(1.09);
     box-shadow: 0 14px 30px rgba(21, 48, 48, 0.24);
+}
+.lp-heap__slot:hover {
     z-index: 3;
 }
 .lp-heap__bubble:focus-visible {
@@ -3290,8 +3290,9 @@ a.lp-projstrip__item:hover .lp-projstrip__name {
 }
 .lp-heap .lp-heap__bubble.is-selected {
     opacity: 1;
-    transform: scale(1.16);
     box-shadow: 0 18px 38px rgba(21, 48, 48, 0.3);
+}
+.lp-heap__slot:has(.is-selected) {
     z-index: 4;
 }
 /* Names appear on demand. Printed under every bubble they landed on top of
@@ -3509,11 +3510,5 @@ a.lp-heap__pill:hover {
 @media (prefers-reduced-motion: reduce) {
     .lp-heap__bubble {
         transition: opacity 0.2s ease;
-    }
-    .lp-heap__bubble:hover {
-        transform: none;
-    }
-    .lp-heap .lp-heap__bubble.is-selected {
-        transform: none;
     }
 }

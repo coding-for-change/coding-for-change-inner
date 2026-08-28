@@ -86,26 +86,57 @@ const buildProjectIndex = (
 /* Heap layout                                                         */
 /* ------------------------------------------------------------------ */
 
-interface Placed {
-    /** Percent of container width / height, for absolute positioning. */
-    left: number;
-    top: number;
-    size: number;
+/**
+ * One member's circle in the simulation. Coordinates are "world units" where
+ * 1 = a nominal bubble diameter, centred on the origin; the renderer maps them
+ * to pixels against whatever width the container happens to have.
+ */
+interface Node {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    /** Current radius, eased toward `targetR` so growth pushes neighbours. */
+    r: number;
+    targetR: number;
+    baseR: number;
 }
 
-/** Step between bubble centres, in diameters. ~sqrt(3)/2 vertically = honeycomb. */
+interface Seed {
+    nodes: Node[];
+    worldW: number;
+    worldH: number;
+}
+
+/** Deterministic 0..1 from an index — the seed has to match on server and client. */
+const noise = (i: number, salt: number) => {
+    const x = Math.sin(i * 127.1 + salt * 311.7) * 43758.5453;
+    return x - Math.floor(x);
+};
+
 const STEP_X = 1.1;
 const STEP_Y = 0.94;
+/** How much a bubble grows when hovered / picked, which is what shoves the rest. */
+const HOVER_GROWTH = 1.14;
+const SELECT_GROWTH = 1.42;
+/** Headroom around the resting cluster so a grown bubble has somewhere to go. */
+const WORLD_PAD = 0.55;
+
+const COLLIDE_PAD = 0.05;
+const COLLIDE_STRENGTH = 0.34;
+const CENTER_PULL = 0.014;
+const DAMPING = 0.86;
+const RADIUS_EASE = 0.16;
+/** Below this total movement per frame the cluster is settled; stop the loop. */
+const REST = 0.0009;
 
 /**
- * Row sizes that trace a rough disc — each row is as long as the chord of a
- * circle at that height, so the cluster comes out round rather than as a wide
- * lens or a block. 11 people land on 2 / 4 / 3 / 2.
+ * Row lengths tracing the chord of a circle at each height, so the cluster
+ * starts out roughly round — 11 people seed as 2 / 4 / 3 / 2. This is only the
+ * starting arrangement; the simulation loosens it from there.
  */
 const discRows = (count: number): number[] => {
     if (count <= 3) return [count];
-    // Rows chosen so the widest row is close to the row count, which is what
-    // makes the outline roughly as wide as it is tall.
     const rows = Math.max(2, Math.round(Math.sqrt(count / 0.82)));
     const exact = Array.from({ length: rows }, (_, i) => {
         const y = ((i + 0.5) / rows) * 2 - 1;
@@ -116,15 +147,12 @@ const discRows = (count: number): number[] => {
 
     const sizes = exact.map((v) => Math.max(1, Math.floor(v)));
     let left = count - sizes.reduce((a, b) => a + b, 0);
-    // Rows that were rounded down hardest get the leftovers first.
     const byRemainder = [...exact.keys()].sort(
         (a, b) =>
             exact[b] - Math.floor(exact[b]) - (exact[a] - Math.floor(exact[a]))
     );
     for (let i = 0; left > 0; i = (i + 1) % rows, left -= 1)
         sizes[byRemainder[i]] += 1;
-    // A count small enough that the `max(1, …)` floor over-allocated: trim the
-    // outermost rows, which are the shortest, back down.
     for (let i = 0; left < 0; i = (i + 1) % rows, left += 1) {
         const row = byRemainder[rows - 1 - (i % rows)];
         if (sizes[row] > 1) sizes[row] -= 1;
@@ -134,40 +162,87 @@ const discRows = (count: number): number[] => {
 };
 
 /**
- * Lay the members out in centred, half-offset rows tracing a disc. An earlier
- * version relaxed a phyllotaxis spiral into a free packing; it read as
- * accidental, because it was. Rows keep the cluster symmetrical and every
- * bubble the same size, while the staggered offsets keep it off a grid.
+ * Seed the cluster: disc rows for the overall round shape, then per-bubble
+ * jitter and a radius wobble so it reads as settled rather than set out. A
+ * pure grid looked rigid; a pure scatter looked accidental — this is the grid
+ * with the edges knocked off, and the simulation does the rest.
  */
-const buildHeap = (
-    count: number
-): { placed: Placed[]; aspect: number; maxWidth: number } => {
+const seedCluster = (count: number): Seed => {
     const rows = discRows(count);
     const widest = Math.max(...rows, 1);
-    // Measured in bubble diameters, then normalised to percentages below.
-    const width = (widest - 1) * STEP_X + 1;
-    const height = (rows.length - 1) * STEP_Y + 1;
-    const placed: Placed[] = [];
+    const restW = (widest - 1) * STEP_X + 1;
+    const restH = (rows.length - 1) * STEP_Y + 1;
+    const nodes: Node[] = [];
+    let i = 0;
     rows.forEach((inRow, rowIndex) => {
-        for (let i = 0; i < inRow; i++) {
-            // Centring each row is what produces the half-bubble offset
-            // between rows of different lengths.
-            const cx = (i - (inRow - 1) / 2) * STEP_X;
-            const cy = (rowIndex - (rows.length - 1) / 2) * STEP_Y;
-            placed.push({
-                left: ((cx - 0.5 + width / 2) / width) * 100,
-                top: ((cy - 0.5 + height / 2) / height) * 100,
-                size: (1 / width) * 100,
+        for (let col = 0; col < inRow; col++, i++) {
+            const r = 0.5 * (0.88 + 0.24 * noise(i, 1));
+            nodes.push({
+                x:
+                    (col - (inRow - 1) / 2) * STEP_X +
+                    (noise(i, 2) - 0.5) * 0.22,
+                y:
+                    (rowIndex - (rows.length - 1) / 2) * STEP_Y +
+                    (noise(i, 3) - 0.5) * 0.2,
+                vx: 0,
+                vy: 0,
+                r,
+                targetR: r,
+                baseR: r,
             });
         }
     });
     return {
-        placed,
-        aspect: width / height,
-        // Keeps a single bubble near 130px however few members there are — a
-        // four-person roster would otherwise render two enormous faces.
-        maxWidth: Math.min(540, Math.round(width * 132)),
+        nodes,
+        worldW: restW + WORLD_PAD,
+        worldH: restH + WORLD_PAD,
     };
+};
+
+/**
+ * Advance the soft-body cluster one frame: ease each radius toward its target,
+ * shove overlapping pairs apart, pull everything gently back to the centre.
+ * Returns the total movement, so the caller can stop once it settles.
+ */
+const stepCluster = (nodes: Node[]): number => {
+    for (const n of nodes) n.r += (n.targetR - n.r) * RADIUS_EASE;
+
+    for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+            const a = nodes[i];
+            const b = nodes[j];
+            let dx = b.x - a.x;
+            let dy = b.y - a.y;
+            let dist = Math.hypot(dx, dy);
+            if (dist < 1e-4) {
+                dx = 1e-3;
+                dy = 0;
+                dist = 1e-3;
+            }
+            const min = a.r + b.r + COLLIDE_PAD;
+            if (dist < min) {
+                const push = (((min - dist) / dist) * COLLIDE_STRENGTH) / 2;
+                a.vx -= dx * push;
+                a.vy -= dy * push;
+                b.vx += dx * push;
+                b.vy += dy * push;
+            }
+        }
+    }
+
+    let motion = 0;
+    for (const n of nodes) {
+        n.vx += -n.x * CENTER_PULL;
+        // Slightly stronger vertically, which keeps the cluster from stretching
+        // into a column as it grows.
+        n.vy += -n.y * CENTER_PULL * 1.15;
+        n.vx *= DAMPING;
+        n.vy *= DAMPING;
+        n.x += n.vx;
+        n.y += n.vy;
+        motion += Math.abs(n.vx) + Math.abs(n.vy) + Math.abs(n.targetR - n.r);
+    }
+    return motion;
 };
 
 /* ------------------------------------------------------------------ */
@@ -322,8 +397,16 @@ const TeamBubbles: React.FC<TeamBubblesProps> = (props) => {
         () => buildProjectIndex(projects ?? []),
         [projects]
     );
-    // One disc at every size — it just scales with the column it is given.
-    const heap = useMemo(() => buildHeap(members.length), [members.length]);
+    // The resting arrangement. The simulation starts here and takes over on
+    // mount; this is also what the server renders, so the markup is stable.
+    const seed = useMemo(() => seedCluster(members.length), [members.length]);
+
+    const heapRef = useRef<HTMLDivElement>(null);
+    const slotRefs = useRef<(HTMLDivElement | null)[]>([]);
+    const simRef = useRef<Node[]>([]);
+    const hoverRef = useRef<number | null>(null);
+    const selectedIndexRef = useRef<number | null>(null);
+    const frameRef = useRef<number | null>(null);
 
     const selected = members.find((m) => m.id === selectedId) ?? null;
     const cardRef = useRef<HTMLDivElement>(null);
@@ -334,6 +417,99 @@ const TeamBubbles: React.FC<TeamBubblesProps> = (props) => {
             block: 'nearest',
         });
     }, [selectedId]);
+
+    // ---- Soft-body cluster -------------------------------------------------
+    // Positions are written straight to the DOM rather than through state: at
+    // 60fps a React render per frame would be pure waste, and nothing else on
+    // the page needs to know where a bubble currently is.
+    const paint = React.useCallback(() => {
+        const box = heapRef.current;
+        if (!box) return;
+        const width = box.clientWidth;
+        if (!width) return;
+        const scale = width / seed.worldW;
+        const originX = width / 2;
+        const originY = (seed.worldH * scale) / 2;
+        simRef.current.forEach((n, i) => {
+            const el = slotRefs.current[i];
+            if (!el) return;
+            const size = n.r * 2 * scale;
+            el.style.width = `${size}px`;
+            el.style.left = `${originX + n.x * scale - size / 2}px`;
+            el.style.top = `${originY + n.y * scale - size / 2}px`;
+        });
+    }, [seed.worldH, seed.worldW]);
+
+    const settle = React.useCallback(() => {
+        // Restart rather than bail out when a loop is already pending: bailing
+        // meant one stale frame id (a cancelled frame, or a cleanup that ran
+        // between React's double-invoked mounts) froze the cluster for good.
+        if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+        // Reduced motion: jump straight to the settled arrangement rather than
+        // animating the neighbours out of the way.
+        if (
+            typeof window !== 'undefined' &&
+            window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+        ) {
+            for (let i = 0; i < 220; i++) stepCluster(simRef.current);
+            paint();
+            return;
+        }
+        const tick = () => {
+            const motion = stepCluster(simRef.current);
+            paint();
+            if (motion > REST) {
+                frameRef.current = requestAnimationFrame(tick);
+            } else {
+                frameRef.current = null;
+            }
+        };
+        frameRef.current = requestAnimationFrame(tick);
+    }, [paint]);
+
+    // Seed the simulation, then relax it once so the cluster is already settled
+    // when it first paints instead of visibly shuffling into place.
+    useEffect(() => {
+        simRef.current = seed.nodes.map((n) => ({ ...n }));
+        for (let i = 0; i < 220; i++) stepCluster(simRef.current);
+        paint();
+        const box = heapRef.current;
+        if (!box || typeof ResizeObserver === 'undefined') return;
+        const observer = new ResizeObserver(paint);
+        observer.observe(box);
+        return () => observer.disconnect();
+    }, [seed, paint]);
+
+    useEffect(
+        () => () => {
+            if (frameRef.current !== null)
+                cancelAnimationFrame(frameRef.current);
+            frameRef.current = null;
+        },
+        []
+    );
+
+    // Growing a bubble is what pushes its neighbours out of the way, so hover
+    // and selection are expressed as a change of radius, not a CSS transform.
+    const retarget = React.useCallback(() => {
+        simRef.current.forEach((n, i) => {
+            const grow =
+                selectedIndexRef.current === i
+                    ? SELECT_GROWTH
+                    : hoverRef.current === i
+                      ? HOVER_GROWTH
+                      : 1;
+            n.targetR = n.baseR * grow;
+        });
+        settle();
+    }, [settle]);
+
+    useEffect(() => {
+        const index = members.findIndex((m) => m.id === selectedId);
+        selectedIndexRef.current = index >= 0 ? index : null;
+        retarget();
+    }, [selectedId, members, retarget]);
 
     // Numbers that come straight out of the CMS — no new fields, nothing to
     // keep in sync by hand.
@@ -391,32 +567,60 @@ const TeamBubbles: React.FC<TeamBubblesProps> = (props) => {
                             </motion.div>
 
                             <div
+                                ref={heapRef}
                                 className={`lp-heap${
                                     selected ? ' has-selection' : ''
                                 }`}
                                 style={{
-                                    aspectRatio: String(heap.aspect),
-                                    maxWidth: `${heap.maxWidth}px`,
+                                    aspectRatio: String(
+                                        seed.worldW / seed.worldH
+                                    ),
+                                    maxWidth: `${Math.min(
+                                        560,
+                                        Math.round(seed.worldW * 128)
+                                    )}px`,
                                 }}
                             >
                                 {members.map((member, i) => {
-                                    const spot = heap.placed[i];
+                                    const node = seed.nodes[i];
                                     const img = mediaUrl(member.image);
                                     const isSelected = member.id === selectedId;
+                                    // Server-rendered fallback position; the
+                                    // simulation overwrites these on mount.
+                                    const size =
+                                        ((node.r * 2) / seed.worldW) * 100;
                                     return (
-                                        <motion.div
+                                        <div
                                             key={member.id}
+                                            ref={(el) => {
+                                                slotRefs.current[i] = el;
+                                            }}
                                             className="lp-heap__slot"
                                             style={{
-                                                left: `${spot.left}%`,
-                                                top: `${spot.top}%`,
-                                                width: `${spot.size}%`,
+                                                width: `${size}%`,
+                                                left: `${
+                                                    ((node.x + seed.worldW / 2) /
+                                                        seed.worldW) *
+                                                        100 -
+                                                    size / 2
+                                                }%`,
+                                                top: `${
+                                                    ((node.y + seed.worldH / 2) /
+                                                        seed.worldH) *
+                                                        100 -
+                                                    (size * seed.worldW) /
+                                                        seed.worldH /
+                                                        2
+                                                }%`,
                                             }}
-                                            initial={{ opacity: 0, scale: 0.6 }}
-                                            animate={{ opacity: 1, scale: 1 }}
-                                            transition={{
-                                                duration: 0.4,
-                                                delay: Math.min(i * 0.04, 0.4),
+                                            onMouseEnter={() => {
+                                                hoverRef.current = i;
+                                                retarget();
+                                            }}
+                                            onMouseLeave={() => {
+                                                if (hoverRef.current === i)
+                                                    hoverRef.current = null;
+                                                retarget();
                                             }}
                                         >
                                             <button
@@ -427,6 +631,15 @@ const TeamBubbles: React.FC<TeamBubblesProps> = (props) => {
                                                         : ''
                                                 }`}
                                                 aria-pressed={isSelected}
+                                                onFocus={() => {
+                                                    hoverRef.current = i;
+                                                    retarget();
+                                                }}
+                                                onBlur={() => {
+                                                    if (hoverRef.current === i)
+                                                        hoverRef.current = null;
+                                                    retarget();
+                                                }}
                                                 onClick={() =>
                                                     setSelectedId(
                                                         isSelected
@@ -450,7 +663,7 @@ const TeamBubbles: React.FC<TeamBubblesProps> = (props) => {
                                                     {member.name}
                                                 </span>
                                             </button>
-                                        </motion.div>
+                                        </div>
                                     );
                                 })}
                             </div>
