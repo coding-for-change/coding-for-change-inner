@@ -217,6 +217,8 @@ export interface CmsSiteConfig {
     windowTitle?: string;
     bookingUrl?: string;
     teamHeroImage?: CmsMedia | null;
+    /** Club headcount for the Team page — typed in, not counted off `team`. */
+    memberCount?: string | null;
     stats?: { value: string; label: string; id?: string }[];
 }
 

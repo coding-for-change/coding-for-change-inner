@@ -265,6 +265,27 @@ const stepCluster = (nodes: Node[]): number => {
     return motion;
 };
 
+/**
+ * SSR-safe media query. Starts false so the server and the first client render
+ * agree, then corrects in an effect.
+ */
+const useMediaQuery = (query: string): boolean => {
+    const [matches, setMatches] = useState(false);
+    useEffect(() => {
+        const mql = window.matchMedia(query);
+        const onChange = () => setMatches(mql.matches);
+        onChange();
+        mql.addEventListener('change', onChange);
+        return () => mql.removeEventListener('change', onChange);
+    }, [query]);
+    return matches;
+};
+
+/** Above this the card is anchored beside its bubble instead of below the heap. */
+const ANCHOR_QUERY = '(min-width: 1000px)';
+/** Gap between the selected bubble's edge and the anchored card. */
+const ANCHOR_GAP = 22;
+
 /* ------------------------------------------------------------------ */
 
 const DetailCard: React.FC<{
@@ -272,14 +293,17 @@ const DetailCard: React.FC<{
     projects: MemberProject[];
     onClose: () => void;
     cardRef: React.RefObject<HTMLDivElement>;
-}> = ({ member, projects, onClose, cardRef }) => {
+    anchored?: boolean;
+}> = ({ member, projects, onClose, cardRef, anchored }) => {
     const { t } = useLanguage();
     const companies = populatedCompanies(member);
     const links = member.links ?? [];
     return (
         <motion.div
             ref={cardRef}
-            className="lp-heap__card"
+            className={`lp-heap__card${
+                anchored ? ' lp-heap__card--anchored' : ''
+            }`}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.28 }}
@@ -430,22 +454,29 @@ const TeamBubbles: React.FC<TeamBubblesProps> = (props) => {
 
     const selected = members.find((m) => m.id === selectedId) ?? null;
     const cardRef = useRef<HTMLDivElement>(null);
+    // Wide screens put the card beside the bubble; narrower ones keep it in
+    // flow below the heap, where there is no room to either side.
+    const anchored = useMediaQuery(ANCHOR_QUERY);
+    const anchoredRef = useRef(anchored);
+    anchoredRef.current = anchored;
+
     useEffect(() => {
-        if (!selectedId || !cardRef.current) return;
+        // Anchored, the card is already next to what you clicked.
+        if (anchored || !selectedId || !cardRef.current) return;
         cardRef.current.scrollIntoView({
             behavior: 'smooth',
             block: 'nearest',
         });
-    }, [selectedId]);
+    }, [selectedId, anchored]);
 
     // ---- Soft-body cluster -------------------------------------------------
     // Positions are written straight to the DOM rather than through state: at
     // 60fps a React render per frame would be pure waste, and nothing else on
     // the page needs to know where a bubble currently is.
     const paint = React.useCallback(() => {
-        const box = heapRef.current;
-        if (!box) return;
-        const width = box.clientWidth;
+        const box_ = heapRef.current;
+        if (!box_) return;
+        const width = box_.clientWidth;
         if (!width) return;
         const scale = width / seed.worldW;
         const originX = width / 2;
@@ -458,6 +489,43 @@ const TeamBubbles: React.FC<TeamBubblesProps> = (props) => {
             el.style.left = `${originX + n.x * scale - size / 2}px`;
             el.style.top = `${originY + n.y * scale - size / 2}px`;
         });
+
+        // Keep the anchored card glued to its bubble while the cluster settles.
+        const card = cardRef.current;
+        const index = selectedIndexRef.current;
+        if (!anchoredRef.current || !card || index === null) return;
+        const node = simRef.current[index];
+        if (!node) return;
+        const cardW = card.offsetWidth;
+        const cardH = card.offsetHeight;
+        const cx = originX + node.x * scale;
+        const cy = originY + node.y * scale;
+        const radius = node.r * scale;
+
+        // The heap is narrower than the text column it sits in, so the card may
+        // use the gutters either side — but must not escape the column.
+        const box = box_.getBoundingClientRect();
+        const column = box_.parentElement?.getBoundingClientRect();
+        const minLeft = column ? column.left - box.left : 0;
+        const maxLeft = (column ? column.right - box.left : width) - cardW;
+
+        // Open away from the middle — a bubble in the right half opens rightward
+        // into the gutter, one in the left half opens left. Choosing by "which
+        // side does it fit in" instead put the card straight over the cluster
+        // whenever the bubble sat near an edge.
+        let left =
+            node.x > 0
+                ? cx + radius + ANCHOR_GAP
+                : cx - radius - ANCHOR_GAP - cardW;
+        left = Math.min(Math.max(left, minLeft), Math.max(maxLeft, minLeft));
+
+        const height = seed.worldH * scale;
+        const top = Math.min(
+            Math.max(cy - cardH / 2, -40),
+            Math.max(height - cardH + 40, -40)
+        );
+        card.style.left = `${left}px`;
+        card.style.top = `${top}px`;
     }, [seed.worldH, seed.worldW]);
 
     const settle = React.useCallback(() => {
@@ -533,12 +601,29 @@ const TeamBubbles: React.FC<TeamBubblesProps> = (props) => {
         const index = members.findIndex((m) => m.id === selectedId);
         selectedIndexRef.current = index >= 0 ? index : null;
         retarget();
-    }, [selectedId, members, retarget]);
+        paint();
+    }, [selectedId, members, retarget, paint]);
 
-    // Edited in the CMS (SiteConfig → stats), not counted off this page. Only a
-    // fraction of the club has a profile here, so a derived headcount would
-    // under-report the club — it read 11 when there were 20 members.
-    const stats = useSiteConfig().stats ?? [];
+    // The headcount is typed into the CMS because only part of the club has a
+    // profile here — counted off this page it read 12 against 20 members. The
+    // other two come from the Projects collection, which is complete, so they
+    // look after themselves.
+    const memberCount = useSiteConfig().memberCount;
+    const ngoCount = useMemo(() => {
+        const names = new Set<string>();
+        for (const p of projects ?? [])
+            if (p.ngoPartner?.trim()) names.add(p.ngoPartner.trim());
+        return names.size;
+    }, [projects]);
+    const stats = [
+        { value: memberCount?.trim() ?? '', label: t.team.statMembers },
+        { value: ngoCount ? String(ngoCount) : '', label: t.team.statNgos },
+        {
+            value: projects?.length ? String(projects.length) : '',
+            label: t.team.statProjects,
+        },
+        // A figure we have no number for yet is left out rather than shown as 0.
+    ].filter((stat) => stat.value !== '');
 
     return (
         <div className="lp">
@@ -566,7 +651,7 @@ const TeamBubbles: React.FC<TeamBubblesProps> = (props) => {
                                 {stats.map((stat) => (
                                     <div
                                         className="lp-heap__stat"
-                                        key={stat.id ?? stat.label}
+                                        key={stat.label}
                                     >
                                         <span className="lp-heap__stat-value">
                                             {stat.value}
@@ -681,9 +766,21 @@ const TeamBubbles: React.FC<TeamBubblesProps> = (props) => {
                                         </div>
                                     );
                                 })}
+                                {anchored && selected && (
+                                    <DetailCard
+                                        key={selected.id}
+                                        cardRef={cardRef}
+                                        anchored
+                                        member={selected}
+                                        projects={
+                                            projectIndex.get(selected.id) ?? []
+                                        }
+                                        onClose={() => setSelectedId(null)}
+                                    />
+                                )}
                             </div>
 
-                            {selected && (
+                            {!anchored && selected && (
                                 <DetailCard
                                     key={selected.id}
                                     cardRef={cardRef}

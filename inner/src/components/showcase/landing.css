@@ -3334,6 +3334,17 @@ a.lp-projstrip__item:hover .lp-projstrip__name {
 }
 
 /* ---- Detail card ---- */
+/* Anchored beside its bubble on wide screens, where the card would otherwise
+   open several hundred pixels below the face that was clicked. `paint()` sets
+   left/top from the selected bubble's live position, so it stays put while the
+   cluster settles around it. */
+.lp-heap__card--anchored {
+    position: absolute;
+    z-index: 6;
+    width: 330px;
+    max-width: none;
+    margin: 0;
+}
 .lp-heap__card {
     display: block;
     max-width: 560px;

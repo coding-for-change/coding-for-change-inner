@@ -42,20 +42,28 @@ export const SiteConfig: GlobalConfig = {
       },
     },
     {
-      // Impact figures shown above the Team page roster. Editable here so the
-      // numbers can be bumped without a code deploy. The label is localized;
-      // the value (e.g. "10+") is locale-agnostic.
+      // The club's headcount, shown above the Team page roster.
       //
-      // Deliberately NOT derived from the `team` collection: only part of the
-      // club has a profile on the site, so a headcount taken off that page
-      // under-reports the club (it read 12 against 20 actual members).
-      name: 'stats',
-      type: 'array',
-      label: 'Team-page stats',
+      // Typed in rather than counted off the `team` collection on purpose:
+      // only part of the club has a profile on the site, so a derived figure
+      // under-reports it (the page held 12 profiles against 20 members). The
+      // other two figures beside it — NGO partners and projects — are counted
+      // from the Projects collection, which is complete.
+      name: 'memberCount',
+      type: 'text',
+      label: 'Member count',
       admin: {
         description:
-          'Shown as a row above the team photos. Keep it to three or four — the member count belongs here rather than being counted off the profiles, since not everyone has one.',
+          'Shown above the team photos, e.g. "20" or "20+". How many people are in the club — not how many have a profile on the site. Leave empty to hide it.',
       },
+    },
+    {
+      // Impact figures shown on the About page. Editable here so the numbers
+      // can be bumped without a code deploy. The label is localized; the value
+      // (e.g. "10+") is locale-agnostic.
+      name: 'stats',
+      type: 'array',
+      label: 'About-page stats',
       fields: [
         { name: 'value', type: 'text', required: true },
         { name: 'label', type: 'text', required: true, localized: true },

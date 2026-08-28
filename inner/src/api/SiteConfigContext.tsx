@@ -25,6 +25,7 @@ export const useSiteConfig = (): CmsSiteConfig & { loading: boolean } => {
         copyrightText: config?.copyrightText ?? '',
         windowTitle: config?.windowTitle ?? '',
         bookingUrl: config?.bookingUrl ?? '',
+        memberCount: config?.memberCount ?? '',
         stats: config?.stats ?? [],
         loading,
     };
