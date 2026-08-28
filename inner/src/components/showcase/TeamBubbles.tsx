@@ -93,49 +93,56 @@ interface Placed {
     size: number;
 }
 
-/** Widest row, which sets how big a single bubble can be. */
-const MAX_PER_ROW_WIDE = 5;
-const MAX_PER_ROW_NARROW = 3;
-/** Step between bubble centres, in diameters. <1 vertically so rows interlock. */
+/** Step between bubble centres, in diameters. ~sqrt(3)/2 vertically = honeycomb. */
 const STEP_X = 1.1;
-const STEP_Y = 0.9;
+const STEP_Y = 0.94;
 
 /**
- * Row sizes for a centred, middle-heavy cluster — e.g. 11 people across three
- * rows becomes 3 / 5 / 3. The remainder goes to the most central row first (up
- * to the row cap), so the cluster bulges in the middle rather than trailing off
- * into a short last row.
+ * Row sizes that trace a rough disc — each row is as long as the chord of a
+ * circle at that height, so the cluster comes out round rather than as a wide
+ * lens or a block. 11 people land on 2 / 4 / 3 / 2.
  */
-const rowSizes = (count: number, maxPerRow: number): number[] => {
-    const rows = Math.max(1, Math.ceil(count / maxPerRow));
-    const sizes: number[] = new Array(rows).fill(Math.floor(count / rows));
+const discRows = (count: number): number[] => {
+    if (count <= 3) return [count];
+    // Rows chosen so the widest row is close to the row count, which is what
+    // makes the outline roughly as wide as it is tall.
+    const rows = Math.max(2, Math.round(Math.sqrt(count / 0.82)));
+    const exact = Array.from({ length: rows }, (_, i) => {
+        const y = ((i + 0.5) / rows) * 2 - 1;
+        return Math.sqrt(Math.max(0, 1 - y * y));
+    });
+    const total = exact.reduce((a, b) => a + b, 0);
+    for (let i = 0; i < rows; i++) exact[i] = (exact[i] / total) * count;
+
+    const sizes = exact.map((v) => Math.max(1, Math.floor(v)));
     let left = count - sizes.reduce((a, b) => a + b, 0);
-    const middle = (rows - 1) / 2;
-    const byCentrality = [...sizes.keys()].sort(
-        (a, b) => Math.abs(a - middle) - Math.abs(b - middle)
+    // Rows that were rounded down hardest get the leftovers first.
+    const byRemainder = [...exact.keys()].sort(
+        (a, b) =>
+            exact[b] - Math.floor(exact[b]) - (exact[a] - Math.floor(exact[a]))
     );
-    for (const row of byCentrality) {
-        while (left > 0 && sizes[row] < maxPerRow) {
-            sizes[row] += 1;
-            left -= 1;
-        }
-        if (left === 0) break;
+    for (let i = 0; left > 0; i = (i + 1) % rows, left -= 1)
+        sizes[byRemainder[i]] += 1;
+    // A count small enough that the `max(1, …)` floor over-allocated: trim the
+    // outermost rows, which are the shortest, back down.
+    for (let i = 0; left < 0; i = (i + 1) % rows, left += 1) {
+        const row = byRemainder[rows - 1 - (i % rows)];
+        if (sizes[row] > 1) sizes[row] -= 1;
+        else left -= 1;
     }
     return sizes;
 };
 
 /**
- * Lay the members out in centred, half-offset rows — a honeycomb rather than a
- * scatter. An earlier version relaxed a phyllotaxis spiral into a free packing;
- * it read as accidental, because it was. Rows keep the cluster symmetrical and
- * every bubble the same size, while the staggered offsets and tapered row
- * lengths keep it from looking like a grid.
+ * Lay the members out in centred, half-offset rows tracing a disc. An earlier
+ * version relaxed a phyllotaxis spiral into a free packing; it read as
+ * accidental, because it was. Rows keep the cluster symmetrical and every
+ * bubble the same size, while the staggered offsets keep it off a grid.
  */
 const buildHeap = (
-    count: number,
-    maxPerRow: number
-): { placed: Placed[]; aspect: number } => {
-    const rows = rowSizes(count, maxPerRow);
+    count: number
+): { placed: Placed[]; aspect: number; maxWidth: number } => {
+    const rows = discRows(count);
     const widest = Math.max(...rows, 1);
     // Measured in bubble diameters, then normalised to percentages below.
     const width = (widest - 1) * STEP_X + 1;
@@ -143,7 +150,7 @@ const buildHeap = (
     const placed: Placed[] = [];
     rows.forEach((inRow, rowIndex) => {
         for (let i = 0; i < inRow; i++) {
-            // Centre each row, which is what produces the half-bubble offset
+            // Centring each row is what produces the half-bubble offset
             // between rows of different lengths.
             const cx = (i - (inRow - 1) / 2) * STEP_X;
             const cy = (rowIndex - (rows.length - 1) / 2) * STEP_Y;
@@ -154,20 +161,13 @@ const buildHeap = (
             });
         }
     });
-    return { placed, aspect: width / height };
-};
-
-/** SSR-safe narrow-viewport check at the heap's own breakpoint. */
-const useNarrow = (): boolean => {
-    const [narrow, setNarrow] = useState(false);
-    useEffect(() => {
-        const mql = window.matchMedia('(max-width: 760px)');
-        const onChange = () => setNarrow(mql.matches);
-        onChange();
-        mql.addEventListener('change', onChange);
-        return () => mql.removeEventListener('change', onChange);
-    }, []);
-    return narrow;
+    return {
+        placed,
+        aspect: width / height,
+        // Keeps a single bubble near 130px however few members there are — a
+        // four-person roster would otherwise render two enormous faces.
+        maxWidth: Math.min(540, Math.round(width * 132)),
+    };
 };
 
 /* ------------------------------------------------------------------ */
@@ -312,7 +312,6 @@ const TeamBubbles: React.FC<TeamBubblesProps> = (props) => {
         props.projects
     );
     const { t } = useLanguage();
-    const narrow = useNarrow();
     const [selectedId, setSelectedId] = useState<number | null>(null);
 
     const members = useMemo(
@@ -323,16 +322,8 @@ const TeamBubbles: React.FC<TeamBubblesProps> = (props) => {
         () => buildProjectIndex(projects ?? []),
         [projects]
     );
-    // A phone fits three to a row, a wide screen five, so the cluster stays
-    // proportionate to the column it is given.
-    const heap = useMemo(
-        () =>
-            buildHeap(
-                members.length,
-                narrow ? MAX_PER_ROW_NARROW : MAX_PER_ROW_WIDE
-            ),
-        [members.length, narrow]
-    );
+    // One disc at every size — it just scales with the column it is given.
+    const heap = useMemo(() => buildHeap(members.length), [members.length]);
 
     const selected = members.find((m) => m.id === selectedId) ?? null;
     const cardRef = useRef<HTMLDivElement>(null);
@@ -403,7 +394,10 @@ const TeamBubbles: React.FC<TeamBubblesProps> = (props) => {
                                 className={`lp-heap${
                                     selected ? ' has-selection' : ''
                                 }`}
-                                style={{ aspectRatio: String(heap.aspect) }}
+                                style={{
+                                    aspectRatio: String(heap.aspect),
+                                    maxWidth: `${heap.maxWidth}px`,
+                                }}
                             >
                                 {members.map((member, i) => {
                                     const spot = heap.placed[i];

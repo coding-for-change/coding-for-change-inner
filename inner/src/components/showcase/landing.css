@@ -3226,9 +3226,10 @@ a.lp-projstrip__item:hover .lp-projstrip__name {
     display: block;
     position: relative;
     width: 100%;
-    /* A row of five spans 5.4 bubble diameters, so this caps a bubble at about
-       120px — filling the 1060px column made every face far too large. */
-    max-width: 650px;
+    /* The disc's widest row spans about 4.3 bubble diameters, so this caps a
+       bubble at roughly 125px — filling the 1060px column made faces far too
+       large. */
+    max-width: 540px;
     margin: 30px auto;
 }
 /* The slot carries the packed position and the entrance animation; the button
