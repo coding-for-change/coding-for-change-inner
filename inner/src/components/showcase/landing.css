@@ -3170,3 +3170,310 @@ a.lp-projstrip__item:hover .lp-projstrip__name {
     .lp-prose p,
     .lp-prose li { font-size: 16px; }
 }
+
+/* ------------------------------------------------------------------ */
+/* Team — "heap of bubbles" variant (experiment, see TeamBubbles.tsx)  */
+/* ------------------------------------------------------------------ */
+
+/* ---- Stats strip above the heap ---- */
+.lp-heap__stats {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 12px 42px;
+    margin: 4px 0 8px;
+    padding: 20px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+}
+.lp-heap__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.lp-heap__stat-value {
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-size: 30px;
+    line-height: 1;
+    color: var(--ink);
+}
+.lp-heap__stat-label {
+    margin-top: 6px;
+    font-size: 10.5px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+.lp-heap__join {
+    margin-left: auto;
+    align-self: center;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-size: 14px;
+    color: var(--teal-dark);
+    text-decoration: none;
+    border-bottom: 2px solid var(--teal);
+    padding-bottom: 2px;
+}
+.lp-heap__join:hover {
+    color: var(--teal);
+}
+
+/* ---- The heap ---- */
+/* Bubbles are absolutely positioned in percentages of this box, and the box
+   carries the aspect ratio the packer settled on, so the whole cluster scales
+   with the column instead of needing a fixed pixel size. */
+.lp-heap {
+    display: block;
+    position: relative;
+    width: 100%;
+    margin: 28px 0 30px;
+}
+/* The slot carries the packed position and the entrance animation; the button
+   inside owns hover and selection, so framer-motion's inline opacity/transform
+   never fights the CSS that dims the rest of the heap. */
+.lp-heap__slot {
+    display: block;
+    position: absolute;
+    aspect-ratio: 1 / 1;
+}
+.lp-heap__bubble {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    border-radius: 50%;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: transform 0.28s cubic-bezier(0.2, 0.7, 0.3, 1),
+        opacity 0.24s ease, box-shadow 0.28s ease;
+    box-shadow: 0 0 0 1px var(--line), 0 6px 18px rgba(21, 48, 48, 0.1);
+}
+.lp-heap__bubble img,
+.lp-heap__initials {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center 22%;
+}
+.lp-heap__initials {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+    color: #fff;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-size: 22px;
+}
+.lp-heap__bubble:hover {
+    transform: scale(1.07);
+    box-shadow: 0 0 0 2px var(--teal), 0 12px 26px rgba(21, 48, 48, 0.18);
+    z-index: 3;
+}
+.lp-heap__bubble:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 4px;
+}
+/* Picked out of the heap: the chosen face grows and the rest recede. */
+.lp-heap.has-selection .lp-heap__bubble {
+    opacity: 0.32;
+}
+.lp-heap .lp-heap__bubble.is-selected {
+    opacity: 1;
+    transform: scale(1.22);
+    box-shadow: 0 0 0 3px var(--teal), 0 18px 36px rgba(21, 48, 48, 0.22);
+    z-index: 4;
+}
+/* Names appear on demand. Printed under every bubble they landed on top of
+   whichever neighbour the packer put below, which is unavoidable in a heap —
+   so the name is a chip that surfaces on hover, focus or selection instead. */
+.lp-heap__caption {
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    transform: translateX(-50%) translateY(-3px);
+    margin-top: 7px;
+    padding: 3px 9px;
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-size: 11.5px;
+    line-height: 1.3;
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(21, 48, 48, 0.12);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.lp-heap__bubble:hover .lp-heap__caption,
+.lp-heap__bubble:focus-visible .lp-heap__caption,
+.lp-heap__bubble.is-selected .lp-heap__caption {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+.lp-heap__bubble.is-selected .lp-heap__caption {
+    color: var(--teal-dark);
+    border-color: #cfe0e0;
+}
+
+/* ---- Detail card ---- */
+.lp-heap__card {
+    display: block;
+    max-width: 560px;
+    margin: 26px auto 0;
+    padding: 22px 24px 20px;
+    box-sizing: border-box;
+    background: #fff;
+    border: 1px solid var(--line);
+    box-shadow: 0 16px 38px rgba(21, 48, 48, 0.13);
+}
+.lp-heap__card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+}
+.lp-heap__card-ident {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+}
+.lp-heap__card-name {
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-size: 22px;
+    line-height: 1.15;
+}
+.lp-heap__card-role {
+    margin-top: 6px;
+    font-size: 10.5px;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+    color: var(--teal-dark);
+}
+.lp-heap__close {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color 0.16s ease, color 0.16s ease;
+}
+.lp-heap__close:hover {
+    border-color: var(--teal);
+    color: var(--teal);
+}
+.lp-heap__card-bio {
+    margin: 14px 0 0;
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: #41494a;
+}
+.lp-heap__card-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+}
+.lp-heap__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.lp-heap__pill {
+    display: inline-block;
+    padding: 3px 11px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--teal-dark);
+    background: #eaf2f2;
+    border: 1px solid #d4e3e3;
+    text-decoration: none;
+}
+a.lp-heap__pill:hover {
+    background: #d9e9e9;
+    border-color: var(--teal);
+}
+.lp-heap__card-companies {
+    margin: 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--muted);
+}
+.lp-heap__card-label {
+    margin-right: 6px;
+    font-size: 9.5px;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+    color: #9fadad;
+    white-space: nowrap;
+}
+.lp-heap__card-links {
+    display: flex;
+    gap: 12px;
+}
+.lp-heap__card-links a {
+    display: flex;
+    color: #7d8a8a;
+    transition: color 0.18s ease;
+}
+.lp-heap__card-links a:hover {
+    color: var(--teal);
+}
+.lp-heap__card-links svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
+@media (max-width: 760px) {
+    .lp-heap__stats {
+        gap: 14px 28px;
+    }
+    .lp-heap__stat-value {
+        font-size: 24px;
+    }
+    .lp-heap__join {
+        margin-left: 0;
+        width: 100%;
+        align-self: flex-start;
+    }
+    .lp-heap__caption {
+        font-size: 9.5px;
+        margin-top: 4px;
+    }
+    .lp-heap__card {
+        padding: 18px 18px 16px;
+    }
+    .lp-heap__card-bio {
+        font-size: 13.5px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lp-heap__bubble {
+        transition: opacity 0.2s ease;
+    }
+    .lp-heap__bubble:hover {
+        transform: none;
+    }
+    .lp-heap .lp-heap__bubble.is-selected {
+        transform: none;
+    }
+}

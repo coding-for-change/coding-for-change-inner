@@ -1,4 +1,4 @@
-import Team from '@/components/showcase/Team';
+import Team from '@/components/showcase/TeamBubbles';
 import { fetchCollection } from '@/lib/cms';
 import { getServerLocale } from '@/lib/locale';
 import type { CmsTeamMember, CmsProject } from '@/api/types';
