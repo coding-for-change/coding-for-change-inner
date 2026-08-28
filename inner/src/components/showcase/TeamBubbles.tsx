@@ -52,6 +52,8 @@ interface MemberProject {
     title: string;
     slug?: string | null;
     role?: string | null;
+    /** The project's `image` is the NGO partner's logo (Lebenshilfe, edunovo…). */
+    logo?: string | null;
 }
 
 /** Invert the case studies' `team` blocks into `memberId -> projects`. */
@@ -71,6 +73,7 @@ const buildProjectIndex = (
                         title: project.title,
                         slug: project.slug,
                         role: row.role,
+                        logo: mediaUrl(project.image),
                     });
                 byMember.set(row.member.id, list);
             }
@@ -83,18 +86,6 @@ const buildProjectIndex = (
 /* Heap layout                                                         */
 /* ------------------------------------------------------------------ */
 
-const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
-
-/**
- * Deterministic 0..1 from an index. The layout is computed during render, so
- * it must come out identical on the server and the client — `Math.random`
- * here would mean a different heap in the HTML than in the hydrated tree.
- */
-const noise = (i: number) => {
-    const x = Math.sin(i * 127.1 + 311.7) * 43758.5453;
-    return x - Math.floor(x);
-};
-
 interface Placed {
     /** Percent of container width / height, for absolute positioning. */
     left: number;
@@ -102,79 +93,68 @@ interface Placed {
     size: number;
 }
 
+/** Widest row, which sets how big a single bubble can be. */
+const MAX_PER_ROW_WIDE = 5;
+const MAX_PER_ROW_NARROW = 3;
+/** Step between bubble centres, in diameters. <1 vertically so rows interlock. */
+const STEP_X = 1.1;
+const STEP_Y = 0.9;
+
 /**
- * Pack `count` circles into an organic heap.
- *
- * Seeded on a phyllotaxis spiral, which spreads points evenly with no
- * clumping, then relaxed: overlapping pairs push each other apart while a
- * weak pull toward the centre keeps the cluster tight. Gravity is stronger
- * vertically than horizontally, which is what makes the heap settle wide on
- * desktop and rounder on a phone.
+ * Row sizes for a centred, middle-heavy cluster — e.g. 11 people across three
+ * rows becomes 3 / 5 / 3. The remainder goes to the most central row first (up
+ * to the row cap), so the cluster bulges in the middle rather than trailing off
+ * into a short last row.
  */
-const packHeap = (
+const rowSizes = (count: number, maxPerRow: number): number[] => {
+    const rows = Math.max(1, Math.ceil(count / maxPerRow));
+    const sizes: number[] = new Array(rows).fill(Math.floor(count / rows));
+    let left = count - sizes.reduce((a, b) => a + b, 0);
+    const middle = (rows - 1) / 2;
+    const byCentrality = [...sizes.keys()].sort(
+        (a, b) => Math.abs(a - middle) - Math.abs(b - middle)
+    );
+    for (const row of byCentrality) {
+        while (left > 0 && sizes[row] < maxPerRow) {
+            sizes[row] += 1;
+            left -= 1;
+        }
+        if (left === 0) break;
+    }
+    return sizes;
+};
+
+/**
+ * Lay the members out in centred, half-offset rows — a honeycomb rather than a
+ * scatter. An earlier version relaxed a phyllotaxis spiral into a free packing;
+ * it read as accidental, because it was. Rows keep the cluster symmetrical and
+ * every bubble the same size, while the staggered offsets and tapered row
+ * lengths keep it from looking like a grid.
+ */
+const buildHeap = (
     count: number,
-    gravityY: number
+    maxPerRow: number
 ): { placed: Placed[]; aspect: number } => {
-    const nodes = Array.from({ length: count }, (_, i) => {
-        const angle = i * GOLDEN_ANGLE;
-        const radius = Math.sqrt(i + 0.5);
-        return {
-            x: radius * Math.cos(angle),
-            y: radius * Math.sin(angle),
-            // Varied radii are what read as a heap rather than a diagram.
-            r: 0.42 + 0.26 * noise(i),
-        };
+    const rows = rowSizes(count, maxPerRow);
+    const widest = Math.max(...rows, 1);
+    // Measured in bubble diameters, then normalised to percentages below.
+    const width = (widest - 1) * STEP_X + 1;
+    const height = (rows.length - 1) * STEP_Y + 1;
+    const placed: Placed[] = [];
+    rows.forEach((inRow, rowIndex) => {
+        for (let i = 0; i < inRow; i++) {
+            // Centre each row, which is what produces the half-bubble offset
+            // between rows of different lengths.
+            const cx = (i - (inRow - 1) / 2) * STEP_X;
+            const cy = (rowIndex - (rows.length - 1) / 2) * STEP_Y;
+            placed.push({
+                left: ((cx - 0.5 + width / 2) / width) * 100,
+                top: ((cy - 0.5 + height / 2) / height) * 100,
+                size: (1 / width) * 100,
+            });
+        }
     });
-
-    for (let step = 0; step < 260; step++) {
-        for (let i = 0; i < count; i++) {
-            for (let j = i + 1; j < count; j++) {
-                const a = nodes[i];
-                const b = nodes[j];
-                let dx = b.x - a.x;
-                let dy = b.y - a.y;
-                let dist = Math.hypot(dx, dy);
-                if (dist === 0) {
-                    dx = 0.01;
-                    dy = 0;
-                    dist = 0.01;
-                }
-                const min = a.r + b.r + 0.085;
-                if (dist < min) {
-                    const push = (min - dist) / dist / 2;
-                    a.x -= dx * push;
-                    a.y -= dy * push;
-                    b.x += dx * push;
-                    b.y += dy * push;
-                }
-            }
-        }
-        for (const n of nodes) {
-            n.x *= 0.997;
-            n.y *= gravityY;
-        }
-    }
-
-    let minX = Infinity;
-    let maxX = -Infinity;
-    let minY = Infinity;
-    let maxY = -Infinity;
-    for (const n of nodes) {
-        minX = Math.min(minX, n.x - n.r);
-        maxX = Math.max(maxX, n.x + n.r);
-        minY = Math.min(minY, n.y - n.r);
-        maxY = Math.max(maxY, n.y + n.r);
-    }
-    const width = maxX - minX;
-    const height = maxY - minY;
-    return {
-        aspect: width / height,
-        placed: nodes.map((n) => ({
-            left: ((n.x - n.r - minX) / width) * 100,
-            top: ((n.y - n.r - minY) / height) * 100,
-            size: ((n.r * 2) / width) * 100,
-        })),
-    };
+    return { placed, aspect: width / height };
 };
 
 /** SSR-safe narrow-viewport check at the heap's own breakpoint. */
@@ -230,15 +210,27 @@ const DetailCard: React.FC<{
                         className="lp-heap__pills"
                         aria-label={t.team.projectsLabel}
                     >
-                        {projects.map((project) =>
-                            project.slug ? (
+                        {projects.map((project) => {
+                            const inner = (
+                                <>
+                                    {project.logo && (
+                                        <img
+                                            className="lp-heap__pill-logo"
+                                            src={project.logo}
+                                            alt=""
+                                        />
+                                    )}
+                                    <span>{project.title}</span>
+                                </>
+                            );
+                            return project.slug ? (
                                 <Link
                                     className="lp-heap__pill"
                                     href={`/projects/${project.slug}`}
                                     key={project.id}
                                     title={project.role ?? undefined}
                                 >
-                                    {project.title}
+                                    {inner}
                                 </Link>
                             ) : (
                                 <span
@@ -246,19 +238,39 @@ const DetailCard: React.FC<{
                                     key={project.id}
                                     title={project.role ?? undefined}
                                 >
-                                    {project.title}
+                                    {inner}
                                 </span>
-                            )
-                        )}
+                            );
+                        })}
                     </div>
                 )}
                 {companies.length > 0 && (
-                    <p className="lp-heap__card-companies">
+                    <div className="lp-heap__card-companies">
                         <span className="lp-heap__card-label">
                             {t.team.experienceLabel}
                         </span>
-                        {companies.map((c) => c.name).join(' · ')}
-                    </p>
+                        <span className="lp-heap__logos">
+                            {companies.map((company) => {
+                                const logo = mediaUrl(company.logo);
+                                return logo ? (
+                                    <img
+                                        className="lp-heap__logo"
+                                        key={company.id}
+                                        src={logo}
+                                        alt={company.name}
+                                        title={company.name}
+                                    />
+                                ) : (
+                                    <span
+                                        className="lp-heap__logo-name"
+                                        key={company.id}
+                                    >
+                                        {company.name}
+                                    </span>
+                                );
+                            })}
+                        </span>
+                    </div>
                 )}
                 {links.length > 0 && (
                     <div className="lp-heap__card-links">
@@ -311,10 +323,14 @@ const TeamBubbles: React.FC<TeamBubblesProps> = (props) => {
         () => buildProjectIndex(projects ?? []),
         [projects]
     );
-    // A phone gets a rounder heap; a wide screen gets a flatter one, so the
-    // cluster fills the column it is given instead of leaving big gutters.
+    // A phone fits three to a row, a wide screen five, so the cluster stays
+    // proportionate to the column it is given.
     const heap = useMemo(
-        () => packHeap(members.length, narrow ? 0.995 : 0.972),
+        () =>
+            buildHeap(
+                members.length,
+                narrow ? MAX_PER_ROW_NARROW : MAX_PER_ROW_WIDE
+            ),
         [members.length, narrow]
     );
 

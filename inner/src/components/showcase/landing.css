@@ -3226,7 +3226,10 @@ a.lp-projstrip__item:hover .lp-projstrip__name {
     display: block;
     position: relative;
     width: 100%;
-    margin: 28px 0 30px;
+    /* A row of five spans 5.4 bubble diameters, so this caps a bubble at about
+       120px — filling the 1060px column made every face far too large. */
+    max-width: 650px;
+    margin: 30px auto;
 }
 /* The slot carries the packed position and the entrance animation; the button
    inside owns hover and selection, so framer-motion's inline opacity/transform
@@ -3250,7 +3253,7 @@ a.lp-projstrip__item:hover .lp-projstrip__name {
     appearance: none;
     transition: transform 0.28s cubic-bezier(0.2, 0.7, 0.3, 1),
         opacity 0.24s ease, box-shadow 0.28s ease;
-    box-shadow: 0 0 0 1px var(--line), 0 6px 18px rgba(21, 48, 48, 0.1);
+    box-shadow: 0 5px 16px rgba(21, 48, 48, 0.12);
 }
 .lp-heap__bubble img,
 .lp-heap__initials {
@@ -3270,9 +3273,10 @@ a.lp-projstrip__item:hover .lp-projstrip__name {
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
     font-size: 22px;
 }
+/* Scale and shadow only — a teal ring around a photograph read as a sticker. */
 .lp-heap__bubble:hover {
-    transform: scale(1.07);
-    box-shadow: 0 0 0 2px var(--teal), 0 12px 26px rgba(21, 48, 48, 0.18);
+    transform: scale(1.09);
+    box-shadow: 0 14px 30px rgba(21, 48, 48, 0.24);
     z-index: 3;
 }
 .lp-heap__bubble:focus-visible {
@@ -3285,8 +3289,8 @@ a.lp-projstrip__item:hover .lp-projstrip__name {
 }
 .lp-heap .lp-heap__bubble.is-selected {
     opacity: 1;
-    transform: scale(1.22);
-    box-shadow: 0 0 0 3px var(--teal), 0 18px 36px rgba(21, 48, 48, 0.22);
+    transform: scale(1.16);
+    box-shadow: 0 18px 38px rgba(21, 48, 48, 0.3);
     z-index: 4;
 }
 /* Names appear on demand. Printed under every bubble they landed on top of
@@ -3319,8 +3323,7 @@ a.lp-projstrip__item:hover .lp-projstrip__name {
     transform: translateX(-50%) translateY(0);
 }
 .lp-heap__bubble.is-selected .lp-heap__caption {
-    color: var(--teal-dark);
-    border-color: #cfe0e0;
+    color: var(--ink);
 }
 
 /* ---- Detail card ---- */
@@ -3396,8 +3399,10 @@ a.lp-projstrip__item:hover .lp-projstrip__name {
     gap: 6px;
 }
 .lp-heap__pill {
-    display: inline-block;
-    padding: 3px 11px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px 4px 7px;
     border-radius: 999px;
     font-size: 11.5px;
     line-height: 1.5;
@@ -3410,10 +3415,37 @@ a.lp-heap__pill:hover {
     background: #d9e9e9;
     border-color: var(--teal);
 }
+.lp-heap__pill-logo {
+    display: block;
+    max-height: 20px;
+    max-width: 44px;
+    object-fit: contain;
+}
+/* Logos work here where they did not in the mosaic's tile-width panel — the
+   card is 560px wide, so a wordmark still reads at this size. */
 .lp-heap__card-companies {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 14px;
     margin: 0;
+}
+.lp-heap__logos {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+}
+/* Wide wordmarks are width-bound, not height-bound, so the width cap is what
+   actually decides how big they render — keep it generous. */
+.lp-heap__logo {
+    display: block;
+    max-height: 26px;
+    max-width: 132px;
+    object-fit: contain;
+}
+.lp-heap__logo-name {
     font-size: 12.5px;
-    line-height: 1.5;
     color: var(--muted);
 }
 .lp-heap__card-label {
@@ -3463,6 +3495,13 @@ a.lp-heap__pill:hover {
     }
     .lp-heap__card-bio {
         font-size: 13.5px;
+    }
+    .lp-heap__logo {
+        max-height: 22px;
+        max-width: 104px;
+    }
+    .lp-heap__logos {
+        gap: 8px 14px;
     }
 }
 
