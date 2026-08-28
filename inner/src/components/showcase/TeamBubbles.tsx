@@ -285,6 +285,8 @@ const useMediaQuery = (query: string): boolean => {
 const ANCHOR_QUERY = '(min-width: 1000px)';
 /** Gap between the selected bubble's edge and the anchored card. */
 const ANCHOR_GAP = 22;
+/** Minimum breathing room between the anchored card and the window edge. */
+const ANCHOR_EDGE = 20;
 
 /* ------------------------------------------------------------------ */
 
@@ -502,21 +504,28 @@ const TeamBubbles: React.FC<TeamBubblesProps> = (props) => {
         const cy = originY + node.y * scale;
         const radius = node.r * scale;
 
-        // The heap is narrower than the text column it sits in, so the card may
-        // use the gutters either side — but must not escape the column.
+        // Bounds are the viewport, not the text column. The column's gutters are
+        // only ~250px, too narrow for the card, so clamping to them slid it back
+        // over the very bubble it describes. `.site-scroll` clips horizontally,
+        // so the viewport is the real limit.
         const box = box_.getBoundingClientRect();
-        const column = box_.parentElement?.getBoundingClientRect();
-        const minLeft = column ? column.left - box.left : 0;
-        const maxLeft = (column ? column.right - box.left : width) - cardW;
+        const viewport = document.documentElement.clientWidth;
+        const minLeft = ANCHOR_EDGE - box.left;
+        const maxLeft = viewport - ANCHOR_EDGE - box.left - cardW;
 
-        // Open away from the middle — a bubble in the right half opens rightward
-        // into the gutter, one in the left half opens left. Choosing by "which
-        // side does it fit in" instead put the card straight over the cluster
-        // whenever the bubble sat near an edge.
-        let left =
+        // Open away from the middle, fall back to the inward side if there is
+        // no room outward. Either way the card never covers the selected
+        // bubble — that is the one thing the placement has to guarantee.
+        const outward =
             node.x > 0
                 ? cx + radius + ANCHOR_GAP
                 : cx - radius - ANCHOR_GAP - cardW;
+        const inward =
+            node.x > 0
+                ? cx - radius - ANCHOR_GAP - cardW
+                : cx + radius + ANCHOR_GAP;
+        const fits = (v: number) => v >= minLeft && v <= maxLeft;
+        let left = fits(outward) ? outward : fits(inward) ? inward : outward;
         left = Math.min(Math.max(left, minLeft), Math.max(maxLeft, minLeft));
 
         const height = seed.worldH * scale;
