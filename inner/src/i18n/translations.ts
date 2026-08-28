@@ -62,7 +62,8 @@ export interface Translations {
         upcoming: string; past: string;
         emptyTitle: string; emptyText: string; emptyCta: string;
     };
-    team: { title: string; subtitle: string; intro: string; advisersTitle: string; experienceLabel: string; };
+    team: { title: string; subtitle: string; intro: string; advisersTitle: string; experienceLabel: string; projectsLabel: string;
+        joinTileTitle: string; joinTileHint: string; };
     qa: { title: string; subtitle: string; intro: string; };
     join: {
         benefits: string; requirements: string; waysToContribute: string; applyNow: string;
@@ -253,6 +254,9 @@ const en: Translations = {
         intro: 'Meet the team that drives Coding for Change. We are a diverse group of students passionate about using technology for social good.',
         advisersTitle: 'Advisers',
         experienceLabel: 'Previously at',
+        projectsLabel: 'Projects',
+        joinTileTitle: 'Your face here',
+        joinTileHint: 'We are growing — join the club',
     },
     qa: {
         title: 'Q&A', subtitle: 'Frequently Asked Questions',
@@ -494,6 +498,9 @@ const de: Translations = {
         intro: 'Lernen Sie das Team kennen, das Coding for Change antreibt. Wir sind eine vielfältige Gruppe von Studierenden, die Technologie für soziale Zwecke einsetzen wollen.',
         advisersTitle: 'Beirat',
         experienceLabel: 'Zuvor bei',
+        projectsLabel: 'Projekte',
+        joinTileTitle: 'Dein Gesicht hier',
+        joinTileHint: 'Wir wachsen — komm dazu',
     },
     qa: {
         title: 'F&A', subtitle: 'Häufig Gestellte Fragen',

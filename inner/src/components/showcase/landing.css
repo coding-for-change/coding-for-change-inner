@@ -1119,75 +1119,273 @@ html[data-nav='dark'] .lp-nav .enter3d-btn {
 }
 
 /* ---- Team ---- */
+/* A dense mosaic of portraits. The page's job is to read as "a group, and
+   growing", which a tight grid of many faces does and a short list of detailed
+   cards does not — so at rest a tile is only photo + name + role, and
+   everything else (bio, projects, past employers, links) lives in a panel that
+   opens over the photo on hover, focus or tap. */
 .lp-team {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(min(146px, 100%), 1fr));
+    gap: 10px;
+    align-items: start;
 }
 .lp-member {
+    position: relative;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 28px 20px;
-    background: #fff;
-    border: 1px solid var(--line);
+    align-items: stretch;
+    text-align: left;
     box-sizing: border-box;
-    transition: transform 0.16s ease, box-shadow 0.16s ease,
-        border-color 0.16s ease;
+    min-width: 0;
 }
-.lp-member:hover {
-    transform: translateY(-3px);
-    border-color: #cfe0e0;
-    box-shadow: 0 10px 30px rgba(36, 107, 108, 0.12);
+/* Raised so the open panel floats above the tiles that follow it in the grid. */
+.lp-member:hover,
+.lp-member:focus-within,
+.lp-member.is-open {
+    z-index: 5;
+}
+.lp-member__portrait {
+    display: block;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: var(--alt);
+}
+/* Clips the photo's hover zoom without also clipping the popover, which is a
+   sibling one level up. */
+.lp-member__trigger {
+    overflow: hidden;
+}
+/* Wraps the photo only — the panel's links must not sit inside a button. */
+.lp-member__trigger {
+    display: block;
+    position: absolute;
+    inset: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
 }
 .lp-member__avatar {
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
+    display: block;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    margin-bottom: 16px;
+    object-position: center 20%;
+    transition: transform 0.5s ease;
 }
 .lp-member__avatar-ph {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 96px;
-    height: 96px;
-    margin-bottom: 16px;
-    border-radius: 50%;
+    width: 100%;
+    height: 100%;
     background: linear-gradient(135deg, var(--teal), var(--teal-dark));
     color: #fff;
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
-    font-size: 30px;
+    font-size: 34px;
+    letter-spacing: 1px;
+}
+.lp-member__portrait:hover .lp-member__avatar {
+    transform: scale(1.04);
 }
 .lp-member__name {
+    display: block;
+    margin-top: 10px;
     font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
-    font-size: 19px;
+    font-size: 15.5px;
+    line-height: 1.15;
 }
+/* Roles borrow the page kicker's small-caps treatment so the tiles speak the
+   same typographic language as the headings above them. */
 .lp-member__role {
-    font-size: 14px;
-    color: var(--teal-dark);
+    display: block;
     margin-top: 4px;
+    font-size: 9.5px;
+    line-height: 1.3;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+    color: var(--teal-dark);
+}
+
+/* ---- The reveal panel ---- */
+/* A sibling of the trigger, not a child: once open it sits on top and takes
+   the pointer events, so its links are clickable and a tap on the backdrop
+   closes it again. */
+.lp-member__detail {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    /* Grows past the photo when a bio runs long rather than clipping it. The
+       portrait is only the anchor — the panel is a popover, so it costs no
+       layout and never resizes the grid. */
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 13px 13px 12px;
+    box-sizing: border-box;
+    background: #fff;
+    border: 1px solid var(--line);
+    box-shadow: 0 14px 32px rgba(21, 48, 48, 0.18);
+    color: var(--ink);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    cursor: pointer;
+}
+.lp-member__portrait:hover .lp-member__detail,
+.lp-member__portrait:focus-within .lp-member__detail,
+.lp-member.is-open .lp-member__detail {
+    opacity: 1;
+    pointer-events: auto;
 }
 .lp-member__bio {
-    font-size: 14px;
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: #41494a;
+    margin: 0;
+}
+/* One divided block instead of four stacked ones — the panel was reading as a
+   pile of separate cards rather than a single profile. */
+.lp-member__meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 7px;
+    margin-top: auto;
+    padding-top: 11px;
+    border-top: 1px solid var(--line);
+}
+.lp-member__projects {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+/* A pill, matching the site's existing `.lp-pill`. Carrying the per-project
+   role too made this wrap to three lines, which is a box, not a badge. */
+.lp-member__project {
+    display: inline-block;
+    max-width: 100%;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 10px;
     line-height: 1.5;
-    color: var(--muted);
-    margin-top: 12px;
+    letter-spacing: 0.2px;
+    color: var(--teal-dark);
+    background: #eaf2f2;
+    border: 1px solid #d4e3e3;
+    text-decoration: none;
+}
+a.lp-member__project:hover {
+    background: #d9e9e9;
+    border-color: var(--teal);
 }
 .lp-member__links {
     display: flex;
-    gap: 14px;
-    justify-content: center;
-    margin-top: 16px;
+    gap: 10px;
+    margin-top: 1px;
 }
 .lp-member__links a {
     display: flex;
+    color: #7d8a8a;
+    transition: color 0.18s ease;
 }
-.lp-member__links img {
-    width: 22px;
-    height: 22px;
+.lp-member__links a:hover {
+    color: var(--teal);
+}
+.lp-member__links a:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 3px;
+}
+.lp-member__links svg {
+    width: 16px;
+    height: 16px;
+    display: block;
+}
+.lp-member__trigger:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: -2px;
+}
+@media (prefers-reduced-motion: reduce) {
+    .lp-member__avatar,
+    .lp-member__detail,
+    .lp-member__links a {
+        transition: none;
+    }
+    .lp-member__portrait:hover .lp-member__avatar {
+        transform: none;
+    }
+}
+/* ---- Closing "join us" tile ---- */
+.lp-member--join .lp-member__name {
+    color: var(--teal-dark);
+}
+.lp-member__join {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    padding: 14px;
+    box-sizing: border-box;
+    text-align: center;
+    text-decoration: none;
+    background: var(--alt);
+    border: 1px dashed #bcd3d3;
+    color: var(--teal-dark);
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+.lp-member__join:hover {
+    background: #e4f0f0;
+    border-color: var(--teal);
+}
+.lp-member__join:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: -2px;
+}
+.lp-member__join-mark {
+    font-family: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+    font-size: 34px;
+    line-height: 1;
+}
+.lp-member__join-hint {
+    font-size: 11.5px;
+    line-height: 1.4;
+}
+@media (prefers-reduced-motion: reduce) {
+    .lp-member__join {
+        transition: none;
+    }
+}
+
+/* Phones keep three across — dropping to one or two would undo the density
+   that makes the roster read as a group. */
+@media (max-width: 620px) {
+    .lp-team {
+        grid-template-columns: repeat(auto-fill, minmax(min(140px, 100%), 1fr));
+        gap: 8px;
+    }
+    .lp-member__name {
+        margin-top: 9px;
+        font-size: 15px;
+    }
+    .lp-member__role {
+        font-size: 9.5px;
+        letter-spacing: 1px;
+    }
+    .lp-member__detail {
+        padding: 10px;
+    }
+    .lp-member__bio {
+        font-size: 11px;
+        line-height: 1.4;
+    }
 }
 
 /* Team "where our members have worked" logo wall */
@@ -1462,66 +1660,49 @@ html[data-nav='dark'] .lp-nav .enter3d-btn {
 .lp-team__group {
     display: block;
 }
+/* The heading sits on a hairline rule that runs to the edge of the grid, so
+   each team reads as a labelled band rather than a floating h2. */
 .lp-team__group-head-row {
     display: flex;
     align-items: center;
     gap: 14px;
-    margin: 64px 0 8px;
+    margin: 56px 0 20px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
 }
 .lp-team__group:first-child .lp-team__group-head-row {
-    margin-top: 24px;
+    margin-top: 8px;
+    padding-top: 0;
+    border-top: 0;
 }
 .lp-team__group-head-row .lp-team__group-head {
     margin: 0;
+    font-size: 22px;
+    letter-spacing: -0.2px;
 }
 .lp-team__group-logo {
     display: block;
     flex-shrink: 0;
-    height: 40px;
+    height: 34px;
     width: auto;
     max-width: 130px;
     object-fit: contain;
 }
 
-/* ---- Per-member company logos (hidden until the card is hovered/focused) ---- */
+/* ---- Per-member past employers (inside the reveal panel) ---- */
 .lp-member__companies {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    width: 100%;
-    max-height: 0;
-    opacity: 0;
-    margin-top: 0;
-    padding-top: 0;
-    overflow: hidden;
-    border-top: 1px solid transparent;
-    transition: max-height 0.28s ease, opacity 0.2s ease,
-        margin-top 0.28s ease, padding-top 0.28s ease, border-color 0.28s ease;
-}
-.lp-member:hover .lp-member__companies,
-.lp-member:focus-within .lp-member__companies {
-    max-height: 120px;
-    opacity: 1;
-    margin-top: 14px;
-    padding-top: 14px;
-    border-top-color: var(--line);
-}
-.lp-member__company {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 30px;
-}
-.lp-member__company img {
-    max-height: 26px;
-    max-width: 92px;
-    object-fit: contain;
-}
-.lp-member__company-name {
-    font-size: 12px;
+    display: block;
+    font-size: 11px;
+    line-height: 1.45;
     color: var(--muted);
+}
+.lp-member__companies-label {
+    font-size: 9px;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+    color: #9fadad;
+    margin-right: 5px;
+    white-space: nowrap;
 }
 
 /* ---- Booking embed ---- */
