@@ -3186,6 +3186,10 @@ a.lp-projstrip__item:hover .lp-projstrip__name {
     border-top: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
 }
+/* Nothing to show if the CMS has no stats — don't leave a pair of empty rules. */
+.lp-heap__stats:empty {
+    display: none;
+}
 .lp-heap__stat {
     display: flex;
     flex-direction: column;
@@ -3478,15 +3482,33 @@ a.lp-heap__pill:hover {
 }
 
 @media (max-width: 760px) {
+    /* Wrapping flex left an odd stat hanging under the first row with barely
+       any air above it. A two-column grid keeps the rows aligned whatever the
+       label lengths are. */
     .lp-heap__stats {
-        gap: 14px 28px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px 22px;
+        padding: 18px 0;
+        align-items: start;
+    }
+    .lp-heap__join {
+        grid-column: 1 / -1;
+        justify-self: start;
     }
     .lp-heap__stat-value {
         font-size: 24px;
     }
+    .lp-heap__stat-label {
+        font-size: 9.5px;
+        letter-spacing: 1px;
+    }
+    /* Full width put a rule the width of the page under the link, which read
+       as a divider rather than a link. Keep it shrink-to-fit on its own line. */
     .lp-heap__join {
         margin-left: 0;
-        width: 100%;
+        margin-top: 4px;
+        width: auto;
         align-self: flex-start;
     }
     .lp-heap__caption {

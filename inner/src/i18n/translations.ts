@@ -63,8 +63,7 @@ export interface Translations {
         emptyTitle: string; emptyText: string; emptyCta: string;
     };
     team: { title: string; subtitle: string; intro: string; advisersTitle: string; experienceLabel: string; projectsLabel: string;
-        joinTileTitle: string; joinTileHint: string;
-        statMembers: string; statProjects: string; statCompanies: string; };
+        joinTileTitle: string; joinTileHint: string; };
     qa: { title: string; subtitle: string; intro: string; };
     join: {
         benefits: string; requirements: string; waysToContribute: string; applyNow: string;
@@ -258,9 +257,6 @@ const en: Translations = {
         projectsLabel: 'Projects',
         joinTileTitle: 'Your face here',
         joinTileHint: 'We are growing — join the club',
-        statMembers: 'Members',
-        statProjects: 'Projects',
-        statCompanies: 'Companies represented',
     },
     qa: {
         title: 'Q&A', subtitle: 'Frequently Asked Questions',
@@ -505,9 +501,6 @@ const de: Translations = {
         projectsLabel: 'Projekte',
         joinTileTitle: 'Dein Gesicht hier',
         joinTileHint: 'Wir wachsen — komm dazu',
-        statMembers: 'Mitglieder',
-        statProjects: 'Projekte',
-        statCompanies: 'Unternehmen vertreten',
     },
     qa: {
         title: 'F&A', subtitle: 'Häufig Gestellte Fragen',

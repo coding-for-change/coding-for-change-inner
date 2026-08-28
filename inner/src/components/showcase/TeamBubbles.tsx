@@ -2,7 +2,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useCmsCollection, mediaUrl } from '../../api';
+import { useCmsCollection, useSiteConfig, mediaUrl } from '../../api';
 import {
     CmsTeamMember,
     CmsCompany,
@@ -535,19 +535,10 @@ const TeamBubbles: React.FC<TeamBubblesProps> = (props) => {
         retarget();
     }, [selectedId, members, retarget]);
 
-    // Numbers that come straight out of the CMS — no new fields, nothing to
-    // keep in sync by hand.
-    const companyCount = useMemo(() => {
-        const ids = new Set<number>();
-        for (const m of members)
-            for (const c of populatedCompanies(m)) ids.add(c.id);
-        return ids.size;
-    }, [members]);
-    const stats = [
-        { value: String(members.length), label: t.team.statMembers },
-        { value: String((projects ?? []).length), label: t.team.statProjects },
-        { value: String(companyCount), label: t.team.statCompanies },
-    ];
+    // Edited in the CMS (SiteConfig → stats), not counted off this page. Only a
+    // fraction of the club has a profile here, so a derived headcount would
+    // under-report the club — it read 11 when there were 20 members.
+    const stats = useSiteConfig().stats ?? [];
 
     return (
         <div className="lp">
@@ -575,7 +566,7 @@ const TeamBubbles: React.FC<TeamBubblesProps> = (props) => {
                                 {stats.map((stat) => (
                                     <div
                                         className="lp-heap__stat"
-                                        key={stat.label}
+                                        key={stat.id ?? stat.label}
                                     >
                                         <span className="lp-heap__stat-value">
                                             {stat.value}
