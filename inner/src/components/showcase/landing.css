@@ -3284,9 +3284,10 @@ a.lp-projstrip__item:hover .lp-projstrip__name {
     outline: 2px solid var(--teal);
     outline-offset: 4px;
 }
-/* Picked out of the heap: the chosen face grows and the rest recede. */
+/* Picked out of the heap: the chosen face grows and the rest recede — but stay
+   legible, since they are still the roster. */
 .lp-heap.has-selection .lp-heap__bubble {
-    opacity: 0.32;
+    opacity: 0.58;
 }
 .lp-heap .lp-heap__bubble.is-selected {
     opacity: 1;

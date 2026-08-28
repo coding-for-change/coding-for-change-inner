@@ -94,8 +94,9 @@ const buildProjectIndex = (
 interface Node {
     x: number;
     y: number;
-    vx: number;
-    vy: number;
+    /** Position at the top of the frame, for measuring net movement. */
+    px: number;
+    py: number;
     /** Current radius, eased toward `targetR` so growth pushes neighbours. */
     r: number;
     targetR: number;
@@ -123,12 +124,19 @@ const SELECT_GROWTH = 1.42;
 const WORLD_PAD = 0.55;
 
 const COLLIDE_PAD = 0.05;
-const COLLIDE_STRENGTH = 0.34;
-const CENTER_PULL = 0.014;
-const DAMPING = 0.86;
-const RADIUS_EASE = 0.16;
-/** Below this total movement per frame the cluster is settled; stop the loop. */
-const REST = 0.0009;
+/** Share of an overlap corrected per frame. Below 1 so separation eases in. */
+const COLLIDE_STRENGTH = 0.42;
+const CENTER_PULL = 0.022;
+const RADIUS_EASE = 0.14;
+/**
+ * Below this net movement per frame the cluster is settled. It cannot go to
+ * zero: at equilibrium the centre pull and the separation alternate, leaving a
+ * residual around 0.004/frame, so the threshold sits above that floor. A grown
+ * bubble drops under it about 75 frames (~1.2s) after it starts moving.
+ */
+const REST = 0.008;
+/** Hard stop, so a parameter change can never leave the loop spinning. */
+const MAX_FRAMES = 600;
 
 /**
  * Row lengths tracing the chord of a circle at each height, so the cluster
@@ -184,8 +192,8 @@ const seedCluster = (count: number): Seed => {
                 y:
                     (rowIndex - (rows.length - 1) / 2) * STEP_Y +
                     (noise(i, 3) - 0.5) * 0.2,
-                vx: 0,
-                vy: 0,
+                px: 0,
+                py: 0,
                 r,
                 targetR: r,
                 baseR: r,
@@ -201,11 +209,21 @@ const seedCluster = (count: number): Seed => {
 
 /**
  * Advance the soft-body cluster one frame: ease each radius toward its target,
- * shove overlapping pairs apart, pull everything gently back to the centre.
+ * separate overlapping pairs, pull everything gently back to the centre.
+ *
+ * Corrections are applied straight to position rather than as impulses on a
+ * velocity. Velocities gave every nudge a springy overshoot that read as the
+ * whole cluster shivering; relaxing positions converges smoothly instead, and
+ * the motion you see comes from the radius easing rather than from bounce.
+ *
  * Returns the total movement, so the caller can stop once it settles.
  */
 const stepCluster = (nodes: Node[]): number => {
-    for (const n of nodes) n.r += (n.targetR - n.r) * RADIUS_EASE;
+    for (const n of nodes) {
+        n.r += (n.targetR - n.r) * RADIUS_EASE;
+        n.px = n.x;
+        n.py = n.y;
+    }
 
     for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
@@ -221,26 +239,28 @@ const stepCluster = (nodes: Node[]): number => {
             }
             const min = a.r + b.r + COLLIDE_PAD;
             if (dist < min) {
-                const push = (((min - dist) / dist) * COLLIDE_STRENGTH) / 2;
-                a.vx -= dx * push;
-                a.vy -= dy * push;
-                b.vx += dx * push;
-                b.vy += dy * push;
+                const shift = (((min - dist) / dist) * COLLIDE_STRENGTH) / 2;
+                a.x -= dx * shift;
+                a.y -= dy * shift;
+                b.x += dx * shift;
+                b.y += dy * shift;
             }
         }
     }
 
+    // Net movement over the whole frame, not the size of the forces: at rest
+    // the centre pull and the separation cancel each other exactly, so summing
+    // force magnitudes never converges and the loop would spin forever.
     let motion = 0;
     for (const n of nodes) {
-        n.vx += -n.x * CENTER_PULL;
+        n.x -= n.x * CENTER_PULL;
         // Slightly stronger vertically, which keeps the cluster from stretching
         // into a column as it grows.
-        n.vy += -n.y * CENTER_PULL * 1.15;
-        n.vx *= DAMPING;
-        n.vy *= DAMPING;
-        n.x += n.vx;
-        n.y += n.vy;
-        motion += Math.abs(n.vx) + Math.abs(n.vy) + Math.abs(n.targetR - n.r);
+        n.y -= n.y * CENTER_PULL * 1.15;
+        motion +=
+            Math.abs(n.x - n.px) +
+            Math.abs(n.y - n.py) +
+            Math.abs(n.targetR - n.r);
     }
     return motion;
 };
@@ -452,14 +472,17 @@ const TeamBubbles: React.FC<TeamBubblesProps> = (props) => {
             typeof window !== 'undefined' &&
             window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
         ) {
-            for (let i = 0; i < 220; i++) stepCluster(simRef.current);
+            for (let i = 0; i < 300; i++)
+                if (stepCluster(simRef.current) <= REST) break;
             paint();
             return;
         }
+        let frames = 0;
         const tick = () => {
             const motion = stepCluster(simRef.current);
             paint();
-            if (motion > REST) {
+            frames += 1;
+            if (motion > REST && frames < MAX_FRAMES) {
                 frameRef.current = requestAnimationFrame(tick);
             } else {
                 frameRef.current = null;
@@ -472,7 +495,8 @@ const TeamBubbles: React.FC<TeamBubblesProps> = (props) => {
     // when it first paints instead of visibly shuffling into place.
     useEffect(() => {
         simRef.current = seed.nodes.map((n) => ({ ...n }));
-        for (let i = 0; i < 220; i++) stepCluster(simRef.current);
+        for (let i = 0; i < 300; i++)
+            if (stepCluster(simRef.current) <= REST) break;
         paint();
         const box = heapRef.current;
         if (!box || typeof ResizeObserver === 'undefined') return;
