@@ -9,6 +9,8 @@ import {
     CmsProject,
 } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { buildProjectIndex } from '../../lib/projects';
+import type { MemberProject } from '../../lib/projects';
 import ClosingCta from './ClosingCta';
 import './landing.css';
 
@@ -46,41 +48,6 @@ const populatedCompanies = (member: CmsTeamMember): CmsCompany[] =>
     (member.companies ?? []).filter(
         (c): c is CmsCompany => typeof c === 'object' && c !== null
     );
-
-interface MemberProject {
-    id: number;
-    title: string;
-    slug?: string | null;
-    role?: string | null;
-    /** The project's `image` is the NGO partner's logo (Lebenshilfe, edunovo…). */
-    logo?: string | null;
-}
-
-/** Invert the case studies' `team` blocks into `memberId -> projects`. */
-const buildProjectIndex = (
-    projects: CmsProject[]
-): Map<number, MemberProject[]> => {
-    const byMember = new Map<number, MemberProject[]>();
-    for (const project of projects) {
-        for (const block of project.layout ?? []) {
-            if (block.blockType !== 'team') continue;
-            for (const row of block.members ?? []) {
-                if (!row.member || typeof row.member !== 'object') continue;
-                const list = byMember.get(row.member.id) ?? [];
-                if (!list.some((x) => x.id === project.id))
-                    list.push({
-                        id: project.id,
-                        title: project.title,
-                        slug: project.slug,
-                        role: row.role,
-                        logo: mediaUrl(project.image),
-                    });
-                byMember.set(row.member.id, list);
-            }
-        }
-    }
-    return byMember;
-};
 
 /* ------------------------------------------------------------------ */
 /* Heap layout                                                         */

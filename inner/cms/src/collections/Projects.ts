@@ -58,6 +58,32 @@ export const Projects: CollectionConfig = {
         { name: 'url', type: 'text', required: true },
       ],
     },
+    {
+      // Who works on this project. Deliberately a project-level field and not
+      // part of the case study below: the Team page reads these assignments to
+      // show what each person works on, and that has to work for a project
+      // whose case study hasn't been written yet (most of them).
+      name: 'team',
+      label: 'Team',
+      type: 'array',
+      labels: { singular: 'Member', plural: 'Members' },
+      admin: {
+        description:
+          'Who works on this project. Shown on the Team page under each person — no case study needed. The case study\'s "Team" block reuses this list.',
+      },
+      fields: [
+        { name: 'member', type: 'relationship', relationTo: 'team', required: true },
+        {
+          name: 'role',
+          type: 'text',
+          localized: true,
+          admin: {
+            description:
+              'Role on this project (e.g. "Project Lead"). Falls back to the member\'s main role if blank.',
+          },
+        },
+      ],
+    },
     // ---- Case-study head (shown at the top of /projects/<slug>) ----
     {
       name: 'impactHeadline',
@@ -260,10 +286,17 @@ export const Projects: CollectionConfig = {
               admin: { description: 'Optional section heading (e.g. "The team behind it").' },
             },
             {
+              // No minRows: leaving this empty is the normal case now — the
+              // block then renders the project-level `team` above, so the
+              // assignment is maintained in exactly one place. Rows here
+              // override that list (and keep pre-existing case studies working).
               name: 'members',
               type: 'array',
-              minRows: 1,
               labels: { singular: 'Member', plural: 'Members' },
+              admin: {
+                description:
+                  'Leave empty to show the project\'s Team (set further up this page). Add rows only to show a different list here.',
+              },
               fields: [
                 { name: 'member', type: 'relationship', relationTo: 'team', required: true },
                 {

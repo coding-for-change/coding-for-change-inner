@@ -6,7 +6,6 @@ import { motion } from 'framer-motion';
 import { mediaUrl } from '../../api';
 import {
     CmsProject,
-    CmsTeamMember,
     CmsGalleryImage,
     CmsTextBlock,
     CmsQuoteBlock,
@@ -17,6 +16,7 @@ import {
     CmsDemoBlock,
 } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { projectTeam } from '../../lib/projects';
 import { useOverlay } from '../../hooks/useOverlay';
 import BookingEmbed from '../general/BookingEmbed';
 import ProcessTimeline from './ProcessTimeline';
@@ -293,15 +293,17 @@ const TimelineBlock: React.FC<{ block: CmsTimelineBlock }> = ({ block }) => {
     );
 };
 
-const TeamBlock: React.FC<{ block: CmsTeamBlock; fallbackHeading: string }> = ({
-    block,
-    fallbackHeading,
-}) => {
+const TeamBlock: React.FC<{
+    block: CmsTeamBlock;
+    project: CmsProject;
+    fallbackHeading: string;
+}> = ({ block, project, fallbackHeading }) => {
     const { t } = useLanguage();
-    // Keep only rows whose relationship actually populated (object, not an ID).
-    const members = (block.members ?? []).filter(
-        (m) => m.member && typeof m.member === 'object'
-    );
+    // The block normally carries no members of its own: the assignment lives on
+    // the project, so it survives without a case study and the Team page can
+    // read it. `projectTeam` resolves that, falling back to rows written into
+    // the block itself by case studies that predate the project-level field.
+    const members = projectTeam(project);
     if (members.length === 0) return null;
     return (
         <section className="lp-cs__block lp-cs__block--wide lp-cs-team-band">
@@ -310,7 +312,7 @@ const TeamBlock: React.FC<{ block: CmsTeamBlock; fallbackHeading: string }> = ({
             </h2>
             <ul className="lp-cs-team">
                 {members.map((m, i) => {
-                    const person = m.member as CmsTeamMember;
+                    const person = m.member;
                     const photo = mediaUrl(person.image);
                     return (
                         <li className="lp-cs-team__card" key={m.id ?? i}>
@@ -379,7 +381,12 @@ const CaseStudyBlocks: React.FC<{ project: CmsProject }> = ({ project }) => {
                         return <TimelineBlock key={key} block={b} />;
                     case 'team':
                         return (
-                            <TeamBlock key={key} block={b} fallbackHeading={t.projectDetail.team} />
+                            <TeamBlock
+                                key={key}
+                                block={b}
+                                project={project}
+                                fallbackHeading={t.projectDetail.team}
+                            />
                         );
                     case 'faq':
                         return <FaqBlock key={key} block={b} heading={t.caseStudy.faqHeading} />;
