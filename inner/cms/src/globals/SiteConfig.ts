@@ -42,6 +42,22 @@ export const SiteConfig: GlobalConfig = {
       },
     },
     {
+      // The club's headcount, shown above the Team page roster.
+      //
+      // Typed in rather than counted off the `team` collection on purpose:
+      // only part of the club has a profile on the site, so a derived figure
+      // under-reports it (the page held 12 profiles against 20 members). The
+      // other two figures beside it — NGO partners and projects — are counted
+      // from the Projects collection, which is complete.
+      name: 'memberCount',
+      type: 'text',
+      label: 'Member count',
+      admin: {
+        description:
+          'Shown above the team photos, e.g. "20" or "20+". How many people are in the club — not how many have a profile on the site. Leave empty to hide it.',
+      },
+    },
+    {
       // Impact figures shown on the About page. Editable here so the numbers
       // can be bumped without a code deploy. The label is localized; the value
       // (e.g. "10+") is locale-agnostic.

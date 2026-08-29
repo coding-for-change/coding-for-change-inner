@@ -2086,6 +2086,10 @@ export interface SiteConfig {
    * Optional wide group photo shown at the top of the Team page. Left empty, the page starts straight at the member grid.
    */
   teamHeroImage?: (number | null) | Media;
+  /**
+   * Shown above the team photos, e.g. "20" or "20+". How many people are in the club — not how many have a profile on the site. Leave empty to hide it.
+   */
+  memberCount?: string | null;
   stats?:
     | {
         value: string;
@@ -2351,6 +2355,7 @@ export interface SiteConfigSelect<T extends boolean = true> {
   windowTitle?: T;
   bookingUrl?: T;
   teamHeroImage?: T;
+  memberCount?: T;
   stats?:
     | T
     | {
