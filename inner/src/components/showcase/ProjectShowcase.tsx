@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { mediaUrl } from '../../api';
 import { CmsProject } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { hasCaseStudy } from '../../lib/projects';
 import './landing.css';
 
 const reveal = {
@@ -19,11 +20,9 @@ const statusColors: Record<string, string> = {
     recruiting: '#b5651d',
 };
 
-/** A project has a case-study detail page once it has a slug + some case-study
- *  content (a headline, an impact highlight, or any body blocks). */
-export const hasCaseStudy = (p: CmsProject): boolean =>
-    !!p.slug &&
-    !!(p.impactHeadline || p.impact || (p.layout && p.layout.length > 0));
+// Defined in lib/projects.ts (the Team page needs it too); re-exported here
+// because this is where callers have always imported it from.
+export { hasCaseStudy };
 
 /**
  * Projects laid out as one editorial feature for the flagship and a quiet

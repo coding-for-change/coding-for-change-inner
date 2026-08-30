@@ -67,11 +67,23 @@ export interface CmsProject {
     // flagship for a differentiated treatment on the projects list.
     slug?: string | null;
     featured?: boolean | null;
+    // Who works on the project. Project-level, so a project can carry its team
+    // without a case study — this is what the Team page reads.
+    team?: CmsProjectTeamRow[] | null;
     // Case-study head.
     impactHeadline?: string | null;
     impact?: string | null;
     // Case-study body — freely-orderable content blocks, rendered in order.
     layout?: CmsCaseStudyBlock[] | null;
+}
+
+/** One person on a project, with the role they hold on it. */
+export interface CmsProjectTeamRow {
+    /** Populated at depth >= 1; may be an ID at insufficient depth. */
+    member?: CmsTeamMember | number | null;
+    /** Role on this project; falls back to the member's main role. */
+    role?: string | null;
+    id?: string | null;
 }
 
 /** A shared { image, caption } item used by gallery blocks. */
@@ -145,13 +157,8 @@ export interface CmsTeamBlock {
     blockType: 'team';
     id?: string | null;
     heading?: string | null;
-    members?: {
-        /** Populated at depth >= 1; may be an ID at insufficient depth. */
-        member?: CmsTeamMember | number | null;
-        /** Role on this project; falls back to the member's main role. */
-        role?: string | null;
-        id?: string | null;
-    }[] | null;
+    /** Empty means "show the project's own `team`". */
+    members?: CmsProjectTeamRow[] | null;
 }
 
 export interface CmsFaqBlock {

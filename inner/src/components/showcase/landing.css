@@ -3419,8 +3419,7 @@ a.lp-projstrip__item:hover .lp-projstrip__name {
 .lp-heap__pill {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 4px 12px 4px 7px;
+    padding: 4px 12px;
     border-radius: 999px;
     font-size: 11.5px;
     line-height: 1.5;
@@ -3432,12 +3431,6 @@ a.lp-projstrip__item:hover .lp-projstrip__name {
 a.lp-heap__pill:hover {
     background: #d9e9e9;
     border-color: var(--teal);
-}
-.lp-heap__pill-logo {
-    display: block;
-    max-height: 20px;
-    max-width: 44px;
-    object-fit: contain;
 }
 /* Logos work here where they did not in the mosaic's tile-width panel — the
    card is 560px wide, so a wordmark still reads at this size. */

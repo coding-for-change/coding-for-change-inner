@@ -10,6 +10,8 @@ import {
     CmsProject,
 } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { buildProjectIndex } from '../../lib/projects';
+import type { MemberProject } from '../../lib/projects';
 import ClosingCta from './ClosingCta';
 import './landing.css';
 
@@ -58,45 +60,6 @@ const populatedCompanies = (member: CmsTeamMember): CmsCompany[] =>
     (member.companies ?? []).filter(
         (c): c is CmsCompany => typeof c === 'object' && c !== null
     );
-
-/** A project a person worked on, with the role they held on it. */
-interface MemberProject {
-    id: number;
-    title: string;
-    slug?: string | null;
-    role?: string | null;
-}
-
-/**
- * Invert the case studies' `team` blocks into `memberId -> projects`. The
- * affiliation is already in the CMS (each case study lists its team with
- * per-project roles), so the Team page can show what someone actually worked
- * on without anyone maintaining a second list.
- */
-const buildProjectIndex = (
-    projects: CmsProject[]
-): Map<number, MemberProject[]> => {
-    const byMember = new Map<number, MemberProject[]>();
-    for (const project of projects) {
-        for (const block of project.layout ?? []) {
-            if (block.blockType !== 'team') continue;
-            for (const row of block.members ?? []) {
-                // Unpopulated relationships come back as bare IDs; skip those.
-                if (!row.member || typeof row.member !== 'object') continue;
-                const list = byMember.get(row.member.id) ?? [];
-                if (!list.some((x) => x.id === project.id))
-                    list.push({
-                        id: project.id,
-                        title: project.title,
-                        slug: project.slug,
-                        role: row.role,
-                    });
-                byMember.set(row.member.id, list);
-            }
-        }
-    }
-    return byMember;
-};
 
 interface TeamSection {
     group: CmsTeamGroup;

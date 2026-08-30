@@ -324,6 +324,19 @@ export interface Project {
       }[]
     | null;
   /**
+   * Who works on this project. Shown on the Team page under each person — no case study needed. The case study's "Team" block reuses this list.
+   */
+  team?:
+    | {
+        member: number | Team;
+        /**
+         * Role on this project (e.g. "Project Lead"). Falls back to the member's main role if blank.
+         */
+        role?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
    * The case-study page headline (falls back to the project title).
    */
   impactHeadline?: string | null;
@@ -432,6 +445,9 @@ export interface Project {
              * Optional section heading (e.g. "The team behind it").
              */
             heading?: string | null;
+            /**
+             * Leave empty to show the project's Team (set further up this page). Add rows only to show a different list here.
+             */
             members?:
               | {
                   member: number | Team;
@@ -1474,6 +1490,13 @@ export interface ProjectsSelect<T extends boolean = true> {
     | {
         label?: T;
         url?: T;
+        id?: T;
+      };
+  team?:
+    | T
+    | {
+        member?: T;
+        role?: T;
         id?: T;
       };
   impactHeadline?: T;

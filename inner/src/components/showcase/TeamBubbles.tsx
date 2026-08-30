@@ -9,6 +9,8 @@ import {
     CmsProject,
 } from '../../api/types';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { buildProjectIndex } from '../../lib/projects';
+import type { MemberProject } from '../../lib/projects';
 import ClosingCta from './ClosingCta';
 import './landing.css';
 
@@ -46,41 +48,6 @@ const populatedCompanies = (member: CmsTeamMember): CmsCompany[] =>
     (member.companies ?? []).filter(
         (c): c is CmsCompany => typeof c === 'object' && c !== null
     );
-
-interface MemberProject {
-    id: number;
-    title: string;
-    slug?: string | null;
-    role?: string | null;
-    /** The project's `image` is the NGO partner's logo (Lebenshilfe, edunovo…). */
-    logo?: string | null;
-}
-
-/** Invert the case studies' `team` blocks into `memberId -> projects`. */
-const buildProjectIndex = (
-    projects: CmsProject[]
-): Map<number, MemberProject[]> => {
-    const byMember = new Map<number, MemberProject[]>();
-    for (const project of projects) {
-        for (const block of project.layout ?? []) {
-            if (block.blockType !== 'team') continue;
-            for (const row of block.members ?? []) {
-                if (!row.member || typeof row.member !== 'object') continue;
-                const list = byMember.get(row.member.id) ?? [];
-                if (!list.some((x) => x.id === project.id))
-                    list.push({
-                        id: project.id,
-                        title: project.title,
-                        slug: project.slug,
-                        role: row.role,
-                        logo: mediaUrl(project.image),
-                    });
-                byMember.set(row.member.id, list);
-            }
-        }
-    }
-    return byMember;
-};
 
 /* ------------------------------------------------------------------ */
 /* Heap layout                                                         */
@@ -331,27 +298,19 @@ const DetailCard: React.FC<{
                         className="lp-heap__pills"
                         aria-label={t.team.projectsLabel}
                     >
-                        {projects.map((project) => {
-                            const inner = (
-                                <>
-                                    {project.logo && (
-                                        <img
-                                            className="lp-heap__pill-logo"
-                                            src={project.logo}
-                                            alt=""
-                                        />
-                                    )}
-                                    <span>{project.title}</span>
-                                </>
-                            );
-                            return project.slug ? (
+                        {/* Title only. The partner logo used to sit in here,
+                            but a pill caps it at ~20px, where a wordmark is
+                            unreadable and a crest is a smudge — the same reason
+                            the companies row below is set in type. */}
+                        {projects.map((project) =>
+                            project.slug ? (
                                 <Link
                                     className="lp-heap__pill"
                                     href={`/projects/${project.slug}`}
                                     key={project.id}
                                     title={project.role ?? undefined}
                                 >
-                                    {inner}
+                                    {project.title}
                                 </Link>
                             ) : (
                                 <span
@@ -359,10 +318,10 @@ const DetailCard: React.FC<{
                                     key={project.id}
                                     title={project.role ?? undefined}
                                 >
-                                    {inner}
+                                    {project.title}
                                 </span>
-                            );
-                        })}
+                            )
+                        )}
                     </div>
                 )}
                 {companies.length > 0 && (
