@@ -298,27 +298,19 @@ const DetailCard: React.FC<{
                         className="lp-heap__pills"
                         aria-label={t.team.projectsLabel}
                     >
-                        {projects.map((project) => {
-                            const inner = (
-                                <>
-                                    {project.logo && (
-                                        <img
-                                            className="lp-heap__pill-logo"
-                                            src={project.logo}
-                                            alt=""
-                                        />
-                                    )}
-                                    <span>{project.title}</span>
-                                </>
-                            );
-                            return project.slug ? (
+                        {/* Title only. The partner logo used to sit in here,
+                            but a pill caps it at ~20px, where a wordmark is
+                            unreadable and a crest is a smudge — the same reason
+                            the companies row below is set in type. */}
+                        {projects.map((project) =>
+                            project.slug ? (
                                 <Link
                                     className="lp-heap__pill"
                                     href={`/projects/${project.slug}`}
                                     key={project.id}
                                     title={project.role ?? undefined}
                                 >
-                                    {inner}
+                                    {project.title}
                                 </Link>
                             ) : (
                                 <span
@@ -326,10 +318,10 @@ const DetailCard: React.FC<{
                                     key={project.id}
                                     title={project.role ?? undefined}
                                 >
-                                    {inner}
+                                    {project.title}
                                 </span>
-                            );
-                        })}
+                            )
+                        )}
                     </div>
                 )}
                 {companies.length > 0 && (

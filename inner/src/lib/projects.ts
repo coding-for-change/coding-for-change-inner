@@ -1,4 +1,3 @@
-import { mediaUrl } from '../api/client';
 import type {
     CmsProject,
     CmsProjectTeamRow,
@@ -32,8 +31,6 @@ export interface MemberProject {
     /** Set only when the project has a case study to link to. */
     slug?: string | null;
     role?: string | null;
-    /** The project's `image` is the NGO partner's logo (Lebenshilfe, edunovo…). */
-    logo?: string | null;
 }
 
 /** Keep only rows whose relationship actually populated (object, not a bare ID). */
@@ -87,7 +84,6 @@ export const buildProjectIndex = (
                     // is plain text (see `MemberProject.slug`).
                     slug: hasCaseStudy(project) ? project.slug : null,
                     role,
-                    logo: mediaUrl(project.image),
                 });
             byMember.set(member.id, list);
         }
